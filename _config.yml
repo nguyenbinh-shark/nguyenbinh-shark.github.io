@@ -24,22 +24,22 @@ author:
   # Biographic information
   avatar           : "profile.png"
   name             : "Trần Nguyên Bình"
-  pronouns         : # example: "she/her"  
+  pronouns         : "He/His"  
   bio              : "Tôi là sinh viên ngành Cơ điện tử (chương trình tiên tiến ME_E1, khóa K67) tại Đại học Bách Khoa Hà Nội. Với niềm đam mê trong lĩnh vực robot, hệ thống điều khiển thông minh và tự động hóa, tôi đã tham gia nhiều dự án nghiên cứu và thực hành, từ xe cân bằng hai bánh, xe dò line cho đến robot điều khiển bằng ESP32/STM32 và nghiên cứu điều khiển động cơ BLDC. Tôi đặc biệt hứng thú với việc ứng dụng các thuật toán điều khiển (PID, FOC, SLAM) kết hợp cùng phần cứng vi điều khiển để xây dựng những hệ thống cơ điện tử hoạt động thực tế. Ngoài ra, tôi cũng quan tâm đến việc mô phỏng và kiểm chứng hoạt động của robot trong môi trường ảo nhằm tối ưu hóa quá trình thiết kế và phát triển."
   location         : "Vietnam"
   employer         : "HANOI University of Science and Technology"
-  uri              : https://hust.edu.vn/en/
+  uri              : #URL
   email            : "trannguyenbinh.shark@gmail.com" 
 
   # Academic websites
   academia         : # URL
   arxiv            : # URL - Update with the correct link to your profile
-  googlescholar    : "https://scholar.google.com/citations?user=PS_CX0AAAAAJ"
+  googlescholar    : #"https://scholar.google.com/citations?user=PS_CX0AAAAAJ"
   inspire-hep      : # URL
   impactstory      : # URL
-  orcid            : "http://orcid.org/yourorcidurl"
+  orcid            : #"http://orcid.org/yourorcidurl"
   semantic         : # URL
-  pubmed           : "https://www.ncbi.nlm.nih.gov/pubmed/?term=john+snow"
+  pubmed           : #"https://www.ncbi.nlm.nih.gov/pubmed/?term=john+snow"
   researchgate     : # URL
   scopus           : # URL
 
@@ -47,14 +47,14 @@ author:
   bitbucket        : # Username - Update with your username on the site
   codepen          : # Username
   dribbble         : # Username
-  github           : "academicpages"
+  github           : "nguyenbinh-shark"
   kaggle           : # Username  
   stackoverflow    : # User number or user number and name (i.e., use "1" or "1/jeff-atwood")    
 
   # Social media
   artstation       : # Username
-  bluesky          : "bsky.app" # Replace this with you Bluesky username
-  facebook         : # Username
+  bluesky          :  # Replace this with you Bluesky username
+  facebook         : "nguyenbinh16022004"
   flickr           : # Username
   foursquare       : # Username
   goodreads        : # Username
@@ -75,7 +75,7 @@ author:
   weibo            : # Username
   wikipedia        : # Username
   xing             : # Username
-  youtube          : # Username
+  youtube          : "Nguyên_Bình-Shark"
   zhihu            : # Username
 
 # Publication Category - The following the list of publication categories and their headings
