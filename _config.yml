@@ -25,9 +25,10 @@ author:
   avatar           : "profile.png"
   name             : "Trần Nguyên Bình"
   pronouns         : "He/His"  
-  bio              : "Tôi là sinh viên ngành Cơ điện tử (chương trình tiên tiến ME_E1, khóa K67) tại Đại học Bách Khoa Hà Nội. Với niềm đam mê trong lĩnh vực robot, hệ thống điều khiển thông minh và tự động hóa, tôi đã tham gia nhiều dự án nghiên cứu và thực hành, từ xe cân bằng hai bánh, xe dò line cho đến robot điều khiển bằng ESP32/STM32 và nghiên cứu điều khiển động cơ BLDC. Tôi đặc biệt hứng thú với việc ứng dụng các thuật toán điều khiển (PID, FOC, SLAM) kết hợp cùng phần cứng vi điều khiển để xây dựng những hệ thống cơ điện tử hoạt động thực tế. Ngoài ra, tôi cũng quan tâm đến việc mô phỏng và kiểm chứng hoạt động của robot trong môi trường ảo nhằm tối ưu hóa quá trình thiết kế và phát triển."
+  bio              : "Tôi là sinh viên ngành Cơ điện tử (CTTT – ME_E1, K67) tại Đại học Bách Khoa Hà Nội, quan tâm đến robot, hệ thống điều khiển thông minh và mô phỏng trong cơ điện tử"
   location         : "Vietnam"
   employer         : "HANOI University of Science and Technology"
+  employer_url     : "https://www.hust.edu.vn"
   uri              : #URL
   email            : "trannguyenbinh.shark@gmail.com" 
 
