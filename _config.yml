@@ -12,11 +12,10 @@ site_theme               : "default" # Currently available options are "default"
 title                    : "NBS"
 title_separator          : "-"
 name                     : &name "Trần Nguyên Bình"
-description              : &description "personal description"
+description              : &description "Sinh viên Cơ điện tử"
 url                      : https://nguyenbinh-shark.github.io # the base hostname & protocol for your site e.g. "https://[your GitHub username].github.io" or if you already have some other page hosted on Github then use "https://[your GitHub username].github.io/[Your Repo Name]"
 baseurl                  : "" # the subpath of your site, e.g. "/blog"
-repository               : "https://nguyenbinh-shark.github.io"
-
+repository               : nguyenbinh-shark/nguyenbinh-shark.github.io
 # Site Author - The following control what appear as part of the author content on the side bar.
 #               If a field is blank the icon and link will not appear, otherwise it will be shown.
 #               Additional customization can be done by editing /_includes/author-profile.html
@@ -24,7 +23,7 @@ author:
   # Biographic information
   avatar           : "profile.png"
   name             : "Trần Nguyên Bình"
-  pronouns         : "He/His"  
+  pronouns         : #"He/His"  
   bio              : "Tôi là sinh viên ngành Cơ điện tử (CTTT – ME_E1, K67) tại Đại học Bách Khoa Hà Nội, quan tâm đến robot, hệ thống điều khiển thông minh và mô phỏng trong cơ điện tử"
   location         : "Vietnam"
   employer         : "HANOI University of Science and Technology"
