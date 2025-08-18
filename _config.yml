@@ -279,7 +279,7 @@ defaults:
       layout: single
       author_profile: true
       share: true
-      comment: true
+      comments: true
   # _talks
   - scope:
       path: ""
@@ -289,7 +289,9 @@ defaults:
       author_profile: true
       share: true
 #model
-- scope: { path: "", type: models }
+  - scope: 
+      path: ""
+      type: models
     values:
       layout: model   # dùng layout chi tiết bên dưới
       author_profile: true
