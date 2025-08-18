@@ -29,7 +29,7 @@ Website này được mình xây dựng để:
 
 ## 🚀 Một số dự án tiêu biểu
 - **Dual-Mode Control Robot** – xe dò line kết hợp điều khiển từ xa bằng ESP-NOW  
-- **Self-Balancing Robot with SLAM** – robot cân bằng 2 bánh với cơ cấu khớp linh hoạt, sử dụng STM32 + ROS để lập bản đồ thời gian thực  
+- **Self-Balancing Robot** – robot cân bằng 2 bánh với cơ cấu khớp linh hoạt, sử dụng STM32 + ROS để lập bản đồ thời gian thực  
 - **Smart Door System (ESP32)** – hệ thống cửa thông minh với nhận diện vân tay và mật khẩu  
 - **2DOF Mechanism (ATmega16)** – mô phỏng gimbal điều khiển camera  
 
@@ -52,6 +52,7 @@ Mình thường chia sẻ kinh nghiệm về:
 
 ---
 
-Cảm ơn bạn đã ghé thăm website! Nếu muốn kết nối, hãy liên hệ qua email:  
+Cảm ơn bạn đã ghé thăm website! Nếu muốn kết nối, hãy liên hệ qua email hoặc số điện thoại:  
 📧 [trannguyenbinh.shark@gmail.com](mailto:trannguyenbinh.shark@gmail.com)  
+📱 [{{ site.author.phone }}]({{ site.author.phone_url }})
 
