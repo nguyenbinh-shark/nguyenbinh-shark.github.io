@@ -54,5 +54,6 @@ Mình thường chia sẻ kinh nghiệm về:
 
 Cảm ơn bạn đã ghé thăm website! Nếu muốn kết nối, hãy liên hệ qua email hoặc số điện thoại:  
 📧 [trannguyenbinh.shark@gmail.com](mailto:trannguyenbinh.shark@gmail.com)  
-📱 [{{ site.author.phone }}]({{ site.author.phone_url }})
+📱 [ +84 866 772 355 ](tel:+84866772355)
+
 
