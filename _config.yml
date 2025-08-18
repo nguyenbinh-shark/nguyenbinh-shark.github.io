@@ -229,7 +229,9 @@ collections:
   talks:
     output: true
     permalink: /:collection/:path/
-
+  models:
+    output: true
+    permalink: /models/:name/
 
 # These settings control how pages and collections are included in the site
 defaults:
@@ -286,8 +288,13 @@ defaults:
       layout: talk
       author_profile: true
       share: true
-
-
+#model
+- scope: { path: "", type: models }
+    values:
+      layout: model   # dùng layout chi tiết bên dưới
+      author_profile: true
+      share: true
+      comments: true
 # Sass/SCSS
 sass:
   sass_dir: _sass
