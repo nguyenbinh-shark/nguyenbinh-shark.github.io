@@ -231,7 +231,7 @@ collections:
     permalink: /:collection/:path/
   library:
     output: true
-    permalink: /library/:path/
+    permalink: /library/:type/:path/
 
 # These settings control how pages and collections are included in the site
 defaults:
