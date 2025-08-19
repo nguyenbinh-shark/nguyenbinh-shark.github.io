@@ -1,0 +1,106 @@
+/* ====== 1) Biến màu “an toàn” cho toàn site ====== */
+:root{
+  --bg: #ffffff;
+  --text: #111111;
+  --muted-text: #6b7280;
+  --border: #d1d5db;
+  --bg-elev: #f9fafb;
+
+  /* card/badge bạn đang dùng ở Library */
+  --card-bg: #ffffff;
+  --chip-border: #d1d5db;
+}
+
+html[data-theme="dark"],
+body[data-theme="dark"],
+html.dark,
+body.dark,
+.theme-dark{
+  --bg: #0b0f19;
+  --text: #e5e7eb;
+  --muted-text: #9ca3af;
+  --border: #374151;
+  --bg-elev: #111827;
+
+  --card-bg: #0f172a;
+  --chip-border: #374151;
+}
+
+/* Fallback theo hệ thống nếu theme không set class/attr */
+@media (prefers-color-scheme: dark){
+  :root{
+    color-scheme: dark;
+    --bg: #0b0f19;
+    --text: #e5e7eb;
+    --muted-text: #9ca3af;
+    --border: #374151;
+    --bg-elev: #111827;
+
+    --card-bg: #0f172a;
+    --chip-border: #374151;
+  }
+}
+
+/* ====== 2) Form controls đồng bộ theme cho toàn site ====== */
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="url"],
+input[type="password"],
+input[type="number"],
+select,
+textarea{
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: .45rem .6rem;
+  outline: none;
+  transition: border-color .15s ease, background .15s ease, color .15s ease;
+}
+
+input::placeholder,
+textarea::placeholder{
+  color: var(--muted-text);
+}
+
+/* Focus state nhất quán */
+input:focus,
+select:focus,
+textarea:focus{
+  border-color: #3b82f6; /* xanh dương dễ nhìn */
+  box-shadow: 0 0 0 3px rgba(59,130,246,.2);
+}
+
+/* Disable state */
+input:disabled,
+select:disabled,
+textarea:disabled{
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+/* ====== 3) Các tiện ích bạn đã dùng ở Library ====== */
+.card{
+  text-decoration: none;
+  color: inherit;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(0,0,0,.12);
+  background: var(--card-bg);
+}
+
+.chip{
+  padding: .35rem .6rem;
+  border: 1px solid var(--chip-border);
+  border-radius: 999px;
+  text-decoration: none;
+  opacity: .9;
+}
+
+/* grid tiện dụng (có thể tận dụng ở nhiều page) */
+.grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
