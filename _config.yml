@@ -26,7 +26,11 @@ author:
   pronouns         : #"He/His"  
   bio              : "Sinh viên ngành Cơ điện tử (CTTT – ME_E1, K67) tại Đại học Bách Khoa Hà Nội, quan tâm đến robot, hệ thống điều khiển thông minh và mô phỏng trong cơ điện tử"
   location         : "Vietnam"
-  employer         : "hust"
+  employer         : >
+              <div style="display:inline-block;line-height:1.3;">
+                Hanoi University of<br>
+                Science and Technology
+              </div>
   uri              : #URL
   email            : "trannguyenbinh.shark@gmail.com" 
 
