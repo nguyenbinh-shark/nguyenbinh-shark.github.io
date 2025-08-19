@@ -26,11 +26,14 @@ author:
   pronouns         : #"He/His"  
   bio              : "Sinh viên ngành Cơ điện tử (CTTT – ME_E1, K67) tại Đại học Bách Khoa Hà Nội, quan tâm đến robot, hệ thống điều khiển thông minh và mô phỏng trong cơ điện tử"
   location         : "Vietnam"
-  employer         : >
-              <span style="display: inline-block; line-height: 1.2;">
-                <span style="display: inline;">Hanoi University of</span><br>
-                <span style="padding-left: 1.5em;">Science and Technology</span>
-              </span>
+  employer: >
+        <div style="display: flex; align-items: flex-start; gap: 0.5em;">
+          <span style="font-size: 1.3em; line-height: 1;">🏛</span>
+          <div style="display: flex; flex-direction: column; line-height: 1.3;">
+            <span>Hanoi University of</span>
+            <span>Science and Technology</span>
+          </div>
+        </div>
   uri              : #URL
   email            : "trannguyenbinh.shark@gmail.com" 
 
