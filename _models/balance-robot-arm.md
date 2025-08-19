@@ -1,7 +1,7 @@
 ---
 title: "Balance Robot Arm v1"
 date: 2025-08-18
-cover: /assets/models/balance-robot-arm/cover.jpg
+cover: files/models/model1.png
 model_glb: /assets/models/balance-robot-arm/preview.glb
 files:
   - label: "STL (3D Print)"
