@@ -6,9 +6,15 @@
   --border: #d1d5db;
   --bg-elev: #f9fafb;
 
-  /* card/badge bạn đang dùng ở Library */
+  /* card/badge */
   --card-bg: #ffffff;
   --chip-border: #d1d5db;
+
+  /* input */
+  --input-bg: #ffffff;
+  --input-text: #111111;
+  --input-border: #d1d5db;
+  --input-placeholder: #6b7280;
 }
 
 html[data-theme="dark"],
@@ -24,9 +30,14 @@ body.dark,
 
   --card-bg: #0f172a;
   --chip-border: #374151;
+
+  --input-bg: #111827;
+  --input-text: #e5e7eb;
+  --input-border: #374151;
+  --input-placeholder: #9ca3af;
 }
 
-/* Fallback theo hệ thống nếu theme không set class/attr */
+/* fallback nếu theme theo system */
 @media (prefers-color-scheme: dark){
   :root{
     color-scheme: dark;
@@ -38,6 +49,11 @@ body.dark,
 
     --card-bg: #0f172a;
     --chip-border: #374151;
+
+    --input-bg: #111827;
+    --input-text: #e5e7eb;
+    --input-border: #374151;
+    --input-placeholder: #9ca3af;
   }
 }
 
@@ -50,9 +66,9 @@ input[type="password"],
 input[type="number"],
 select,
 textarea{
-  color: var(--text);
-  background: var(--bg);
-  border: 1px solid var(--border);
+  color: var(--input-text) !important;
+  background: var(--input-bg) !important;
+  border: 1px solid var(--input-border) !important;
   border-radius: 8px;
   padding: .45rem .6rem;
   outline: none;
@@ -61,18 +77,18 @@ textarea{
 
 input::placeholder,
 textarea::placeholder{
-  color: var(--muted-text);
+  color: var(--input-placeholder) !important;
 }
 
-/* Focus state nhất quán */
+/* Focus state */
 input:focus,
 select:focus,
 textarea:focus{
-  border-color: #3b82f6; /* xanh dương dễ nhìn */
+  border-color: #3b82f6 !important;
   box-shadow: 0 0 0 3px rgba(59,130,246,.2);
 }
 
-/* Disable state */
+/* Disabled state */
 input:disabled,
 select:disabled,
 textarea:disabled{
@@ -80,7 +96,7 @@ textarea:disabled{
   cursor: not-allowed;
 }
 
-/* ====== 3) Các tiện ích bạn đã dùng ở Library ====== */
+/* ====== 3) Các tiện ích dùng ở Library ====== */
 .card{
   text-decoration: none;
   color: inherit;
@@ -98,7 +114,6 @@ textarea:disabled{
   opacity: .9;
 }
 
-/* grid tiện dụng (có thể tận dụng ở nhiều page) */
 .grid{
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
