@@ -4,9 +4,9 @@ permalink: /library/
 layout: single
 ---
 
-{% assign items = site.models | sort: 'date' | reverse %}
+{% assign items = site.library | sort: 'date' | reverse %}
 {% if items.size == 0 %}
-<p><em>Chưa có mô hình nào. Hãy thêm file vào <code>_models/</code>.</em></p>
+<p><em>Chưa có mục nào. Hãy thêm file vào <code>_library/</code>.</em></p>
 {% endif %}
 
 <div class="grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px">
@@ -20,3 +20,4 @@ layout: single
   </a>
 {% endfor %}
 </div>
+
