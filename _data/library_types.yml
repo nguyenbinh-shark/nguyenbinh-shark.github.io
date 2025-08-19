@@ -1,0 +1,24 @@
+- key: model3d
+  label: "3D Models"
+  icon: "🧩"
+- key: code
+  label: "Code"
+  icon: "💻"
+- key: sim
+  label: "Simulation"
+  icon: "📈"
+- key: cad
+  label: "CAD & Mechanisms"
+  icon: "⚙️"
+- key: elec
+  label: "Electronics"
+  icon: "🔌"
+- key: dataset
+  label: "Datasets"
+  icon: "🗃️"
+- key: paper
+  label: "Papers & Reports"
+  icon: "📄"
+- key: project
+  label: "Projects"
+  icon: "🚀"
