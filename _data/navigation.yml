@@ -28,8 +28,8 @@ main:
     
   # - title: "CV"
   #   url: /cv-json/
-  - title: "3D Models"
-    url: /models/
+  - title: "Library"
+    url: /library/
     
   - title: "Guide"
     url: /markdown/
