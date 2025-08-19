@@ -72,15 +72,20 @@ input:disabled,select:disabled,textarea:disabled{ opacity:.6; cursor:not-allowed
 }
 .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; }
 
-/* ====== ÉP RIÊNG ô tìm kiếm Library LUÔN trắng-đen ======
-   -> Bất kể theme dark/light, chỉ #lib-search sẽ luôn nền trắng, chữ đen.
-   -> Các input khác trên site vẫn theo theme như trên.
-========================================================= */
+/* ====== Ô tìm kiếm Library theo theme ====== */
 #lib-search{
-  background:#ffffff !important;
-  color:#000000 !important;
-  border:1px solid #999 !important;
-  border-radius:8px;
-  padding:.45rem .6rem;
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border: 1px solid var(--input-border) !important;
+  border-radius: 8px;
+  padding: .45rem .6rem;
+  -webkit-appearance: none;
+  appearance: none;
 }
-#lib-search::placeholder{ color:#555 !important; }
+#lib-search::placeholder { color: var(--input-placeholder) !important; }
+
+/* Autofill Chrome để không bị nền vàng khi dark */
+#lib-search:-webkit-autofill {
+  -webkit-text-fill-color: var(--input-text) !important;
+  box-shadow: 0 0 0 1000px var(--input-bg) inset !important;
+}
