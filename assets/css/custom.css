@@ -17,6 +17,7 @@
   --input-placeholder: #6b7280;
 }
 
+/* Dark mode khi SITE chủ động bật (qua data-theme/class) */
 html[data-theme="dark"],
 body[data-theme="dark"],
 html.dark,
@@ -37,9 +38,9 @@ body.dark,
   --input-placeholder: #9ca3af;
 }
 
-/* fallback nếu theme theo system */
+/* Fallback CHỈ chạy khi site KHÔNG gắn theme (không data-theme, không .dark) */
 @media (prefers-color-scheme: dark){
-  :root{
+  html:not([data-theme]):not(.dark):not(.theme-dark){
     color-scheme: dark;
     --bg: #0b0f19;
     --text: #e5e7eb;
@@ -58,6 +59,8 @@ body.dark,
 }
 
 /* ====== 2) Form controls đồng bộ theme cho toàn site ====== */
+/* Thêm selector input (không type) để bắt mọi trường hợp */
+input,
 input[type="text"],
 input[type="search"],
 input[type="email"],
