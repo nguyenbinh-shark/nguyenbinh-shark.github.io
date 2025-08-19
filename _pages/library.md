@@ -10,7 +10,6 @@ layout: single
 <p><em>Chưa có mục nào. Hãy thêm file vào <code>_library/</code>.</em></p>
 {% endif %}
 
-<!-- Thanh filter đơn giản: ô tìm kiếm + các type có item -->
 <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin:0 0 1rem 0">
   <input id="lib-search" placeholder="Tìm theo tiêu đề..." style="flex:1;min-width:220px;padding:.45rem .6rem;border-radius:8px;border:1px solid var(--mm-muted-border,#374151)">
   {% for t in site.data.library_types %}
@@ -34,7 +33,6 @@ layout: single
   .tags{ display:flex; flex-wrap:wrap; gap:.25rem; margin-top:.25rem }
 </style>
 
-<!-- Render theo thứ tự trong _data/library_types.yml -->
 {% for t in site.data.library_types %}
   {% assign group = all | where: "type", t.key %}
   {% if group.size > 0 %}
@@ -63,7 +61,6 @@ layout: single
   {% endif %}
 {% endfor %}
 
-<!-- Nhóm “Other” cho item thiếu type -->
 {% assign group_other = all | where_exp: "i","i.type == nil" %}
 {% if group_other.size > 0 %}
   <h2 id="other" style="margin-top:2rem">📦 Other</h2>
