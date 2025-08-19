@@ -229,9 +229,9 @@ collections:
   talks:
     output: true
     permalink: /:collection/:path/
-  models:
+  library:
     output: true
-    permalink: /models/:name/
+    permalink: /library/:path/
 
 # These settings control how pages and collections are included in the site
 defaults:
@@ -288,10 +288,10 @@ defaults:
       layout: talk
       author_profile: true
       share: true
-#model
+#library
   - scope: 
       path: ""
-      type: models
+      type: library
     values:
       layout: single  # dùng layout chi tiết bên dưới
       author_profile: true
