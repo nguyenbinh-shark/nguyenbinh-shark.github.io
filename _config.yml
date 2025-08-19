@@ -27,10 +27,10 @@ author:
   bio              : "Sinh viên ngành Cơ điện tử (CTTT – ME_E1, K67) tại Đại học Bách Khoa Hà Nội, quan tâm đến robot, hệ thống điều khiển thông minh và mô phỏng trong cơ điện tử"
   location         : "Vietnam"
   employer         : >
-              <div style="display: inline-block;">
-                <span style="display: block;">Hanoi University of</span>
-                <span style="display: block; padding-left: 1.5em;">Science and Technology</span>
-              </div>
+              <span style="display: inline-block; line-height: 1.2;">
+                <span style="display: inline;">Hanoi University of</span><br>
+                <span style="padding-left: 1.5em;">Science and Technology</span>
+              </span>
   uri              : #URL
   email            : "trannguyenbinh.shark@gmail.com" 
 
