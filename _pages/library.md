@@ -1,6 +1,6 @@
 ---
-title: "3D Models"
-permalink: /models/
+title: "Library"
+permalink: /library/
 layout: single
 ---
 
