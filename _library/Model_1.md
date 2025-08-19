@@ -1,21 +1,16 @@
 ---
-title: "Model 1"
+title: "Balance Robot Arm · Model 1"
 date: 2025-08-18
-permalink: /models/model-1/
-layout: single
+type: model3d
+tags: [glb, robot-arm]
+cover: /assets/models/balance-robot-arm/cover.jpg
+file: /assets/models/balance-robot-arm/preview.glb
+license: CC-BY-4.0
 ---
 
-<!-- nạp thư viện viewer một lần trên trang -->
-<script type="module"
-  src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+Mô tả ngắn về mô hình 3D. Xem trực tiếp bên dưới.
 
-<!-- nhúng GLB -->
-<model-viewer
-  src="{{ '/files/models/model1.glb' | relative_url }}"
-  poster="{{ '/images/cover-model1.jpg' | relative_url }}"   <!-- tùy chọn -->
-  camera-controls
-  auto-rotate
-  style="width:100%;max-width:900px;height:520px;background:transparent;display:block;margin:auto;">
-</model-viewer>
-
-Mô tả ngắn về mô hình…
+{% if page.file contains '.glb' or page.file contains '.gltf' %}
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <model-viewer src="{{ page.file | relative_url }}" camera-controls auto-rotate style="width:100%;height:420px;background:#111;border-radius:12px"></model-viewer>
+{% endif %}
