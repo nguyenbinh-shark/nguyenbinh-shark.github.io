@@ -11,7 +11,7 @@ layout: single
 {% endif %}
 
 <div style="display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;margin:0 0 1rem 0">
-  <input id="lib-search" placeholder="Tìm theo tiêu đề..." style="flex:1;min-width:220px;padding:.45rem .6rem;border-radius:8px;border:1px solid var(--mm-muted-border,#374151)">
+  <input id="lib-search" placeholder="Tìm theo tiêu đề..."
   {% for t in site.data.library_types %}
     {% assign has = all | where: "type", t.key | size %}
     {% if has > 0 %}
