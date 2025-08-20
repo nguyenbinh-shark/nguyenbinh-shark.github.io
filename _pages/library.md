@@ -67,10 +67,15 @@ layout: single
     color: #fff;
   }
   .badge-type {
-    background-color: #334155;
-    color: #fff;
-    font-weight: 600;
+    background-color: transparent;
+    color: #0ea5e9;
+    font-weight: 700;
+    border: 1.5px solid #0ea5e9;
+    border-radius: 6px;
+    padding: 0.2rem 0.5rem;
+    text-transform: uppercase;
   }
+
 
   .tags {
     display: flex;
