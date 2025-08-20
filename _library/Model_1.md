@@ -4,7 +4,7 @@ date: 2025-08-18
 type: model3d
 tags: [glb, robot-arm]
 cover: /files/models/model1.png
-file:  /files/models/model1.glb
+file:  /files/models/micro_mecanum/micro_mecanum.glb
 license: CC-BY-4.0
 ---
 
