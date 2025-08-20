@@ -6,6 +6,7 @@ tags: [glb, robot-arm]
 cover: /files/models/micro_mecanum/robot render.png
 file:  /files/models/micro_mecanum/micro_mecanum.glb
 license: CC-BY-4.0
+ownership: collected   # collected.. hoặc..original
 ---
 
 Mô tả ngắn về mô hình 3D. Xem trực tiếp bên dưới.
