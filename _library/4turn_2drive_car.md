@@ -30,4 +30,11 @@ Mô tả ngắn về mô hình 3D. Xem trực tiếp bên dưới.
   <p style="margin-top:1em;">
     Mô hình <strong>4-Turn 2-Drive</strong> là một nền tảng robot linh hoạt, có khả năng quay tại chỗ và điều hướng thông minh nhờ vào 4 cơ cấu lái và 2 động cơ truyền động. Thiết kế phù hợp cho ứng dụng robot vận chuyển, robot công nghiệp hoặc nghiên cứu mô phỏng.
   </p>
+  <p style="margin-top: 1.5em;">
+    🔗 <strong>Link Source:</strong>  
+    <a href="https://drive.google.com/drive/folders/1exTTxWK0Tk6kEf2w314jS2wDx6MPcTD4?usp=sharing">
+      Xem mô hình gốc trên Google Driver
+    </a>
+  </p>
+</div>
 </div>
