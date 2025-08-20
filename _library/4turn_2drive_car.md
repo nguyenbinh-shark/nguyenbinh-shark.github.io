@@ -6,6 +6,7 @@ tags: [mobile robot, robot-arm]
 cover: /files/models/4turn2drive_car/image/4.jpeg
 file:  /files/models/4turn2drive_car/4turn2drive_carglb.glb
 license: CC-BY-4.0
+ownership: original
 ---
 
 Mô tả ngắn về mô hình 3D. Xem trực tiếp bên dưới.
