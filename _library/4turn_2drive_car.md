@@ -14,3 +14,12 @@ Mô tả ngắn về mô hình 3D. Xem trực tiếp bên dưới.
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <model-viewer src="{{ page.file | relative_url }}" camera-controls auto-rotate style="width:100%;height:420px;background:#111;border-radius:12px"></model-viewer>
 {% endif %}
+<!-- Nội dung bổ sung -->
+<div style="margin-top: 2em;">
+  <h2>Hình ảnh bổ sung</h2>
+  <img src="/files/models/4turn2drive_car/image/4.jpeg" alt="Ảnh mô hình 4-turn 2-drive" style="width:100%; max-width:800px; border-radius:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+  
+  <p style="margin-top:1em;">
+    Mô hình <strong>4-Turn 2-Drive</strong> là một nền tảng robot linh hoạt, có khả năng quay tại chỗ và điều hướng thông minh nhờ vào 4 cơ cấu lái và 2 động cơ truyền động. Thiết kế phù hợp cho ứng dụng robot vận chuyển, robot công nghiệp hoặc nghiên cứu mô phỏng.
+  </p>
+</div>
