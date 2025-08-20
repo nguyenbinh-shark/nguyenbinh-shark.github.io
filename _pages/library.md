@@ -66,6 +66,11 @@ layout: single
     background-color: #0284c7;
     color: #fff;
   }
+  .badge-type {
+    background-color: #334155;
+    color: #fff;
+    font-weight: 600;
+  }
 
   .tags {
     display: flex;
@@ -102,7 +107,7 @@ layout: single
           {% if m.tags %}
             <div class="tags">
               {% for tag in m.tags %}
-                <span class="badge">{{ tag }}</span>
+                <span class="badge">#{{ tag }}</span>
               {% endfor %}
             </div>
           {% endif %}
