@@ -1,10 +1,10 @@
 ---
-title: "Balance Robot Arm · Model 1"
-date: 2025-08-18
+title: "4-Turn 2-Drive car"
+date: 2025-08-20
 type: model3d
-tags: [glb, robot-arm]
-cover: /files/models/model1.png
-file:  /files/models/model1.glb
+tags: [mobile robot, robot-arm]
+cover: /files/models/4turn2drive_car/image/4.jpeg
+file:  /files/models/4turn2drive_car/4turn2drive_carglb.glb
 license: CC-BY-4.0
 ---
 
