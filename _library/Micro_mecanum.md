@@ -3,7 +3,7 @@ title: "Balance Robot Arm · Model 1"
 date: 2025-08-18
 type: model3d
 tags: [glb, robot-arm]
-cover: /files/models/micro_mecanum/all.jpg
+cover: /files/models/micro_mecanum/robot render.png
 file:  /files/models/micro_mecanum/micro_mecanum.glb
 license: CC-BY-4.0
 ---
