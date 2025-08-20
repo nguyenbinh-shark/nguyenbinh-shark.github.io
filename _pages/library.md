@@ -47,14 +47,14 @@ layout: single
             <span class="badge">{{ t.label }}</span>
           </div>
           {% if m.date %}
-            <p style="margin:.15rem 0 0 0;opacity:.75;font-size:.9rem;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
-              <span>{{ m.date | date: "%Y-%m-%d" }}</span>
-              {% if m.ownership == "original" %}
-                <span class="badge" style="background:#16a34a;color:#fff;border:none">Tự tạo</span>
-              {% elsif m.ownership == "collected" %}
-                <span class="badge" style="background:#0284c7;color:#fff;border:none">Sưu tầm</span>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:.25rem">
+              <span style="font-size:.85rem;opacity:.75">{{ m.date | date: "%Y-%m-%d" }}</span>
+              {% if m.ownership %}
+                <span class="badge {% if m.ownership == 'original' %}badge-success{% else %}badge-info{% endif %}">
+                  {% if m.ownership == 'original' %}Tự tạo{% else %}Sưu tầm{% endif %}
+                </span>
               {% endif %}
-            </p>
+            </div>
           {% endif %}
           {% if m.tags %}
             <div class="tags">
