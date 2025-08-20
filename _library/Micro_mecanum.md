@@ -1,10 +1,10 @@
 ---
-title: "Balance Robot Arm · Model 1"
+title: "Micro mecanum"
 date: 2025-08-18
 type: model3d
 tags: [glb, robot-arm]
 cover: /files/models/micro_mecanum/robot render.png
-file:  /files/models/model1.glb
+file:  /files/models/micro_mecanum/micro_mecanum.glb
 license: CC-BY-4.0
 ---
 
