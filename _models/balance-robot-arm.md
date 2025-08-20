@@ -1,6 +1,6 @@
 <!-- Viewer 3D -->
 <model-viewer
-  src="{{ '/assets/models/balance-robot-arm/preview.glb' | relative_url }}"
+  src="{{ 'files/models/model1.glb' | relative_url }}"
   camera-controls
   auto-rotate
   shadow-intensity="0.7"
