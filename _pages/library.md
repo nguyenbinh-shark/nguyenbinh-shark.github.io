@@ -23,15 +23,58 @@ layout: single
 </div>
 
 <style>
-  .chip{ padding:.35rem .6rem; border:1px solid var(--mm-muted-border,#374151);
-         border-radius:999px; text-decoration:none; opacity:.9 }
-  .card{ text-decoration:none; color:inherit; border-radius:12px; overflow:hidden;
-         box-shadow:0 6px 16px rgba(0,0,0,.12); background:var(--card-bg,#1f2937) }
-  .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px }
-  .badge{ display:inline-block; font-size:.75rem; opacity:.8; padding:.15rem .5rem;
-          border:1px solid var(--mm-muted-border,#374151); border-radius:999px; }
-  .tags{ display:flex; flex-wrap:wrap; gap:.25rem; margin-top:.25rem }
+  .chip {
+    padding: .35rem .6rem;
+    border: 1px solid var(--mm-muted-border, #374151);
+    border-radius: 999px;
+    text-decoration: none;
+    opacity: .9;
+  }
+
+  .card {
+    text-decoration: none;
+    color: inherit;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 16px rgba(0,0,0,.12);
+    background: var(--card-bg, #1f2937);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: .75rem;
+    font-weight: 600;
+    opacity: .85;
+    padding: .2rem .6rem;
+    border-radius: 999px;
+    white-space: nowrap;
+    border: none;
+  }
+
+  .badge-success {
+    background-color: #16a34a;
+    color: #fff;
+  }
+
+  .badge-info {
+    background-color: #0284c7;
+    color: #fff;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .25rem;
+    margin-top: .25rem;
+  }
 </style>
+
 
 {% for t in site.data.library_types %}
   {% assign group = all | where: "type", t.key %}
