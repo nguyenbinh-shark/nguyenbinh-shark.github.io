@@ -22,9 +22,9 @@ Mô tả ngắn về mô hình 3D. Xem trực tiếp bên dưới.
     <img src="/files/models/4turn2drive_car/image/3.jpeg" alt="Ảnh 1" style="width:100%; max-width:360px; border-radius:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
     <img src="/files/models/4turn2drive_car/image/1.jpeg" alt="Ảnh 1" style="width:100%; max-width:360px; border-radius:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
     <img src="/files/models/4turn2drive_car/image/5.jpeg" alt="Ảnh 1" style="width:100%; max-width:360px; border-radius:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
-    <img src="/files/models/4turn2drive_car/image/6.jpeg" alt="Ảnh 1" style="width:100%; max-width:360px; border-radius:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
-    <img src="/files/models/4turn2drive_car/image/7.jpeg" alt="Ảnh 1" style="width:100%; max-width:360px; border-radius:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
-        <img src="/files/models/4turn2drive_car/image/8.jpeg" alt="Ảnh 1" style="width:100%; max-width:360px; border-radius:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+    <img src="/files/models/4turn2drive_car/image/6.jpg" alt="Ảnh 1" style="width:100%; max-width:360px; border-radius:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+    <img src="/files/models/4turn2drive_car/image/7.jpg" alt="Ảnh 1" style="width:100%; max-width:360px; border-radius:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+    <img src="/files/models/4turn2drive_car/image/8.jpg" alt="Ảnh 1" style="width:100%; max-width:360px; border-radius:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
 
 
   <p style="margin-top:1em;">
