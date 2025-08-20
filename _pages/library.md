@@ -46,7 +46,16 @@ layout: single
             <h3 style="margin:.2rem 0 .3rem 0;font-size:1rem">{{ m.title }}</h3>
             <span class="badge">{{ t.label }}</span>
           </div>
-          {% if m.date %}<p style="margin:.15rem 0 0 0;opacity:.75;font-size:.9rem">{{ m.date | date: "%Y-%m-%d" }}</p>{% endif %}
+          {% if m.date %}
+            <p style="margin:.15rem 0 0 0;opacity:.75;font-size:.9rem;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
+              <span>{{ m.date | date: "%Y-%m-%d" }}</span>
+              {% if m.ownership == "original" %}
+                <span class="badge" style="background:#16a34a;color:#fff;border:none">Tự tạo</span>
+              {% elsif m.ownership == "collected" %}
+                <span class="badge" style="background:#0284c7;color:#fff;border:none">Sưu tầm</span>
+              {% endif %}
+            </p>
+          {% endif %}
           {% if m.tags %}
             <div class="tags">
               {% for tag in m.tags %}
