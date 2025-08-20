@@ -4,7 +4,7 @@ date: 2025-08-18
 type: model3d
 tags: [glb, robot-arm]
 cover: /files/models/model1.png
-file: /assets/models/balance-robot-arm/preview.glb
+file:  /files/models/model1.glb
 license: CC-BY-4.0
 ---
 
