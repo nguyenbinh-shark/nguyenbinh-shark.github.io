@@ -1,7 +1,7 @@
 ---
 title: "ESP32 · PID for Line Follower"
 date: 2025-08-18
-type: web
+type: elec
 tags: [esp32, pid, line-follower]
 lang: cpp
 repo: https://github.com/your/repo
