@@ -1,0 +1,36 @@
+---
+title: "4-Turn 2-Drive with robot arm"
+date: 2025-08-22
+type: model3d
+tags: [mobile robot, robot-arm]
+cover: /files/models/4turn4drive-car-arm-robot/image/1.jpeg
+file:  /files/models/4turn4drive-car-arm-robot/4T4d_arm.glb
+license: CC-BY-4.0
+ownership: collected   # collected.. hoặc..original
+
+---
+
+Mô tả ngắn về mô hình 3D. Xem trực tiếp bên dưới.
+
+{% if page.file contains '.glb' or page.file contains '.gltf' %}
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <model-viewer src="{{ page.file | relative_url }}" camera-controls auto-rotate style="width:100%;height:420px;background:#111;border-radius:12px"></model-viewer>
+{% endif %}
+<!-- Nội dung bổ sung -->
+<div style="margin-top: 2em;">
+  <h2>Hình ảnh bổ sung</h2>
+    <img src="/files/models/4turn4drive-car-arm-robot/image/1.jpeg" alt="Ảnh mô hình 4-turn 2-drive" style="width:100%; max-width:800px; border-radius:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+    <img src="/files/models/4turn4drive-car-arm-robot/image/2.jpeg" alt="Ảnh 1" style="width:100%; max-width:360px; border-radius:12px; box-shadow: 0 2px 8px  rgba(0,0,0,0.3);">
+    <img src="/files/models/4turn4drive-car-arm-robot/image/3.jpeg" alt="Ảnh 1" style="width:100%; max-width:360px; border-radius:12px; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+
+
+  <p style="margin-top:1em;">
+    Mô hình <strong>4-Turn 2-Drive robot arm</strong> là một nền tảng robot linh hoạt, có khả năng quay tại chỗ và điều hướng thông minh nhờ vào 4 cơ cấu lái và 2 động cơ truyền động. Thiết kế phù hợp cho ứng dụng robot vận chuyển, robot công nghiệp hoặc nghiên cứu mô phỏng. Ngoài ra nó còn có thêm cánh tay robot ở trên có thể thực hiện nhiều chưc năng.
+  </p>
+  <p style="margin-top: 1.5em;">
+    🔗 <strong>Link Source:</strong>  
+    <a href="https://drive.google.com/drive/folders/1zY5ZG_2Lzq70a3Ekv-TIbTK2BW7KlrBW?usp=sharing">
+      Xem mô hình gốc trên Google Driver
+    </a>
+  </p>
+</div>
