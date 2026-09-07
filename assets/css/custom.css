@@ -1,0 +1,855 @@
+/* ====== Tokens cơ bản (light/dark) ====== */
+:root{
+  --bg: #ffffff;
+  --text: #111111;
+  --muted-text: #6b7280;
+  --border: #d1d5db;
+  --bg-elev: #f9fafb;
+
+  --card-bg: #ffffff;
+  --chip-border: #d1d5db;
+
+  /* inputs mặc định theo theme (nếu cần nơi khác) */
+  --input-bg: #ffffff;
+  --input-text: #111111;
+  --input-border: #d1d5db;
+  --input-placeholder: #6b7280;
+}
+
+html[data-theme="dark"],
+body[data-theme="dark"],
+html.dark,
+body.dark,
+.theme-dark{
+  --bg: #0b0f19;
+  --text: #e5e7eb;
+  --muted-text: #9ca3af;
+  --border: #374151;
+  --bg-elev: #111827;
+
+  --card-bg: #0f172a;
+  --chip-border: #374151;
+
+  --input-bg: #111827;
+  --input-text: #e5e7eb;
+  --input-border: #374151;
+  --input-placeholder: #9ca3af;
+}
+
+/* ====== Form controls (theo theme) ====== */
+input,
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="url"],
+input[type="password"],
+input[type="number"],
+select,
+textarea{
+  color: var(--input-text);
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  padding: .45rem .6rem;
+  outline: none;
+  transition: border-color .15s ease, background .15s ease, color .15s ease;
+}
+input::placeholder,
+textarea::placeholder{ color: var(--input-placeholder); }
+input:focus,select:focus,textarea:focus{
+  border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,.2);
+}
+input:disabled,select:disabled,textarea:disabled{ opacity:.6; cursor:not-allowed; }
+
+/* ====== Tiện ích dùng ở Library (tái sử dụng) ====== */
+.card{
+  text-decoration:none; color:inherit; border-radius:12px; overflow:hidden;
+  box-shadow:0 6px 16px rgba(0,0,0,.12); background:var(--card-bg);
+}
+.chip{
+  padding:.35rem .6rem; border:1px solid var(--chip-border);
+  border-radius:999px; text-decoration:none; opacity:.9;
+}
+.grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:16px; }
+
+/* ====== Ô tìm kiếm Library theo theme ====== */
+#lib-search{
+  background-color: var(--input-bg) !important;
+  color: var(--input-text) !important;
+  border: 1px solid var(--input-border) !important;
+  border-radius: 8px;
+  padding: .45rem .6rem;
+  -webkit-appearance: none;
+  appearance: none;
+}
+#lib-search::placeholder { color: var(--input-placeholder) !important; }
+
+/* Autofill Chrome để không bị nền vàng khi dark */
+#lib-search:-webkit-autofill {
+  -webkit-text-fill-color: var(--input-text) !important;
+  box-shadow: 0 0 0 1000px var(--input-bg) inset !important;
+}
+
+/* ====== Language Switcher ====== */
+.lang-btn {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 26px;
+  padding: 0 6px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  border-radius: 6px;
+  border: 1.5px solid currentColor;
+  cursor: pointer;
+  user-select: none;
+  text-decoration: none !important;
+  transition: background .15s, color .15s;
+  opacity: .85;
+  /* Reset mặc định của <button> để trông giống các mục menu khác. */
+  background: none;
+  color: inherit;
+  font-family: inherit;
+  line-height: 1;
+}
+.lang-btn:hover {
+  opacity: 1;
+  background: rgba(128,128,128,.15);
+}
+/* Viền focus rõ ràng cho người dùng bàn phím (nút này điều hướng được bằng Tab). */
+.lang-btn:focus-visible {
+  opacity: 1;
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Viền focus cho nút đổi giao diện sáng/tối khi điều hướng bằng bàn phím */
+.theme-btn:focus-visible,
+#theme-toggle a:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ---- Bilingual content blocks ----------------------------------------
+   Hiển thị do CSS quyết định, không phải JS. Thuộc tính `data-lang` được gán
+   vào <html> bởi script inline trong _includes/head/custom.html TRƯỚC khi trang
+   được vẽ, nên không có hiện tượng nháy hai ngôn ngữ (FOUC).
+
+   Vì chỉ ẨN ngôn ngữ không được chọn (thay vì HIỆN ngôn ngữ được chọn),
+   quy tắc này giữ nguyên display mặc định của phần tử — <div> vẫn là block,
+   <span> vẫn là inline — và khi không có JS (không có data-lang) thì
+   cả hai ngôn ngữ cùng hiện, không cần rule fallback riêng.
+
+   Quy tắc này cũng áp dụng cho phần tử được JS chèn sau khi tải trang
+   (ví dụ dòng đếm kết quả tìm kiếm trong _pages/year-archive.html). */
+html[data-lang="vi"] .lang-en,
+html[data-lang="en"] .lang-vi {
+  display: none;
+}
+
+/* ====== CV Page Styles ====== */
+
+/* --- Section headings --- */
+.cv-page h2 {
+  font-size: 1.45em;
+  font-weight: 700;
+  color: var(--text);
+  border-left: 4px solid #3b82f6;
+  padding-left: 0.65em;
+  margin-top: 1.8em;
+  margin-bottom: 0.6em;
+  letter-spacing: 0.01em;
+}
+
+/* Dark mode accent stays visible */
+html[data-theme="dark"] .cv-page h2,
+body[data-theme="dark"] .cv-page h2,
+html.dark .cv-page h2 {
+  border-left-color: #60a5fa;
+}
+
+/* --- Horizontal rules (section dividers) --- */
+.cv-page hr {
+  border: none;
+  border-top: 1px solid var(--border, #e5e7eb);
+  margin: 2em 0;
+  opacity: 0.6;
+}
+
+/* --- Bold text (project / company / school names) --- */
+.cv-page strong {
+  color: var(--text);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+/* --- Date / subtitle lines (italic) --- */
+.cv-page em {
+  color: var(--muted-text, #6b7280);
+  font-style: italic;
+}
+
+/* --- Lists --- */
+.cv-page ul {
+  padding-left: 1.3em;
+  margin-top: 0.4em;
+  margin-bottom: 0.8em;
+}
+
+.cv-page ul li {
+  margin-bottom: 0.35em;
+  line-height: 1.65;
+}
+
+/* --- Paragraph spacing --- */
+.cv-page p {
+  line-height: 1.7;
+  margin-bottom: 0.8em;
+}
+
+/* --- Bullet markers colored --- */
+.cv-page ul li::marker {
+  color: #3b82f6;
+}
+
+html[data-theme="dark"] .cv-page ul li::marker,
+body[data-theme="dark"] .cv-page ul li::marker,
+html.dark .cv-page ul li::marker {
+  color: #60a5fa;
+}
+
+/* --- Skill chips / topic lines (bullets separated by •) --- */
+.cv-page .lang-en > p:first-of-type,
+.cv-page .lang-vi > p:first-of-type {
+  line-height: 1.8;
+}
+
+/* --- Buttons inside CV --- */
+.cv-page .btn--info {
+  font-size: 0.8em;
+  padding: 0.25em 0.7em;
+  border-radius: 6px;
+  margin-top: 0.3em;
+  display: inline-block;
+}
+
+/* --- CV download / export actions (screen) --- */
+.cv-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6em;
+  align-items: center;
+  margin: 0 0 0.4em;
+}
+.cv-download-btn {
+  font-size: 1.05em;
+  font-weight: 600;
+  cursor: pointer;
+  color: #fff;
+  background: #e74c3c;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5em 1em;
+  font-family: inherit;
+}
+.cv-download-btn:hover { background: #c0392b; }
+.cv-download-btn i { margin-right: 0.35em; }
+.cv-file-link {
+  font-size: 0.9em;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid var(--border, #d1d5db);
+  border-radius: 6px;
+  padding: 0.45em 0.8em;
+  color: var(--text);
+}
+.cv-file-link:hover { background: rgba(128,128,128,.12); }
+
+/* Blocks that only appear in the printed/exported PDF */
+.print-only { display: none; }
+
+/* ====== PRINT / EXPORT-TO-PDF STYLES ====== */
+/* ====== SIDEBAR TOGGLE / COLLAPSE (Tối giản, không bị khoảng trống) ====== */
+
+/* Nút toggle cố định ở vị trí tinh tế góc trên bên trái */
+.sidebar__toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg-elev);
+  color: var(--muted-text);
+  cursor: pointer;
+  padding: 0;
+  position: fixed;
+  top: 76px;
+  left: 12px;
+  z-index: 95;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+}
+
+.sidebar__toggle-btn i {
+  font-size: 0.75rem;
+}
+
+.sidebar__toggle-btn:hover {
+  color: var(--text);
+  border-color: #3b82f6;
+  background: var(--card-bg);
+  transform: scale(1.08);
+}
+
+/* Khi Sidebar bị thu gọn */
+@media (min-width: 925px) {
+  html.sidebar-collapsed .sidebar {
+    display: none !important;
+  }
+
+  html.sidebar-collapsed #main {
+    margin-top: 2em !important;
+    max-width: 1450px !important;
+  }
+
+  html.sidebar-collapsed .page {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    float: none !important;
+    padding-left: 2.8rem !important;
+    padding-right: 1.5rem !important;
+  }
+
+  html.sidebar-collapsed .archive {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    float: none !important;
+    padding-left: 2.8rem !important;
+    padding-right: 1.5rem !important;
+  }
+}
+
+/* ============================================================
+   BỐ CỤC BLOG ARCHIVE & SERIES (PHONG CÁCH TỐI GIẢN NHƯ TÀI NGUYÊN)
+   ============================================================ */
+
+/* 1. Category Hub Grid (Thanh khối điều hướng chuyên mục tối giản) */
+.blog-hub {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin: 1rem 0 1.5rem;
+}
+
+.blog-hub-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.2rem 0.8rem;
+  border-radius: 12px;
+  border: 1.5px solid var(--border, #d1d5db);
+  text-decoration: none !important;
+  color: inherit !important;
+  background: var(--card-bg, #ffffff);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+  text-align: center;
+}
+
+.blog-hub-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  border-color: #3b82f6;
+}
+
+html[data-theme="dark"] .blog-hub-card:hover {
+  border-color: #60a5fa;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.bh-icon {
+  font-size: 1.75rem;
+  line-height: 1;
+  margin-bottom: 0.4rem;
+}
+
+.bh-label {
+  font-weight: 600;
+  font-size: 0.92rem;
+  line-height: 1.3;
+}
+
+.bh-count {
+  font-size: 0.75rem;
+  color: var(--muted-text, #6b7280);
+  opacity: 0.75;
+  margin-top: 0.25rem;
+}
+
+/* 2. Thanh tìm kiếm & Tag Chips tối giản */
+.blog-search-bar {
+  margin: 1.2rem 0 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.blog-search-input-wrap input#blog-search {
+  width: 100%;
+  max-width: 440px;
+  background-color: var(--input-bg, #ffffff) !important;
+  color: var(--input-text, #111111) !important;
+  border: 1px solid var(--input-border, #d1d5db) !important;
+  border-radius: 8px;
+  padding: 0.48rem 0.75rem;
+  font-size: 0.88rem;
+  outline: none;
+}
+
+.blog-search-input-wrap input#blog-search:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.blog-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.filter-chip {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.22rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid var(--border, #d1d5db);
+  background: var(--card-bg, #ffffff);
+  color: var(--muted-text, #6b7280);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s ease;
+}
+
+.filter-chip:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.filter-chip.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #ffffff;
+}
+
+html[data-theme="dark"] .filter-chip.active {
+  background: #3b82f6;
+  border-color: #3b82f6;
+  color: #ffffff;
+}
+
+/* 3. Khối Chuyên Đề Tiêu Biểu (Minimalist Series Boxes) */
+.series-section {
+  margin: 0 0 1.8rem;
+}
+
+.series-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 0.75rem;
+}
+
+.series-box {
+  background: var(--card-bg, #ffffff);
+  border: 1.5px solid var(--border, #e5e7eb);
+  border-radius: 12px;
+  padding: 1.15rem 1.15rem 0.95rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.series-box:hover {
+  transform: translateY(-2px);
+  border-color: #3b82f6;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+html[data-theme="dark"] .series-box:hover {
+  border-color: #60a5fa;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+.series-box__header {
+  margin-bottom: 0.65rem;
+}
+
+.series-box__meta {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--muted-text, #6b7280);
+  margin-bottom: 0.45rem;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.badge-series-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #0ea5e9;
+  border: 1.5px solid #0ea5e9;
+  border-radius: 6px;
+  padding: 0.15rem 0.5rem;
+  text-transform: uppercase;
+  background: transparent;
+}
+
+html[data-theme="dark"] .badge-series-tag {
+  color: #38bdf8;
+  border-color: #38bdf8;
+}
+
+.series-box__title {
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 0 0 0.45rem;
+}
+
+.series-box__title a {
+  color: var(--text, #111827);
+  text-decoration: none;
+}
+
+.series-box__title a:hover {
+  color: #3b82f6;
+  text-decoration: underline;
+}
+
+html[data-theme="dark"] .series-box__title a:hover {
+  color: #60a5fa;
+}
+
+.series-box__desc {
+  font-size: 0.84rem;
+  line-height: 1.45;
+  color: var(--muted-text, #6b7280);
+  margin: 0;
+}
+
+.series-box__list {
+  margin: 0.55rem 0 0.85rem 1.25rem;
+  padding: 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--muted-text, #6b7280);
+}
+
+.series-box__list li {
+  margin-bottom: 0.32rem;
+}
+
+.series-box__list a {
+  color: var(--text, #111827);
+  text-decoration: none;
+}
+
+.series-box__list a:hover {
+  color: #3b82f6;
+  text-decoration: underline;
+}
+
+html[data-theme="dark"] .series-box__list a:hover {
+  color: #60a5fa;
+}
+
+.series-box__footer {
+  margin-top: auto;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--border, #e5e7eb);
+}
+
+.series-box__link {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #3b82f6;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.series-box__link:hover {
+  text-decoration: underline;
+}
+
+html[data-theme="dark"] .series-box__link {
+  color: #60a5fa;
+}
+
+/* 4. Danh sách tất cả bài viết (Grid Cards tối giản theo mô hình Tài nguyên) */
+.all-articles-section {
+  margin-top: 0.5rem;
+}
+
+.blog-articles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.blog-article-card {
+  background: var(--card-bg, #ffffff);
+  border: 1.5px solid var(--border, #e5e7eb);
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.blog-article-card:hover {
+  transform: translateY(-2px);
+  border-color: #3b82f6;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+html[data-theme="dark"] .blog-article-card:hover {
+  border-color: #60a5fa;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+/* Hình đại diện bài viết — file nằm ở /images/blog-thumbnails/, đặt tên theo
+   số thứ tự thư mục trong _blog/ (01.png, 02.png ...). Xem README trong thư mục. */
+.bac-thumb {
+  display: block;
+  margin: -1rem -1.1rem 0.75rem;
+  border-radius: 10px 10px 0 0;
+  overflow: hidden;
+  background: var(--bg-elev, #f3f4f6);
+  aspect-ratio: 16 / 9;
+  line-height: 0;
+}
+
+.bac-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.25s ease;
+}
+
+.blog-article-card:hover .bac-thumb img {
+  transform: scale(1.04);
+}
+
+/* Khối thay thế khi bài chưa có hình — tự biến mất khi thêm file vào thư mục. */
+.bac-thumb__ph {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, var(--bg-elev, #f3f4f6) 0%, var(--card-bg, #ffffff) 100%);
+  border-bottom: 1px solid var(--border, #e5e7eb);
+  line-height: 1;
+}
+
+.bac-thumb__icon {
+  font-size: 1.6rem;
+  opacity: 0.55;
+}
+
+.bac-thumb__num {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--muted-text, #6b7280);
+  opacity: 0.35;
+  letter-spacing: 0.02em;
+}
+
+html[data-theme="dark"] .bac-thumb {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+html[data-theme="dark"] .bac-thumb__ph {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+}
+
+.bac-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+.bac-date {
+  font-size: 0.75rem;
+  color: var(--muted-text, #6b7280);
+  opacity: 0.75;
+}
+
+.bac-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.35;
+  margin: 0.1rem 0 0.35rem;
+}
+
+.bac-title a {
+  color: var(--text, #111827);
+  text-decoration: none;
+}
+
+.bac-title a:hover {
+  color: #3b82f6;
+}
+
+html[data-theme="dark"] .bac-title a:hover {
+  color: #60a5fa;
+}
+
+.bac-excerpt {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--muted-text, #6b7280);
+  margin: 0 0 0.65rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.bac-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: auto;
+}
+
+.bac-tag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  background: var(--bg-elev, #f3f4f6);
+  color: var(--muted-text, #6b7280);
+  border: 1px solid var(--border, #e5e7eb);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.bac-tag:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+/* Badge Type tối giản chung */
+.badge-type {
+  display: inline-block;
+  background-color: transparent;
+  color: #0ea5e9;
+  font-weight: 700;
+  border: 1.5px solid #0ea5e9;
+  border-radius: 6px;
+  padding: 0.15rem 0.5rem;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+}
+
+html[data-theme="dark"] .badge-type {
+  color: #38bdf8;
+  border-color: #38bdf8;
+}
+
+/* Ẩn nút trên màn hình nhỏ */
+@media (max-width: 924px) {
+  .sidebar__toggle-btn {
+    display: none !important;
+  }
+}
+
+@media print {
+  /* Force light theme regardless of the dark/light toggle */
+  :root,
+  html[data-theme="dark"],
+  body[data-theme="dark"] {
+    --bg: #ffffff;
+    --text: #000000;
+    --bg-elev: #ffffff;
+    --border: #cccccc;
+    --muted-text: #444444;
+  }
+  html, body { background: #fff !important; color: #000 !important; }
+
+  /* Hide all site chrome — keep only the CV content */
+  .masthead, .sidebar, .page__footer, .breadcrumbs,
+  #lang-toggle, #theme-toggle, .no-print, .page__title,
+  .author__avatar, .author__urls-wrapper { display: none !important; }
+
+  /* Reveal the print-only header (name + contact) */
+  .print-only { display: block !important; }
+
+  /* Full-width single-column layout on paper */
+  #main { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+  .archive { width: 100% !important; float: none !important; padding: 0 !important; margin: 0 !important; }
+  .page, .page__inner-wrap, .page__content {
+    width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important;
+  }
+
+  /* CV typography tuned for A4 */
+  .cv-page { font-size: 10.5pt; line-height: 1.4; color: #000; }
+  .cv-page h2 {
+    font-size: 1.25em;
+    color: #000 !important;
+    border-left: 3px solid #000;
+    margin-top: 1.1em;
+    break-after: avoid;
+  }
+  .cv-page h3 { break-after: avoid; }
+  .cv-page a { color: #000 !important; text-decoration: none; }
+  .cv-page .btn--info { border: 1px solid #000; color: #000 !important; background: none; }
+
+  /* Print-only CV header */
+  .cv-print-header {
+    text-align: center;
+    margin-bottom: 0.8em;
+    border-bottom: 2px solid #000;
+    padding-bottom: 0.5em;
+  }
+  .cv-print-header h1 { font-size: 1.9em; margin: 0 0 0.2em; }
+  .cv-print-header p { font-size: 0.82em; margin: 0; color: #222; }
+
+  /* Avoid awkward page breaks mid-entry */
+  .cv-page h2, .cv-page h3, .pub-entry, .cv-page li { break-inside: avoid; }
+
+  @page { size: A4; margin: 13mm 15mm; }
+}
+
+/* ====== Global Typography & Figure Captions ====== */
+body, h1, h2, h3, h4, h5, h6, p, li, a, span, figcaption {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+code, kbd, samp, pre {
+  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+}
+
+figcaption {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+  font-style: normal;
+}
+

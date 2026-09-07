@@ -1,0 +1,890 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Code Lab 1 — Mô phỏng PID Lò Sấy</title>
+<style>
+  /* ═══════════ PICO-8 LAB EDITION · DESIGN SYSTEM ═══════════ */
+  :root {
+    --bg: #0b0e1a;
+    --panel: #0f1322;
+    --ink: #FFF1E8;
+    --muted: #83769C;
+    --line: #5F574F;
+    --acc: #FFEC27;
+    --blue: #29ADFF;
+    --amber: #FFA300;
+    --rose: #FF77A8;
+    --green: #00E436;
+    --green-dark: #008751;
+    --red: #FF004D;
+    --navy: #1D2B53;
+    --purple: #7E2553;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 14px;
+    color: var(--ink);
+    font-family: "Courier New", ui-monospace, Consolas, monospace;
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(45deg, #0d1122 25%, transparent 25%, transparent 75%, #0d1122 75%),
+      linear-gradient(45deg, #0d1122 25%, transparent 25%, transparent 75%, #0d1122 75%);
+    background-size: 26px 26px;
+    background-position: 0 0, 13px 13px;
+  }
+  .wrap { width: 100%; max-width: 1020px; margin: auto; }
+
+  /* ── Header ── */
+  .header-box {
+    margin-bottom: 12px;
+    padding: 12px 16px;
+    background: var(--navy);
+    border: 2px solid var(--line);
+    box-shadow: 4px 4px 0 #000;
+  }
+  .header-box h1 {
+    margin: 0 0 4px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+    color: var(--acc);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .lab-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background: var(--purple);
+    border: 1px solid rgba(255,255,255,.15);
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: var(--ink);
+    box-shadow: 2px 2px 0 #000;
+    vertical-align: middle;
+  }
+  .header-box p {
+    margin: 0;
+    font-size: 0.84rem;
+    color: #C2C3C7;
+    line-height: 1.5;
+  }
+  .header-box p b { color: var(--acc); }
+
+  /* ── Preset Tabs ── */
+  .preset-bar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .preset-tab {
+    flex: 1 1 140px;
+    padding: 9px 12px;
+    background: var(--panel);
+    border: 2px solid var(--line);
+    box-shadow: 3px 3px 0 #000;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    color: var(--ink);
+    font-size: 0.76rem;
+    font-weight: 700;
+  }
+  .preset-tab:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 #000; }
+  .preset-tab.active {
+    border-color: var(--acc);
+    background: #1a2340;
+    box-shadow: 3px 3px 0 #000, inset 0 0 0 1px rgba(255,236,39,.25);
+  }
+  .preset-tab .ptitle { color: var(--acc); text-transform: uppercase; letter-spacing: .03em; }
+  .preset-tab .pdesc { display: block; margin-top: 3px; font-size: 0.68rem; color: var(--muted); font-weight: 600; }
+
+  /* ── Panel (canvas, tables) ── */
+  .panel {
+    position: relative;
+    border: 2px solid var(--line);
+    background: var(--panel);
+    overflow: hidden;
+    margin-bottom: 12px;
+    box-shadow: 4px 4px 0 #000;
+  }
+  .panel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,.13) 0 1px, transparent 1px 3px);
+  }
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--navy);
+    border-bottom: 2px solid var(--line);
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--acc);
+    flex-wrap: wrap;
+  }
+  .panel canvas { display: block; width: 100%; height: auto; }
+
+  /* ── Main Grid (Chart + Table) ── */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1.7fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  /* ── HUD Stats ── */
+  .hud {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .stat-card {
+    padding: 9px 10px;
+    background: var(--panel);
+    border: 2px solid var(--line);
+    box-shadow: 3px 3px 0 #000;
+    text-align: center;
+  }
+  .stat-card b {
+    display: block;
+    font-size: 1.02rem;
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--acc);
+  }
+  .stat-card span {
+    display: block;
+    margin-top: 3px;
+    font-size: 0.62rem;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .stat-card.warn b { color: var(--red); }
+
+  /* ── Slider Cards ── */
+  .controls-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .slider-card {
+    padding: 12px 14px;
+    background: var(--panel);
+    border: 2px solid var(--line);
+    box-shadow: 3px 3px 0 #000;
+  }
+  .slider-card.sp-card { border-color: var(--green-dark); }
+  .slider-card.p-card  { border-color: #1e5f96; }
+  .slider-card.i-card  { border-color: #9c6a1e; }
+  .slider-card.d-card  { border-color: var(--purple); }
+  .slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    gap: 6px;
+  }
+  .slider-header label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+  }
+  .slider-header .val {
+    font-size: 0.9rem;
+    font-weight: 900;
+    white-space: nowrap;
+  }
+  .sp-card .slider-header label, .sp-card .slider-header .val { color: var(--green); }
+  .p-card  .slider-header label, .p-card  .slider-header .val { color: var(--blue); }
+  .i-card  .slider-header label, .i-card  .slider-header .val { color: var(--amber); }
+  .d-card  .slider-header label, .d-card  .slider-header .val { color: var(--rose); }
+  input[type=range] { width: 100%; margin: 6px 0 2px; cursor: pointer; }
+  .sp-card input[type=range] { accent-color: var(--green); }
+  .p-card  input[type=range] { accent-color: var(--blue); }
+  .i-card  input[type=range] { accent-color: var(--amber); }
+  .d-card  input[type=range] { accent-color: var(--rose); }
+  .slider-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.6rem;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  /* ── Buttons ── */
+  .action-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  button {
+    min-height: 44px;
+    padding: 9px 14px;
+    border: 2px solid #C2C3C7;
+    background: var(--navy);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    user-select: none;
+    box-shadow: 3px 3px 0 #000;
+  }
+  button:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 #000; }
+  button.primary { background: var(--green-dark); border-color: var(--green); }
+  button.warn    { background: #2a0f1e; border-color: var(--red); color: var(--red); }
+
+  /* ── Data Table (Lab-specific) ── */
+  .table-panel { position: relative; }
+  .table-wrap {
+    height: 340px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) var(--panel);
+  }
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.68rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .data-table th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: 7px 6px;
+    background: var(--navy);
+    color: var(--acc);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    text-align: right;
+    border-bottom: 2px solid var(--line);
+    font-size: 0.62rem;
+  }
+  .data-table td {
+    padding: 5px 6px;
+    text-align: right;
+    color: #C2C3C7;
+    border-bottom: 1px solid #1a2040;
+  }
+  .data-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+  .data-table tr:first-child td {
+    background: rgba(255,236,39,.06);
+    color: var(--ink);
+  }
+  .data-table .col-p { color: var(--blue); }
+  .data-table .col-i { color: var(--amber); }
+  .data-table .col-d { color: var(--rose); }
+  .data-table .col-out { color: var(--green); font-weight: 700; }
+
+  /* ── Coach Box ── */
+  .coach-box {
+    padding: 12px 14px;
+    background: #141a30;
+    border: 2px solid var(--line);
+    box-shadow: 4px 4px 0 #000;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .coach-avatar {
+    width: 40px; height: 40px;
+    border: 2px solid var(--acc);
+    background: var(--navy);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  .coach-content { flex: 1; min-width: 0; }
+  .coach-title {
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+    color: var(--acc);
+    margin-bottom: 3px;
+  }
+  .coach-msg {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #C2C3C7;
+    line-height: 1.5;
+  }
+  .coach-msg b { color: var(--acc); }
+  .coach-msg .alert { color: var(--red); font-weight: 700; }
+
+  /* ── Guide Note ── */
+  .guide-note {
+    padding: 12px 14px;
+    background: var(--panel);
+    border: 2px solid var(--line);
+    box-shadow: 4px 4px 0 #000;
+    font-size: 0.76rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+  .guide-note b { color: #C2C3C7; }
+
+  @media (max-width: 860px) {
+    body { padding: 8px; }
+    .main-grid { grid-template-columns: 1fr; }
+    .hud { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .controls-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .preset-bar { flex-direction: column; }
+  }
+  @media (max-width: 500px) {
+    .controls-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <!-- Header -->
+  <div class="header-box">
+    <h1>
+      💻 CODE LAB 1 · MÔ PHỎNG PID LÒ SẤY
+      <span class="lab-badge">CODE LAB</span>
+    </h1>
+    <p>Mô phỏng bộ điều khiển PID cho lò sấy nhiệt. Kéo thanh trượt <b>Kp</b>, <b>Ki</b>, <b>Kd</b> để quan sát đáp ứng nhiệt độ, hoặc chọn một trong 4 kịch bản có sẵn. Bảng số liệu bên phải ghi lại từng bước tính toán của thuật toán PID.</p>
+  </div>
+
+  <!-- Preset Tabs -->
+  <div class="preset-bar">
+    <button class="preset-tab active" data-preset="p">
+      <span class="ptitle">① Chỉ P</span>
+      <span class="pdesc">Kp=2 · Ki=0 · Kd=0 — Nhanh nhưng còn sai số tồn dư</span>
+    </button>
+    <button class="preset-tab" data-preset="pi">
+      <span class="ptitle">② P + I</span>
+      <span class="pdesc">Kp=2 · Ki=0,08 · Kd=0 — Xóa sai số nhưng vọt lố nhẹ</span>
+    </button>
+    <button class="preset-tab" data-preset="pid">
+      <span class="ptitle">③ PID đủ</span>
+      <span class="pdesc">Kp=2 · Ki=0,08 · Kd=0,8 — Cân bằng tốt, ổn định nhanh</span>
+    </button>
+    <button class="preset-tab" data-preset="bad">
+      <span class="ptitle">④ I gắt — Lắc dữ</span>
+      <span class="pdesc">Kp=1,4 · Ki=0,35 · Kd=1,2 — Dao động không ổn!</span>
+    </button>
+  </div>
+
+  <!-- HUD Stats -->
+  <div class="hud">
+    <div class="stat-card"><b id="hudTemp">20,0°C</b><span>Nhiệt độ hiện tại</span></div>
+    <div class="stat-card"><b id="hudOver">0%</b><span>Vọt lố lớn nhất</span></div>
+    <div class="stat-card"><b id="hudSettle">--</b><span>Thời gian ổn định</span></div>
+    <div class="stat-card" id="hudSatCard"><b id="hudOsc">0</b><span>Nhịp dao động</span></div>
+  </div>
+
+  <!-- Sliders -->
+  <div class="controls-grid">
+    <div class="slider-card sp-card">
+      <div class="slider-header">
+        <label for="spRange">Nhiệt đặt (SP)</label>
+        <span class="val" id="spVal">50°C</span>
+      </div>
+      <input id="spRange" type="range" min="30" max="75" step="1" value="50">
+      <div class="slider-meta"><span>30°C</span><span>75°C</span></div>
+    </div>
+    <div class="slider-card p-card">
+      <div class="slider-header">
+        <label for="kpRange">Kp · Tỉ lệ</label>
+        <span class="val" id="kpVal">2,00</span>
+      </div>
+      <input id="kpRange" type="range" min="0" max="5" step="0.05" value="2">
+      <div class="slider-meta"><span>0</span><span>5,0</span></div>
+    </div>
+    <div class="slider-card i-card">
+      <div class="slider-header">
+        <label for="kiRange">Ki · Tích phân</label>
+        <span class="val" id="kiVal">0,00</span>
+      </div>
+      <input id="kiRange" type="range" min="0" max="0.5" step="0.01" value="0">
+      <div class="slider-meta"><span>0</span><span>0,50</span></div>
+    </div>
+    <div class="slider-card d-card">
+      <div class="slider-header">
+        <label for="kdRange">Kd · Vi phân</label>
+        <span class="val" id="kdVal">0,00</span>
+      </div>
+      <input id="kdRange" type="range" min="0" max="3" step="0.05" value="0">
+      <div class="slider-meta"><span>0</span><span>3,0</span></div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-row">
+    <button class="primary" id="btnStep" type="button">⏩ TỪNG BƯỚC (1 TICK)</button>
+    <button id="btnAuto" type="button">▶ TỰ CHẠY LIÊN TỤC</button>
+    <button id="btnReset" type="button">🔄 ĐẶT LẠI</button>
+  </div>
+
+  <!-- Main Grid: Chart + Table -->
+  <div class="main-grid">
+    <!-- Chart Panel -->
+    <section class="panel">
+      <div class="panel-header">
+        <span>ĐỒ THỊ NHIỆT ĐỘ · THỜI GIAN THỰC</span>
+        <span id="chartStatus" style="color:var(--muted)">t = 0,0 s</span>
+      </div>
+      <canvas id="chart" width="680" height="340" aria-label="Đồ thị đáp ứng nhiệt độ lò sấy PID"></canvas>
+    </section>
+
+    <!-- Data Table Panel -->
+    <section class="panel table-panel">
+      <div class="panel-header">
+        <span>📋 NHẬT KÝ TÍNH TOÁN PID</span>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>t(s)</th>
+              <th>T(°C)</th>
+              <th>error</th>
+              <th class="col-p">P</th>
+              <th class="col-i">I</th>
+              <th class="col-d">D</th>
+              <th class="col-out">out</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- Coach Box -->
+  <div class="coach-box">
+    <div class="coach-avatar">🔥</div>
+    <div class="coach-content">
+      <div class="coach-title">GHI CHÚ LÒ SẤY</div>
+      <p class="coach-msg" id="coachMsg">
+        Hãy bắt đầu với preset <b>"Chỉ P"</b> và bấm <b>Tự chạy</b> để thấy sai số tồn dư. Sau đó chuyển sang <b>"P+I"</b> để xem khâu tích phân xóa sai số, rồi <b>"PID đủ"</b> để thấy khâu vi phân dập vọt lố. Cuối cùng thử <b>"I gắt"</b> để trải nghiệm hệ mất kiểm soát!
+      </p>
+    </div>
+  </div>
+
+  <!-- Guide -->
+  <div class="guide-note">
+    <b>💡 Mô hình vật lý:</b> Lò sấy nhiệt với nhiệt độ môi trường 20°C. Công suất gia nhiệt 0–100%.
+    Phương trình: <b>ΔT = (heat × 0,055 − (T − 20) × 0,018) × Δt</b><br>
+    <b>Bước thời gian:</b> Δt = 0,1 s · <b>Tiêu chí ổn định:</b> sai số &lt; 1°C<br>
+    <b>Khi bão hòa:</b> Lệnh PID vượt 100% nhưng lò chỉ cho tối đa 100% công suất → khâu I sẽ bị tích dồn (windup)!
+  </div>
+</main>
+
+<script>
+"use strict";
+
+// ═══════════ DOM Elements ═══════════
+const chart = document.getElementById("chart");
+const ctx = chart.getContext("2d");
+const tableBody = document.getElementById("tableBody");
+const coachMsg = document.getElementById("coachMsg");
+const chartStatus = document.getElementById("chartStatus");
+
+const spRange = document.getElementById("spRange");
+const kpRange = document.getElementById("kpRange");
+const kiRange = document.getElementById("kiRange");
+const kdRange = document.getElementById("kdRange");
+const spVal = document.getElementById("spVal");
+const kpVal = document.getElementById("kpVal");
+const kiVal = document.getElementById("kiVal");
+const kdVal = document.getElementById("kdVal");
+
+const hudTemp = document.getElementById("hudTemp");
+const hudOver = document.getElementById("hudOver");
+const hudSettle = document.getElementById("hudSettle");
+const hudOsc = document.getElementById("hudOsc");
+const hudSatCard = document.getElementById("hudSatCard");
+
+const btnStep = document.getElementById("btnStep");
+const btnAuto = document.getElementById("btnAuto");
+const btnReset = document.getElementById("btnReset");
+
+// ═══════════ Preset Definitions ═══════════
+const PRESETS = {
+  p:   { kp: 2,   ki: 0,    kd: 0,   label: "Chỉ P" },
+  pi:  { kp: 2,   ki: 0.08, kd: 0,   label: "P+I" },
+  pid: { kp: 2,   ki: 0.08, kd: 0.8, label: "PID đủ" },
+  bad: { kp: 1.4, ki: 0.35, kd: 1.2, label: "I gắt" }
+};
+let currentPreset = "p";
+
+// ═══════════ State ═══════════
+const DT = 0.1;
+let state = {};
+let timer = null;
+
+const fmt = (n, d = 1) => n.toFixed(d).replace(".", ",");
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+
+function initState() {
+  state = {
+    t: 0,
+    T: 20,
+    I: 0,
+    prevError: 0,
+    peakT: 20,
+    crossings: 0,
+    lastSign: 0,
+    settled: false,
+    settleTime: null,
+    history: []
+  };
+}
+
+// ═══════════ Slider Sync ═══════════
+function syncSliders() {
+  spVal.textContent = spRange.value + "°C";
+  kpVal.textContent = fmt(+kpRange.value, 2);
+  kiVal.textContent = fmt(+kiRange.value, 2);
+  kdVal.textContent = fmt(+kdRange.value, 2);
+}
+
+// ═══════════ Preset Selection ═══════════
+const presetTabs = document.querySelectorAll(".preset-tab");
+function selectPreset(key) {
+  currentPreset = key;
+  const p = PRESETS[key];
+  kpRange.value = p.kp;
+  kiRange.value = p.ki;
+  kdRange.value = p.kd;
+  syncSliders();
+  resetSim();
+
+  presetTabs.forEach(tab => tab.classList.remove("active"));
+  document.querySelector(`[data-preset="${key}"]`).classList.add("active");
+
+  const msgs = {
+    p: 'Preset <b>"Chỉ P"</b>: Chỉ dùng khâu tỉ lệ. Nhiệt độ sẽ tiến gần setpoint nhưng <b>luôn còn sai số tồn dư</b> vì không có tích phân bù.',
+    pi: 'Preset <b>"P+I"</b>: Thêm khâu tích phân. Sai số tồn dư được <b>xóa sạch</b>, nhưng có thể <b>vọt lố nhẹ</b> do I dồn lực quá đà.',
+    pid: 'Preset <b>"PID đủ"</b>: Bộ ba PID cân bằng. Khâu D phát hiện nhiệt đang tăng nhanh và <b>hãm tốc sớm</b>, giảm vọt lố đáng kể.',
+    bad: '<span class="alert">Preset "I gắt":</span> Ki quá cao! Khâu I dồn lực quá đà gây <b>dao động lắc lư không hội tụ</b>. Đây là ví dụ thất bại kinh điển.'
+  };
+  coachMsg.innerHTML = msgs[key] || "";
+}
+
+// ═══════════ Simulation Step ═══════════
+function stepSim() {
+  const sp = +spRange.value;
+  const kp = +kpRange.value;
+  const ki = +kiRange.value;
+  const kd = +kdRange.value;
+
+  const error = sp - state.T;
+
+  // PID terms
+  const P = kp * error;
+  state.I += ki * error * DT;
+  const D = kd * (error - state.prevError) / DT;
+  state.prevError = error;
+
+  const output = P + state.I + D;
+  const heat = clamp(output, 0, 100);
+
+  // Thermal dynamics: heating - cooling to ambient
+  state.T += (heat * 0.055 - (state.T - 20) * 0.018) * DT;
+  state.t += DT;
+
+  // Track peak for overshoot
+  state.peakT = Math.max(state.peakT, state.T);
+
+  // Zero-crossing counter
+  const sign = Math.sign(error);
+  if (state.lastSign && sign !== state.lastSign && sign !== 0) {
+    state.crossings++;
+  }
+  state.lastSign = sign || state.lastSign;
+
+  // Settling check
+  if (!state.settled && Math.abs(error) < 1) {
+    state.settled = true;
+    state.settleTime = state.t;
+  }
+  if (state.settled && Math.abs(error) >= 1) {
+    state.settled = false;
+    state.settleTime = null;
+  }
+
+  // Record history
+  state.history.push({
+    t: state.t, T: state.T, sp: sp,
+    error: error, P: P, I: state.I, D: D,
+    output: output, heat: heat
+  });
+  if (state.history.length > 600) state.history.shift();
+
+  // Update table (prepend row)
+  const tr = document.createElement("tr");
+  tr.innerHTML =
+    `<td>${state.t.toFixed(1)}</td>` +
+    `<td>${state.T.toFixed(1)}</td>` +
+    `<td>${error.toFixed(1)}</td>` +
+    `<td class="col-p">${P.toFixed(1)}</td>` +
+    `<td class="col-i">${state.I.toFixed(1)}</td>` +
+    `<td class="col-d">${D.toFixed(1)}</td>` +
+    `<td class="col-out">${output.toFixed(1)}</td>`;
+  tableBody.prepend(tr);
+  while (tableBody.children.length > 80) tableBody.lastChild.remove();
+
+  // Update HUD
+  hudTemp.textContent = fmt(state.T) + "°C";
+  const overPct = Math.max(0, (state.peakT - sp) / sp * 100);
+  hudOver.textContent = fmt(overPct) + "%";
+  hudOver.style.color = overPct > 15 ? "var(--red)" : "var(--acc)";
+  hudSettle.textContent = state.settleTime !== null ? fmt(state.settleTime) + " s" : "--";
+  hudOsc.textContent = state.crossings;
+  chartStatus.textContent = `t = ${fmt(state.t)} s`;
+
+  // Saturation warning
+  if (output > 100) {
+    hudSatCard.style.borderColor = "var(--red)";
+    hudSatCard.querySelector("span").textContent = `BÃO HÒA ${Math.round(output)}%→100%`;
+  } else {
+    hudSatCard.style.borderColor = "";
+    hudSatCard.querySelector("span").textContent = "Nhịp dao động";
+  }
+
+  drawChart();
+}
+
+// ═══════════ Chart Drawing ═══════════
+function drawChart() {
+  const W = chart.width, H = chart.height;
+  const cx = ctx;
+
+  // Background
+  cx.fillStyle = "#0f1322";
+  cx.fillRect(0, 0, W, H);
+
+  const padL = 50, padR = 20, padT = 22, padB = 30;
+  const plotW = W - padL - padR;
+  const plotH = H - padT - padB;
+
+  const sp = +spRange.value;
+  const yMin = 15, yMax = Math.max(sp + 15, state.peakT + 5, 70);
+
+  const mapY = v => padT + plotH - ((v - yMin) / (yMax - yMin)) * plotH;
+  const mapX = (i, len) => padL + (i / Math.max(1, len - 1)) * plotW;
+
+  // Grid lines
+  cx.strokeStyle = "#232c4e";
+  cx.lineWidth = 1;
+  cx.setLineDash([2, 3]);
+  cx.font = '10px "Courier New", monospace';
+  cx.textAlign = "right";
+  cx.textBaseline = "middle";
+
+  const gridStep = 10;
+  for (let v = Math.ceil(yMin / gridStep) * gridStep; v <= yMax; v += gridStep) {
+    const y = mapY(v);
+    if (y < padT || y > padT + plotH) continue;
+    cx.beginPath();
+    cx.moveTo(padL, y);
+    cx.lineTo(padL + plotW, y);
+    cx.stroke();
+    cx.fillStyle = "#83769C";
+    cx.fillText(v + "°", padL - 6, y);
+  }
+  cx.setLineDash([]);
+
+  // Time axis labels
+  if (state.history.length > 1) {
+    cx.textAlign = "center";
+    cx.textBaseline = "top";
+    cx.fillStyle = "#83769C";
+    const maxT = state.history[state.history.length - 1].t;
+    const tStep = maxT > 40 ? 10 : maxT > 15 ? 5 : 2;
+    for (let t = 0; t <= maxT; t += tStep) {
+      const frac = t / maxT;
+      const x = padL + frac * plotW;
+      cx.fillText(t + "s", x, padT + plotH + 8);
+    }
+  }
+
+  // Setpoint line (dashed orange)
+  const spY = mapY(sp);
+  cx.strokeStyle = "#FFA300";
+  cx.lineWidth = 2;
+  cx.setLineDash([6, 4]);
+  cx.beginPath();
+  cx.moveTo(padL, spY);
+  cx.lineTo(padL + plotW, spY);
+  cx.stroke();
+  cx.setLineDash([]);
+
+  // Settling band ±1°C
+  cx.fillStyle = "rgba(0, 228, 54, 0.08)";
+  const bandTop = mapY(sp + 1);
+  const bandBot = mapY(sp - 1);
+  cx.fillRect(padL, bandTop, plotW, bandBot - bandTop);
+
+  // Setpoint label
+  cx.fillStyle = "#FFA300";
+  cx.font = 'bold 10px "Courier New", monospace';
+  cx.textAlign = "left";
+  cx.textBaseline = "bottom";
+  cx.fillText("SP " + sp + "°C", padL + 4, spY - 3);
+
+  // Temperature curve (blue with glow)
+  if (state.history.length > 1) {
+    const h = state.history;
+    const len = h.length;
+
+    // Glow layer
+    cx.strokeStyle = "#29ADFF";
+    cx.lineWidth = 5;
+    cx.globalAlpha = 0.15;
+    cx.beginPath();
+    for (let i = 0; i < len; i++) {
+      const x = mapX(i, len);
+      const y = mapY(h[i].T);
+      i === 0 ? cx.moveTo(x, y) : cx.lineTo(x, y);
+    }
+    cx.stroke();
+    cx.globalAlpha = 1;
+
+    // Main line
+    cx.strokeStyle = "#29ADFF";
+    cx.lineWidth = 2.5;
+    cx.shadowColor = "#29ADFF";
+    cx.shadowBlur = 6;
+    cx.beginPath();
+    for (let i = 0; i < len; i++) {
+      const x = mapX(i, len);
+      const y = mapY(h[i].T);
+      i === 0 ? cx.moveTo(x, y) : cx.lineTo(x, y);
+    }
+    cx.stroke();
+    cx.shadowBlur = 0;
+
+    // Setpoint trace (gray, thin)
+    cx.strokeStyle = "#5F574F";
+    cx.lineWidth = 1.5;
+    cx.setLineDash([3, 3]);
+    cx.beginPath();
+    for (let i = 0; i < len; i++) {
+      const x = mapX(i, len);
+      const y = mapY(h[i].sp);
+      i === 0 ? cx.moveTo(x, y) : cx.lineTo(x, y);
+    }
+    cx.stroke();
+    cx.setLineDash([]);
+
+    // Current temperature dot
+    const lastPt = h[len - 1];
+    const dotX = mapX(len - 1, len);
+    const dotY = mapY(lastPt.T);
+    cx.fillStyle = "#29ADFF";
+    cx.beginPath();
+    cx.arc(dotX, dotY, 4, 0, Math.PI * 2);
+    cx.fill();
+    cx.fillStyle = "#FFF1E8";
+    cx.beginPath();
+    cx.arc(dotX, dotY, 1.5, 0, Math.PI * 2);
+    cx.fill();
+  }
+
+  // Legend
+  cx.font = '10px "Courier New", monospace';
+  cx.textAlign = "left";
+  cx.textBaseline = "top";
+  const legX = padL + plotW - 140, legY = padT + 6;
+  cx.fillStyle = "rgba(0,0,0,.5)";
+  cx.fillRect(legX - 4, legY - 2, 140, 30);
+  cx.fillStyle = "#29ADFF";
+  cx.fillRect(legX, legY + 4, 14, 3);
+  cx.fillStyle = "#C2C3C7";
+  cx.fillText("Nhiệt độ T", legX + 20, legY);
+  cx.fillStyle = "#FFA300";
+  cx.setLineDash([3, 2]);
+  cx.strokeStyle = "#FFA300";
+  cx.lineWidth = 2;
+  cx.beginPath();
+  cx.moveTo(legX, legY + 18);
+  cx.lineTo(legX + 14, legY + 18);
+  cx.stroke();
+  cx.setLineDash([]);
+  cx.fillStyle = "#C2C3C7";
+  cx.fillText("Setpoint SP", legX + 20, legY + 13);
+}
+
+// ═══════════ Reset ═══════════
+function resetSim() {
+  if (timer) { clearInterval(timer); timer = null; }
+  btnAuto.textContent = "▶ TỰ CHẠY LIÊN TỤC";
+  initState();
+  tableBody.innerHTML = "";
+  hudTemp.textContent = "20,0°C";
+  hudOver.textContent = "0%";
+  hudOver.style.color = "var(--acc)";
+  hudSettle.textContent = "--";
+  hudOsc.textContent = "0";
+  hudSatCard.style.borderColor = "";
+  hudSatCard.querySelector("span").textContent = "Nhịp dao động";
+  chartStatus.textContent = "t = 0,0 s";
+  drawChart();
+}
+
+// ═══════════ Event Listeners ═══════════
+presetTabs.forEach(tab => {
+  tab.addEventListener("click", () => selectPreset(tab.dataset.preset));
+});
+
+[spRange, kpRange, kiRange, kdRange].forEach(inp => {
+  inp.addEventListener("input", syncSliders);
+});
+
+btnStep.addEventListener("click", stepSim);
+
+btnAuto.addEventListener("click", () => {
+  if (timer) {
+    clearInterval(timer);
+    timer = null;
+    btnAuto.textContent = "▶ TỰ CHẠY LIÊN TỤC";
+  } else {
+    timer = setInterval(() => {
+      for (let i = 0; i < 3; i++) stepSim();
+    }, 50);
+    btnAuto.textContent = "⏸ DỪNG";
+  }
+});
+
+btnReset.addEventListener("click", resetSim);
+
+// ═══════════ Init ═══════════
+syncSliders();
+initState();
+drawChart();
+</script>
+</body>
+</html>

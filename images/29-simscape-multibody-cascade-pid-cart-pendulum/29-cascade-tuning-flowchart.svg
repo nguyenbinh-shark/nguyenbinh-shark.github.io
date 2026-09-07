@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="580" viewBox="0 0 1200 580" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="t5 d5">
+  <title id="t5">Quy trình tinh chỉnh Cascade-PID hai giai đoạn: trong trước, ngoài sau</title>
+  <desc id="d5">Giai đoạn một tinh chỉnh vòng trong cân bằng góc với năm bước; sau khi vòng trong đứng vững mới sang giai đoạn hai tinh chỉnh vòng ngoài điều khiển vị trí với năm bước.</desc>
+  <defs>
+    <marker id="gt" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#475569"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1  { font-size: 24px; font-weight: 800; fill: #0f172a; }
+      .h2  { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .ch  { font-size: 16px; font-weight: 800; fill: #ffffff; }
+      .cs  { font-size: 14px; font-weight: 500; fill: #cbd5e1; }
+      .sn  { font-size: 14px; font-weight: 800; fill: #ffffff; }
+      .sl  { font-size: 14px; font-weight: 700; fill: #1e293b; }
+      .sd  { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .gate{ font-size: 12px; font-weight: 700; fill: #475569; }
+      .ft  { font-size: 14px; font-weight: 500; fill: #64748b; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="580" fill="#ffffff"/>
+  <text x="40" y="44" class="h1">Quy trình tinh chỉnh: trong trước — ngoài sau</text>
+  <text x="40" y="72" class="h2">Sáu tham số của hai vòng không bao giờ được dò cùng lúc. Khoá một vòng, dò vòng kia, rồi mới mở ra.</text>
+
+  <!-- ================= STAGE 1 ================= -->
+  <g>
+    <rect x="40" y="110" width="500" height="410" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <path d="M 40 120 a 10 10 0 0 1 10 -10 h 480 a 10 10 0 0 1 10 10 v 36 h -500 z" fill="#1e293b"/>
+    <text x="64" y="142" class="ch">GIAI ĐOẠN 1 · VÒNG TRONG (GÓC LẮC)</text>
+
+    <circle cx="76" cy="192" r="11" fill="#475569"/><text x="76" y="197" text-anchor="middle" class="sn">1</text>
+    <text x="100" y="190" class="sl">Khoá vòng ngoài lại</text>
+    <text x="100" y="209" class="sd">Đặt K_p,pos = 0 hoặc ngắt dây, ép cứng θ_ref = 0 rad.</text>
+
+    <circle cx="76" cy="258" r="11" fill="#475569"/><text x="76" y="263" text-anchor="middle" class="sn">2</text>
+    <text x="100" y="256" class="sl">Dò K_p,θ : 10 → 30 → 50</text>
+    <text x="100" y="275" class="sd">Dừng lại khi xe đã biết đẩy đỡ con lắc nhưng bắt đầu</text>
+    <text x="100" y="291" class="sd">xuất hiện rung lắc quanh vị trí thẳng đứng.</text>
+
+    <circle cx="76" cy="340" r="11" fill="#475569"/><text x="76" y="345" text-anchor="middle" class="sn">3</text>
+    <text x="100" y="338" class="sl">Thêm K_d,θ : 1 → 3 → 5</text>
+    <text x="100" y="357" class="sd">Tạo lực cản ảo dập tắt rung. Gõ nhẹ vào con lắc, nó</text>
+    <text x="100" y="373" class="sd">phải đứng thẳng lại chứ không dao động kéo dài.</text>
+
+    <circle cx="76" cy="422" r="11" fill="#475569"/><text x="76" y="427" text-anchor="middle" class="sn">4</text>
+    <text x="100" y="420" class="sl">Thêm K_i,θ nhỏ : 0.5</text>
+    <text x="100" y="439" class="sd">Chỉ để khử góc lệch tĩnh do ma sát ổ trục. Đừng vượt 1.0.</text>
+
+    <circle cx="76" cy="478" r="11" fill="#475569"/><text x="76" y="483" text-anchor="middle" class="sn">5</text>
+    <text x="100" y="476" class="sl">Nghiệm thu bằng xung nhiễu</text>
+    <text x="100" y="495" class="sd">Bật khối Disturbance ≈ 15 N trong 0.05 s: θ phải về 0 trong &lt; 0.5 s.</text>
+  </g>
+
+  <!-- ================= GATE ================= -->
+  <g>
+    <text x="600" y="262" text-anchor="middle" class="gate">CHỈ SANG</text>
+    <text x="600" y="278" text-anchor="middle" class="gate">GIAI ĐOẠN 2</text>
+    <text x="600" y="294" text-anchor="middle" class="gate">KHI VÒNG TRONG</text>
+    <text x="600" y="310" text-anchor="middle" class="gate">ĐÃ ĐỨNG VỮNG</text>
+    <path d="M 556 340 H 644" stroke="#475569" stroke-width="2.5" marker-end="url(#gt)"/>
+  </g>
+
+  <!-- ================= STAGE 2 ================= -->
+  <g>
+    <rect x="660" y="110" width="500" height="410" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <path d="M 660 120 a 10 10 0 0 1 10 -10 h 480 a 10 10 0 0 1 10 10 v 36 h -500 z" fill="#475569"/>
+    <text x="684" y="142" class="ch">GIAI ĐOẠN 2 · VÒNG NGOÀI (VỊ TRÍ)</text>
+
+    <circle cx="696" cy="192" r="11" fill="#94a3b8"/><text x="696" y="197" text-anchor="middle" class="sn">1</text>
+    <text x="720" y="190" class="sl">Nối lại vòng ngoài</text>
+    <text x="720" y="209" class="sd">Ngõ ra PID vị trí đi vào cổng Ref của PID cân bằng.</text>
+
+    <circle cx="696" cy="258" r="11" fill="#94a3b8"/><text x="696" y="263" text-anchor="middle" class="sn">2</text>
+    <text x="720" y="256" class="sl">Kẹp bão hòa TRƯỚC khi tăng lợi</text>
+    <text x="720" y="275" class="sd">Giới hạn |θ_ref| ≤ 8° (0.14 rad). Làm bước này trước,</text>
+    <text x="720" y="291" class="sd">không phải sau khi đã dò xong hệ số.</text>
+
+    <circle cx="696" cy="340" r="11" fill="#94a3b8"/><text x="696" y="345" text-anchor="middle" class="sn">3</text>
+    <text x="720" y="338" class="sl">Dò K_p,pos : 0.05 → 0.1</text>
+    <text x="720" y="357" class="sd">Bắt đầu từ giá trị rất nhỏ. Xe phải bò từ từ về gốc,</text>
+    <text x="720" y="373" class="sd">nếu nó lao đi là bạn đã đặt quá lớn.</text>
+
+    <circle cx="696" cy="422" r="11" fill="#94a3b8"/><text x="696" y="427" text-anchor="middle" class="sn">4</text>
+    <text x="720" y="420" class="sl">Thêm K_d,pos nếu vọt lố : 0.02 → 0.05</text>
+    <text x="720" y="439" class="sd">Chỉ dùng khi xe chạy quá vạch đích rồi mới lùi lại.</text>
+
+    <circle cx="696" cy="478" r="11" fill="#94a3b8"/><text x="696" y="483" text-anchor="middle" class="sn">5</text>
+    <text x="720" y="476" class="sl">Giữ nguyên K_i,pos = 0</text>
+    <text x="720" y="495" class="sd">Tích phân ở vòng ngoài thêm trễ pha, dễ kích cộng hưởng tần thấp.</text>
+  </g>
+
+  <line x1="40" y1="546" x2="1160" y2="546" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="40" y="568" class="ft">Các con số là điểm khởi đầu ứng với cơ hệ M = 0.5 kg và m = 0.2 kg trong file mẫu — đổi cơ hệ thì phải dò lại từ bước 2.</text>
+</svg>

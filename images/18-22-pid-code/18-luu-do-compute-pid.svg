@@ -1,0 +1,177 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="740" viewBox="0 0 960 740" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="pid-flow-title pid-flow-desc">
+  <title id="pid-flow-title">Lưu đồ thuật toán hàm computePID</title>
+  <desc id="pid-flow-desc">Lưu đồ đơn sắc các bước thực thi hàm computePID: đo dt, tính sai số, 3 khâu P-I-D, gộp lệnh và cập nhật trạng thái.</desc>
+  <defs>
+    <!-- Uniform Arrow Marker -->
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#475569"/>
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-amber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#d97706"/>
+    </marker>
+    <marker id="arrow-rose" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#e11d48"/>
+    </marker>
+
+    <!-- Clip paths for cards -->
+    <clipPath id="clip-p"><rect x="50" y="340" width="260" height="116" rx="8"/></clipPath>
+    <clipPath id="clip-i"><rect x="350" y="340" width="260" height="116" rx="8"/></clipPath>
+    <clipPath id="clip-d"><rect x="650" y="340" width="260" height="116" rx="8"/></clipPath>
+
+    <style>
+      text { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+      .code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+      .title-main { font-size: 20px; font-weight: 800; fill: #0f172a; }
+      .title-sub { font-size: 13px; font-weight: 500; fill: #64748b; }
+      .step-tag { font-size: 11px; font-weight: 800; fill: #475569; letter-spacing: 0.04em; }
+      .step-desc { font-size: 12.5px; font-weight: 600; fill: #475569; }
+      .code-main { font-size: 13.5px; font-weight: 700; fill: #0f172a; }
+      .card-title { font-size: 13px; font-weight: 800; }
+      .card-sub { font-size: 11px; font-weight: 500; fill: #64748b; }
+    </style>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="960" height="740" rx="12" fill="#ffffff"/>
+  <rect x="1" y="1" width="958" height="738" rx="11" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Header -->
+  <g transform="translate(40, 24)">
+    <rect x="0" y="0" width="34" height="34" rx="6" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+    <text x="17" y="23" text-anchor="middle" fill="#0f172a" font-size="16" font-weight="800">𝑓</text>
+    <text x="46" y="18" class="title-main">Lưu Đồ Thuật Toán Hàm computePID()</text>
+    <text x="46" y="35" class="title-sub">Chu trình 5 bước thực thi trong mỗi chu kỳ: Đo nhịp → Sai số → 3 khâu P-I-D → Gộp lệnh → Lưu trạng thái</text>
+  </g>
+
+  <!-- ================= 0. START NODE ================= -->
+  <g transform="translate(480, 78)">
+    <rect x="-170" y="0" width="340" height="40" rx="20" fill="#0f172a"/>
+    <text x="0" y="25" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="700" class="code">computePID(setpoint, input)</text>
+  </g>
+
+  <!-- Connector: 0 -> 1 -->
+  <line x1="480" y1="118" x2="480" y2="146" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ================= 1. STEP 1: DT ================= -->
+  <g transform="translate(480, 148)">
+    <rect x="-260" y="0" width="520" height="56" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <rect x="-248" y="8" width="58" height="18" rx="3" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="-219" y="21" text-anchor="middle" class="step-tag">BƯỚC 1</text>
+    <text x="-178" y="22" class="step-desc">Đo chu kỳ lấy mẫu thực tế:</text>
+    <text x="0" y="44" text-anchor="middle" class="code-main code">dt = (millis() - previous_time) / 1000.0;</text>
+  </g>
+
+  <!-- Connector: 1 -> 2 -->
+  <line x1="480" y1="204" x2="480" y2="230" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ================= 2. STEP 2: ERROR ================= -->
+  <g transform="translate(480, 232)">
+    <rect x="-260" y="0" width="520" height="56" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <rect x="-248" y="8" width="58" height="18" rx="3" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="-219" y="21" text-anchor="middle" class="step-tag">BƯỚC 2</text>
+    <text x="-178" y="22" class="step-desc">Tính khoảng cách tới mục tiêu:</text>
+    <text x="0" y="44" text-anchor="middle" class="code-main code">error = setpoint - input;</text>
+  </g>
+
+  <!-- Connector: 2 -> 3 branches -->
+  <line x1="480" y1="288" x2="480" y2="312" fill="none" stroke="#475569" stroke-width="2"/>
+  <line x1="180" y1="312" x2="780" y2="312" fill="none" stroke="#475569" stroke-width="2"/>
+  <line x1="180" y1="312" x2="180" y2="336" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow-blue)"/>
+  <line x1="480" y1="312" x2="480" y2="336" fill="none" stroke="#d97706" stroke-width="2" marker-end="url(#arrow-amber)"/>
+  <line x1="780" y1="312" x2="780" y2="336" fill="none" stroke="#e11d48" stroke-width="2" marker-end="url(#arrow-rose)"/>
+
+  <!-- ================= 3. STEP 3: 3 PARALLEL PID BRANCHES (Nhấn mạnh màu có chủ đích) ================= -->
+
+  <!-- Branch P -->
+  <g id="card-p">
+    <g clip-path="url(#clip-p)">
+      <rect x="50" y="340" width="260" height="116" fill="#ffffff"/>
+      <rect x="50" y="340" width="260" height="28" fill="#f8fafc"/>
+      <line x1="50" y1="368" x2="310" y2="368" stroke="#e2e8f0" stroke-width="1"/>
+    </g>
+    <text x="180" y="359" text-anchor="middle" fill="#2563eb" class="card-title">KHÂU P · HIỆN TẠI</text>
+    <text x="180" y="394" text-anchor="middle" fill="#1e293b" class="code" font-size="13.5" font-weight="700">P_term = Kp * error;</text>
+    <line x1="70" y1="410" x2="290" y2="410" stroke="#f1f5f9" stroke-width="1"/>
+    <text x="180" y="428" text-anchor="middle" class="card-sub">Lực kéo tỉ lệ với sai số</text>
+    <text x="180" y="443" text-anchor="middle" fill="#94a3b8" font-size="10.5">Càng xa đích kéo càng mạnh</text>
+    <!-- Border -->
+    <rect x="50" y="340" width="260" height="116" rx="8" fill="none" stroke="#93c5fd" stroke-width="1.5"/>
+  </g>
+
+  <!-- Branch I -->
+  <g id="card-i">
+    <g clip-path="url(#clip-i)">
+      <rect x="350" y="340" width="260" height="116" fill="#ffffff"/>
+      <rect x="350" y="340" width="260" height="28" fill="#f8fafc"/>
+      <line x1="350" y1="368" x2="610" y2="368" stroke="#e2e8f0" stroke-width="1"/>
+    </g>
+    <text x="480" y="359" text-anchor="middle" fill="#d97706" class="card-title">KHÂU I · QUÁ KHỨ</text>
+    <text x="480" y="394" text-anchor="middle" fill="#1e293b" class="code" font-size="13.5" font-weight="700">I_term += Ki * error * dt;</text>
+    <line x1="370" y1="410" x2="590" y2="410" stroke="#f1f5f9" stroke-width="1"/>
+    <text x="480" y="428" text-anchor="middle" class="card-sub">Cộng dồn nợ diện tích (Riemann)</text>
+    <text x="480" y="443" text-anchor="middle" fill="#94a3b8" font-size="10.5">Sổ nợ xóa sạch sai số xác lập</text>
+    <!-- Border -->
+    <rect x="350" y="340" width="260" height="116" rx="8" fill="none" stroke="#fcd34d" stroke-width="1.5"/>
+  </g>
+
+  <!-- Branch D -->
+  <g id="card-d">
+    <g clip-path="url(#clip-d)">
+      <rect x="650" y="340" width="260" height="116" fill="#ffffff"/>
+      <rect x="650" y="340" width="260" height="28" fill="#f8fafc"/>
+      <line x1="650" y1="368" x2="910" y2="368" stroke="#e2e8f0" stroke-width="1"/>
+    </g>
+    <text x="780" y="359" text-anchor="middle" fill="#e11d48" class="card-title">KHÂU D · TƯƠNG LAI</text>
+    <text x="780" y="390" text-anchor="middle" fill="#1e293b" class="code" font-size="11.5" font-weight="700">D_term = Kd * (error -</text>
+    <text x="780" y="405" text-anchor="middle" fill="#1e293b" class="code" font-size="11.5" font-weight="700">previous_error) / dt;</text>
+    <line x1="670" y1="414" x2="890" y2="414" stroke="#f1f5f9" stroke-width="1"/>
+    <text x="780" y="430" text-anchor="middle" class="card-sub">Tính độ dốc sai số (phanh hãm)</text>
+    <text x="780" y="445" text-anchor="middle" fill="#94a3b8" font-size="10.5">Chống lao quá trớn vượt vạch</text>
+    <!-- Border -->
+    <rect x="650" y="340" width="260" height="116" rx="8" fill="none" stroke="#fda4af" stroke-width="1.5"/>
+  </g>
+
+  <!-- Connector: 3 branches -> Step 4 -->
+  <line x1="180" y1="456" x2="180" y2="476" fill="none" stroke="#475569" stroke-width="2"/>
+  <line x1="180" y1="476" x2="480" y2="476" fill="none" stroke="#475569" stroke-width="2"/>
+  
+  <line x1="780" y1="456" x2="780" y2="476" fill="none" stroke="#475569" stroke-width="2"/>
+  <line x1="780" y1="476" x2="480" y2="476" fill="none" stroke="#475569" stroke-width="2"/>
+  
+  <line x1="480" y1="456" x2="480" y2="494" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ================= 4. STEP 4: OUTPUT SUMMATION ================= -->
+  <g transform="translate(480, 498)">
+    <rect x="-260" y="0" width="520" height="56" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <rect x="-248" y="8" width="58" height="18" rx="3" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="-219" y="21" text-anchor="middle" class="step-tag">BƯỚC 4</text>
+    <text x="-178" y="22" class="step-desc">Tổng hợp lệnh điều khiển:</text>
+    <text x="0" y="44" text-anchor="middle" class="code-main code">output = P_term + I_term + D_term;</text>
+  </g>
+
+  <!-- Connector: 4 -> 5 -->
+  <line x1="480" y1="554" x2="480" y2="574" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ================= 5. STEP 5: STATE MEMORY UPDATE ================= -->
+  <g transform="translate(480, 576)">
+    <rect x="-260" y="0" width="520" height="66" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <rect x="-248" y="8" width="58" height="18" rx="3" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="-219" y="21" text-anchor="middle" class="step-tag">BƯỚC 5</text>
+    <text x="-178" y="22" class="step-desc">Cập nhật biến trạng thái (nhớ cho vòng sau):</text>
+    <text x="0" y="42" text-anchor="middle" class="code-main code">previous_error = error;</text>
+    <text x="0" y="58" text-anchor="middle" class="code-main code">previous_time  = current_time;</text>
+  </g>
+
+  <!-- Connector: 5 -> End -->
+  <line x1="480" y1="642" x2="480" y2="662" fill="none" stroke="#475569" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ================= 6. RETURN / END NODE ================= -->
+  <g transform="translate(480, 664)">
+    <rect x="-150" y="0" width="300" height="40" rx="20" fill="#0f172a"/>
+    <text x="0" y="25" text-anchor="middle" fill="#ffffff" font-size="14.5" font-weight="700" class="code">return output;</text>
+  </g>
+
+</svg>

@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="title desc">
+  <title id="title">Bảng phân loại ba loại đối tượng theo tỉ số Tu trên Tg</title>
+  <desc id="desc">Loại I dễ có Tu trên Tg nhỏ hơn 0,1. Loại II vừa nằm từ 0,1 đến 0,3. Loại III khó lớn hơn 0,3. Bảng có mô tả tính cách và ví dụ đời thường.</desc>
+  <defs>
+    <style>
+      text { font-family: Inter, "Segoe UI", Arial, sans-serif; }
+      .ink { fill: #0f172a; }
+      .muted { fill: #475569; }
+      .head { fill: #334155; font-size: 16px; font-weight: 800; letter-spacing: 1px; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="760" fill="#f8fafc"/>
+  <text x="60" y="58" class="ink" font-size="32" font-weight="800">Ba loại học trò theo tỉ số Tu / Tg</text>
+  <text x="60" y="91" class="muted" font-size="19"><tspan font-weight="700">Tu</tspan><tspan> = thời gian trễ  ·  </tspan><tspan font-weight="700">Tg</tspan><tspan> = thời gian lên dốc</tspan></text>
+
+  <!-- Difficulty scale -->
+  <text x="60" y="139" class="head">ĐỘ KHÓ ĐIỀU KHIỂN</text>
+  <rect x="276" y="117" width="294" height="36" rx="6" fill="#dcfce7" stroke="#86efac"/>
+  <rect x="570" y="117" width="254" height="36" fill="#fef3c7" stroke="#fcd34d"/>
+  <rect x="824" y="117" width="316" height="36" rx="6" fill="#ffe4e6" stroke="#fda4af"/>
+  <text x="423" y="141" text-anchor="middle" fill="#047857" font-size="16" font-weight="800">DỄ · Tu/Tg &lt; 0,1</text>
+  <text x="697" y="141" text-anchor="middle" fill="#b45309" font-size="16" font-weight="800">VỪA · 0,1–0,3</text>
+  <text x="982" y="141" text-anchor="middle" fill="#be123c" font-size="16" font-weight="800">KHÓ · Tu/Tg &gt; 0,3</text>
+  <path d="M 570 108 V 161 M 824 108 V 161" stroke="#64748b" stroke-width="2"/>
+
+  <!-- Table frame -->
+  <rect x="55" y="190" width="1090" height="478" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+  <path d="M 55 254 H 1145" stroke="#cbd5e1" stroke-width="2"/>
+  <path d="M 250 190 V 668 M 426 190 V 668 M 772 190 V 668" stroke="#e2e8f0" stroke-width="2"/>
+  <path d="M 55 392 H 1145 M 55 530 H 1145" stroke="#e2e8f0" stroke-width="2"/>
+
+  <rect x="56" y="191" width="1088" height="62" rx="7" fill="#f1f5f9"/>
+  <text x="85" y="229" class="head">HỌC TRÒ</text>
+  <text x="278" y="229" class="head">TỈ SỐ</text>
+  <text x="455" y="229" class="head">TÍNH CÁCH</text>
+  <text x="800" y="229" class="head">VÍ DỤ ĐỂ HÌNH DUNG</text>
+
+  <!-- Type I -->
+  <rect x="56" y="255" width="12" height="136" fill="#22c55e"/>
+  <circle cx="109" cy="323" r="28" fill="#dcfce7" stroke="#22c55e" stroke-width="2"/>
+  <text x="109" y="331" text-anchor="middle" fill="#047857" font-size="23" font-weight="900">I</text>
+  <text x="151" y="311" class="ink" font-size="22" font-weight="800">Loại I</text>
+  <text x="151" y="341" fill="#047857" font-size="17" font-weight="800" letter-spacing="1">DỄ</text>
+
+  <text x="338" y="317" text-anchor="middle" fill="#047857" font-size="26" font-weight="900">&lt; 0,1</text>
+  <text x="338" y="346" text-anchor="middle" class="muted" font-size="15">trễ rất nhỏ</text>
+
+  <text x="455" y="307" class="ink" font-size="19" font-weight="700">Nghe lệnh gần như ngay,</text>
+  <text x="455" y="337" class="muted" font-size="18">còn nhiều thời gian để sửa.</text>
+  <path d="M 455 357 H 710" stroke="#86efac" stroke-width="4" stroke-linecap="round"/>
+
+  <g transform="translate(806 281)">
+    <circle cx="33" cy="39" r="29" fill="#eff6ff"/>
+    <circle cx="33" cy="39" r="17" fill="none" stroke="#3b82f6" stroke-width="5"/>
+    <path d="M 33 22 V 56 M 16 39 H 50" stroke="#3b82f6" stroke-width="3"/>
+    <text x="79" y="34" class="ink" font-size="20" font-weight="800">Quạt bàn đổi tốc</text>
+    <text x="79" y="61" class="muted" font-size="16">bắt đầu quay gần như tức thì</text>
+  </g>
+
+  <!-- Type II -->
+  <rect x="56" y="393" width="12" height="136" fill="#f59e0b"/>
+  <circle cx="109" cy="461" r="28" fill="#fef3c7" stroke="#f59e0b" stroke-width="2"/>
+  <text x="109" y="469" text-anchor="middle" fill="#b45309" font-size="21" font-weight="900">II</text>
+  <text x="151" y="449" class="ink" font-size="22" font-weight="800">Loại II</text>
+  <text x="151" y="479" fill="#b45309" font-size="17" font-weight="800" letter-spacing="1">VỪA</text>
+
+  <text x="338" y="455" text-anchor="middle" fill="#b45309" font-size="24" font-weight="900">0,1–0,3</text>
+  <text x="338" y="484" text-anchor="middle" class="muted" font-size="15">trễ thấy rõ</text>
+
+  <text x="455" y="445" class="ink" font-size="19" font-weight="700">Có một nhịp chờ đáng kể,</text>
+  <text x="455" y="475" class="muted" font-size="18">nhưng hậu quả vẫn đến kịp.</text>
+  <path d="M 455 495 H 710" stroke="#fcd34d" stroke-width="4" stroke-linecap="round"/>
+
+  <g transform="translate(806 419)">
+    <circle cx="33" cy="39" r="29" fill="#fff7ed"/>
+    <path d="M 16 54 H 50 L 46 24 H 20 Z" fill="none" stroke="#d97706" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M 24 16 C 20 9, 30 6, 26 0 M 39 16 C 35 9, 45 6, 41 0" fill="none" stroke="#d97706" stroke-width="3" stroke-linecap="round"/>
+    <text x="79" y="34" class="ink" font-size="20" font-weight="800">Lò nướng gia đình</text>
+    <text x="79" y="61" class="muted" font-size="16">nhiệt tới cảm biến sau một nhịp</text>
+  </g>
+
+  <!-- Type III -->
+  <rect x="56" y="531" width="12" height="136" fill="#e11d48"/>
+  <circle cx="109" cy="599" r="28" fill="#ffe4e6" stroke="#e11d48" stroke-width="2"/>
+  <text x="109" y="607" text-anchor="middle" fill="#be123c" font-size="19" font-weight="900">III</text>
+  <text x="151" y="587" class="ink" font-size="22" font-weight="800">Loại III</text>
+  <text x="151" y="617" fill="#be123c" font-size="17" font-weight="800" letter-spacing="1">KHÓ</text>
+
+  <text x="338" y="593" text-anchor="middle" fill="#be123c" font-size="26" font-weight="900">&gt; 0,3</text>
+  <text x="338" y="622" text-anchor="middle" class="muted" font-size="15">trễ chi phối</text>
+
+  <text x="455" y="583" class="ink" font-size="19" font-weight="700">Phải ra lệnh khi chưa thấy</text>
+  <text x="455" y="613" class="muted" font-size="18">hậu quả của lệnh trước.</text>
+  <path d="M 455 633 H 710" stroke="#fda4af" stroke-width="4" stroke-linecap="round"/>
+
+  <g transform="translate(806 557)">
+    <circle cx="33" cy="39" r="29" fill="#f0f9ff"/>
+    <path d="M 13 23 H 39 C 51 23, 54 31, 54 40 V 54" fill="none" stroke="#0284c7" stroke-width="5" stroke-linecap="round"/>
+    <path d="M 47 55 v8 M 54 55 v11 M 61 55 v8" stroke="#38bdf8" stroke-width="4" stroke-linecap="round"/>
+    <text x="79" y="34" class="ink" font-size="20" font-weight="800">Vòi sen qua ống dài</text>
+    <text x="79" y="61" class="muted" font-size="16">nước nóng “đi bộ” mới tới nơi</text>
+  </g>
+
+  <!-- Footnote -->
+  <circle cx="74" cy="710" r="16" fill="#334155"/>
+  <text x="74" y="716" text-anchor="middle" fill="#ffffff" font-size="17" font-weight="900">!</text>
+  <text x="103" y="705" class="ink" font-size="17" font-weight="700">Tu càng lớn so với Tg, bộ điều khiển càng phải “đoán” nhiều hơn.</text>
+  <text x="103" y="731" class="muted" font-size="15">Ví dụ chỉ để tạo cảm giác; hãy đo Tu và Tg trên chính hệ thống của bạn.</text>
+</svg>

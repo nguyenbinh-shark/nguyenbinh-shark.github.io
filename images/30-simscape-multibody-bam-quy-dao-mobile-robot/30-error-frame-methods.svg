@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="540" viewBox="0 0 1200 540" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="t30b d30b">
+  <title id="t30b">Hình học sai số bám quỹ đạo và các đại lượng mà từng phương pháp sử dụng</title>
+  <desc id="d30b">Một đường quỹ đạo cong với tư thế đặt nằm trên đường và robot nằm lệch bên dưới. Vector nối robot tới tư thế đặt được phân tích trong hệ thân xe thành sai số dọc e_x và sai số ngang e_y, cùng sai số hướng e_psi giữa hai trục tiến. Trên cùng hình còn đánh dấu điểm nhìn trước cách robot một khoảng L_d với độ lệch ngang y_L mà Pure Pursuit dùng, và khoảng cách vuông góc e_vuong_goc tới điểm gần nhất trên đường mà Stanley dùng. Bảng chú giải bên phải liệt kê phương pháp nào tiêu thụ đại lượng nào.</desc>
+  <defs>
+    <marker id="ar30b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9.5 5 L 0 8.5 z" fill="#1e293b"/>
+    </marker>
+    <marker id="arp30b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9.5 5 L 0 8.5 z" fill="#475569"/>
+    </marker>
+    <marker id="ara30b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9.5 5 L 0 8.5 z" fill="#b45309"/>
+    </marker>
+    <marker id="art30b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9.5 5 L 0 8.5 z" fill="#0f766e"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1 { font-size: 23px; font-weight: 800; fill: #0f172a; }
+      .h2 { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .bt { font-size: 15px; font-weight: 700; fill: #0f172a; }
+      .bs { font-size: 13px; font-weight: 500; fill: #475569; }
+      .sym{ font-size: 16px; font-weight: 700; fill: #1e293b; }
+      .syma{ font-size: 16px; font-weight: 700; fill: #b45309; }
+      .symt{ font-size: 16px; font-weight: 700; fill: #0f766e; }
+      .ax { font-size: 14px; font-weight: 700; fill: #475569; }
+      .nt { font-size: 13px; font-weight: 500; fill: #64748b; }
+      .lg { font-size: 14px; font-weight: 600; fill: #1e293b; }
+      .lgs{ font-size: 13px; font-weight: 500; fill: #64748b; }
+      .path { fill: none; stroke: #475569; stroke-width: 2.6; }
+      .ln  { fill: none; stroke: #1e293b; stroke-width: 1.8; }
+      .thin{ fill: none; stroke: #1e293b; stroke-width: 1.4; stroke-dasharray: 5 4; }
+      .amb { fill: none; stroke: #b45309; stroke-width: 1.8; }
+      .ambd{ fill: none; stroke: #b45309; stroke-width: 1.6; stroke-dasharray: 5 4; }
+      .tea { fill: none; stroke: #0f766e; stroke-width: 1.8; }
+      .ax2 { fill: none; stroke: #475569; stroke-width: 1.6; }
+      .card{ fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.4; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="540" fill="#ffffff"/>
+  <text x="40" y="42" class="h1">Hình học sai số bám: mỗi phương pháp đọc một tập đại lượng khác nhau</text>
+  <text x="40" y="70" class="h2">Cùng một tình huống — robot lệch phải và chúc mũi so với tư thế đặt trên quỹ đạo.</text>
+
+  <!-- ===== path ===== -->
+  <path d="M 120 430 C 400 430 560 250 760 250" class="path" marker-end="url(#arp30b)"/>
+  <text x="640" y="238" class="bs">quỹ đạo đặt (x_r(t), y_r(t))</text>
+  <circle cx="120" cy="430" r="4" fill="#475569"/>
+
+  <!-- ===== reference pose ===== -->
+  <path d="M 509.1 329.3 L 469.2 334.6 L 476.6 353.2 Z" fill="#ffffff" stroke="#1e293b" stroke-width="1.8"/>
+  <circle cx="470" cy="340" r="3.4" fill="#1e293b"/>
+  <path d="M 470 340 L 552.1 303.1" class="ax2" marker-end="url(#arp30b)"/>
+  <text x="556" y="300" class="ax">x_r</text>
+  <path d="M 470 340 L 445.4 285.3" class="ax2" marker-end="url(#arp30b)"/>
+  <text x="418" y="282" class="ax">y_r</text>
+  <text x="452" y="366" class="bs">tư thế đặt</text>
+
+  <!-- ===== robot pose ===== -->
+  <path d="M 405.6 420.5 L 364.3 416.6 L 368.1 438.3 Z" fill="#1e293b" stroke="#1e293b" stroke-width="1.8"/>
+  <circle cx="380" cy="425" r="3.4" fill="#1e293b"/>
+  <path d="M 380 425 L 577 390.2" class="ax2" marker-end="url(#arp30b)"/>
+  <text x="582" y="388" class="ax">x_b</text>
+  <path d="M 380 425 L 362.6 326.5" class="ax2" marker-end="url(#arp30b)"/>
+  <text x="332" y="322" class="ax">y_b</text>
+  <text x="300" y="452" class="bs">robot (x, y, ψ)</text>
+
+  <!-- ===== e_x, e_y decomposition ===== -->
+  <path d="M 380 425 L 481.9 407.0" class="ln" marker-end="url(#ar30b)"/>
+  <text x="415" y="432" class="sym">e_x</text>
+  <path d="M 481.9 407.0 L 470.0 339.9" class="ln" marker-end="url(#ar30b)"/>
+  <text x="492" y="378" class="sym">e_y</text>
+  <path d="M 380 425 L 470 340" class="thin"/>
+
+  <!-- ===== e_psi ===== -->
+  <path d="M 380 425 L 498.6 371.7" class="thin"/>
+  <path d="M 490.3 405.6 A 112 112 0 0 0 482.2 379.1" fill="none" stroke="#1e293b" stroke-width="1.6"/>
+  <text x="500" y="399" class="sym">e_ψ</text>
+
+  <!-- ===== Pure Pursuit ===== -->
+  <path d="M 380 425 L 529 313.4" class="amb" marker-end="url(#ara30b)"/>
+  <text x="404" y="368" class="syma">L_d</text>
+  <circle cx="529" cy="313.4" r="5" fill="#ffffff" stroke="#b45309" stroke-width="2.2"/>
+  <text x="540" y="336" class="bs" fill="#b45309">điểm nhìn trước</text>
+  <path d="M 543.7 396.1 L 529.1 313.4" class="ambd"/>
+  <path d="M 380 425 L 577 390.2" class="ambd"/>
+  <text x="556" y="358" class="syma">y_L</text>
+
+  <!-- ===== Stanley ===== -->
+  <path d="M 380 425 L 374 382" class="tea" marker-end="url(#art30b)"/>
+  <circle cx="374" cy="382" r="5" fill="#ffffff" stroke="#0f766e" stroke-width="2.2"/>
+  <text x="238" y="392" class="symt">e_⊥</text>
+  <text x="196" y="412" class="bs" fill="#0f766e">tới điểm gần nhất</text>
+  <path d="M 300 396 L 366 400" class="tea" stroke-dasharray="5 4"/>
+
+  <!-- ===== legend ===== -->
+  <rect x="806" y="104" width="360" height="330" rx="10" class="card"/>
+  <text x="830" y="136" class="bt">Phương pháp nào đọc gì</text>
+
+  <path d="M 830 164 H 866" stroke="#1e293b" stroke-width="2.6" fill="none"/>
+  <text x="878" y="169" class="lg">e_x , e_y , e_ψ</text>
+  <text x="830" y="190" class="lgs">Kanayama · PID tách kênh hệ thân xe</text>
+  <text x="830" y="210" class="lgs">→ dùng cả ba, có feedforward v_r, ω_r</text>
+
+  <path d="M 830 244 H 866" stroke="#b45309" stroke-width="2.6" fill="none"/>
+  <text x="878" y="249" class="lg" fill="#b45309">L_d , y_L</text>
+  <text x="830" y="270" class="lgs">Pure Pursuit</text>
+  <text x="830" y="290" class="lgs">→ chỉ cần hình dạng đường, κ = 2·y_L / L_d²</text>
+
+  <path d="M 830 324 H 866" stroke="#0f766e" stroke-width="2.6" fill="none"/>
+  <text x="878" y="329" class="lg" fill="#0f766e">e_⊥ , ψ_path − ψ</text>
+  <text x="830" y="350" class="lgs">Stanley</text>
+  <text x="830" y="370" class="lgs">→ cần v ở mẫu số, hỏng khi v → 0</text>
+
+  <path d="M 830 396 H 1142" stroke="#cbd5e1" stroke-width="1.4" fill="none"/>
+  <text x="830" y="418" class="lgs">Cả ba đều đòi tư thế (x, y, ψ) đo được — thứ Bài 4 không có.</text>
+</svg>

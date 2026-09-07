@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="360" viewBox="0 0 860 360" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="ramp-title ramp-desc">
+  <title id="ramp-title">Minh họa cơ chế Output Ramp (Slew Rate Limiting) bảo vệ động cơ</title>
+  <desc id="ramp-desc">So sánh tín hiệu điều khiển khi không có Output Ramp (bước nhảy sốc) và khi có Output Ramp (đường dốc kiểm soát gia tốc).</desc>
+  <defs>
+    <marker id="arr-axis" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#475569"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+      .code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    </style>
+  </defs>
+
+  <rect width="860" height="360" rx="12" fill="#ffffff"/>
+  <rect x="1" y="1" width="858" height="358" rx="11" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Tiêu đề biểu đồ -->
+  <text x="430" y="32" text-anchor="middle" font-size="15" font-weight="800" fill="#0f172a">Cơ chế Giới hạn tốc độ biến thiên ngõ ra (Output Ramp / Slew Rate Limiter)</text>
+
+  <!-- Khung bên trái: Không có Output Ramp -->
+  <g transform="translate(45, 55)">
+    <rect width="360" height="240" rx="8" fill="#fff1f2" stroke="#fecdd3" stroke-width="1.2"/>
+    <text x="180" y="26" text-anchor="middle" font-size="13" font-weight="800" fill="#be123c">❌ Không có Output Ramp (Step Jump)</text>
+    
+    <!-- Trục tọa độ -->
+    <line x1="45" y1="195" x2="330" y2="195" stroke="#475569" stroke-width="1.5" marker-end="url(#arr-axis)"/>
+    <line x1="45" y1="195" x2="45" y2="45" stroke="#475569" stroke-width="1.5" marker-end="url(#arr-axis)"/>
+    <text x="335" y="210" font-size="10" fill="#64748b" text-anchor="end">Thời gian t</text>
+    <text x="40" y="42" font-size="10" fill="#64748b" text-anchor="end">u(t)</text>
+    <text x="35" y="75" font-size="9.5" font-weight="700" fill="#64748b" text-anchor="end">100%</text>
+    <text x="35" y="195" font-size="9.5" font-weight="700" fill="#64748b" text-anchor="end">0%</text>
+
+    <!-- Đường đứt net mức 100% -->
+    <line x1="45" y1="70" x2="310" y2="70" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3 3"/>
+
+    <!-- Đường đáp ứng u(t): Bước nhảy thẳng đứng -->
+    <path d="M 45 195 L 80 195 L 80 70 L 310 70" fill="none" stroke="#e11d48" stroke-width="3"/>
+    
+    <!-- Điểm nhảy sốc -->
+    <circle cx="80" cy="70" r="5" fill="#e11d48"/>
+    
+    <!-- Callout cảnh báo -->
+    <rect x="95" y="95" width="220" height="58" rx="5" fill="#ffffff" stroke="#e11d48" stroke-width="1.2"/>
+    <text x="105" y="113" font-size="10.5" font-weight="800" fill="#e11d48">⚠️ Sốc dòng &amp; Giật cơ khí:</text>
+    <text x="105" y="129" font-size="9.5" fill="#475569">Lệnh nhảy vọt từ 0% → 100% tại 1 chu kỳ</text>
+    <text x="105" y="143" font-size="9" font-style="italic" fill="#64748b">(dI/dt cực lớn, rung nảy bánh răng/khớp)</text>
+
+    <!-- Nhãn t0 -->
+    <text x="80" y="210" font-size="9.5" font-weight="700" fill="#64748b" text-anchor="middle">t₀ (Đổi SP)</text>
+  </g>
+
+  <!-- Khung bên phải: Có Output Ramp -->
+  <g transform="translate(455, 55)">
+    <rect width="360" height="240" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.2"/>
+    <text x="180" y="26" text-anchor="middle" font-size="13" font-weight="800" fill="#15803d">✅ Có Output Ramp (Slew Rate Limiting)</text>
+    
+    <!-- Trục tọa độ -->
+    <line x1="45" y1="195" x2="330" y2="195" stroke="#475569" stroke-width="1.5" marker-end="url(#arr-axis)"/>
+    <line x1="45" y1="195" x2="45" y2="45" stroke="#475569" stroke-width="1.5" marker-end="url(#arr-axis)"/>
+    <text x="335" y="210" font-size="10" fill="#64748b" text-anchor="end">Thời gian t</text>
+    <text x="40" y="42" font-size="10" fill="#64748b" text-anchor="end">u(t)</text>
+    <text x="35" y="75" font-size="9.5" font-weight="700" fill="#64748b" text-anchor="end">100%</text>
+    <text x="35" y="195" font-size="9.5" font-weight="700" fill="#64748b" text-anchor="end">0%</text>
+
+    <!-- Đường đứt net mức 100% -->
+    <line x1="45" y1="70" x2="310" y2="70" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3 3"/>
+
+    <!-- Đường đáp ứng u(t): Đường dốc kiểm soát gia tốc -->
+    <path d="M 45 195 L 80 195 L 210 70 L 310 70" fill="none" stroke="#16a34a" stroke-width="3"/>
+    
+    <!-- Tam giác độ dốc ramp -->
+    <polygon points="80,195 210,195 210,70" fill="#16a34a" fill-opacity="0.12" stroke="#16a34a" stroke-width="1" stroke-dasharray="2 2"/>
+    <text x="155" y="160" font-size="10" font-weight="800" fill="#15803d">Độ dốc = output_ramp</text>
+
+    <!-- Điểm mốc -->
+    <circle cx="80" cy="195" r="4" fill="#16a34a"/>
+    <circle cx="210" cy="70" r="4" fill="#16a34a"/>
+
+    <!-- Callout khen ngợi -->
+    <rect x="120" y="85" width="200" height="54" rx="5" fill="#ffffff" stroke="#16a34a" stroke-width="1.2"/>
+    <text x="130" y="103" font-size="10.5" font-weight="800" fill="#16a34a">🛡️ Tăng tốc mượt mà:</text>
+    <text x="130" y="119" font-size="9.5" fill="#475569">u = u_prev ± output_ramp × Ts</text>
+    <text x="130" y="132" font-size="9" font-style="italic" fill="#64748b">(Bảo vệ motor, êm ái cơ khí)</text>
+
+    <!-- Nhãn mốc thời gian -->
+    <text x="80" y="210" font-size="9.5" font-weight="700" fill="#64748b" text-anchor="middle">t₀</text>
+    <line x1="210" y1="195" x2="210" y2="70" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2 2"/>
+    <text x="210" y="210" font-size="9.5" font-weight="700" fill="#64748b" text-anchor="middle">t₁ = t₀ + Δu/ramp</text>
+  </g>
+
+  <!-- Chân trang giải thích -->
+  <text x="430" y="325" text-anchor="middle" font-size="11.5" font-weight="600" fill="#475569">SimpleFOC khống chế đạo hàm ngõ ra du/dt ≤ output_ramp giúp khử triệt để xung kích dòng và sốc cơ cấu chấp hành.</text>
+</svg>

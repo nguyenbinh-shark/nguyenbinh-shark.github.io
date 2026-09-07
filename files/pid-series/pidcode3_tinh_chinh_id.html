@@ -1,0 +1,819 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Phòng thí nghiệm Tinh chỉnh PID — WangHongxi</title>
+<style>
+  /* ═══════════ PICO-8 LAB EDITION · DESIGN SYSTEM ═══════════ */
+  :root {
+    --bg: #0b0e1a;
+    --panel: #0f1322;
+    --ink: #FFF1E8;
+    --muted: #83769C;
+    --line: #5F574F;
+    --acc: #FFEC27;
+    --blue: #29ADFF;
+    --amber: #FFA300;
+    --rose: #FF77A8;
+    --green: #00E436;
+    --green-dark: #008751;
+    --red: #FF004D;
+    --navy: #1D2B53;
+    --purple: #7E2553;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 14px;
+    color: var(--ink);
+    font-family: "Courier New", ui-monospace, Consolas, monospace;
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(45deg, #0d1122 25%, transparent 25%, transparent 75%, #0d1122 75%),
+      linear-gradient(45deg, #0d1122 25%, transparent 25%, transparent 75%, #0d1122 75%);
+    background-size: 26px 26px;
+    background-position: 0 0, 13px 13px;
+  }
+  .wrap { width: 100%; max-width: 1120px; margin: auto; }
+
+  /* ── Header ── */
+  .header-box {
+    margin-bottom: 12px;
+    padding: 12px 16px;
+    background: var(--navy);
+    border: 2px solid var(--line);
+    box-shadow: 4px 4px 0 #000;
+  }
+  .header-box h1 {
+    margin: 0 0 4px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+    color: var(--acc);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .lab-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background: var(--purple);
+    border: 1px solid rgba(255,255,255,.15);
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: var(--ink);
+    box-shadow: 2px 2px 0 #000;
+    vertical-align: middle;
+  }
+  .header-box p {
+    margin: 0;
+    font-size: 0.84rem;
+    color: #C2C3C7;
+    line-height: 1.5;
+  }
+  .header-box p b { color: var(--acc); }
+
+  /* ── Preset Tabs ── */
+  .preset-bar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .preset-tab {
+    flex: 1 1 200px;
+    padding: 9px 12px;
+    background: var(--panel);
+    border: 2px solid var(--line);
+    box-shadow: 3px 3px 0 #000;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    color: var(--ink);
+    font-size: 0.76rem;
+    font-weight: 700;
+  }
+  .preset-tab:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 #000; }
+  .preset-tab.active {
+    border-color: var(--acc);
+    background: #1a2340;
+    box-shadow: 3px 3px 0 #000, inset 0 0 0 1px rgba(255,236,39,.25);
+  }
+  .preset-tab .ptitle { color: var(--acc); text-transform: uppercase; letter-spacing: .03em; }
+  .preset-tab .pdesc { display: block; margin-top: 3px; font-size: 0.68rem; color: var(--muted); font-weight: 600; }
+
+  /* ── Toggles ── */
+  .toggles-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    background: var(--panel);
+    border: 2px solid var(--line);
+    padding: 8px 12px;
+    box-shadow: 4px 4px 0 #000;
+  }
+  .toggle-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.76rem;
+    font-weight: 800;
+    color: var(--ink);
+    cursor: pointer;
+    user-select: none;
+    text-transform: uppercase;
+  }
+  .toggle-label input { width: 16px; height: 16px; cursor: pointer; accent-color: var(--green); }
+  .toggle-tag { font-size: 0.6rem; padding: 2px 6px; background: var(--navy); color: var(--acc); border: 1px solid var(--blue); }
+
+  /* ── HUD Stats ── */
+  .hud {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .stat-card {
+    padding: 9px 10px;
+    background: var(--panel);
+    border: 2px solid var(--line);
+    box-shadow: 3px 3px 0 #000;
+    text-align: center;
+  }
+  .stat-card b {
+    display: block;
+    font-size: 1.02rem;
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--acc);
+  }
+  .stat-card span {
+    display: block;
+    margin-top: 3px;
+    font-size: 0.62rem;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .stat-card.warn { border-color: var(--red); }
+  .stat-card.warn b { color: var(--red); }
+  .stat-card.good { border-color: var(--green-dark); }
+  .stat-card.good b { color: var(--green); }
+  .hud-alert { display: none; background: #2a0f1e; border: 2px solid var(--red); color: var(--red); padding: 9px 10px; font-weight: 800; box-shadow: 3px 3px 0 #000; font-size: 0.8rem; text-align: center; align-items: center; justify-content: center;}
+
+  /* ── Slider Cards ── */
+  .controls-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .slider-card {
+    padding: 12px 14px;
+    background: var(--panel);
+    border: 2px solid var(--line);
+    box-shadow: 3px 3px 0 #000;
+  }
+  .slider-card.sp-card { border-color: var(--green-dark); }
+  .slider-card.p-card  { border-color: #1e5f96; }
+  .slider-card.i-card  { border-color: #9c6a1e; }
+  .slider-card.d-card  { border-color: var(--purple); }
+  .slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    gap: 6px;
+  }
+  .slider-header label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+  }
+  .slider-header .val {
+    font-size: 0.9rem;
+    font-weight: 900;
+    white-space: nowrap;
+  }
+  .sp-card .slider-header label, .sp-card .slider-header .val { color: var(--green); }
+  .p-card  .slider-header label, .p-card  .slider-header .val { color: var(--blue); }
+  .i-card  .slider-header label, .i-card  .slider-header .val { color: var(--amber); }
+  .d-card  .slider-header label, .d-card  .slider-header .val { color: var(--rose); }
+  input[type=range] { width: 100%; margin: 6px 0 2px; cursor: pointer; }
+  .sp-card input[type=range] { accent-color: var(--green); }
+  .p-card  input[type=range] { accent-color: var(--blue); }
+  .i-card  input[type=range] { accent-color: var(--amber); }
+  .d-card  input[type=range] { accent-color: var(--rose); }
+
+  /* ── Buttons ── */
+  .action-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  button {
+    min-height: 44px;
+    padding: 9px 14px;
+    border: 2px solid #C2C3C7;
+    background: var(--navy);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    user-select: none;
+    box-shadow: 3px 3px 0 #000;
+  }
+  button:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 #000; }
+  button.primary { background: var(--green-dark); border-color: var(--green); }
+  button.warn    { background: #2a0f1e; border-color: var(--red); color: var(--red); }
+  button.kick-btn { background: #2a0f1e; border-color: var(--rose); color: var(--rose); }
+
+  /* ── Main Grid (Chart + Table) ── */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1.8fr 1.2fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  /* ── Panel (canvas, tables) ── */
+  .panel {
+    position: relative;
+    border: 2px solid var(--line);
+    background: var(--panel);
+    overflow: hidden;
+    box-shadow: 4px 4px 0 #000;
+  }
+  .panel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,.13) 0 1px, transparent 1px 3px);
+  }
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--navy);
+    border-bottom: 2px solid var(--line);
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--acc);
+    flex-wrap: wrap;
+  }
+  .panel canvas { display: block; width: 100%; height: auto; }
+
+  /* ── Data Table ── */
+  .table-panel { position: relative; }
+  .table-wrap {
+    height: 340px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) var(--panel);
+  }
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.68rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .data-table th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: 7px 6px;
+    background: var(--navy);
+    color: var(--acc);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    text-align: right;
+    border-bottom: 2px solid var(--line);
+    font-size: 0.62rem;
+  }
+  .data-table td {
+    padding: 5px 6px;
+    text-align: right;
+    color: #C2C3C7;
+    border-bottom: 1px solid #1a2040;
+  }
+  .data-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+  .data-table tr:first-child td {
+    background: rgba(255,236,39,.06);
+    color: var(--ink);
+  }
+  .data-table .col-p { color: var(--blue); }
+  .data-table .col-i { color: var(--amber); }
+  .data-table .col-d { color: var(--rose); }
+  .data-table .col-out { color: var(--green); font-weight: 700; }
+  .data-table .col-d.kick { color: var(--red); font-weight: 800; }
+
+  /* ── Coach Box ── */
+  .coach-box {
+    padding: 12px 14px;
+    background: #141a30;
+    border: 2px solid var(--line);
+    box-shadow: 4px 4px 0 #000;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .coach-avatar {
+    width: 40px; height: 40px;
+    border: 2px solid var(--acc);
+    background: var(--navy);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  .coach-content { flex: 1; min-width: 0; }
+  .coach-title {
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+    color: var(--acc);
+    margin-bottom: 3px;
+  }
+  .coach-msg {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #C2C3C7;
+    line-height: 1.5;
+  }
+  .coach-msg b { color: var(--acc); }
+
+  @media (max-width: 860px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .hud { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .controls-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 500px) {
+    .controls-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <!-- Header -->
+  <div class="header-box">
+    <h1>
+      💻 CODE LAB 3 · PHÒNG THÍ NGHIỆM TINH CHỈNH PID
+      <span class="lab-badge">CODE LAB</span>
+    </h1>
+    <p>Khám phá các kỹ thuật nâng cao: <b>Derivative on Measurement</b> (chống Kick), <b>Tích phân hình thang</b> và <b>Biến tốc độ tích phân</b> (chống Windup & Vọt lố).</p>
+  </div>
+
+  <!-- Preset Tabs -->
+  <div class="preset-bar">
+    <button class="preset-tab active" data-preset="1">
+      <span class="ptitle">1. D Cổ điển</span>
+      <span class="pdesc">Bị Derivative Kick khi nhảy bậc setpoint</span>
+    </button>
+    <button class="preset-tab" data-preset="2">
+      <span class="ptitle">2. D on Measurement</span>
+      <span class="pdesc">WangHongxi — Êm ru khi nhảy bậc</span>
+    </button>
+    <button class="preset-tab" data-preset="3">
+      <span class="ptitle">3. Biến tốc độ tích phân</span>
+      <span class="pdesc">Changing Integral Rate</span>
+    </button>
+    <button class="preset-tab" data-preset="4">
+      <span class="ptitle">4. Tinh chỉnh đầy đủ</span>
+      <span class="pdesc">Hình thang + Biến I + D on Meas</span>
+    </button>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-row">
+    <button class="primary" id="step" type="button">⏩ TỪNG BƯỚC</button>
+    <button id="auto" type="button">▶ TỰ CHẠY</button>
+    <button id="reset" type="button">🔄 ĐẶT LẠI</button>
+    <button id="jump_btn" class="kick-btn" type="button">⚡ NHẢY SETPOINT (30→60°C)</button>
+  </div>
+
+  <!-- Toggles -->
+  <div class="toggles-bar">
+    <label class="toggle-label">
+      <input type="checkbox" id="chk_dmeas" checked>
+      <span>Derivative on Measurement</span>
+      <span class="toggle-tag">Chống Kick</span>
+    </label>
+    <label class="toggle-label">
+      <input type="checkbox" id="chk_trap" checked>
+      <span>Tích phân hình thang (Tustin)</span>
+      <span class="toggle-tag">Chính xác</span>
+    </label>
+    <label class="toggle-label">
+      <input type="checkbox" id="chk_changi" checked>
+      <span>Biến tốc độ tích phân</span>
+      <span class="toggle-tag">Triệt vọt lố</span>
+    </label>
+  </div>
+
+  <!-- Sliders -->
+  <div class="controls-grid">
+    <div class="slider-card sp-card">
+      <div class="slider-header">
+        <label>Nhiệt đặt</label>
+        <span class="val" id="spv">30°C</span>
+      </div>
+      <input id="sp" type="range" min="30" max="75" value="30">
+    </div>
+    <div class="slider-card p-card">
+      <div class="slider-header">
+        <label>Kp</label>
+        <span class="val" id="kpv">2.00</span>
+      </div>
+      <input id="kp" type="range" min="0" max="5" step=".05" value="2.0">
+    </div>
+    <div class="slider-card i-card">
+      <div class="slider-header">
+        <label>Ki</label>
+        <span class="val" id="kiv">0.35</span>
+      </div>
+      <input id="ki" type="range" min="0" max="1.0" step=".01" value="0.35">
+    </div>
+    <div class="slider-card d-card">
+      <div class="slider-header">
+        <label>Kd</label>
+        <span class="val" id="kdv">1.20</span>
+      </div>
+      <input id="kd" type="range" min="0" max="3" step=".05" value="1.20">
+    </div>
+  </div>
+
+  <!-- HUD Stats -->
+  <div class="hud">
+    <div class="stat-card"><b id="hud_temp">30.0°C</b><span>Nhiệt độ hiện tại</span></div>
+    <div class="stat-card" id="chip_kick"><b id="hud_kick">0.0</b><span>Đỉnh giật D</span></div>
+    <div class="stat-card"><b id="hud_factor">1.00</b><span>Hệ số tích phân f(e)</span></div>
+    <div class="hud-alert" id="hud_alert">💥 Derivative Kick phát tác do đổi SP!</div>
+  </div>
+
+  <!-- Main Grid: Chart + Table -->
+  <div class="main-grid">
+    <section class="panel">
+      <div class="panel-header">
+        <span>ĐỒ THỊ ĐÁP ỨNG & TÍN HIỆU D</span>
+      </div>
+      <canvas id="chart" width="680" height="340"></canvas>
+    </section>
+    
+    <section class="panel table-panel">
+      <div class="panel-header">
+        <span>📋 NHẬT KÝ TÍNH TOÁN</span>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>t(s)</th>
+              <th>SP</th>
+              <th>T(°C)</th>
+              <th class="col-p">P</th>
+              <th class="col-i">I</th>
+              <th class="col-d">D</th>
+              <th class="col-out">Out</th>
+              <th>f(e)</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- Coach Box -->
+  <div class="coach-box">
+    <div class="coach-avatar">👨‍🔬</div>
+    <div class="coach-content">
+      <div class="coach-title">LỜI KHUYÊN TỪ WANGHONGXI</div>
+      <p class="coach-msg" id="coachMsg">
+        Hãy thử <b>Nhảy Setpoint</b> khi dùng <b>D cổ điển</b> (preset 1) để thấy hiện tượng <i>Derivative Kick</i>. Sau đó chuyển sang <b>D on Measurement</b> (preset 2) và thử lại để thấy sự khác biệt!
+      </p>
+    </div>
+  </div>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const C = $('chart'), ctx = C.getContext('2d');
+let state, timer = null;
+
+const presets = {
+  "1": { kp: 2.0, ki: 0.35, kd: 1.2, dmeas: false, trap: false, changi: false, sp: 30 },
+  "2": { kp: 2.0, ki: 0.35, kd: 1.2, dmeas: true,  trap: false, changi: false, sp: 30 },
+  "3": { kp: 2.0, ki: 0.35, kd: 1.2, dmeas: true,  trap: true,  changi: true,  sp: 30 },
+  "4": { kp: 2.0, ki: 0.35, kd: 1.2, dmeas: true,  trap: true,  changi: true,  sp: 30 }
+};
+
+function reset() {
+  const current_sp = +$('sp').value;
+  state = {
+    t: 0,
+    T: current_sp,
+    I: 0.0,
+    prev_e: 0.0,
+    prev_T: current_sp,
+    peak_kick: 0.0,
+    factor: 1.0,
+    steps: 0,
+    history: []
+  };
+  $('rows').innerHTML = '';
+  updateHUD(state.T, 0, 1.0, false);
+  draw();
+}
+
+function step() {
+  const sp = +$('sp').value;
+  const kp = +$('kp').value;
+  const ki = +$('ki').value;
+  const kd = +$('kd').value;
+  const dt = 0.1;
+
+  const en_dmeas = $('chk_dmeas').checked;
+  const en_trap = $('chk_trap').checked;
+  const en_changi = $('chk_changi').checked;
+
+  const error = sp - state.T;
+
+  // 1. Khâu P
+  const P = kp * error;
+
+  // 2. Khâu I (Biến tốc độ tích phân + Tích phân hình thang)
+  let factor = 1.0;
+  if (en_changi) {
+    const A = 20.0, B = 5.0;
+    const abs_e = Math.abs(error);
+    if (abs_e >= (A + B)) factor = 0.0;
+    else if (abs_e > B) factor = (A - abs_e + B) / A;
+    else factor = 1.0;
+  }
+  state.factor = factor;
+
+  let i_step = 0.0;
+  if (en_trap) {
+    i_step = factor * ki * 0.5 * (error + state.prev_e) * dt;
+  } else {
+    i_step = factor * ki * error * dt;
+  }
+  state.I += i_step;
+  state.I = Math.max(-25.0, Math.min(25.0, state.I)); // Anti-windup limit
+
+  // 3. Khâu D (Derivative on Error vs Derivative on Measurement)
+  let D = 0.0;
+  if (state.steps > 0) {
+    if (en_dmeas) {
+      D = kd * (state.prev_T - state.T) / dt;
+    } else {
+      D = kd * (error - state.prev_e) / dt;
+    }
+  }
+
+  if (Math.abs(D) > state.peak_kick) {
+    state.peak_kick = Math.abs(D);
+  }
+
+  // 4. Tổng ngõ ra có bão hòa 0-100%
+  let out = P + state.I + D;
+  out = Math.max(0.0, Math.min(100.0, out));
+
+  // Mô hình lò sấy
+  state.T += (out * 0.05 - (state.T - 20.0) * 0.015) * dt;
+
+  state.t += dt;
+  state.steps++;
+  state.prev_e = error;
+  state.prev_T = state.T;
+
+  state.history.push({
+    t: state.t,
+    sp: sp,
+    T: state.T,
+    P: P,
+    I: state.I,
+    D: D,
+    out: out,
+    factor: factor
+  });
+  if (state.history.length > 500) state.history.shift();
+
+  const tr = document.createElement('tr');
+  const d_kick = Math.abs(D) > 50;
+  tr.innerHTML = `
+    <td>${state.t.toFixed(1)}</td>
+    <td>${sp.toFixed(0)}</td>
+    <td>${state.T.toFixed(1)}</td>
+    <td class="col-p">${P.toFixed(1)}</td>
+    <td class="col-i">${state.I.toFixed(1)}</td>
+    <td class="col-d ${d_kick ? 'kick' : ''}">${D.toFixed(1)}</td>
+    <td class="col-out">${out.toFixed(0)}%</td>
+    <td>${factor.toFixed(2)}</td>
+  `;
+  $('rows').prepend(tr);
+  while ($('rows').children.length > 60) $('rows').lastChild.remove();
+
+  updateHUD(state.T, Math.abs(D), factor, !en_dmeas && Math.abs(D) > 50);
+  draw();
+}
+
+function updateHUD(T, current_kick, factor, is_kick) {
+  $('hud_temp').textContent = T.toFixed(1) + '°C';
+  $('hud_kick').textContent = current_kick.toFixed(1);
+  if (current_kick > 50) {
+    $('chip_kick').className = 'stat-card warn';
+  } else {
+    $('chip_kick').className = 'stat-card good';
+  }
+  $('hud_factor').textContent = factor.toFixed(2);
+
+  const alert_el = $('hud_alert');
+  if (is_kick) {
+    alert_el.style.display = 'flex';
+  } else {
+    alert_el.style.display = 'none';
+  }
+}
+
+function draw() {
+  ctx.clearRect(0, 0, C.width, C.height);
+  const W = C.width, H = C.height;
+  
+  // Background
+  ctx.fillStyle = "#0f1322";
+  ctx.fillRect(0, 0, W, H);
+  
+  const padL = 45, padR = 15, padT = 25, padB = 25;
+  const graphW = W - padL - padR;
+  const graphH = H - padT - padB;
+
+  // Lưới ngang
+  ctx.strokeStyle = '#232c4e';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([2, 3]);
+  ctx.fillStyle = '#83769C';
+  ctx.font = '10px "Courier New", monospace';
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'middle';
+
+  for (let temp = 20; temp <= 80; temp += 10) {
+    const y = padT + graphH - ((temp - 20) / 60) * graphH;
+    ctx.beginPath();
+    ctx.moveTo(padL, y);
+    ctx.lineTo(W - padR, y);
+    ctx.stroke();
+    ctx.fillText(temp + '°C', padL - 6, y);
+  }
+  ctx.setLineDash([]);
+
+  if (state.history.length === 0) return;
+
+  const mapX = i => padL + (i / Math.max(1, state.history.length - 1)) * graphW;
+  const mapY_temp = temp => padT + graphH - ((temp - 20) / 60) * graphH;
+  const mapY_d = d_val => padT + graphH * 0.7 - (d_val / 200) * (graphH * 0.3); // vẽ khâu D
+
+  // 1. Vẽ Setpoint SP (nét đứt amber)
+  ctx.strokeStyle = '#FFA300';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  state.history.forEach((pt, i) => {
+    const x = mapX(i), y = mapY_temp(pt.sp);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // 2. Vẽ Tín hiệu khâu D (Rose)
+  ctx.strokeStyle = '#FF77A8';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  state.history.forEach((pt, i) => {
+    const x = mapX(i), y = mapY_d(pt.D);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  // 3. Vẽ Nhiệt độ thực T (Xanh dương with glow)
+  const h = state.history;
+  const len = h.length;
+  
+  ctx.strokeStyle = "#29ADFF";
+  ctx.lineWidth = 4;
+  ctx.globalAlpha = 0.15;
+  ctx.beginPath();
+  for (let i = 0; i < len; i++) {
+    const x = mapX(i);
+    const y = mapY_temp(h[i].T);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+  
+  ctx.strokeStyle = '#29ADFF';
+  ctx.lineWidth = 2.5;
+  ctx.shadowColor = "#29ADFF";
+  ctx.shadowBlur = 6;
+  ctx.beginPath();
+  h.forEach((pt, i) => {
+    const x = mapX(i), y = mapY_temp(pt.T);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Chú giải
+  ctx.font = 'bold 11px "Courier New", monospace';
+  ctx.textAlign = 'left';
+  
+  // Nền chú giải
+  ctx.fillStyle = 'rgba(15, 19, 34, 0.8)';
+  ctx.fillRect(padL + 5, 5, 380, 20);
+  
+  ctx.fillStyle = '#29ADFF';
+  ctx.fillText('— Nhiệt độ T (°C)', padL + 10, 19);
+  ctx.fillStyle = '#FFA300';
+  ctx.fillText('--- Setpoint SP', padL + 150, 19);
+  ctx.fillStyle = '#FF77A8';
+  ctx.fillText('— Khâu D (Lực hãm / Kick)', padL + 270, 19);
+}
+
+function sync() {
+  $('spv').textContent = $('sp').value + '°C';
+  $('kpv').textContent = (+ $('kp').value).toFixed(2);
+  $('kiv').textContent = (+ $('ki').value).toFixed(2);
+  $('kdv').textContent = (+ $('kd').value).toFixed(2);
+}
+
+$('step').onclick = step;
+$('auto').onclick = () => {
+  if (timer) {
+    clearInterval(timer);
+    timer = null;
+    $('auto').textContent = '▶ TỰ CHẠY';
+    $('auto').classList.remove('warn');
+  } else {
+    timer = setInterval(() => {
+      for (let i = 0; i < 3; i++) step();
+    }, 50);
+    $('auto').textContent = '⏸ TẠM DỪNG';
+    $('auto').classList.add('warn');
+  }
+};
+$('reset').onclick = reset;
+
+$('jump_btn').onclick = () => {
+  const current_sp = +$('sp').value;
+  $('sp').value = current_sp === 30 ? 60 : 30;
+  sync();
+};
+
+const presetTabs = document.querySelectorAll(".preset-tab");
+presetTabs.forEach(tab => {
+  tab.onclick = () => {
+    presetTabs.forEach(t => t.classList.remove("active"));
+    tab.classList.add("active");
+    
+    const p = presets[tab.dataset.preset];
+    if (!p) return;
+    $('kp').value = p.kp;
+    $('ki').value = p.ki;
+    $('kd').value = p.kd;
+    $('chk_dmeas').checked = p.dmeas;
+    $('chk_trap').checked = p.trap;
+    $('chk_changi').checked = p.changi;
+    $('sp').value = p.sp;
+    sync();
+    reset();
+  };
+});
+
+['sp', 'kp', 'ki', 'kd'].forEach(id => $(id).oninput = sync);
+['chk_dmeas', 'chk_trap', 'chk_changi'].forEach(id => $(id).onchange = draw);
+
+sync();
+reset();
+</script>
+</body>
+</html>

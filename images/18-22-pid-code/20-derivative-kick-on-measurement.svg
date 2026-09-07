@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="380" viewBox="0 0 800 380" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="kick-title kick-desc">
+  <title id="kick-title">Hiện tượng Derivative Kick và giải pháp Derivative on Measurement</title>
+  <desc id="kick-desc">Khi đổi Setpoint đột ngột, D cổ điển tạo cú spike khổng lồ làm giật cơ cấu chấp hành, trong khi Derivative on Measurement phản ứng hoàn toàn êm ái.</desc>
+  <defs>
+    <marker id="arr-kick" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#64748b"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+      .code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    </style>
+  </defs>
+
+  <rect width="800" height="380" rx="12" fill="#ffffff"/>
+  <rect x="1" y="1" width="798" height="378" rx="11" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Panel 1: D cổ điển theo sai số (Derivative on Error) -->
+  <g transform="translate(40, 25)">
+    <rect width="340" height="325" rx="8" fill="#fef2f2" stroke="#fecaca" stroke-width="1.2"/>
+    <text x="16" y="24" font-size="13" font-weight="800" fill="#991b1b">1. D cổ điển theo sai số (Bị Kick)</text>
+    <text x="16" y="42" font-size="10.5" fill="#7f1d1d" class="code">D = Kd × (error - prev_error) / dt</text>
+
+    <!-- Axes -->
+    <line x1="45" y1="265" x2="315" y2="265" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-kick)"/>
+    <line x1="45" y1="265" x2="45" y2="60" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-kick)"/>
+    <text x="40" y="55" text-anchor="end" font-size="10" font-weight="700" fill="#64748b">D / SP</text>
+    <text x="315" y="280" text-anchor="end" font-size="10" font-weight="700" fill="#64748b">t</text>
+
+    <!-- Setpoint step jump (30 -> 60) -->
+    <path d="M 45 220 L 130 220 L 130 140 L 305 140" fill="none" stroke="#2563eb" stroke-width="2" stroke-dasharray="4 3"/>
+    <text x="70" y="212" font-size="10" font-weight="700" fill="#2563eb">SP: 30°C</text>
+    <text x="230" y="132" font-size="10" font-weight="700" fill="#2563eb">SP nhảy lên 60°C ⬆️</text>
+
+    <!-- Derivative Kick Spike -->
+    <path d="M 45 265 L 129 265 L 130 75 L 135 265 L 305 265" fill="none" stroke="#dc2626" stroke-width="2.5"/>
+
+    <!-- Callout Spike -->
+    <rect x="145" y="65" width="160" height="40" rx="5" fill="#ffffff" stroke="#dc2626" stroke-width="1.2"/>
+    <text x="152" y="82" font-size="10.5" font-weight="800" fill="#dc2626">💥 Derivative Kick!</text>
+    <text x="152" y="97" font-size="9.5" fill="#475569">Gai nhọn +360% giật cơ cấu</text>
+  </g>
+
+  <!-- Panel 2: Vi phân theo giá trị đo (Derivative on Measurement) -->
+  <g transform="translate(420, 25)">
+    <rect width="340" height="325" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.2"/>
+    <text x="16" y="24" font-size="13" font-weight="800" fill="#166534">2. Vi phân theo giá trị đo (WangHongxi)</text>
+    <text x="16" y="42" font-size="10.5" fill="#14532d" class="code">D = Kd × (prev_input - input) / dt</text>
+
+    <!-- Axes -->
+    <line x1="45" y1="265" x2="315" y2="265" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-kick)"/>
+    <line x1="45" y1="265" x2="45" y2="60" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-kick)"/>
+    <text x="40" y="55" text-anchor="end" font-size="10" font-weight="700" fill="#64748b">D / SP</text>
+    <text x="315" y="280" text-anchor="end" font-size="10" font-weight="700" fill="#64748b">t</text>
+
+    <!-- Setpoint step jump (30 -> 60) -->
+    <path d="M 45 220 L 130 220 L 130 140 L 305 140" fill="none" stroke="#2563eb" stroke-width="2" stroke-dasharray="4 3"/>
+    <text x="70" y="212" font-size="10" font-weight="700" fill="#2563eb">SP: 30°C</text>
+    <text x="230" y="132" font-size="10" font-weight="700" fill="#2563eb">SP nhảy lên 60°C ⬆️</text>
+
+    <!-- Smooth D on Measurement response -->
+    <path d="M 45 265 L 130 265 C 145 265, 160 250, 180 245 C 220 235, 260 260, 305 265" fill="none" stroke="#16a34a" stroke-width="2.5"/>
+
+    <!-- Callout Smooth -->
+    <rect x="145" y="65" width="160" height="40" rx="5" fill="#ffffff" stroke="#16a34a" stroke-width="1.2"/>
+    <text x="152" y="82" font-size="10.5" font-weight="800" fill="#166534">✅ Hoàn toàn êm ái!</text>
+    <text x="152" y="97" font-size="9.5" fill="#475569">0% spike, chỉ phanh theo lò</text>
+  </g>
+</svg>

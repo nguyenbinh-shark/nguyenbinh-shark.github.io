@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="360" viewBox="0 0 800 360" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="trap-title trap-desc">
+  <title id="trap-title">So sánh tích phân hình chữ nhật và tích phân hình thang Tustin</title>
+  <desc id="trap-desc">Tích phân hình thang ôm sát đường cong sai số hơn hình chữ nhật, giúp tăng độ chính xác của khâu I khi tần số lấy mẫu thấp.</desc>
+  <defs>
+    <marker id="arr-trap" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#64748b"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+      .code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    </style>
+  </defs>
+
+  <rect width="800" height="360" rx="12" fill="#ffffff"/>
+  <rect x="1" y="1" width="798" height="358" rx="11" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Panel 1: Hình chữ nhật (Riemann) -->
+  <g transform="translate(40, 25)">
+    <rect width="340" height="310" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.2"/>
+    <text x="16" y="26" font-size="13.5" font-weight="800" fill="#0f172a">1. Tích phân hình chữ nhật (Bài 1)</text>
+    <text x="16" y="46" font-size="11" fill="#64748b" class="code">I_step = Ki × e(k) × dt</text>
+
+    <!-- Axes -->
+    <line x1="45" y1="250" x2="315" y2="250" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-trap)"/>
+    <line x1="45" y1="250" x2="45" y2="65" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-trap)"/>
+    <text x="40" y="60" text-anchor="end" font-size="10" font-weight="700" fill="#64748b">e(t)</text>
+    <text x="315" y="268" text-anchor="end" font-size="10" font-weight="700" fill="#64748b">t</text>
+
+    <!-- Rectangles -->
+    <rect x="80" y="150" width="90" height="100" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+    <rect x="170" y="90" width="90" height="160" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+
+    <!-- Error Gap (Tam giác thừa/thiếu) -->
+    <polygon points="80,190 170,150 170,150 80,150" fill="#fee2e2" stroke="#dc2626" stroke-width="1" stroke-dasharray="2 2"/>
+    <polygon points="170,150 260,90 260,90 170,90" fill="#fee2e2" stroke="#dc2626" stroke-width="1" stroke-dasharray="2 2"/>
+
+    <!-- Continuous Curve -->
+    <path d="M 45 220 C 100 200, 160 160, 260 90" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+
+    <text x="140" y="180" font-size="10.5" font-weight="700" fill="#b45309">Hình chữ nhật</text>
+    <text x="210" y="125" font-size="10" font-weight="800" fill="#dc2626">Sai lệch tam giác ⚠️</text>
+  </g>
+
+  <!-- Panel 2: Hình thang (Tustin) -->
+  <g transform="translate(420, 25)">
+    <rect width="340" height="310" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.2"/>
+    <text x="16" y="26" font-size="13.5" font-weight="800" fill="#166534">2. Tích phân hình thang Tustin (Bài 3)</text>
+    <text x="16" y="46" font-size="11" fill="#15803d" class="code">I_step = Ki × ((e_k + e_prev)/2) × dt</text>
+
+    <!-- Axes -->
+    <line x1="45" y1="250" x2="315" y2="250" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-trap)"/>
+    <line x1="45" y1="250" x2="45" y2="65" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-trap)"/>
+    <text x="40" y="60" text-anchor="end" font-size="10" font-weight="700" fill="#64748b">e(t)</text>
+    <text x="315" y="268" text-anchor="end" font-size="10" font-weight="700" fill="#64748b">t</text>
+
+    <!-- Trapezoids -->
+    <polygon points="80,250 80,190 170,140 170,250" fill="#dcfce7" stroke="#16a34a" stroke-width="1.8"/>
+    <polygon points="170,250 170,140 260,90 260,250" fill="#dcfce7" stroke="#16a34a" stroke-width="1.8"/>
+
+    <!-- Continuous Curve -->
+    <path d="M 45 220 C 100 200, 160 160, 260 90" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+
+    <!-- Points -->
+    <circle cx="80" cy="190" r="3.5" fill="#166534"/>
+    <circle cx="170" cy="140" r="3.5" fill="#166534"/>
+    <circle cx="260" cy="90" r="3.5" fill="#166534"/>
+
+    <text x="125" y="195" font-size="11" font-weight="800" fill="#166534">Hình thang</text>
+    <text x="180" y="75" font-size="10.5" font-weight="800" fill="#15803d">✅ Ôm khít đường cong!</text>
+  </g>
+</svg>

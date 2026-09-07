@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="340" viewBox="0 0 960 340" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="int3-title int3-desc">
+  <title id="int3-title">Ba phương pháp rời rạc hoá khâu tích phân trong khối PID Simulink</title>
+  <desc id="int3-desc">So sánh Forward Euler, Backward Euler và Trapezoidal trên cùng một đường cong sai số. Forward Euler lấy cao độ của mẫu trước nên trễ một nhịp; Backward Euler lấy cao độ mẫu hiện tại; Trapezoidal lấy trung bình hai mẫu và ôm sát đường cong nhất.</desc>
+  <defs>
+    <marker id="arr-int3" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#64748b"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+      .code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    </style>
+  </defs>
+
+  <rect width="960" height="340" rx="12" fill="#ffffff"/>
+  <rect x="1" y="1" width="958" height="338" rx="11" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- ============ Panel 1: Forward Euler ============ -->
+  <g transform="translate(25, 25)">
+    <rect width="290" height="290" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.2"/>
+    <text x="14" y="25" font-size="13.5" font-weight="800" fill="#0f172a">Forward Euler</text>
+    <text x="14" y="43" font-size="10.5" fill="#64748b" class="code">I_term += Ki*e_prev*dt;</text>
+
+    <line x1="48" y1="235" x2="272" y2="235" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-int3)"/>
+    <line x1="48" y1="235" x2="48" y2="64" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-int3)"/>
+    <text x="44" y="60" text-anchor="end" font-size="10" font-weight="700" fill="#64748b">e(t)</text>
+    <text x="272" y="252" text-anchor="end" font-size="10" font-weight="700" fill="#64748b">t</text>
+
+    <rect x="110" y="190" width="100" height="45" fill="#fef3c7" stroke="#d97706" stroke-width="1.6"/>
+    <path d="M 110 190 C 140 176, 180 148, 210 130 L 210 190 Z" fill="#fee2e2" stroke="#dc2626" stroke-width="1" stroke-dasharray="3 2"/>
+
+    <path d="M 48 216 C 78 205, 95 196, 110 190 C 140 176, 180 148, 210 130 C 232 117, 252 106, 265 100" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+
+    <line x1="110" y1="190" x2="110" y2="235" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2 2"/>
+    <line x1="210" y1="130" x2="210" y2="235" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2 2"/>
+    <circle cx="110" cy="190" r="4" fill="#b45309"/>
+    <circle cx="210" cy="130" r="4" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1.2"/>
+
+    <text x="110" y="251" text-anchor="middle" font-size="10" font-weight="700" fill="#b45309">k−1</text>
+    <text x="210" y="251" text-anchor="middle" font-size="10" font-weight="700" fill="#94a3b8">k</text>
+    <text x="222" y="168" font-size="9.5" font-weight="700" fill="#dc2626">phần bỏ sót</text>
+
+    <rect x="14" y="262" width="112" height="17" rx="8.5" fill="#fee2e2"/>
+    <text x="70" y="274" text-anchor="middle" font-size="9.5" font-weight="800" fill="#b91c1c">TRỄ MỘT NHỊP</text>
+    <text x="134" y="274" font-size="10" fill="#64748b">lấy cao độ mẫu trước</text>
+  </g>
+
+  <!-- ============ Panel 2: Backward Euler ============ -->
+  <g transform="translate(335, 25)">
+    <rect width="290" height="290" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.2"/>
+    <text x="14" y="25" font-size="13.5" font-weight="800" fill="#0f172a">Backward Euler</text>
+    <text x="14" y="43" font-size="10.5" fill="#64748b" class="code">I_term += Ki*e*dt;</text>
+
+    <line x1="48" y1="235" x2="272" y2="235" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-int3)"/>
+    <line x1="48" y1="235" x2="48" y2="64" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-int3)"/>
+    <text x="44" y="60" text-anchor="end" font-size="10" font-weight="700" fill="#64748b">e(t)</text>
+    <text x="272" y="252" text-anchor="end" font-size="10" font-weight="700" fill="#64748b">t</text>
+
+    <rect x="110" y="130" width="100" height="105" fill="#fef3c7" stroke="#d97706" stroke-width="1.6"/>
+    <path d="M 110 130 L 210 130 C 180 148, 140 176, 110 190 Z" fill="#fee2e2" stroke="#dc2626" stroke-width="1" stroke-dasharray="3 2"/>
+
+    <path d="M 48 216 C 78 205, 95 196, 110 190 C 140 176, 180 148, 210 130 C 232 117, 252 106, 265 100" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+
+    <line x1="110" y1="190" x2="110" y2="235" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2 2"/>
+    <line x1="210" y1="130" x2="210" y2="235" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2 2"/>
+    <circle cx="110" cy="190" r="4" fill="#cbd5e1" stroke="#94a3b8" stroke-width="1.2"/>
+    <circle cx="210" cy="130" r="4" fill="#b45309"/>
+
+    <text x="110" y="251" text-anchor="middle" font-size="10" font-weight="700" fill="#94a3b8">k−1</text>
+    <text x="210" y="251" text-anchor="middle" font-size="10" font-weight="700" fill="#b45309">k</text>
+    <text x="120" y="152" font-size="9.5" font-weight="700" fill="#dc2626">phần thừa</text>
+
+    <rect x="14" y="262" width="118" height="17" rx="8.5" fill="#fef3c7"/>
+    <text x="73" y="274" text-anchor="middle" font-size="9.5" font-weight="800" fill="#b45309">KHỚP CODE V1</text>
+    <text x="140" y="274" font-size="10" fill="#64748b">lấy cao độ mẫu này</text>
+  </g>
+
+  <!-- ============ Panel 3: Trapezoidal ============ -->
+  <g transform="translate(645, 25)">
+    <rect width="290" height="290" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.2"/>
+    <text x="14" y="25" font-size="13.5" font-weight="800" fill="#166534">Trapezoidal</text>
+    <text x="14" y="43" font-size="10.5" fill="#15803d" class="code">I_term += Ki*0.5f*(e+e_prev)*dt;</text>
+
+    <line x1="48" y1="235" x2="272" y2="235" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-int3)"/>
+    <line x1="48" y1="235" x2="48" y2="64" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-int3)"/>
+    <text x="44" y="60" text-anchor="end" font-size="10" font-weight="700" fill="#64748b">e(t)</text>
+    <text x="272" y="252" text-anchor="end" font-size="10" font-weight="700" fill="#64748b">t</text>
+
+    <polygon points="110,235 110,190 210,130 210,235" fill="#dcfce7" stroke="#16a34a" stroke-width="1.8"/>
+
+    <path d="M 48 216 C 78 205, 95 196, 110 190 C 140 176, 180 148, 210 130 C 232 117, 252 106, 265 100" fill="none" stroke="#0f172a" stroke-width="2.5"/>
+
+    <line x1="110" y1="190" x2="110" y2="235" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2 2"/>
+    <line x1="210" y1="130" x2="210" y2="235" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2 2"/>
+    <circle cx="110" cy="190" r="4" fill="#166534"/>
+    <circle cx="210" cy="130" r="4" fill="#166534"/>
+
+    <text x="110" y="251" text-anchor="middle" font-size="10" font-weight="700" fill="#166534">k−1</text>
+    <text x="210" y="251" text-anchor="middle" font-size="10" font-weight="700" fill="#166534">k</text>
+    <text x="150" y="205" font-size="9.5" font-weight="700" fill="#15803d">trung bình hai mẫu</text>
+
+    <rect x="14" y="262" width="118" height="17" rx="8.5" fill="#dcfce7"/>
+    <text x="73" y="274" text-anchor="middle" font-size="9.5" font-weight="800" fill="#166534">KHỚP CODE V3</text>
+    <text x="140" y="274" font-size="10" fill="#15803d">ôm sát đường cong</text>
+  </g>
+</svg>

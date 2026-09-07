@@ -1,0 +1,609 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>WBR System Modeling Analysis / Phân tích mô hình hóa hệ WBR</title>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  <style>
+    :root {
+      color-scheme: light;
+      --text: #1f2933;
+      --muted: #52616b;
+      --line: #d9e2ec;
+      --accent: #b84a18;
+      --bg: #ffffff;
+      --soft: #f7f9fb;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    main {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 28px 32px 56px;
+    }
+
+    h1 {
+      margin: 0 0 22px;
+      color: var(--accent);
+      font-size: 28px;
+      font-weight: 500;
+      line-height: 1.25;
+    }
+
+    h2 {
+      margin: 34px 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--line);
+      color: #313d49;
+      font-size: 22px;
+    }
+
+    h3 {
+      margin: 24px 0 10px;
+      color: #313d49;
+      font-size: 18px;
+    }
+
+    p {
+      margin: 8px 0;
+    }
+
+    .toc {
+      margin: 0 0 28px;
+      padding: 14px 18px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--soft);
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .toc a {
+      display: inline-block;
+      margin: 2px 18px 2px 0;
+      color: #1d5a7a;
+      text-decoration: none;
+    }
+
+    .toc a:hover {
+      text-decoration: underline;
+    }
+
+    .note {
+      color: var(--muted);
+    }
+
+    .definition-list {
+      display: grid;
+      grid-template-columns: minmax(180px, 260px) 1fr;
+      gap: 8px 18px;
+      margin: 12px 0 18px;
+    }
+
+    .definition-list dt {
+      font-weight: 600;
+      color: #243b53;
+    }
+
+    .definition-list dd {
+      margin: 0;
+    }
+
+    .eq {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto auto;
+      gap: 12px;
+      align-items: center;
+      margin: 10px 0;
+      padding: 10px 12px;
+      border-left: 3px solid #cbd5e1;
+      background: #fbfdff;
+      overflow-x: auto;
+      user-select: text;
+    }
+
+    .eq .formula {
+      min-width: 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 2px;
+    }
+
+    .eq .num {
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .matrix-row {
+      margin: 12px 0;
+      overflow-x: auto;
+      user-select: text;
+    }
+
+    .section-spacer {
+      margin-top: 18px;
+    }
+
+    .language-switch {
+      display: inline-flex;
+      gap: 6px;
+      margin: 0 0 18px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--soft);
+    }
+
+    .language-switch button {
+      border: 0;
+      border-radius: 4px;
+      background: transparent;
+      color: #1d5a7a;
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+      padding: 5px 10px;
+    }
+
+    .language-switch button.is-active {
+      background: #ffffff;
+      color: var(--accent);
+      box-shadow: 0 0 0 1px var(--line);
+    }
+
+    body[data-lang="vi"] .lang-en,
+    body[data-lang="en"] .lang-vi {
+      display: none;
+    }
+
+    .copy-tex {
+      align-self: center;
+      justify-self: end;
+      border: 1px solid var(--line);
+      border-radius: 4px;
+      background: #ffffff;
+      color: #1d5a7a;
+      cursor: pointer;
+      font: inherit;
+      font-size: 12px;
+      line-height: 1.2;
+      padding: 5px 8px;
+      white-space: nowrap;
+      user-select: none;
+    }
+
+    .copy-tex:hover,
+    .copy-tex:focus {
+      border-color: #9fb3c8;
+      background: #f0f6fb;
+      outline: none;
+    }
+
+    .matrix-copy {
+      margin: 6px 0 -4px;
+    }
+
+    @media (max-width: 720px) {
+      main {
+        padding: 22px 16px 42px;
+      }
+
+      .definition-list {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+
+      .definition-list dd {
+        margin-bottom: 8px;
+      }
+
+      .eq {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+
+      .eq .num,
+      .eq .copy-tex {
+        justify-self: end;
+      }
+    }
+  </style>
+</head>
+<body data-lang="vi">
+<main>
+  <div class="language-switch" aria-label="Language selector">
+    <button type="button" data-set-lang="vi" class="is-active" aria-pressed="true">Tiếng Việt</button>
+    <button type="button" data-set-lang="en" aria-pressed="false">English</button>
+  </div>
+
+  <h1>
+    <span class="lang-en">WBR System Modeling Analysis</span>
+    <span class="lang-vi">Phân tích mô hình hóa hệ WBR</span>
+  </h1>
+
+  <nav class="toc" aria-label="Table of contents">
+    <strong>
+      <span class="lang-en">Contents</span>
+      <span class="lang-vi">Mục lục</span>
+    </strong>
+    <a href="#modeling"><span class="lang-en">1 System Modeling</span><span class="lang-vi">1 Mô hình hóa hệ thống</span></a>
+    <a href="#assumptions"><span class="lang-en">1.1 Simplifications and Assumptions</span><span class="lang-vi">1.1 Giản lược và giả thiết</span></a>
+    <a href="#definitions"><span class="lang-en">1.2 Variables and Parameters</span><span class="lang-vi">1.2 Định nghĩa biến và tham số</span></a>
+    <a href="#kinematics"><span class="lang-en">2 Kinematics</span><span class="lang-vi">2 Động học</span></a>
+    <a href="#dynamics"><span class="lang-en">3 Dynamics</span><span class="lang-vi">3 Động lực học</span></a>
+    <a href="#dynamic-equations"><span class="lang-en">3.1 Dynamic Equations</span><span class="lang-vi">3.1 Phương trình động lực học</span></a>
+    <a href="#solution"><span class="lang-en">3.2 Solving the Equations</span><span class="lang-vi">3.2 Giải hệ phương trình</span></a>
+    <a href="#state-space"><span class="lang-en">4 State-Space Model</span><span class="lang-vi">4 Mô hình không gian trạng thái</span></a>
+  </nav>
+
+  <section id="modeling">
+    <h2><span class="lang-en">1 System Modeling</span><span class="lang-vi">1 Mô hình hóa hệ thống</span></h2>
+
+    <section id="assumptions">
+      <h3><span class="lang-en">1.1 Simplifications and Assumptions</span><span class="lang-vi">1.1 Giản lược và giả thiết</span></h3>
+      <p><span class="lang-en">(1) The robot is simplified as a rigid-body system consisting of five parts: the body, the left and right legs, and the left and right drive wheels.</span><span class="lang-vi">(1) Robot được giản lược thành một hệ vật rắn gồm 5 phần: thân, chân trái, chân phải, bánh dẫn động trái và bánh dẫn động phải.</span></p>
+      <p><span class="lang-en">(2) The dynamic effects caused by the motion of the leg linkage mechanism, including changes in leg length and inertia, are neglected. At any instant, each leg is treated as a rigid body with parameters corresponding to its current leg length.</span><span class="lang-vi">(2) Bỏ qua các hiệu ứng động lực học do chuyển động cơ cấu liên kết của chân gây ra, bao gồm thay đổi chiều dài chân và thay đổi quán tính. Tại mỗi thời điểm, mỗi chân được xem như một vật rắn có tham số tương ứng với chiều dài chân tại thời điểm đó.</span></p>
+      <p><span class="lang-en">(3) The influence of leg and body configuration changes on the moment of inertia about the z-axis is neglected.</span><span class="lang-vi">(3) Bỏ qua ảnh hưởng của thay đổi cấu hình chân và thân lên mô men quán tính quanh trục z.</span></p>
+      <p><span class="lang-en">(4) The drive wheels are assumed not to slip relative to the ground. Airborne and slip detection will be added later.</span><span class="lang-vi">(4) Giả sử bánh dẫn động không trượt so với mặt đất. Phát hiện nhấc khỏi mặt đất và trượt sẽ được bổ sung sau.</span></p>
+      <p><span class="lang-en">(5) The roll angle \(\psi\) is controlled by the leg controller. In the overall robot dynamics analysis, assume \(\psi=\dot{\psi}=\ddot{\psi}=0\).</span><span class="lang-vi">(5) Góc roll \(\psi\) được điều khiển bởi bộ điều khiển chân. Trong phân tích động lực học tổng thể của robot, giả sử \(\psi=\dot{\psi}=\ddot{\psi}=0\).</span></p>
+      <p><span class="lang-en">(6) The leg support forces are controlled by the leg controller. In the overall robot dynamics analysis, the left and right leg support forces are assumed equal, and the effect of the lateral inertial moment is neglected.</span><span class="lang-vi">(6) Lực chống đỡ của chân được điều khiển bởi bộ điều khiển chân. Trong phân tích động lực học tổng thể của robot, giả sử lực chống đỡ của hai chân bằng nhau và bỏ qua ảnh hưởng của mô men quán tính theo phương ngang.</span></p>
+    </section>
+
+    <section id="definitions">
+      <h3><span class="lang-en">1.2 Variables and Parameters</span><span class="lang-vi">1.2 Định nghĩa biến và tham số</span></h3>
+      <p><strong><span class="lang-en">Variables. Quantities marked with * are independent variables.</span><span class="lang-vi">Biến. Các đại lượng đánh dấu * là biến độc lập.</span></strong></p>
+      <dl class="definition-list">
+        <dt>* \(\theta_{w,i}\ (i=l,r)\)</dt><dd><span class="lang-en">Drive-wheel rotation angle, about the normal axis of the natural coordinate frame.</span><span class="lang-vi">Góc quay bánh dẫn động, quanh trục pháp tuyến của hệ tọa độ tự nhiên.</span></dd>
+        <dt>* \(\theta_{l,i}\ (i=l,r)\)</dt><dd><span class="lang-en">Leg tilt angle, about the normal axis of the natural coordinate frame.</span><span class="lang-vi">Góc nghiêng chân, quanh trục pháp tuyến của hệ tọa độ tự nhiên.</span></dd>
+        <dt>* \(\theta_b\)</dt><dd><span class="lang-en">Body tilt angle, about the normal axis of the natural coordinate frame.</span><span class="lang-vi">Góc nghiêng thân, quanh trục pháp tuyến của hệ tọa độ tự nhiên.</span></dd>
+        <dt>\(\phi\)</dt><dd><span class="lang-en">Yaw angle.</span><span class="lang-vi">Góc yaw.</span></dd>
+        <dt>\(s\)</dt><dd><span class="lang-en">Horizontal displacement of the robot in the natural coordinate frame.</span><span class="lang-vi">Quãng dịch chuyển ngang của robot trong hệ tọa độ tự nhiên.</span></dd>
+        <dt>\(s_b\)</dt><dd><span class="lang-en">Horizontal displacement of the body center of mass in the natural coordinate frame.</span><span class="lang-vi">Dịch chuyển ngang của khối tâm thân trong hệ tọa độ tự nhiên.</span></dd>
+        <dt>\(h_b\)</dt><dd><span class="lang-en">Vertical displacement of the body center of mass in the natural coordinate frame.</span><span class="lang-vi">Dịch chuyển thẳng đứng của khối tâm thân trong hệ tọa độ tự nhiên.</span></dd>
+        <dt>\(s_{l,i}\ (i=l,r)\)</dt><dd><span class="lang-en">Horizontal displacement of the leg center of mass in the natural coordinate frame.</span><span class="lang-vi">Dịch chuyển ngang của khối tâm chân trong hệ tọa độ tự nhiên.</span></dd>
+        <dt>\(h_{l,i}\ (i=l,r)\)</dt><dd><span class="lang-en">Vertical displacement of the leg center of mass in the natural coordinate frame.</span><span class="lang-vi">Dịch chuyển thẳng đứng của khối tâm chân trong hệ tọa độ tự nhiên.</span></dd>
+        <dt>* \(T_{w,i}\ (i=l,r)\)</dt><dd><span class="lang-en">Drive-wheel torque between the leg and the wheel.</span><span class="lang-vi">Mô men bánh dẫn động giữa chân và bánh.</span></dd>
+        <dt>* \(T_{b,i}\ (i=l,r)\)</dt><dd><span class="lang-en">Leg torque between the body and the leg.</span><span class="lang-vi">Mô men chân giữa thân và chân.</span></dd>
+        <dt>\(f_i\ (i=l,r)\)</dt><dd><span class="lang-en">Ground friction force acting on the drive wheel.</span><span class="lang-vi">Lực ma sát của mặt đất tác dụng lên bánh dẫn động.</span></dd>
+        <dt>\(F_{ws,i}\ (i=l,r)\)</dt><dd><span class="lang-en">Horizontal force exerted by the drive wheel on the leg.</span><span class="lang-vi">Lực theo phương ngang do bánh dẫn động tác dụng lên chân.</span></dd>
+        <dt>\(F_{wh,i}\ (i=l,r)\)</dt><dd><span class="lang-en">Vertical force exerted by the drive wheel on the leg.</span><span class="lang-vi">Lực theo phương thẳng đứng do bánh dẫn động tác dụng lên chân.</span></dd>
+        <dt>\(F_{bs,i}\ (i=l,r)\)</dt><dd><span class="lang-en">Horizontal force exerted by the leg on the body.</span><span class="lang-vi">Lực theo phương ngang do chân tác dụng lên thân.</span></dd>
+        <dt>\(F_{bh,i}\ (i=l,r)\)</dt><dd><span class="lang-en">Vertical force exerted by the leg on the body.</span><span class="lang-vi">Lực theo phương thẳng đứng do chân tác dụng lên thân.</span></dd>
+      </dl>
+
+      <p><strong><span class="lang-en">Parameters</span><span class="lang-vi">Tham số</span></strong></p>
+      <dl class="definition-list">
+        <dt>\(R_w\)</dt><dd><span class="lang-en">Drive-wheel radius.</span><span class="lang-vi">Bán kính bánh dẫn động.</span></dd>
+        <dt>\(R_l\)</dt><dd><span class="lang-en">Half of the drive-wheel track width.</span><span class="lang-vi">Một nửa khoảng cách hai bánh dẫn động.</span></dd>
+        <dt>\(l_i\ (i=l,r)\)</dt><dd><span class="lang-en">Leg length. *1</span><span class="lang-vi">Chiều dài chân. *1</span></dd>
+        <dt>\(l_{w,i}\ (i=l,r)\)</dt><dd><span class="lang-en">Distance from the drive wheel to the leg center of mass. *1</span><span class="lang-vi">Khoảng cách từ bánh dẫn động đến khối tâm chân. *1</span></dd>
+        <dt>\(l_{b,i}\ (i=l,r)\)</dt><dd><span class="lang-en">Distance from the body joint to the leg center of mass. *1</span><span class="lang-vi">Khoảng cách từ khớp thân-chân đến khối tâm chân. *1</span></dd>
+        <dt>\(l_c\)</dt><dd><span class="lang-en">Distance from the body center of mass to the leg joint.</span><span class="lang-vi">Khoảng cách từ khối tâm thân đến khớp chân.</span></dd>
+        <dt>\(m_w\)</dt><dd><span class="lang-en">Drive-wheel mass.</span><span class="lang-vi">Khối lượng bánh dẫn động.</span></dd>
+        <dt>\(m_l\)</dt><dd><span class="lang-en">Leg mass.</span><span class="lang-vi">Khối lượng chân.</span></dd>
+        <dt>\(m_b\)</dt><dd><span class="lang-en">Body mass.</span><span class="lang-vi">Khối lượng thân.</span></dd>
+        <dt>\(I_w\)</dt><dd><span class="lang-en">Drive-wheel moment of inertia about the normal axis of the natural coordinate frame.</span><span class="lang-vi">Mô men quán tính của bánh dẫn động quanh trục pháp tuyến của hệ tọa độ tự nhiên.</span></dd>
+        <dt>\(I_{l,i}\)</dt><dd><span class="lang-en">Leg moment of inertia about the normal axis of the natural coordinate frame. *1</span><span class="lang-vi">Mô men quán tính của chân quanh trục pháp tuyến của hệ tọa độ tự nhiên. *1</span></dd>
+        <dt>\(I_b\)</dt><dd><span class="lang-en">Body moment of inertia about the normal axis of the natural coordinate frame.</span><span class="lang-vi">Mô men quán tính của thân quanh trục pháp tuyến của hệ tọa độ tự nhiên.</span></dd>
+        <dt>\(I_z\)</dt><dd><span class="lang-en">Robot moment of inertia about the z-axis. *2</span><span class="lang-vi">Mô men quán tính của robot quanh trục z. *2</span></dd>
+      </dl>
+
+      <p><strong><span class="lang-en">Notes</span><span class="lang-vi">Ghi chú</span></strong></p>
+      <p><span class="lang-en">*1: On the real robot, each leg is a five-bar linkage. The leg length is variable and controlled by the leg controller; the center-of-mass position and moment of inertia also vary with leg length.</span><span class="lang-vi">*1: Trên robot thực, mỗi chân là một cơ cấu năm thanh. Chiều dài chân thay đổi và được bộ điều khiển chân điều khiển; vị trí khối tâm và mô men quán tính cũng thay đổi theo chiều dài chân.</span></p>
+      <p><span class="lang-en">*2: The moment of inertia about the z-axis is simplified as a constant.</span><span class="lang-vi">*2: Mô men quán tính quanh trục z được giản lược thành hằng số.</span></p>
+    </section>
+  </section>
+
+  <section id="kinematics">
+    <h2><span class="lang-en">2 Kinematics</span><span class="lang-vi">2 Động học</span></h2>
+    <p><span class="lang-en">From the variable definitions, parameter definitions, and geometric relationships, the kinematic equations of the system are obtained, and the expressions for each variable can then be solved.</span><span class="lang-vi">Từ định nghĩa biến, tham số và các quan hệ hình học, ta thu được các phương trình động học của hệ, từ đó giải ra biểu thức của từng biến.</span></p>
+
+    <div class="eq"><div class="formula">\[s=\frac{R_w}{2}(\theta_{w,l}+\theta_{w,r})\]</div><div class="num">(2.1)</div></div>
+    <div class="eq"><div class="formula">\[h_b=\frac{l_l}{2}\cos\theta_{l,l}+\frac{l_r}{2}\cos\theta_{l,r}\]</div><div class="num">(2.2)</div></div>
+    <div class="eq"><div class="formula">\[s_{l,i}=R_w\theta_{w,i}+l_{w,i}\sin\theta_{l,i}\]</div><div class="num">(2.3)</div></div>
+    <div class="eq"><div class="formula">\[h_{l,i}=h_b-l_{b,i}\cos\theta_{l,i}\]</div><div class="num">(2.4)</div></div>
+    <div class="eq"><div class="formula">\[R_w\theta_{w,l}=s_b-R_l\phi-l_l\sin\theta_{l,l}\]</div><div class="num">(2.5)</div></div>
+    <div class="eq"><div class="formula">\[R_w\theta_{w,r}=s_b+R_l\phi-l_r\sin\theta_{l,r}\]</div><div class="num">(2.6)</div></div>
+
+    <p><span class="lang-en">Combining equations (2.5) and (2.6):</span><span class="lang-vi">Kết hợp các phương trình (2.5) và (2.6):</span></p>
+    <div class="eq"><div class="formula">\[\phi=\frac{R_w}{2R_l}(-\theta_{w,l}+\theta_{w,r})-\frac{l_l}{2R_l}\sin\theta_{l,l}+\frac{l_r}{2R_l}\sin\theta_{l,r}\]</div><div class="num">(2.7)</div></div>
+    <div class="eq"><div class="formula">\[s_b=\frac{R_w}{2}(\theta_{w,l}+\theta_{w,r})+\frac{l_l}{2}\sin\theta_{l,l}+\frac{l_r}{2}\sin\theta_{l,r}\]</div><div class="num">(2.8)</div></div>
+
+    <p><span class="lang-en">Taking the first and second time derivatives of equations (2.1), (2.2), (2.3), (2.4), (2.7), and (2.8):</span><span class="lang-vi">Lấy đạo hàm bậc một và bậc hai theo thời gian của các phương trình (2.1), (2.2), (2.3), (2.4), (2.7) và (2.8):</span></p>
+    <div class="eq"><div class="formula">\[\dot{s}=\frac{R_w}{2}(\dot{\theta}_{w,l}+\dot{\theta}_{w,r})\]</div><div class="num">(2.9)</div></div>
+    <div class="eq"><div class="formula">\[\ddot{s}=\frac{R_w}{2}(\ddot{\theta}_{w,l}+\ddot{\theta}_{w,r})\]</div><div class="num">(2.10)</div></div>
+    <div class="eq"><div class="formula">\[\dot{\phi}=\frac{R_w}{2R_l}(-\dot{\theta}_{w,l}+\dot{\theta}_{w,r})-\frac{l_l}{2R_l}\cos\theta_{l,l}\dot{\theta}_{l,l}+\frac{l_r}{2R_l}\cos\theta_{l,r}\dot{\theta}_{l,r}\]</div><div class="num">(2.11)</div></div>
+    <div class="eq"><div class="formula">\[\ddot{\phi}=\frac{R_w}{2R_l}(-\ddot{\theta}_{w,l}+\ddot{\theta}_{w,r})-\frac{l_l}{2R_l}\cos\theta_{l,l}\ddot{\theta}_{l,l}+\frac{l_r}{2R_l}\cos\theta_{l,r}\ddot{\theta}_{l,r}+\frac{l_l}{2R_l}\sin\theta_{l,l}\dot{\theta}_{l,l}^2-\frac{l_r}{2R_l}\sin\theta_{l,r}\dot{\theta}_{l,r}^2\]</div><div class="num">(2.12)</div></div>
+    <div class="eq"><div class="formula">\[\dot{s}_b=\frac{R_w}{2}(\dot{\theta}_{w,l}+\dot{\theta}_{w,r})+\frac{l_l}{2}\cos\theta_{l,l}\dot{\theta}_{l,l}+\frac{l_r}{2}\cos\theta_{l,r}\dot{\theta}_{l,r}\]</div><div class="num">(2.13)</div></div>
+    <div class="eq"><div class="formula">\[\ddot{s}_b=\frac{R_w}{2}(\ddot{\theta}_{w,l}+\ddot{\theta}_{w,r})+\frac{l_l}{2}\cos\theta_{l,l}\ddot{\theta}_{l,l}+\frac{l_r}{2}\cos\theta_{l,r}\ddot{\theta}_{l,r}-\frac{l_l}{2}\sin\theta_{l,l}\dot{\theta}_{l,l}^2-\frac{l_r}{2}\sin\theta_{l,r}\dot{\theta}_{l,r}^2\]</div><div class="num">(2.14)</div></div>
+    <div class="eq"><div class="formula">\[\dot{h}_b=-\frac{l_l}{2}\sin\theta_{l,l}\dot{\theta}_{l,l}-\frac{l_r}{2}\sin\theta_{l,r}\dot{\theta}_{l,r}\]</div><div class="num">(2.15)</div></div>
+    <div class="eq"><div class="formula">\[\ddot{h}_b=-\frac{l_l}{2}\sin\theta_{l,l}\ddot{\theta}_{l,l}-\frac{l_r}{2}\sin\theta_{l,r}\ddot{\theta}_{l,r}-\frac{l_l}{2}\cos\theta_{l,l}\dot{\theta}_{l,l}^2-\frac{l_r}{2}\cos\theta_{l,r}\dot{\theta}_{l,r}^2\]</div><div class="num">(2.16)</div></div>
+    <div class="eq"><div class="formula">\[\dot{s}_{l,i}=R_w\dot{\theta}_{w,i}+l_{w,i}\cos\theta_{l,i}\dot{\theta}_{l,i}\]</div><div class="num">(2.17)</div></div>
+    <div class="eq"><div class="formula">\[\ddot{s}_{l,i}=R_w\ddot{\theta}_{w,i}+l_{w,i}\cos\theta_{l,i}\ddot{\theta}_{l,i}-l_{w,i}\sin\theta_{l,i}\dot{\theta}_{l,i}^2\]</div><div class="num">(2.18)</div></div>
+    <div class="eq"><div class="formula">\[\dot{h}_{l,i}=\dot{h}_b+l_{b,i}\sin\theta_{l,i}\dot{\theta}_{l,i}\]</div><div class="num">(2.19)</div></div>
+    <div class="eq"><div class="formula">\[\ddot{h}_{l,i}=\ddot{h}_b+l_{b,i}\sin\theta_{l,i}\ddot{\theta}_{l,i}+l_{b,i}\cos\theta_{l,i}\dot{\theta}_{l,i}^2\]</div><div class="num">(2.20)</div></div>
+  </section>
+
+  <section id="dynamics">
+    <h2><span class="lang-en">3 Dynamics</span><span class="lang-vi">3 Động lực học</span></h2>
+
+    <section id="dynamic-equations">
+      <h3><span class="lang-en">3.1 Dynamic Equations</span><span class="lang-vi">3.1 Phương trình động lực học</span></h3>
+      <p><span class="lang-en">The system dynamic equations are established using the Newton-Euler method.</span><span class="lang-vi">Các phương trình động lực học của hệ được thiết lập bằng phương pháp Newton-Euler.</span></p>
+      <p><span class="lang-en">For the left and right drive wheels \((i=l,r)\):</span><span class="lang-vi">Đối với bánh dẫn động trái và phải \((i=l,r)\):</span></p>
+      <div class="eq"><div class="formula">\[m_wR_w\ddot{\theta}_{w,i}=f_i-F_{ws,i}\]</div><div class="num">(3.1)</div></div>
+      <div class="eq"><div class="formula">\[I_w\ddot{\theta}_{w,i}=T_{lw,i}-f_iR_w\]</div><div class="num">(3.2)</div></div>
+
+      <p><span class="lang-en">For the left and right legs \((i=l,r)\):</span><span class="lang-vi">Đối với chân trái và chân phải \((i=l,r)\):</span></p>
+      <div class="eq"><div class="formula">\[m_l\ddot{s}_{l,i}=F_{ws,i}-F_{bs,i}\]</div><div class="num">(3.3)</div></div>
+      <div class="eq"><div class="formula">\[m_l\ddot{h}_{l,i}=F_{wh,i}-F_{bh,i}-m_lg\]</div><div class="num">(3.4)</div></div>
+      <div class="eq"><div class="formula">\[I_{l,i}\ddot{\theta}_{l,i}=(F_{wh,i}l_{w,i}+F_{bh,i}l_{b,i})\sin\theta_{l,i}-(F_{ws,i}l_{w,i}+F_{bs,i}l_{b,i})\cos\theta_{l,i}-T_{lw,i}+T_{bl,i}\]</div><div class="num">(3.5)</div></div>
+
+      <p><span class="lang-en">For the body:</span><span class="lang-vi">Đối với thân:</span></p>
+      <div class="eq"><div class="formula">\[m_b\ddot{s}_b=F_{bs,l}+F_{bs,r}\]</div><div class="num">(3.6)</div></div>
+      <div class="eq"><div class="formula">\[m_b\ddot{h}_b=F_{bh,l}+F_{bh,r}-m_bg\]</div><div class="num">(3.7)</div></div>
+      <div class="eq"><div class="formula">\[I_b\ddot{\theta}_b=-(T_{bl,l}+T_{bl,r})-(F_{bs,l}+F_{bs,r})l_c\cos\theta_b+(F_{bh,l}+F_{bh,r})l_c\sin\theta_b\]</div><div class="num">(3.8)</div></div>
+
+      <p><span class="lang-en">Overall robot rotation in the yaw direction:</span><span class="lang-vi">Chuyển động quay yaw tổng thể của robot:</span></p>
+      <div class="eq"><div class="formula">\[I_z\ddot{\phi}=(-f_l+f_r)R_l\]</div><div class="num">(3.9)</div></div>
+
+      <p><span class="lang-en">The support forces of the left and right legs are equal:</span><span class="lang-vi">Lực chống đỡ của chân trái và chân phải bằng nhau:</span></p>
+      <div class="eq"><div class="formula">\[F_{wh,l}=F_{wh,r}\]</div><div class="num">(3.10)</div></div>
+    </section>
+
+    <section id="solution">
+      <h3><span class="lang-en">3.2 Solving the Equations</span><span class="lang-vi">3.2 Giải hệ phương trình</span></h3>
+      <p><span class="lang-en">Substitute equations (2.1)-(2.4) and (2.7)-(2.20) into equations (3.1)-(3.10). The resulting dynamic system contains 15 unknowns: the second derivatives of 5 generalized coordinates and 10 constraint forces. It also contains 15 independent equations that are linear with respect to the unknowns, so the equation system has a unique solution.</span><span class="lang-vi">Thay các phương trình (2.1)-(2.4) và (2.7)-(2.20) vào các phương trình (3.1)-(3.10). Hệ động lực học thu được có 15 ẩn: đạo hàm bậc hai của 5 tọa độ suy rộng và 10 lực ràng buộc. Hệ cũng có 15 phương trình độc lập, tuyến tính theo các ẩn, nên có nghiệm duy nhất.</span></p>
+      <p><span class="lang-en">After eliminating the constraint forces and applying the small-angle approximation to the leg and body tilt angles, the following equation system is obtained:</span><span class="lang-vi">Sau khi khử các lực ràng buộc và áp dụng xấp xỉ góc nhỏ cho góc nghiêng chân và góc nghiêng thân, ta thu được hệ phương trình sau:</span></p>
+
+      <div class="eq"><div class="formula">\[\left(I_w\frac{l_l}{R_w}+m_wR_wl_l+m_lR_wl_{b,l}\right)\ddot{\theta}_{w,l}+\left(m_ll_{w,l}l_{b,l}-I_{l,l}\right)\ddot{\theta}_{l,l}+\left(m_ll_{w,l}+\frac{1}{2}m_bl_l\right)g\theta_{l,l}+T_{bl,l}-T_{lw,l}\left(1+\frac{l_l}{R_w}\right)=0\]</div><div class="num">(3.11)</div></div>
+      <div class="eq"><div class="formula">\[\left(I_w\frac{l_r}{R_w}+m_wR_wl_r+m_lR_wl_{b,r}\right)\ddot{\theta}_{w,r}+\left(m_ll_{w,r}l_{b,r}-I_{l,r}\right)\ddot{\theta}_{l,r}+\left(m_ll_{w,r}+\frac{1}{2}m_bl_r\right)g\theta_{l,r}+T_{bl,r}-T_{lw,r}\left(1+\frac{l_r}{R_w}\right)=0\]</div><div class="num">(3.12)</div></div>
+      <div class="eq"><div class="formula">\[-\left(m_wR_w^2+I_w+m_lR_w^2+\frac{1}{2}m_bR_w^2\right)\ddot{\theta}_{w,l}-\left(m_wR_w^2+I_w+m_lR_w^2+\frac{1}{2}m_bR_w^2\right)\ddot{\theta}_{w,r}-\left(m_lR_wl_{w,l}+\frac{1}{2}m_bR_wl_l\right)\ddot{\theta}_{l,l}-\left(m_lR_wl_{w,r}+\frac{1}{2}m_bR_wl_r\right)\ddot{\theta}_{l,r}+T_{lw,l}+T_{lw,r}=0\]</div><div class="num">(3.13)</div></div>
+      <div class="eq"><div class="formula">\[\left(m_wR_wl_c+I_w\frac{l_c}{R_w}+m_lR_wl_c\right)\ddot{\theta}_{w,l}+\left(m_wR_wl_c+I_w\frac{l_c}{R_w}+m_lR_wl_c\right)\ddot{\theta}_{w,r}+m_ll_{w,l}l_c\ddot{\theta}_{l,l}+m_ll_{w,r}l_c\ddot{\theta}_{l,r}-I_b\ddot{\theta}_{l,r}+m_bgl_c\theta_b-\left(T_{lw,l}+T_{lw,r}\right)\frac{l_c}{R_w}-\left(T_{bl,l}+T_{bl,r}\right)=0\]</div><div class="num">(3.14)</div></div>
+      <div class="eq"><div class="formula">\[\left(\frac{1}{2}I_z\frac{R_w}{R_l}+I_w\frac{R_l}{R_w}\right)\ddot{\theta}_{w,l}-\left(\frac{1}{2}I_z\frac{R_w}{R_l}+I_w\frac{R_l}{R_w}\right)\ddot{\theta}_{w,r}+\frac{1}{2}I_z\frac{l_l}{R_l}\ddot{\theta}_{l,l}-\frac{1}{2}I_z\frac{l_r}{R_l}\ddot{\theta}_{l,r}-T_{lw,l}\frac{R_l}{R_w}+T_{lw,r}\frac{R_l}{R_w}=0\]</div><div class="num">(3.15)</div></div>
+    </section>
+  </section>
+
+  <section id="state-space">
+    <h2><span class="lang-en">4 State-Space Model</span><span class="lang-vi">4 Mô hình không gian trạng thái</span></h2>
+    <p><span class="lang-en">State-space equation:</span><span class="lang-vi">Phương trình không gian trạng thái:</span></p>
+    <div class="eq"><div class="formula">\[\left\{\begin{array}{l}\dot{\mathbf{x}}=A\mathbf{x}+B\mathbf{u}\\\mathbf{y}=C\mathbf{x}\end{array}\right.\]</div><div class="num">(4.1)</div></div>
+    <p><span class="lang-en">In equation (4.1):</span><span class="lang-vi">Trong phương trình (4.1):</span></p>
+    <p><span class="lang-en">State vector:</span><span class="lang-vi">Vector trạng thái:</span></p>
+    <div class="matrix-row">\[\mathbf{x}=\left[\begin{matrix}s & \dot{s} & \phi & \dot{\phi} & \theta_{l,l} & \dot{\theta}_{l,l} & \theta_{l,r} & \dot{\theta}_{l,r} & \theta_b & \dot{\theta}_b\end{matrix}\right]^T\]</div>
+    <p><span class="lang-en">Control vector:</span><span class="lang-vi">Vector điều khiển:</span></p>
+    <div class="matrix-row">\[\mathbf{u}=\left[\begin{matrix}T_{lw,l} & T_{lw,r} & T_{bl,l} & T_{bl,r}\end{matrix}\right]^T\]</div>
+    <p><span class="lang-en">Output vector:</span><span class="lang-vi">Vector đầu ra:</span></p>
+    <div class="matrix-row">\[\mathbf{y}=\mathbf{x}\]</div>
+
+    <p class="section-spacer"><span class="lang-en">Matrix form:</span><span class="lang-vi">Dạng ma trận:</span></p>
+    <div class="matrix-row">
+      \[
+      A=\left[\begin{matrix}
+      0&1&0&0&0&0&0&0&0&0\\
+      0&0&0&0&a_{2,5}&0&a_{2,7}&0&a_{2,9}&0\\
+      0&0&0&1&0&0&0&0&0&0\\
+      0&0&0&0&a_{4,5}&0&a_{4,7}&0&a_{4,9}&0\\
+      0&0&0&0&0&1&0&0&0&0\\
+      0&0&0&0&a_{6,5}&0&a_{6,7}&0&a_{6,9}&0\\
+      0&0&0&0&0&0&0&1&0&0\\
+      0&0&0&0&a_{8,5}&0&a_{8,7}&0&a_{8,9}&0\\
+      0&0&0&0&0&0&0&0&0&1\\
+      0&0&0&0&a_{10,5}&0&a_{10,7}&0&a_{10,9}&0
+      \end{matrix}\right]
+      \]
+    </div>
+
+    <div class="matrix-row">
+      \[
+      B=\left[\begin{matrix}
+      0&0&0&0\\
+      b_{2,1}&b_{2,2}&b_{2,3}&b_{2,4}\\
+      0&0&0&0\\
+      b_{4,1}&b_{4,2}&b_{4,3}&b_{4,4}\\
+      0&0&0&0\\
+      b_{6,1}&b_{6,2}&b_{6,3}&b_{6,4}\\
+      0&0&0&0\\
+      b_{8,1}&b_{8,2}&b_{8,3}&b_{8,4}\\
+      0&0&0&0\\
+      b_{10,1}&b_{10,2}&b_{10,3}&b_{10,4}
+      \end{matrix}\right],\qquad C=I_{10}
+      \]
+    </div>
+
+    <div class="matrix-row">
+      \[
+      a_{i,j}=\left\{\begin{array}{ll}
+      \frac{R_w}{2}\left(\frac{\partial\ddot{\theta}_{w,l}}{\partial x_j}+\frac{\partial\ddot{\theta}_{w,r}}{\partial x_j}\right) & (i=2)\\
+      \frac{R_w}{2R_l}\left(-\frac{\partial\ddot{\theta}_{w,l}}{\partial x_j}+\frac{\partial\ddot{\theta}_{w,r}}{\partial x_j}\right)-\frac{l_l}{2R_l}\frac{\partial\ddot{\theta}_{l,l}}{\partial x_j}+\frac{l_r}{2R_l}\frac{\partial\ddot{\theta}_{l,r}}{\partial x_j} & (i=4)\\
+      \frac{\partial\dot{x}_i}{\partial x_j} & (i=6,8,10)
+      \end{array}\right.
+      \]
+    </div>
+
+    <div class="matrix-row">
+      \[
+      b_{i,j}=\left\{\begin{array}{ll}
+      \frac{R_w}{2}\left(\frac{\partial\ddot{\theta}_{w,l}}{\partial u_j}+\frac{\partial\ddot{\theta}_{w,r}}{\partial u_j}\right) & (i=2)\\
+      \frac{R_w}{2R_l}\left(-\frac{\partial\ddot{\theta}_{w,l}}{\partial u_j}+\frac{\partial\ddot{\theta}_{w,r}}{\partial u_j}\right)-\frac{l_l}{2R_l}\frac{\partial\ddot{\theta}_{l,l}}{\partial u_j}+\frac{l_r}{2R_l}\frac{\partial\ddot{\theta}_{l,r}}{\partial u_j} & (i=4)\\
+      \frac{\partial\dot{x}_i}{\partial u_j} & (i=6,8,10)
+      \end{array}\right.
+      \]
+    </div>
+  </section>
+</main>
+<script>
+  (function () {
+    var LANG_STORAGE_KEY = "wbrModelingLang";
+
+    function currentLang() {
+      return document.body.getAttribute("data-lang") || "vi";
+    }
+
+    function copyLabel() {
+      return currentLang() === "vi" ? "Sao chép TeX" : "Copy TeX";
+    }
+
+    function copiedLabel() {
+      return currentLang() === "vi" ? "Đã sao chép" : "Copied";
+    }
+
+    function setLanguage(lang) {
+      var nextLang = lang === "en" ? "en" : "vi";
+      document.body.setAttribute("data-lang", nextLang);
+      document.documentElement.setAttribute("lang", nextLang);
+
+      document.querySelectorAll("[data-set-lang]").forEach(function (button) {
+        var isActive = button.getAttribute("data-set-lang") === nextLang;
+        button.classList.toggle("is-active", isActive);
+        button.setAttribute("aria-pressed", isActive ? "true" : "false");
+      });
+
+      document.querySelectorAll(".copy-tex").forEach(function (button) {
+        button.textContent = copyLabel();
+      });
+
+      try {
+        localStorage.setItem(LANG_STORAGE_KEY, nextLang);
+      } catch (error) {
+        /* localStorage may be unavailable in restricted browsers. */
+      }
+    }
+
+    document.querySelectorAll("[data-set-lang]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        setLanguage(button.getAttribute("data-set-lang"));
+      });
+    });
+
+    try {
+      setLanguage(localStorage.getItem(LANG_STORAGE_KEY) || "vi");
+    } catch (error) {
+      setLanguage("vi");
+    }
+
+    function cleanTex(source) {
+      return source
+        .trim()
+        .replace(/^\\\[\s*/, "")
+        .replace(/\s*\\\]$/, "")
+        .replace(/^\\\(\s*/, "")
+        .replace(/\s*\\\)$/, "")
+        .trim();
+    }
+
+    function fallbackCopy(text) {
+      var area = document.createElement("textarea");
+      area.value = text;
+      area.setAttribute("readonly", "");
+      area.style.position = "fixed";
+      area.style.left = "-9999px";
+      document.body.appendChild(area);
+      area.select();
+      document.execCommand("copy");
+      document.body.removeChild(area);
+    }
+
+    function copyText(text, button) {
+      var done = function () {
+        button.textContent = copiedLabel();
+        window.setTimeout(function () {
+          button.textContent = copyLabel();
+        }, 1200);
+      };
+
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text).then(done).catch(function () {
+          fallbackCopy(text);
+          done();
+        });
+        return;
+      }
+
+      fallbackCopy(text);
+      done();
+    }
+
+    function makeButton(tex, extraClass) {
+      var button = document.createElement("button");
+      button.type = "button";
+      button.className = extraClass ? "copy-tex " + extraClass : "copy-tex";
+      button.textContent = copyLabel();
+      button.addEventListener("click", function () {
+        copyText(tex, button);
+      });
+      return button;
+    }
+
+    document.querySelectorAll(".eq").forEach(function (eq) {
+      var formula = eq.querySelector(".formula");
+      if (!formula) {
+        return;
+      }
+
+      var tex = cleanTex(formula.textContent);
+      formula.dataset.copyTex = tex;
+      eq.appendChild(makeButton(tex));
+    });
+
+    document.querySelectorAll(".matrix-row").forEach(function (row) {
+      var tex = cleanTex(row.textContent);
+      row.dataset.copyTex = tex;
+      row.parentNode.insertBefore(makeButton(tex, "matrix-copy"), row);
+    });
+
+    document.addEventListener("copy", function (event) {
+      var selection = window.getSelection();
+      if (!selection || selection.isCollapsed || !selection.anchorNode) {
+        return;
+      }
+
+      var anchor = selection.anchorNode.nodeType === Node.ELEMENT_NODE
+        ? selection.anchorNode
+        : selection.anchorNode.parentElement;
+      var focus = selection.focusNode && selection.focusNode.nodeType === Node.ELEMENT_NODE
+        ? selection.focusNode
+        : selection.focusNode && selection.focusNode.parentElement;
+      var source = anchor && anchor.closest("[data-copy-tex]");
+
+      if (!source || !focus || !source.contains(focus)) {
+        return;
+      }
+
+      event.clipboardData.setData("text/plain", source.dataset.copyTex);
+      event.preventDefault();
+    });
+  })();
+</script>
+</body>
+</html>
+
