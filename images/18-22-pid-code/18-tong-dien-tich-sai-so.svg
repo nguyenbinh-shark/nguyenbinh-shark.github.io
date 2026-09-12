@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="360" viewBox="0 0 800 360" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="area-title area-desc">
+  <title id="area-title">Tổng diện tích sai số khâu tích phân I</title>
+  <desc id="area-desc">Khoảng trống giữa Setpoint và Process Value là tổng diện tích sai số được lưu giữ bởi biến I_term.</desc>
+  <defs>
+    <marker id="arr-axis" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#475569"/>
+    </marker>
+    <!-- Clean Subtle Hatch Pattern -->
+    <pattern id="hatch-amber" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <line stroke="#d97706" stroke-width="1.5" stroke-opacity="0.35" x1="0" y1="0" x2="0" y2="10"/>
+    </pattern>
+    <style>
+      text { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+      .code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    </style>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="800" height="360" rx="12" fill="#ffffff"/>
+  <rect x="1" y="1" width="798" height="358" rx="11" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Axes -->
+  <line x1="60" y1="310" x2="750" y2="310" stroke="#475569" stroke-width="2" marker-end="url(#arr-axis)"/>
+  <line x1="60" y1="310" x2="60" y2="35" stroke="#475569" stroke-width="2" marker-end="url(#arr-axis)"/>
+  <text x="50" y="35" text-anchor="end" font-size="12" font-weight="700" fill="#475569">Giá trị (°C)</text>
+  <text x="750" y="332" text-anchor="end" font-size="12" font-weight="700" fill="#475569">Thời gian t</text>
+
+  <!-- Hatched Area between SP and PV (Nhấn mạnh diện tích nợ tích phân) -->
+  <path d="M 60 85 H 720 V 98 C 540 102 460 175 350 160 S 180 250 60 270 Z" fill="url(#hatch-amber)"/>
+
+  <!-- Setpoint Line (SP) -->
+  <line x1="60" y1="85" x2="720" y2="85" stroke="#0f172a" stroke-width="2" stroke-dasharray="6 4"/>
+  <rect x="65" y="60" width="130" height="22" rx="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="130" y="75" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0f172a">Setpoint (SP = 50°C)</text>
+
+  <!-- Process Value Curve (PV) -->
+  <path d="M 60 270 C 180 250, 240 175, 350 160 S 540 102, 720 98" fill="none" stroke="#0f172a" stroke-width="3"/>
+  <rect x="580" y="115" width="135" height="22" rx="4" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1"/>
+  <text x="647" y="130" text-anchor="middle" font-size="11.5" font-weight="700" fill="#0f172a">Process Value (PV)</text>
+
+  <!-- Callout Label: Area Emphasis -->
+  <g transform="translate(230, 195)">
+    <rect x="0" y="0" width="280" height="52" rx="6" fill="#ffffff" stroke="#fcd34d" stroke-width="1.5"/>
+    <text x="140" y="22" text-anchor="middle" font-size="13" font-weight="800" fill="#b45309">TỔNG DIỆN TÍCH SAI SỐ (I_term)</text>
+    <text x="140" y="40" text-anchor="middle" font-size="11" font-weight="500" fill="#475569">Biến I_term cộng dồn toàn bộ khoảng trống này</text>
+  </g>
+</svg>

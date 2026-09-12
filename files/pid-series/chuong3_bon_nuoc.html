@@ -1,0 +1,615 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Chương 3 - Khâu P: bồn nước và đường đua (Vọt lố, Tràn bồn & Bịt lỗ rò)</title>
+<style>
+  :root{--bg:#0b0e1a;--panel:#0f1322;--ink:#FFF1E8;--muted:#83769C;--line:#5F574F;--acc:#FFEC27;--blue:#29ADFF;--orange:#FFA300;--red:#FF004D;--green:#00E436}
+  *{box-sizing:border-box}
+  body{margin:0;padding:12px;color:var(--ink);font-family:"Courier New",ui-monospace,Consolas,monospace;background-color:var(--bg);background-image:linear-gradient(45deg,#0d1122 25%,transparent 25%,transparent 75%,#0d1122 75%),linear-gradient(45deg,#0d1122 25%,transparent 25%,transparent 75%,#0d1122 75%);background-size:26px 26px;background-position:0 0,13px 13px}
+  .wrap{width:100%;max-width:960px;margin:auto}
+  .intro{margin:0 0 10px;color:#C2C3C7;font-size:.88rem;line-height:1.5}
+  .sync-note{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 10px;padding:8px 12px;border:2px solid #1D2B53;background:#141a30;box-shadow:3px 3px 0 #000;font-size:.76rem;color:#C2C3C7}
+  .sync-note strong{color:var(--acc)}
+  .sync-dot{width:8px;height:8px;background:var(--acc);flex:0 0 auto;animation:dotblink 1.2s steps(2) infinite}
+  @keyframes dotblink{50%{opacity:.25}}
+  .demo-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .panel{position:relative;min-width:0;overflow:hidden;border:2px solid var(--line);background:var(--panel);box-shadow:4px 4px 0 #000}
+  .panel::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.13) 0 1px,transparent 1px 3px)}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;background:#1D2B53;border-bottom:2px solid var(--line)}
+  .panel-title{font-size:.72rem;font-weight:700;letter-spacing:.04em;color:var(--acc)}
+  .panel-state{color:var(--muted);font-size:.66rem;white-space:nowrap}
+  .panel-state.warn{color:var(--red);font-weight:700}
+  .panel-state.ok{color:var(--green);font-weight:700}
+  .panel canvas{display:block;width:100%;height:auto}
+  canvas.px{image-rendering:pixelated}
+  .panel-readout{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:8px 10px;border-top:2px solid var(--line)}
+  .readout{min-width:0;padding:6px 7px;border:2px solid #232c4e;background:#0c101f;text-align:center}
+  .readout b{display:block;font-size:.86rem;line-height:1.2;color:var(--acc)}
+  .readout span{display:block;margin-top:2px;color:var(--muted);font-size:.6rem;text-transform:uppercase}
+  .hud{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}
+  .stat{min-width:0;padding:9px 10px;border:2px solid var(--line);background:var(--panel);box-shadow:3px 3px 0 #000;text-align:center}
+  .stat b{display:block;font-size:1.02rem;line-height:1.2;color:var(--acc)}
+  .stat span{display:block;margin-top:3px;color:var(--muted);font-size:.6rem;text-transform:uppercase;letter-spacing:.03em}
+  .controls{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .control{flex:3 1 250px;min-width:220px;padding:10px 12px;border:2px solid var(--line);background:var(--panel);box-shadow:3px 3px 0 #000}
+  .control label{display:block;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+  .control label b{float:right;color:var(--acc)}
+  input[type=range]{width:100%;margin:8px 0 0;accent-color:var(--orange)}
+  button{min-height:44px;padding:9px 13px;border:2px solid #C2C3C7;background:#1D2B53;color:var(--ink);font:inherit;font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;user-select:none;box-shadow:3px 3px 0 #000;transition:none}
+  button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #000}
+  .preset{flex:1 1 110px}
+  button.warn{border-color:var(--red);color:var(--red)}
+  .leak-btn{flex:1 1 150px;font-weight:700}
+  .leak-btn.on{border-color:var(--red);color:var(--red);background:#2a0f1e}
+  .leak-btn.off{border-color:var(--green);background:#008751;color:var(--ink)}
+  .saturation{display:grid;grid-template-columns:auto minmax(100px,1fr) auto;align-items:center;gap:8px;margin-top:10px;padding:8px 12px;border:2px solid var(--line);background:var(--panel);box-shadow:3px 3px 0 #000;color:var(--muted);font-size:.68rem}
+  .sat-track{position:relative;height:10px;overflow:hidden;border:2px solid var(--line);background:#0c101f}
+  .sat-track::after{content:"";position:absolute;top:0;bottom:0;left:66.666%;width:2px;background:var(--red)}
+  .sat-fill{display:block;width:0;height:100%;background:var(--blue)}
+  #graph{display:block;width:100%;height:auto;margin-top:10px;border:2px solid var(--line);background:#0f1322;box-shadow:4px 4px 0 #000}
+  .note{margin:8px 2px 0;color:var(--muted);font-size:.76rem;line-height:1.55}
+  .note b{color:#C2C3C7}
+  @media(max-width:680px){body{padding:8px}.demo-grid{grid-template-columns:1fr}.hud{grid-template-columns:repeat(2,minmax(0,1fr))}.controls .control{flex-basis:100%}.preset,.leak-btn{flex:1 1 120px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <p class="intro"><strong>Khâu P: cùng một phép tính, hai cách nhìn.</strong> Bồn nước và đường đua bên dưới dùng chung công thức $u = K_p \times e$. Khi lỗ rò mở (hoặc băng chuyền kéo lùi), hệ thống luôn bị <em>sai số xác lập</em>. Bấm nút <strong>Bịt lỗ rò</strong> để xem dòng nước rò biến mất và mực nước tự động chạm đúng miệng bồn 100%!</p>
+
+  <div class="sync-note">
+    <span class="sync-dot" aria-hidden="true"></span>
+    <strong>Hai cảnh đang chạy đồng bộ tuyệt đối</strong>
+    <span>Mở vòi bơm = Chân đạp tới  ·  Lỗ rò đáy bồn = Băng chuyền kéo lùi  ·  Chu kỳ van/trọng tài = 2 s</span>
+  </div>
+
+  <div class="demo-grid">
+    <section class="panel" aria-labelledby="tankTitle">
+      <div class="panel-head"><span class="panel-title" id="tankTitle">01 · BỒN NƯỚC (BƠM VÀO VS RÒ ĐÁY)</span><span class="panel-state" id="tankState">đang chạy</span></div>
+      <canvas id="tankCanvas" class="px" width="267" height="157" aria-label="Bồn nước có vòi bơm, vạch mục tiêu, lỗ rò có nút bịt và hiệu ứng tràn nước"></canvas>
+      <div class="panel-readout">
+        <div class="readout"><b id="tankLevel">0%</b><span>mực nước</span></div>
+        <div class="readout"><b id="tankError">100%</b><span>còn thiếu</span></div>
+        <div class="readout"><b id="tankFlow">0%</b><span>lệnh vòi P</span></div>
+      </div>
+    </section>
+    <section class="panel" aria-labelledby="raceTitle">
+      <div class="panel-head"><span class="panel-title" id="raceTitle">02 · ĐƯỜNG ĐUA (CHẠY TỚI VS BĂNG CHUYỀN)</span><span class="panel-state" id="raceState">đang chạy</span></div>
+      <canvas id="raceCanvas" class="px" width="267" height="157" aria-label="A-sin chạy trên băng chuyền đuổi theo Rùa Vàng"></canvas>
+      <div class="panel-readout">
+        <div class="readout"><b id="racePos">0 m</b><span>vị trí A-sin</span></div>
+        <div class="readout"><b id="raceError">100%</b><span>còn thiếu</span></div>
+        <div class="readout"><b id="raceSpeed">0%</b><span>lực chân thực</span></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="hud">
+    <div class="stat"><b id="err">100%</b><span>sai số / vọt lố</span></div>
+    <div class="stat"><b id="maxOver">0%</b><span>vọt lố lớn nhất</span></div>
+    <div class="stat"><b id="cmd">0%</b><span>lệnh tính toán</span></div>
+    <div class="stat"><b id="clock">0,0 s</b><span>thời gian</span></div>
+  </div>
+
+  <div class="controls">
+    <div class="control">
+      <label for="kp">Hệ số tỷ lệ (Kp)<b id="kpv">2</b></label>
+      <input id="kp" type="range" min="0.5" max="8" step="0.5" value="2">
+    </div>
+    <button class="preset" id="kp1" type="button">Kp = 1 · êm, thiếu 20%</button>
+    <button class="preset" id="kp2" type="button">Kp = 2 · vừa, thiếu 10%</button>
+    <button class="preset" id="kp4" type="button">Kp = 4 · nhanh, chạm vạch</button>
+    <button class="preset warn" id="kp8" type="button">Kp = 8 · tràn nước (vọt lố!)</button>
+    <button id="leakBtn" class="leak-btn on" type="button" aria-pressed="true">🛑 Bịt lỗ rò đáy</button>
+    <button id="restart" type="button">Chạy lại</button>
+  </div>
+
+  <div class="saturation">
+    <span>Lệnh tính P → Cơ cấu thực tế:</span>
+    <div class="sat-track"><span class="sat-fill" id="satFill"></span></div>
+    <span id="satText">0% → 0%</span>
+  </div>
+
+  <canvas id="graph" width="900" height="220" aria-label="Đồ thị sai số chung theo thời gian"></canvas>
+
+  <p class="note"><b>Thử nghiệm tương tác:</b><br>
+  1. <b>Quan sát dòng nước rò ở đáy bồn:</b> Khi lỗ rò mở, dòng nước chảy xối xả ra ngoài (20%/s) và băng chuyền kéo lùi. Vòi P mở cân bằng với lỗ rò khiến nước kẹt dưới miệng bồn (sai số xác lập).<br>
+  2. <b>Bấm "Bịt lỗ rò đáy":</b> Nút cao su lập tức đóng chặt lỗ rò (dòng nước rò ngắt hẳn), băng chuyền ngừng chạy. Mực nước sẽ dâng đầy tới tận miệng bồn 100% không còn sai số!<br>
+  3. <b>Bấm "Kp = 8 · tràn nước":</b> Nước được bơm cực mạnh và dâng vượt qua miệng bồn, tràn ào ạt xuống 2 bên thành bồn!</p>
+</main>
+<script>
+"use strict";
+const tankCanvas=document.getElementById("tankCanvas"), raceCanvas=document.getElementById("raceCanvas"), graphCanvas=document.getElementById("graph");
+const tc=tankCanvas.getContext("2d"), rc=raceCanvas.getContext("2d"), gc=graphCanvas.getContext("2d");
+const kp=document.getElementById("kp"), kpv=document.getElementById("kpv");
+const kp1=document.getElementById("kp1"), kp2=document.getElementById("kp2"), kp4=document.getElementById("kp4"), kp8=document.getElementById("kp8");
+const leakBtn=document.getElementById("leakBtn"), restart=document.getElementById("restart");
+const err=document.getElementById("err"), maxOverEl=document.getElementById("maxOver"), cmd=document.getElementById("cmd"), clock=document.getElementById("clock");
+const satFill=document.getElementById("satFill"), satText=document.getElementById("satText");
+const tankLevel=document.getElementById("tankLevel"), tankError=document.getElementById("tankError"), tankFlow=document.getElementById("tankFlow");
+const racePos=document.getElementById("racePos"), raceError=document.getElementById("raceError"), raceSpeed=document.getElementById("raceSpeed");
+const tankState=document.getElementById("tankState"), raceState=document.getElementById("raceState");
+
+const TARGET=100, MAX_SPEED=11, DRAG=1.6, SAMPLE=2, SLEW=75, ROUND=45, TIME_SCALE=2;
+let pos=0, simTime=0, sampleLeft=0, command=0, actual=0, leakOn=true, running=true;
+let maxOver=0, splashClock=0;
+let trace=[], traceClock=0, last=performance.now();
+
+try {
+  const saved=Number(localStorage.getItem("pid-kp"));
+  if(saved>=0.5 && saved<=8) kp.value=saved;
+} catch(e){}
+
+const clamp=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+const errorPercent=()=>(TARGET-pos)/TARGET*100;
+const fmt=(v,d=1)=>v.toFixed(d).replace(".",",");
+
+function setKp(val){
+  kp.value=val; kpv.textContent=val;
+  try{ localStorage.setItem("pid-kp",val); }catch(e){}
+  reset();
+}
+
+function reset(){
+  pos=0; simTime=0; sampleLeft=0; command=0; actual=0; maxOver=0; splashClock=0;
+  trace=[]; traceClock=0; running=true; last=performance.now();
+}
+
+function sampleCommand(){
+  command=clamp(Number(kp.value)*errorPercent(), -150, 150);
+  sampleLeft+=SAMPLE;
+}
+
+function step(dt){
+  sampleLeft-=dt;
+  if(sampleLeft<=0) sampleCommand();
+
+  const targetActual=clamp(command,-100,100);
+  actual=clamp(actual+clamp(targetActual-actual,-SLEW*dt,SLEW*dt),-100,100);
+
+  const inflow=actual/100*MAX_SPEED;
+  const outflow=leakOn?DRAG:0;
+  pos=clamp(pos+(inflow-outflow)*dt,0,135);
+
+  if(pos>TARGET) maxOver=Math.max(maxOver, pos-TARGET);
+
+  simTime+=dt; traceClock+=dt; splashClock+=dt;
+  if(traceClock>=0.15){
+    trace.push({t:simTime, e:errorPercent(), p:pos});
+    traceClock=0;
+    if(trace.length>450) trace.shift();
+  }
+  if(simTime>=ROUND) running=false;
+}
+
+/* ══════════════ PIXEL ARCADE KIT (hiển thị only — không đụng mô phỏng) ══════════════ */
+const PX={
+  blk:"#000000",navy:"#1D2B53",purp:"#7E2553",dgrn:"#008751",brn:"#AB5236",
+  dgy:"#5F574F",lgy:"#C2C3C7",wht:"#FFF1E8",red:"#FF004D",org:"#FFA300",
+  yel:"#FFEC27",grn:"#00E436",blu:"#29ADFF",ind:"#83769C",pnk:"#FF77A8",pch:"#FFCCAA"
+};
+
+function drawSprite(c,rows,map,x,y,flip){
+  for(let r=0;r<rows.length;r++){
+    const row=rows[r], n=row.length;
+    for(let i=0;i<n;i++){
+      const k=flip?row[n-1-i]:row[i];
+      if(k===".") continue;
+      c.fillStyle=map[k];
+      c.fillRect(x+i,y+r,1,1);
+    }
+  }
+}
+
+function pxCircle(c,cx,cy,r,col){
+  c.fillStyle=col;
+  for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++)
+    if(dx*dx+dy*dy<=r*r) c.fillRect(cx+dx,cy+dy,1,1);
+}
+
+function plaqueText(c,txt,x,y,col){
+  c.font='bold 8px "Courier New",monospace';
+  c.textAlign="left"; c.textBaseline="alphabetic";
+  const w=c.measureText(txt).width;
+  c.fillStyle="rgba(0,0,0,.55)";
+  c.fillRect(x-2,y-8,w+4,10);
+  c.fillStyle=col;
+  c.fillText(txt,x,y);
+}
+
+function pxArrow(c,x,y,len,col,dir){
+  c.fillStyle=col;
+  const head=5;
+  if(dir>0) c.fillRect(x,y-1,len-head,3); else c.fillRect(x+head,y-1,len-head,3);
+  for(let i=0;i<4;i++){
+    const hw=3-i;
+    const hx=dir>0? x+len-head+i : x+head-1-i;
+    c.fillRect(hx,y-hw,1,hw*2+1);
+  }
+}
+
+/* ── Sprite A-sin (12×18) ── */
+const RPAL={h:PX.brn,s:PX.pch,r:PX.red,y:PX.yel,a:PX.blu,d:PX.navy,p:PX.purp,k:PX.dgy,e:PX.blk,w:PX.wht};
+const RUN_TOP=[
+"...hhhhhh...",
+"..hhhhhhhh..",
+".rrrrrrrrrr.",
+".rrrrrrrrrry",
+"rr.ssssssss.",
+"r..ssessess.",
+"...ssddss...",
+"..p.aaaaaa..",
+".pp.aaaaaa..",
+".ppaaayaaa..",
+".ppaaaaaass.",
+".ppyyyyyyy.."
+];
+const RUN_LEGS_A=[
+"..aaaa.aaa..",
+"..ss....ss..",
+".ss......ss.",
+".ss......ss.",
+"kk........kk",
+"kkk......kkk"
+];
+const RUN_LEGS_B=[
+"..aaaaaaa...",
+"...ss.ss....",
+"...ss..ss...",
+"....ss......",
+"....kk......",
+"...kkk......"
+];
+const RUN_LEGS_IDLE=[
+"..aaaaaa....",
+"...ss.ss....",
+"...ss.ss....",
+"...ss.ss....",
+"...kk.kk....",
+"..kkk.kkk..."
+];
+const RUN_HEAD_PANIC = RUN_TOP.slice(0,5).concat([
+"r..wwswwsww.",
+"...ssdddds.."
+],RUN_TOP.slice(7));
+
+function runner(c,x,y,moving,t,panic){
+  x=Math.round(x); y=Math.round(y);
+  const fr=Math.floor(t*9)%2;
+  if(moving){
+    c.fillStyle=PX.lgy;
+    for(let i=0;i<3;i++){
+      const ph=Math.floor(t*14)+i;
+      c.fillRect(x-4-((ph*3)%6), y-4-((ph*2)%3), 2, 2);
+      c.fillRect(x-8-((ph*5)%8), y-3-((ph*3)%3), 1, 1);
+    }
+  }
+  let top, legs;
+  if(panic){ top=RUN_HEAD_PANIC; legs=RUN_LEGS_IDLE; y-=Math.floor(t*16)%2; }
+  else if(moving){ top=RUN_TOP; legs=fr?RUN_LEGS_A:RUN_LEGS_B; if(fr) y-=1; }
+  else { top=RUN_TOP; legs=RUN_LEGS_IDLE; }
+  drawSprite(c,top.concat(legs),RPAL,x-6,y-18);
+}
+
+/* ── Rùa Vàng ── */
+function turtle(c,x,y,t){
+  x=Math.round(x); y=Math.round(y);
+  const shimmer=Math.floor(t*2)%2;
+  c.fillStyle="rgba(0,0,0,.3)";
+  c.fillRect(x-9,y+10,22,2);
+  c.fillStyle=PX.dgrn;
+  c.fillRect(x-8,y+7,3,3); c.fillRect(x+2,y+7,3,3); c.fillRect(x+6,y+7,3,3);
+  c.fillRect(x-12,y+6,3,2);
+  const shellHi=shimmer?PX.yel:PX.org, shellLo=shimmer?PX.org:PX.brn;
+  c.fillStyle=shellLo; c.fillRect(x-10,y-1,20,8);
+  c.fillStyle=shellHi; c.fillRect(x-9,y-2,18,3); c.fillRect(x-7,y-3,14,1); c.fillRect(x-4,y-4,8,1);
+  c.fillStyle=shellLo;
+  c.fillRect(x-6,y+2,2,2); c.fillRect(x-1,y+2,2,2); c.fillRect(x+4,y+2,2,2);
+  c.fillStyle=PX.dgrn; c.fillRect(x+9,y-2,7,6);
+  c.fillStyle=PX.wht; c.fillRect(x+12,y-1,2,2);
+  c.fillStyle=PX.blk; c.fillRect(x+13,y-1,1,1);
+  c.fillStyle=PX.pnk; c.fillRect(x+11,y+2,2,1);
+  c.fillStyle=PX.yel;
+  c.fillRect(x+10,y-5,2,3); c.fillRect(x+13,y-6,2,4); c.fillRect(x+16,y-5,2,3);
+  c.fillRect(x+10,y-3,8,1);
+  c.fillStyle=PX.red; c.fillRect(x+13,y-4,2,1);
+}
+
+function cld(c,x,y,big){
+  c.fillStyle=PX.lgy;
+  if(big){ c.fillRect(x,y,10,2); c.fillRect(x+2,y-2,6,2); }
+  else   { c.fillRect(x,y,7,2); c.fillRect(x+1,y-1,4,1); }
+}
+
+/* ── Bồn nước pixel ── */
+function drawTank(){
+  const w=tankCanvas.width, h=tankCanvas.height, t=performance.now()/1000;
+  tc.fillStyle=PX.blk; tc.fillRect(0,0,w,h);
+  // gạch tường nhà máy
+  tc.fillStyle="#141a30";
+  for(let yy=0;yy<h;yy+=8) for(let xx=(yy/8)%2*8;xx<w;xx+=16) tc.fillRect(xx,yy,15,7);
+
+  // Thông số hình học bồn: miệng bồn (top rim) chính xác là mốc 100%
+  const bx=88, by=32, bw=90, bh=92, bottom=by+bh;
+  const isOverflow=pos>100;
+  const fillPct=clamp(pos/100,0,1.0);
+  const fillH=fillPct*bh;
+  const leakX=bx+bw-22;
+
+  // khay hứng nước tràn
+  tc.fillStyle=PX.dgy; tc.fillRect(bx-16,bottom+2,bw+32,5);
+  tc.fillStyle=PX.lgy; tc.fillRect(bx-16,bottom+2,bw+32,1);
+
+  // nền bồn rỗng
+  tc.fillStyle="#1a2140"; tc.fillRect(bx,by,bw,bh);
+
+  // nước trong bồn + tile + sóng
+  if(fillH>0){
+    tc.fillStyle=PX.blu; tc.fillRect(bx,bottom-fillH,bw,fillH);
+    tc.fillStyle=PX.navy;
+    for(let yy=bottom-4;yy>bottom-fillH;yy-=6)
+      for(let xx=bx+3;xx<bx+bw-2;xx+=8)
+        tc.fillRect(xx,yy,2,2);
+    const wy=Math.round(bottom-fillH);
+    for(let i=0;i<bw;i+=6){
+      if((Math.floor(t*6)+i/6)%2===0){ tc.fillStyle=PX.wht; tc.fillRect(bx+i,wy,4,1); }
+    }
+    // xoáy nước gần lỗ rò
+    if(leakOn && fillH>10){
+      tc.fillStyle=PX.wht;
+      const vo=Math.round(Math.sin(simTime*10)*2);
+      tc.fillRect(leakX-4+vo,bottom-6,3,1); tc.fillRect(leakX+1-vo,bottom-9,2,1);
+    }
+  }
+
+  // thành bồn
+  tc.fillStyle=PX.lgy;
+  tc.fillRect(bx-3,by-2,3,bh+4); tc.fillRect(bx+bw,by-2,3,bh+4);
+  tc.fillRect(bx-3,bottom,bw+6,3);
+  tc.fillStyle=PX.dgy;
+  tc.fillRect(bx-3,by-2,3,2); tc.fillRect(bx+bw,by-2,3,2);
+
+  // vạch 100% mục tiêu tại miệng bồn
+  tc.fillStyle=PX.org;
+  for(let xx=bx-10;xx<bx+bw+10;xx+=4) tc.fillRect(xx,by,2,1);
+
+  // vòi bơm P
+  const pipeX=bx+bw/2;
+  tc.fillStyle=PX.lgy; tc.fillRect(pipeX-7,4,14,8); tc.fillRect(pipeX-4,12,8,6);
+  tc.fillStyle=PX.dgy; tc.fillRect(pipeX-7,4,14,2); tc.fillRect(pipeX-7,10,14,2);
+  if(actual>1){
+    const jetW=clamp(Math.round(actual/100*6),2,6);
+    const jetBottom=Math.round(bottom-fillH);
+    tc.fillStyle=PX.blu; tc.fillRect(pipeX-Math.ceil(jetW/2),18,jetW,Math.max(0,jetBottom-18));
+    tc.fillStyle=PX.wht;
+    for(let yy=20;yy<jetBottom-2;yy+=5) tc.fillRect(pipeX-1+((Math.floor(t*12)+yy)%3)-1,yy,2,1);
+  }
+
+  // tràn nước qua miệng bồn
+  if(isOverflow){
+    const overAmt=pos-100;
+    const domeH=clamp(Math.round(overAmt*0.4),1,4);
+    tc.fillStyle=PX.blu;
+    for(let i=0;i<domeH;i++) tc.fillRect(bx+2+i,by-1-i,bw-4-2*i,1);
+    const ft=clamp(Math.round(overAmt*0.4),2,4);
+    for(let yy=by;yy<bottom+4;yy+=2){
+      if((Math.floor(t*12)+yy)%3!==0){
+        tc.fillRect(bx-3-ft,yy,ft,1); tc.fillRect(bx+bw+3,yy,ft,1);
+      }
+    }
+    tc.fillStyle=PX.wht;
+    for(let k=0;k<4;k++){
+      const dy=by+((splashClock*90+k*30)%bh);
+      tc.fillRect(bx-6-ft-(k%2)*3,dy,2,2); tc.fillRect(bx+bw+4+ft+(k%2)*3,dy,2,2);
+    }
+    plaqueText(tc,"NƯỚC TRÀN! +"+fmt(overAmt)+"%",4,10,PX.red);
+  }
+
+  // nhãn
+  plaqueText(tc,"MIỆNG BỒN 100%",bx+bw+8,by+4,PX.org);
+  if(fillH>14) plaqueText(tc,"MỰC NƯỚC: "+fmt(pos)+"%",bx+5,bottom-5,PX.yel);
+  plaqueText(tc,"VÒI P: "+Math.round(actual)+"%",4,10,PX.blu);
+
+  // lỗ rò / nút bịt
+  tc.fillStyle=PX.dgy; tc.fillRect(leakX-4,bottom+3,8,3);
+  if(leakOn){
+    tc.fillStyle=PX.blu;
+    tc.fillRect(leakX-2,bottom+6,4,12);
+    tc.fillStyle=PX.wht;
+    for(let d=0;d<3;d++){
+      const dy=bottom+7+((splashClock*45+d*6)%14);
+      tc.fillRect(leakX-1-((d*2)%3),dy,2,2);
+    }
+    tc.fillStyle=PX.blu; tc.fillRect(leakX-6,bottom+20,12,2);
+    pxArrow(tc,leakX-14,bottom+14,10,PX.red,-1);
+    plaqueText(tc,"LỖ RÒ ĐANG XẢ (-20%)",bx-38,bottom+17,PX.red);
+  } else {
+    tc.fillStyle=PX.grn;
+    tc.fillRect(leakX-4,bottom+3,8,3); tc.fillRect(leakX-3,bottom+6,6,3); tc.fillRect(leakX-2,bottom+9,4,2);
+    tc.fillStyle=PX.yel; tc.fillRect(leakX-3,bottom+11,6,1);
+    plaqueText(tc,"ĐÃ BỊT KÍN (0%)",bx-38,bottom+17,PX.grn);
+  }
+
+  // dòng trạng thái
+  plaqueText(tc,
+    isOverflow?"KP CAO → VÒI Ồ ẠT, VAN ĐÓNG TRỄ → TRÀN MÉP BỒN!"
+    :(!leakOn?"LỖ RÒ ĐÃ BỊT → NƯỚC DÂNG CHẠM ĐÚNG MIỆNG BỒN 100%"
+    :"LỖ RÒ MỞ → VÒI P CÂN BẰNG RÒ → KẸT SAI SỐ XÁC LẬP"),4,h-4,
+    isOverflow?PX.red:(!leakOn?PX.grn:PX.lgy));
+}
+
+/* ── Đường đua pixel ── */
+function drawRace(){
+  const w=raceCanvas.width, h=raceCanvas.height, t=performance.now()/1000;
+  let shx=0;
+  if(pos>102) shx=(Math.floor(t*22)%2)?1:-1;
+  rc.save();
+  rc.translate(shx,0);
+
+  rc.fillStyle=PX.navy; rc.fillRect(-2,0,w+4,36);
+  rc.fillStyle=PX.purp; rc.fillRect(-2,36,w+4,10);
+  rc.fillStyle=PX.pnk;  rc.fillRect(-2,46,w+4,8);
+  pxCircle(rc,224,42,8,PX.org);
+  pxCircle(rc,224,42,6,PX.yel);
+
+  rc.fillStyle=PX.navy;
+  [[0,12],[20,7],[42,17],[68,9],[94,20],[122,12],[150,16],[176,8],[202,14],[228,7],[252,12]].forEach(([mx,mh])=>{
+    rc.fillRect(mx,60-mh,24,mh);
+  });
+
+  const cx1=(Math.floor(t*4)%(w+40))-30;
+  cld(rc,cx1,20,1); cld(rc,(Math.floor(t*2.5)%(w+40))-30,30,0);
+
+  rc.fillStyle=PX.dgrn; rc.fillRect(-2,60,w+4,5);
+  rc.fillStyle=PX.brn;  rc.fillRect(-2,65,w+4,h-65);
+  rc.fillStyle=PX.dgy;
+  for(let i=0;i<120;i++){
+    const sx=(i*61+17)%w, sy=68+((i*37)%85);
+    if(sy>70) rc.fillRect(sx,sy,1,1);
+  }
+
+  const left=16,right=250,roadY=92,roadH=10;
+  rc.fillStyle=PX.dgy; rc.fillRect(left,roadY,right-left,roadH);
+  rc.fillStyle=PX.blk;
+  const boff=leakOn?Math.floor(t*12)%14:0;
+  for(let x=left+4-boff;x<right;x+=14){
+    if(x<left||x>right-6) continue;
+    rc.fillRect(x,roadY+2,3,1); rc.fillRect(x+1,roadY+4,3,1); rc.fillRect(x+2,roadY+6,3,1);
+  }
+  rc.fillStyle=PX.lgy;
+  rc.fillRect(left,roadY-1,right-left,1); rc.fillRect(left,roadY+roadH,right-left,1);
+
+  const targetX=left+TARGET/125*(right-left);
+  const runnerX=left+clamp(pos,0,125)/125*(right-left);
+
+  // cột đích caro
+  for(let yy=78;yy<118;yy+=4){
+    rc.fillStyle=(((yy-78)/4)%2)?PX.yel:PX.blk;
+    rc.fillRect(targetX-3,yy,2,4); rc.fillRect(targetX+1,yy,2,4);
+  }
+  rc.fillStyle=PX.lgy; rc.fillRect(targetX,66,1,12);
+
+  turtle(rc,targetX-8,roadY+roadH-12,t);
+  runner(rc,runnerX,roadY+roadH,Math.abs(actual)>1,t,pos>102);
+
+  const isOver=pos>100;
+  plaqueText(rc,isOver?"A-SIN (VƯỢT MẶT RÙA!)":"A-SIN",clamp(runnerX-20,4,180),74,isOver?PX.red:PX.blu);
+  plaqueText(rc,"ĐÍCH 100M",clamp(targetX-18,4,230),74,PX.org);
+
+  if(leakOn){
+    pxArrow(rc,176,124,26,PX.red,-1);
+    plaqueText(rc,"BĂNG CHUYỀN KÉO LÙI (20%)",60,127,PX.red);
+  } else {
+    plaqueText(rc,"BĂNG CHUYỀN ĐÃ DỪNG (0%)",72,127,PX.grn);
+  }
+
+  plaqueText(rc,"T: "+fmt(Math.min(simTime,ROUND),0)+" S",4,10,PX.yel);
+  plaqueText(rc,"LỰC CHÂN: "+Math.round(actual)+"%",4,21,Math.abs(actual)>1?PX.blu:PX.ind);
+  plaqueText(rc,"VỊ TRÍ ĐƯỜNG ĐUA = MỰC NƯỚC BỒN",4,h-4,PX.lgy);
+
+  rc.restore();
+}
+
+function drawGraph(){
+  const w=graphCanvas.width, h=graphCanvas.height, left=54, right=w-18, top=26, bottom=h-32;
+  gc.clearRect(0,0,w,h); gc.fillStyle="#0f1322"; gc.fillRect(0,0,w,h);
+  const y=e=>top+(115-e)/140*(bottom-top);
+
+  gc.fillStyle="rgba(255,236,39,.10)";
+  gc.fillRect(left,y(2),right-left,y(-2)-y(2));
+  gc.strokeStyle="rgba(255,236,39,.35)"; gc.lineWidth=1;
+  gc.beginPath(); gc.moveTo(left,y(2)); gc.lineTo(right,y(2)); gc.stroke();
+  gc.beginPath(); gc.moveTo(left,y(-2)); gc.lineTo(right,y(-2)); gc.stroke();
+
+  gc.strokeStyle="#232c4e"; gc.lineWidth=1; gc.setLineDash([2,3]);
+  gc.font='11px "Courier New",monospace';
+  gc.fillStyle=PX.ind; gc.textAlign="center";
+  for(let sec=0;sec<=ROUND;sec+=5){
+    const xx=left+sec/ROUND*(right-left);
+    gc.beginPath(); gc.moveTo(xx,top); gc.lineTo(xx,bottom); gc.stroke();
+    gc.fillText(sec+"s",xx,h-10);
+  }
+
+  gc.textAlign="right";
+  [100,50,20,0,-15].forEach(v=>{
+    const yy=y(v);
+    gc.beginPath(); gc.moveTo(left,yy); gc.lineTo(right,yy); gc.stroke();
+    gc.fillText((v<0?"Vượt ":"")+Math.abs(v)+"%",left-7,yy+4);
+  });
+  gc.setLineDash([]);
+
+  gc.strokeStyle=PX.lgy; gc.lineWidth=2;
+  gc.beginPath(); gc.moveTo(left,y(0)); gc.lineTo(right,y(0)); gc.stroke();
+  gc.fillStyle=PX.lgy; gc.fillText("0 = Vạch 100%",right,y(0)-6);
+
+  if(trace.length>1){
+    const col=(maxOver>0)?PX.red:PX.blu;
+    gc.strokeStyle=col; gc.lineWidth=2.5;
+    gc.shadowColor=col; gc.shadowBlur=7;
+    gc.beginPath();
+    trace.forEach((p,i)=>{
+      const xx=left+p.t/ROUND*(right-left), yy=y(p.e);
+      i?gc.lineTo(xx,yy):gc.moveTo(xx,yy);
+    });
+    gc.stroke();
+    gc.shadowBlur=0;
+  }
+
+  gc.fillStyle=PX.yel; gc.font='bold 12px "Courier New",monospace'; gc.textAlign="left";
+  gc.fillText("SAI SỐ & VỌT LỐ (%) · dưới 0% = Vọt lố / Tràn bồn · trên 0% = Còn thiếu nước / khoảng cách",left,14);
+}
+
+function update(){
+  const e=errorPercent();
+  const isOver=pos>100;
+  const stateTxt=isOver?("tràn bồn +"+fmt(pos-100)+"%"):((!leakOn&&e<0.5)?"đã chạm đích":(simTime>=ROUND?"kẹt sai số tĩnh":"đang chạy"));
+
+  err.textContent=isOver?("vượt +"+fmt(pos-100)+"%"):("thiếu "+fmt(e)+"%");
+  maxOverEl.textContent=fmt(maxOver)+"%";
+  cmd.textContent=Math.round(command)+"%";
+  clock.textContent=fmt(Math.min(simTime,ROUND))+" s";
+
+  tankLevel.textContent=fmt(pos)+"%";
+  tankError.textContent=fmt(e)+"%";
+  tankFlow.textContent=Math.round(command)+"%";
+
+  racePos.textContent=fmt(pos)+" m";
+  raceError.textContent=fmt(e)+"%";
+  raceSpeed.textContent=Math.round(actual)+"%";
+
+  tankState.textContent=stateTxt;
+  tankState.className="panel-state" + (isOver?" warn":(!leakOn&&e<0.5?" ok":""));
+  raceState.textContent=stateTxt;
+  raceState.className="panel-state" + (isOver?" warn":(!leakOn&&e<0.5?" ok":""));
+
+  satFill.style.width=clamp(Math.abs(command)/150*100,0,100)+"%";
+  satText.textContent=Math.round(command)+"% → "+Math.round(actual)+"%";
+
+  leakBtn.className="leak-btn " + (leakOn?"on":"off");
+  leakBtn.textContent=leakOn?"🛑 Bịt lỗ rò đáy":"💧 Mở lại lỗ rò đáy";
+}
+
+function loop(now){
+  const dt=Math.min((now-last)/1000*TIME_SCALE,0.1); last=now;
+  if(running) step(dt);
+  update(); drawTank(); drawRace(); drawGraph(); requestAnimationFrame(loop);
+}
+
+kp.addEventListener("input",()=>{ kpv.textContent=kp.value; try{localStorage.setItem("pid-kp",kp.value);}catch(e){} reset(); });
+kp1.addEventListener("click",()=>setKp(1));
+kp2.addEventListener("click",()=>setKp(2));
+kp4.addEventListener("click",()=>setKp(4));
+kp8.addEventListener("click",()=>setKp(8));
+
+leakBtn.addEventListener("click",()=>{
+  leakOn=!leakOn;
+  reset();
+});
+restart.addEventListener("click",reset);
+
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

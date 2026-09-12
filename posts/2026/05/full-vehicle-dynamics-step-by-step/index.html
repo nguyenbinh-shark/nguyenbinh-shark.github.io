@@ -1,0 +1,1151 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Phan tich dong luc hoc xe hai banh chan day du</title>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)']],
+        displayMath: [['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #ffffff;
+      --text: #1f2933;
+      --muted: #52616b;
+      --line: #d9e2ec;
+      --soft: #f7f9fb;
+      --accent: #9f3a18;
+      --accent-soft: #fff4ed;
+      --code-bg: #f3f6f8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.65;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 30px 34px 64px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      color: var(--accent);
+      font-size: 31px;
+      line-height: 1.25;
+      font-weight: 650;
+    }
+
+    h2 {
+      margin: 36px 0 12px;
+      padding-bottom: 7px;
+      border-bottom: 1px solid var(--line);
+      color: #263442;
+      font-size: 23px;
+      line-height: 1.3;
+    }
+
+    h3 {
+      margin: 24px 0 10px;
+      color: #263442;
+      font-size: 18px;
+    }
+
+    p {
+      margin: 9px 0;
+    }
+
+    code {
+      padding: 1px 4px;
+      border-radius: 4px;
+      background: var(--code-bg);
+      font-family: Consolas, "SFMono-Regular", monospace;
+      font-size: 0.94em;
+    }
+
+    pre {
+      margin: 12px 0;
+      padding: 13px 15px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--code-bg);
+      font-family: Consolas, "SFMono-Regular", monospace;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .subtitle {
+      margin: 0 0 22px;
+      color: var(--muted);
+      max-width: 900px;
+    }
+
+    .toc {
+      margin: 24px 0 28px;
+      padding: 15px 18px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--soft);
+    }
+
+    .toc strong {
+      display: block;
+      margin-bottom: 8px;
+      color: #243b53;
+    }
+
+    .toc a {
+      display: inline-block;
+      margin: 3px 18px 3px 0;
+      color: #1d5a7a;
+      text-decoration: none;
+    }
+
+    .toc a:hover {
+      text-decoration: underline;
+    }
+
+    .note {
+      margin: 14px 0;
+      padding: 12px 14px;
+      border-left: 4px solid var(--accent);
+      background: var(--accent-soft);
+      color: #3a2a22;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 18px;
+    }
+
+    .definition-list {
+      display: grid;
+      grid-template-columns: minmax(170px, 250px) 1fr;
+      gap: 7px 18px;
+      margin: 12px 0 18px;
+    }
+
+    .definition-list dt {
+      color: #243b53;
+      font-weight: 650;
+    }
+
+    .definition-list dd {
+      margin: 0;
+    }
+
+    .eq {
+      margin: 12px 0;
+      padding: 11px 13px;
+      border-left: 3px solid #cbd5e1;
+      background: #fbfdff;
+      overflow-x: auto;
+    }
+
+    .eq-title {
+      display: block;
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 650;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .step {
+      margin: 20px 0;
+      padding-top: 2px;
+    }
+
+    .step-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      margin-right: 7px;
+      border-radius: 50%;
+      background: #263442;
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 700;
+      vertical-align: 1px;
+    }
+
+    table {
+      width: 100%;
+      margin: 13px 0 20px;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+
+    th,
+    td {
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: var(--soft);
+      color: #243b53;
+      font-weight: 650;
+    }
+
+    @media (max-width: 760px) {
+      main {
+        padding: 22px 16px 46px;
+      }
+
+      h1 {
+        font-size: 26px;
+      }
+
+      .grid-2,
+      .definition-list {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Phân tích động lực học xe hai bánh có hai chân</h1>
+  <p class="subtitle">
+    Tài liệu này trình bày từng bước cách lập mô hình động lực học đầy đủ theo đúng cấu trúc đang dùng trong
+    <code>print_full_vehicle_AB_mau.m</code>. Mục tiêu là đi từ hình học, lực tác dụng, phương trình Newton-Euler,
+    sau đó tuyến tính hóa để thu được ma trận \(A\), \(B\).
+  </p>
+
+  <nav class="toc" aria-label="Muc luc">
+    <strong>Mục lục</strong>
+    <a href="#goal">1. Mục tiêu mô hình</a>
+    <a href="#coordinates">2. Hệ trục và ký hiệu</a>
+    <a href="#kinematics">3. Động học</a>
+    <a href="#forces">4. Lực và mô men</a>
+    <a href="#dynamics">5. Phương trình động lực học</a>
+    <a href="#implicit">6. Dạng ẩn của hệ</a>
+    <a href="#linearization">7. Tuyến tính hóa</a>
+    <a href="#matlab-flow">8. Luồng code MATLAB</a>
+  </nav>
+
+  <section id="goal">
+    <h2>1. Mục tiêu mô hình</h2>
+    <p>
+      Ta xét robot gồm 5 khối cứng chính: bánh trái, bánh phải, chân trái, chân phải và thân xe. Hai bánh tiếp xúc
+      với mặt đất và lăn không trượt. Hai chân nối từ trục bánh lên cụm hông/thân. Thân có góc nghiêng riêng
+      \(\theta_b\).
+    </p>
+    <p>
+      Mục tiêu cuối cùng là lập mô hình trạng thái tuyến tính quanh vị trí cân bằng thẳng đứng:
+    </p>
+    <div class="eq">
+      \[
+      \dot{\mathbf{x}} = A\mathbf{x} + B\mathbf{u}
+      \]
+    </div>
+    <p>
+      Trong đó vector trạng thái và vector đầu vào được chọn giống trong code:
+    </p>
+    <div class="eq">
+      \[
+      \mathbf{x} =
+      \begin{bmatrix}
+      x & \dot{x} & \psi & \dot{\psi} &
+      \theta_{l,l} & \dot{\theta}_{l,l} &
+      \theta_{l,r} & \dot{\theta}_{l,r} &
+      \theta_b & \dot{\theta}_b
+      \end{bmatrix}^{T}
+      \]
+    </div>
+    <div class="eq">
+      \[
+      \mathbf{u} =
+      \begin{bmatrix}
+      T_{w,l} & T_{w,r} & T_{b,l} & T_{b,r}
+      \end{bmatrix}^{T}
+      \]
+    </div>
+    <p>
+      Ký hiệu \(l\) là bên trái, \(r\) là bên phải. Ký hiệu \(w\) liên quan đến bánh, \(b\) liên quan đến thân,
+      và \(\theta_l\) là góc chân.
+    </p>
+  </section>
+
+  <section id="coordinates">
+    <h2>2. Hệ trục và ký hiệu</h2>
+
+    <div class="step">
+      <h3><span class="step-number">1</span>Chọn hệ trục</h3>
+      <p>
+        Ta dùng hệ trục quán tính đơn giản:
+      </p>
+      <dl class="definition-list">
+        <dt>\(x\)</dt>
+        <dd>phương ngang, dương theo chiều xe tiến.</dd>
+        <dt>\(z\)</dt>
+        <dd>phương đứng, dương hướng lên.</dd>
+        <dt>\(\psi\)</dt>
+        <dd>góc yaw của xe, sinh ra khi hai bên trái/phải đi quãng đường khác nhau.</dd>
+      </dl>
+      <p>
+        Các góc \(\theta_{l,l}\), \(\theta_{l,r}\), \(\theta_b\) được đo so với phương thẳng đứng. Trong file
+        MATLAB hiện tại, ta áp dụng xấp xỉ góc nhỏ ngay từ bước lập công thức để giữ lại biến góc nhưng bỏ phi
+        tuyến lượng giác khó xử lý:
+      </p>
+      <div class="eq">
+        \[
+        \sin\theta \approx \theta,\qquad
+        \cos\theta \approx 1,\qquad
+        \dot{\theta}^{2}\approx 0
+        \]
+      </div>
+      <p>
+        Vì vậy thành phần ngang của một đoạn \(l\) được viết gần đúng là \(l\theta\), còn thành phần đứng được
+        xem gần đúng là \(l\).
+      </p>
+    </div>
+
+    <div class="step">
+      <h3><span class="step-number">2</span>Tham số hình học</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Ký hiệu</th>
+            <th>Ý nghĩa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>\(R_w\)</td>
+            <td>bán kính bánh xe.</td>
+          </tr>
+          <tr>
+            <td>\(R_l\)</td>
+            <td>nửa khoảng cách ngang giữa hai bánh; mô men yaw dùng cánh tay đòn này.</td>
+          </tr>
+          <tr>
+            <td>\(l_l, l_r\)</td>
+            <td>chiều dài chân trái/phải từ trục bánh đến hông.</td>
+          </tr>
+          <tr>
+            <td>\(l_{w,l}, l_{w,r}\)</td>
+            <td>khoảng cách từ trục bánh đến khối tâm chân trái/phải.</td>
+          </tr>
+          <tr>
+            <td>\(l_{b,l}, l_{b,r}\)</td>
+            <td>khoảng cách từ hông đến khối tâm chân trái/phải.</td>
+          </tr>
+          <tr>
+            <td>\(l_c\)</td>
+            <td>khoảng cách từ hông đến khối tâm thân.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="step">
+      <h3><span class="step-number">3</span>Tham số khối lượng và quán tính</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Ký hiệu</th>
+            <th>Ý nghĩa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>\(m_w, m_l, m_b\)</td>
+            <td>khối lượng một bánh, một chân, và thân.</td>
+          </tr>
+          <tr>
+            <td>\(I_w\)</td>
+            <td>mô men quán tính quay của bánh quanh trục bánh.</td>
+          </tr>
+          <tr>
+            <td>\(I_{l,l}, I_{l,r}\)</td>
+            <td>mô men quán tính pitch của chân trái/phải.</td>
+          </tr>
+          <tr>
+            <td>\(I_b\)</td>
+            <td>mô men quán tính pitch của thân.</td>
+          </tr>
+          <tr>
+            <td>\(I_z\)</td>
+            <td>mô men quán tính yaw của toàn xe.</td>
+          </tr>
+          <tr>
+            <td>\(g\)</td>
+            <td>gia tốc trọng trường.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="kinematics">
+    <h2>3. Động học</h2>
+    <p>
+      Động học là bước biến các góc quay thành vị trí khối tâm. Đây là phần quan trọng vì sau đó ta lấy đạo hàm
+      hai lần để đưa vào phương trình Newton.
+    </p>
+
+    <div class="step">
+      <h3><span class="step-number">1</span>Vị trí ngang trung bình của xe</h3>
+      <p>
+        Vì bánh lăn không trượt, dịch chuyển ngang của mỗi bánh tỉ lệ với góc quay bánh:
+      </p>
+      <div class="eq">
+        \[
+        x_{w,l} = R_w\theta_{w,l},
+        \qquad
+        x_{w,r} = R_w\theta_{w,r}
+        \]
+      </div>
+      <p>
+        Tọa độ ngang \(x\) trong vector trạng thái được lấy là trung bình chuyển động của hai bánh:
+      </p>
+      <div class="eq">
+        \[
+        x = \frac{R_w}{2}\left(\theta_{w,l}+\theta_{w,r}\right)
+        \]
+      </div>
+      <p>
+        Code không cần giữ riêng biểu thức \(x\) này vì gia tốc ngang được viết trực tiếp:
+      </p>
+      <div class="eq">
+        \[
+        \ddot{x} = \frac{R_w}{2}\left(\ddot{\theta}_{w,l}+\ddot{\theta}_{w,r}\right)
+        \]
+      </div>
+    </div>
+
+    <div class="step">
+      <h3><span class="step-number">2</span>Góc yaw từ chênh lệch hai bên</h3>
+      <p>
+        Yaw xuất hiện khi tọa độ phía phải và phía trái không bằng nhau. Chênh lệch này gồm phần lăn của bánh và
+        phần lệch ngang do chân nghiêng:
+      </p>
+      <div class="eq">
+        \[
+        \psi =
+        \frac{R_w}{2R_l}\left(-\theta_{w,l}+\theta_{w,r}\right)
+        -\frac{l_l}{2R_l}\theta_{l,l}
+        +\frac{l_r}{2R_l}\theta_{l,r}
+        \]
+      </div>
+      <p>
+        Lấy đạo hàm hai lần, ta có gia tốc yaw:
+      </p>
+      <div class="eq">
+        \[
+        \ddot{\psi}
+        =
+        \frac{R_w}{2R_l}
+        \left(-\ddot{\theta}_{w,l}+\ddot{\theta}_{w,r}\right)
+        -\frac{l_l}{2R_l}\ddot{\theta}_{l,l}
+        +\frac{l_r}{2R_l}\ddot{\theta}_{l,r}
+        \]
+      </div>
+    </div>
+
+    <div class="step">
+      <h3><span class="step-number">3</span>Vị trí hông</h3>
+      <p>
+        Hông được lấy là điểm trung bình của hai đầu trên chân trái/phải:
+      </p>
+      <div class="eq">
+        \[
+        x_h =
+        \frac{R_w}{2}\left(\theta_{w,l}+\theta_{w,r}\right)
+        +\frac{l_l}{2}\theta_{l,l}
+        +\frac{l_r}{2}\theta_{l,r}
+        \]
+      </div>
+      <div class="eq">
+        \[
+        z_h =
+        \frac{l_l}{2}
+        +\frac{l_r}{2}
+        \]
+      </div>
+      <p>
+        Hai biểu thức này là cầu nối giữa chuyển động của chân và chuyển động của thân.
+      </p>
+    </div>
+
+    <div class="step">
+      <h3><span class="step-number">4</span>Vị trí khối tâm thân</h3>
+      <p>
+        Khối tâm thân cách hông một đoạn \(l_c\). Nếu thân nghiêng góc \(\theta_b\), vị trí khối tâm thân là:
+      </p>
+      <div class="eq">
+        \[
+        x_b = x_h - l_c\theta_b
+        \]
+      </div>
+      <div class="eq">
+        \[
+        z_b = z_h + l_c
+        \]
+      </div>
+      <p>
+        Đây là điểm khác quan trọng so với mô hình rút gọn. Trong xấp xỉ góc nhỏ, \(x_b\) vẫn phụ thuộc tuyến tính
+        vào \(\theta_b\), nên góc nghiêng thân vẫn ảnh hưởng ngược lại đến gia tốc ngang, yaw và chân.
+      </p>
+    </div>
+
+    <div class="step">
+      <h3><span class="step-number">5</span>Vị trí khối tâm chân</h3>
+      <p>
+        Với chân trái:
+      </p>
+      <div class="eq">
+        \[
+        x_{l,l} = R_w\theta_{w,l}+l_{w,l}\theta_{l,l}
+        \]
+      </div>
+      <div class="eq">
+        \[
+        z_{l,l} = z_h-l_{b,l}
+        \]
+      </div>
+      <p>
+        Với chân phải:
+      </p>
+      <div class="eq">
+        \[
+        x_{l,r} = R_w\theta_{w,r}+l_{w,r}\theta_{l,r}
+        \]
+      </div>
+      <div class="eq">
+        \[
+        z_{l,r} = z_h-l_{b,r}
+        \]
+      </div>
+    </div>
+  </section>
+
+  <section id="forces">
+    <h2>4. Lực và mô men</h2>
+    <p>
+      Trước khi viết phương trình, cần thống nhất dấu của lực. File MATLAB dùng quy ước \(x\) ngang, \(z\) đứng.
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Ký hiệu</th>
+          <th>Ý nghĩa theo quy ước trong code</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>\(f_i\)</td>
+          <td>lực ma sát mặt đất tác dụng lên bánh bên \(i\), theo phương \(x\).</td>
+        </tr>
+        <tr>
+          <td>\(F_{wx,i}\)</td>
+          <td>lực của bánh tác dụng lên chân bên \(i\), theo phương \(x\).</td>
+        </tr>
+        <tr>
+          <td>\(F_{wz,i}\)</td>
+          <td>lực của bánh tác dụng lên chân bên \(i\), theo phương \(z\).</td>
+        </tr>
+        <tr>
+          <td>\(F_{bx,i}\)</td>
+          <td>lực của chân tác dụng lên thân bên \(i\), theo phương \(x\).</td>
+        </tr>
+        <tr>
+          <td>\(F_{bz,i}\)</td>
+          <td>lực của chân tác dụng lên thân bên \(i\), theo phương \(z\).</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="note">
+      Trong phương trình của chân, \(F_{bx,i}\) và \(F_{bz,i}\) đi với dấu âm vì đó là lực chân tác dụng lên thân.
+      Theo định luật III Newton, thân tác dụng ngược lại lên chân một lực \(-F_{bx,i}\), \(-F_{bz,i}\).
+    </div>
+
+    <p>
+      Các mô men điều khiển là:
+    </p>
+    <dl class="definition-list">
+      <dt>\(T_{w,l}, T_{w,r}\)</dt>
+      <dd>mô men động cơ bánh trái/phải.</dd>
+      <dt>\(T_{b,l}, T_{b,r}\)</dt>
+      <dd>mô men khớp hông/thân tác dụng lên chân trái/phải.</dd>
+    </dl>
+  </section>
+
+  <section id="dynamics">
+    <h2>5. Phương trình động lực học</h2>
+    <p>
+      Ta viết từng phương trình theo dạng:
+    </p>
+    <div class="eq">
+      \[
+      E_i = \text{vế trái} - \text{vế phải} = 0
+      \]
+    </div>
+    <p>
+      Đây là cùng cấu trúc với code MATLAB, giúp gom toàn bộ hệ thành vector \(E\).
+    </p>
+
+    <div class="step">
+      <h3><span class="step-number">1</span>Bánh trái</h3>
+      <p>
+        Phương trình tịnh tiến theo \(x\). Bánh chịu lực ma sát mặt đất \(f_l\) và phản lực từ chân
+        \(-F_{wx,l}\):
+      </p>
+      <div class="eq">
+        <span class="eq-title">E(1)</span>
+        \[
+        m_w R_w\ddot{\theta}_{w,l} = f_l - F_{wx,l}
+        \]
+      </div>
+      <p>
+        Phương trình quay quanh trục bánh. Mô men động cơ \(T_{w,l}\) làm bánh quay, còn lực ma sát tạo mô men
+        ngược chiều \(f_lR_w\):
+      </p>
+      <div class="eq">
+        <span class="eq-title">E(2)</span>
+        \[
+        I_w\ddot{\theta}_{w,l} = T_{w,l}-f_lR_w
+        \]
+      </div>
+    </div>
+
+    <div class="step">
+      <h3><span class="step-number">2</span>Bánh phải</h3>
+      <div class="eq">
+        <span class="eq-title">E(3)</span>
+        \[
+        m_w R_w\ddot{\theta}_{w,r} = f_r - F_{wx,r}
+        \]
+      </div>
+      <div class="eq">
+        <span class="eq-title">E(4)</span>
+        \[
+        I_w\ddot{\theta}_{w,r} = T_{w,r}-f_rR_w
+        \]
+      </div>
+      <p>
+        Hai phương trình bánh trái/phải giống nhau, chỉ khác chỉ số \(l,r\).
+      </p>
+    </div>
+
+    <div class="step">
+      <h3><span class="step-number">3</span>Chân trái: tịnh tiến</h3>
+      <p>
+        Theo phương \(x\), chân nhận lực \(F_{wx,l}\) từ bánh và nhận phản lực \(-F_{bx,l}\) từ thân:
+      </p>
+      <div class="eq">
+        <span class="eq-title">E(5)</span>
+        \[
+        m_l\ddot{x}_{l,l}=F_{wx,l}-F_{bx,l}
+        \]
+      </div>
+      <p>
+        Theo phương \(z\), sau xấp xỉ \(\cos\theta\approx 1\), tọa độ đứng của chân là hằng số nên gia tốc đứng
+        bằng 0. Phương trình còn lại là cân bằng lực đứng:
+      </p>
+      <div class="eq">
+        <span class="eq-title">E(6)</span>
+        \[
+        0=F_{wz,l}-F_{bz,l}-m_lg
+        \]
+      </div>
+    </div>
+
+    <div class="step">
+      <h3><span class="step-number">4</span>Chân trái: quay quanh khối tâm chân</h3>
+      <p>
+        Mô men quanh khối tâm chân được tạo bởi các lực ở hai đầu chân và hai mô men động cơ. Sau xấp xỉ góc nhỏ,
+        thành phần lực đứng nhân với cánh tay đòn ngang cho hạng tuyến tính theo \(\theta_{l,l}\), còn thành phần
+        lực ngang dùng cánh tay đòn đứng gần bằng chiều dài tương ứng.
+      </p>
+      <div class="eq">
+        <span class="eq-title">E(7)</span>
+        \[
+        I_{l,l}\ddot{\theta}_{l,l}
+        =
+        \left(F_{wz,l}l_{w,l}+F_{bz,l}l_{b,l}\right)\theta_{l,l}
+        -
+        \left(F_{wx,l}l_{w,l}+F_{bx,l}l_{b,l}\right)
+        -
+        T_{w,l}+T_{b,l}
+        \]
+      </div>
+      <p>
+        Dấu của \(T_{w,l}\) và \(T_{b,l}\) phụ thuộc quy ước mô men giữa bánh-chân và thân-chân. Ở đây ta giữ đúng
+        quy ước đang dùng trong code.
+      </p>
+    </div>
+
+    <div class="step">
+      <h3><span class="step-number">5</span>Chân phải</h3>
+      <p>
+        Tương tự chân trái:
+      </p>
+      <div class="eq">
+        <span class="eq-title">E(8)</span>
+        \[
+        m_l\ddot{x}_{l,r}=F_{wx,r}-F_{bx,r}
+        \]
+      </div>
+      <div class="eq">
+        <span class="eq-title">E(9)</span>
+        \[
+        0=F_{wz,r}-F_{bz,r}-m_lg
+        \]
+      </div>
+      <div class="eq">
+        <span class="eq-title">E(10)</span>
+        \[
+        I_{l,r}\ddot{\theta}_{l,r}
+        =
+        \left(F_{wz,r}l_{w,r}+F_{bz,r}l_{b,r}\right)\theta_{l,r}
+        -
+        \left(F_{wx,r}l_{w,r}+F_{bx,r}l_{b,r}\right)
+        -
+        T_{w,r}+T_{b,r}
+        \]
+      </div>
+    </div>
+
+    <div class="step">
+      <h3><span class="step-number">6</span>Thân xe: tịnh tiến</h3>
+      <p>
+        Thân nhận lực từ hai chân. Do \(F_{bx,i}\), \(F_{bz,i}\) được định nghĩa là lực chân tác dụng lên thân,
+        các lực này đi dấu dương trong phương trình thân:
+      </p>
+      <div class="eq">
+        <span class="eq-title">E(11)</span>
+        \[
+        m_b\ddot{x}_b=F_{bx,l}+F_{bx,r}
+        \]
+      </div>
+      <div class="eq">
+        <span class="eq-title">E(12)</span>
+        \[
+        0=F_{bz,l}+F_{bz,r}-m_bg
+        \]
+      </div>
+    </div>
+
+    <div class="step">
+      <h3><span class="step-number">7</span>Thân xe: quay pitch</h3>
+      <p>
+        Thân chịu mô men khớp hông và mô men do lực từ hai chân đặt lệch khỏi khối tâm thân một đoạn \(l_c\).
+      </p>
+      <div class="eq">
+        <span class="eq-title">E(13)</span>
+        \[
+        I_b\ddot{\theta}_b
+        =
+        -\left(T_{b,l}+T_{b,r}\right)
+        -\left(F_{bx,l}+F_{bx,r}\right)l_c
+        +\left(F_{bz,l}+F_{bz,r}\right)l_c\theta_b
+        \]
+      </div>
+      <p>
+        Thành phần \(F_{bx}\) dùng cánh tay đòn gần \(l_c\). Thành phần \(F_{bz}\) dùng cánh tay đòn ngang gần
+        \(l_c\theta_b\). Vì vậy lực đứng cân bằng vẫn tạo ra hạng tuyến tính theo \(\theta_b\), không bị mất đi.
+      </p>
+    </div>
+
+    <div class="step">
+      <h3><span class="step-number">8</span>Yaw toàn xe</h3>
+      <p>
+        Chênh lệch lực ma sát hai bánh tạo mô men yaw quanh trục đứng. Với cánh tay đòn \(R_l\):
+      </p>
+      <div class="eq">
+        <span class="eq-title">E(14)</span>
+        \[
+        I_z\ddot{\psi}=\left(-f_l+f_r\right)R_l
+        \]
+      </div>
+      <p>
+        Nếu \(f_r>f_l\), xe có xu hướng quay yaw theo chiều dương của quy ước hiện tại.
+      </p>
+    </div>
+
+    <div class="step">
+      <h3><span class="step-number">9</span>Ràng buộc lực đứng hai bên</h3>
+      <p>
+        Vì mô hình này chưa đưa roll vào state chính, ta dùng một ràng buộc đơn giản để đóng hệ: lực đứng từ bánh
+        lên chân ở hai bên bằng nhau.
+      </p>
+      <div class="eq">
+        <span class="eq-title">E(15)</span>
+        \[
+        F_{wz,l}-F_{wz,r}=0
+        \]
+      </div>
+      <p>
+        Ràng buộc này thay thế cho việc mô hình hóa đầy đủ động lực học roll và phân bố tải trái/phải.
+      </p>
+    </div>
+  </section>
+
+  <section id="implicit">
+    <h2>6. Gom hệ phương trình về dạng ẩn</h2>
+    <p>
+      Sau 15 phương trình trên, ta có một hệ đại số-vi phân theo gia tốc và lực trong. Thay vì giải tay ra từng
+      gia tốc, code gom các ẩn vào vector \(\mathbf{z}\):
+    </p>
+    <div class="eq">
+      \[
+      \mathbf{z}=
+      \begin{bmatrix}
+      \ddot{\theta}_{w,l} &
+      \ddot{\theta}_{w,r} &
+      \ddot{\theta}_{l,l} &
+      \ddot{\theta}_{l,r} &
+      \ddot{\theta}_b &
+      f_l & f_r &
+      F_{wx,l} & F_{wx,r} &
+      F_{wz,l} & F_{wz,r} &
+      F_{bx,l} & F_{bx,r} &
+      F_{bz,l} & F_{bz,r}
+      \end{bmatrix}^{T}
+      \]
+    </div>
+    <p>
+      Toàn bộ phương trình được viết gọn:
+    </p>
+    <div class="eq">
+      \[
+      E(\mathbf{z},\mathbf{x},\mathbf{u})=0
+      \]
+    </div>
+
+    <h3>Đổi tốc độ bánh sang state đã chọn</h3>
+    <p>
+      Trong vector trạng thái ta không chọn \(\dot{\theta}_{w,l}\), \(\dot{\theta}_{w,r}\). Ta chọn \(\dot{x}\)
+      và \(\dot{\psi}\). Vì vậy cần biến đổi tốc độ bánh theo state.
+    </p>
+    <div class="eq">
+      \[
+      \dot{\theta}_{w,l}
+      =
+      \frac{\dot{x}}{R_w}
+      -\frac{R_l\dot{\psi}}{R_w}
+      -\frac{l_l\dot{\theta}_{l,l}}{2R_w}
+      +\frac{l_r\dot{\theta}_{l,r}}{2R_w}
+      \]
+    </div>
+    <div class="eq">
+      \[
+      \dot{\theta}_{w,r}
+      =
+      \frac{\dot{x}}{R_w}
+      +\frac{R_l\dot{\psi}}{R_w}
+      +\frac{l_l\dot{\theta}_{l,l}}{2R_w}
+      -\frac{l_r\dot{\theta}_{l,r}}{2R_w}
+      \]
+    </div>
+    <p>
+      Đây chính là phần code <code>dtheta_w_l_state</code> và <code>dtheta_w_r_state</code>.
+    </p>
+
+    <h3>Vector đạo hàm trạng thái</h3>
+    <p>
+      Sau khi có các gia tốc trong \(\mathbf{z}\), đạo hàm trạng thái có dạng:
+    </p>
+    <div class="eq">
+      \[
+      \dot{\mathbf{x}} =
+      \begin{bmatrix}
+      \dot{x}\\
+      \ddot{x}\\
+      \dot{\psi}\\
+      \ddot{\psi}\\
+      \dot{\theta}_{l,l}\\
+      \ddot{\theta}_{l,l}\\
+      \dot{\theta}_{l,r}\\
+      \ddot{\theta}_{l,r}\\
+      \dot{\theta}_{b}\\
+      \ddot{\theta}_{b}
+      \end{bmatrix}
+      \]
+    </div>
+    <div class="eq">
+      \[
+      \ddot{x}
+      =
+      \frac{R_w}{2}
+      \left(\ddot{\theta}_{w,l}+\ddot{\theta}_{w,r}\right)
+      \]
+    </div>
+    <div class="eq">
+      \[
+      \ddot{\psi}
+      =
+      \frac{R_w}{2R_l}
+      \left(-\ddot{\theta}_{w,l}+\ddot{\theta}_{w,r}\right)
+      -\frac{l_l}{2R_l}\ddot{\theta}_{l,l}
+      +\frac{l_r}{2R_l}\ddot{\theta}_{l,r}
+      \]
+    </div>
+  </section>
+
+  <section id="linearization">
+    <h2>7. Tuyến tính hóa quanh điểm cân bằng</h2>
+
+    <div class="note">
+      Trong phiên bản code hiện tại, xấp xỉ góc nhỏ đã được áp dụng trước bước này:
+      \(\sin\theta\rightarrow\theta\), \(\cos\theta\rightarrow 1\), \(\dot{\theta}^2\rightarrow 0\).
+      Vì vậy tuyến tính hóa ở đây chủ yếu là lấy Jacobian của hệ đã đơn giản hóa rồi thay giá trị cân bằng của
+      lực, gia tốc và input.
+    </div>
+
+    <div class="step">
+      <h3><span class="step-number">1</span>Chọn điểm cân bằng</h3>
+      <p>
+        Điểm cân bằng đang dùng là xe đứng thẳng, không quay, không chạy, mô men đầu vào bằng 0:
+      </p>
+      <div class="eq">
+        \[
+        \mathbf{x}_e=0,\qquad \mathbf{u}_e=0
+        \]
+      </div>
+      <p>
+        Các gia tốc và lực ngang tại cân bằng bằng 0:
+      </p>
+      <div class="eq">
+        \[
+        \ddot{\theta}_{w,l}=
+        \ddot{\theta}_{w,r}=
+        \ddot{\theta}_{l,l}=
+        \ddot{\theta}_{l,r}=
+        \ddot{\theta}_b=
+        f_l=f_r=F_{wx,l}=F_{wx,r}=F_{bx,l}=F_{bx,r}=0
+        \]
+      </div>
+      <p>
+        Lực đứng tại cân bằng:
+      </p>
+      <div class="eq">
+        \[
+        F_{wz,l}=F_{wz,r}=
+        \left(\frac{m_b}{2}+m_l\right)g
+        \]
+      </div>
+      <div class="eq">
+        \[
+        F_{bz,l}=F_{bz,r}=\frac{m_bg}{2}
+        \]
+      </div>
+      <p>
+        Nghĩa là mỗi chân đỡ nửa thân, còn mỗi bánh truyền lên chân lực đứng bằng trọng lượng một chân cộng nửa
+        trọng lượng thân.
+      </p>
+    </div>
+
+    <div class="step">
+      <h3><span class="step-number">2</span>Tuyến tính hóa hệ ẩn</h3>
+      <p>
+        Từ hệ đã xấp xỉ góc nhỏ:
+      </p>
+      <div class="eq">
+        \[
+        E(\mathbf{z},\mathbf{x},\mathbf{u})=0
+        \]
+      </div>
+      <p>
+        Lấy vi phân nhỏ quanh điểm cân bằng. Bước này không còn thay sin/cos nữa; sin/cos đã được xử lý ở phần
+        động học và mô men phía trên.
+      </p>
+      <div class="eq">
+        \[
+        E_z\delta\mathbf{z}
+        +E_x\delta\mathbf{x}
+        +E_u\delta\mathbf{u}=0
+        \]
+      </div>
+      <p>
+        Suy ra:
+      </p>
+      <div class="eq">
+        \[
+        \delta\mathbf{z}
+        =
+        -E_z^{-1}E_x\delta\mathbf{x}
+        -E_z^{-1}E_u\delta\mathbf{u}
+        \]
+      </div>
+      <p>
+        Trong code MATLAB, hai ma trận này là:
+      </p>
+      <pre><code>z_x = simplify(-E_z \ E_x);
+z_u = simplify(-E_z \ E_u);</code></pre>
+    </div>
+
+    <div class="step">
+      <h3><span class="step-number">3</span>Tuyến tính hóa phương trình trạng thái</h3>
+      <p>
+        Vì \(\dot{\mathbf{x}}\) phụ thuộc vào \(\mathbf{x}\), \(\mathbf{u}\), và \(\mathbf{z}\), ta viết:
+      </p>
+      <div class="eq">
+        \[
+        \dot{\mathbf{x}}=f_s(\mathbf{x},\mathbf{u},\mathbf{z})
+        \]
+      </div>
+      <p>
+        Vi phân:
+      </p>
+      <div class="eq">
+        \[
+        \delta\dot{\mathbf{x}}
+        =
+        f_{s,x}\delta\mathbf{x}
+        +f_{s,u}\delta\mathbf{u}
+        +f_{s,z}\delta\mathbf{z}
+        \]
+      </div>
+      <p>
+        Thay \(\delta\mathbf{z}\) ở bước trước vào:
+      </p>
+      <div class="eq">
+        \[
+        A=f_{s,x}+f_{s,z}z_x
+        \]
+      </div>
+      <div class="eq">
+        \[
+        B=f_{s,u}+f_{s,z}z_u
+        \]
+      </div>
+      <p>
+        Đây là lý do file MATLAB không cần giải tay toàn bộ gia tốc. MATLAB lấy Jacobian và dùng vi phân ẩn để
+        tạo trực tiếp \(A\), \(B\).
+      </p>
+    </div>
+  </section>
+
+  <section id="matlab-flow">
+    <h2>8. Luồng code MATLAB tương ứng</h2>
+    <p>
+      Có thể đọc file MATLAB theo các khối sau:
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th>Khối trong code</th>
+          <th>Vai trò</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>syms ...</code></td>
+          <td>Khai báo biến thời gian, tham số, lực trong, mô men và state.</td>
+        </tr>
+        <tr>
+          <td><code>yaw_expr</code>, <code>x_hip</code>, <code>z_hip</code></td>
+          <td>Lập động học yaw và vị trí hông sau xấp xỉ góc nhỏ.</td>
+        </tr>
+        <tr>
+          <td><code>x_body</code>, <code>z_body</code></td>
+          <td>Lập vị trí khối tâm thân có xét offset \(l_c\), với \(x_b\) còn phụ thuộc tuyến tính vào \(\theta_b\).</td>
+        </tr>
+        <tr>
+          <td><code>x_leg_l/r</code>, <code>z_leg_l/r</code></td>
+          <td>Lập vị trí khối tâm chân trái/phải theo dạng đã bỏ sin/cos phi tuyến.</td>
+        </tr>
+        <tr>
+          <td><code>E(1)</code> đến <code>E(15)</code></td>
+          <td>15 phương trình Newton-Euler và ràng buộc lực đứng hai bên.</td>
+        </tr>
+        <tr>
+          <td><code>olds</code>, <code>news</code></td>
+          <td>Thay đạo hàm theo thời gian bằng biến state và ẩn gia tốc.</td>
+        </tr>
+        <tr>
+          <td><code>z</code></td>
+          <td>Vector 15 ẩn gồm gia tốc và lực trong.</td>
+        </tr>
+        <tr>
+          <td><code>xdot</code></td>
+          <td>Vector đạo hàm trạng thái.</td>
+        </tr>
+        <tr>
+          <td><code>x_eq</code>, <code>u_eq</code>, <code>z_eq</code></td>
+          <td>Điểm cân bằng để tuyến tính hóa.</td>
+        </tr>
+        <tr>
+          <td><code>E_z</code>, <code>E_x</code>, <code>E_u</code></td>
+          <td>Jacobian của hệ phương trình ẩn.</td>
+        </tr>
+        <tr>
+          <td><code>A_sym</code>, <code>B_sym</code></td>
+          <td>Ma trận trạng thái và ma trận đầu vào sau tuyến tính hóa.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Ghi chú khi dùng mô hình này cho LQR</h3>
+    <p>
+      Sau khi có \(A\), \(B\), có thể thay tham số số và dùng LQR cho state:
+    </p>
+    <div class="eq">
+      \[
+      \mathbf{x} =
+      \begin{bmatrix}
+      x & \dot{x} & \psi & \dot{\psi} &
+      \theta_{l,l} & \dot{\theta}_{l,l} &
+      \theta_{l,r} & \dot{\theta}_{l,r} &
+      \theta_b & \dot{\theta}_b
+      \end{bmatrix}^{T}
+      \]
+    </div>
+    <p>
+      Nếu dùng với planning, planner thường cho đường tham chiếu \(x_{ref}(t)\), \(\psi_{ref}(t)\), hoặc chuyển
+      sang sai lệch bám đường như \(e_y,e_\psi\). Khi đó mô hình động lực học này vẫn là lõi để tính phản hồi mô men
+      bánh và mô men hông.
+    </p>
+
+    <div class="note">
+      Tài liệu này mô tả đúng hướng "phân tích từ đầu": xuất phát từ động học và Newton-Euler, không lấy trực tiếp
+      hệ phương trình rút gọn làm điểm bắt đầu.
+    </div>
+  </section>
+</main>
+</body>
+</html>
+

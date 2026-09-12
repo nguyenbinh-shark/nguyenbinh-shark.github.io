@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="360" viewBox="0 0 800 360" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="dfilter-title dfilter-desc">
+  <title id="dfilter-title">Bộ lọc thông thấp cho khâu vi phân D</title>
+  <desc id="dfilter-desc">So sánh tín hiệu khâu D thô bị nhiễu tạo gai nhọn răng cưa dữ dội và tín hiệu D sau khi qua bộ lọc thông thấp bậc một êm ái.</desc>
+  <defs>
+    <marker id="arr-axis-d" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#64748b"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+      .code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    </style>
+  </defs>
+
+  <rect width="800" height="360" rx="12" fill="#ffffff"/>
+  <rect x="1" y="1" width="798" height="358" rx="11" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Panel 1: Khâu D thô (Bị nhiễu răng cưa) -->
+  <g transform="translate(40, 25)">
+    <rect width="720" height="140" rx="8" fill="#fff1f2" stroke="#fecdd3" stroke-width="1.2"/>
+    <text x="16" y="24" font-size="13.5" font-weight="800" fill="#9f1239">1. Khâu D thô (Raw D) — Không lọc</text>
+    <text x="350" y="24" font-size="11" fill="#be123c">Nhiễu ADC ±0.5°C bị khuếch đại thành bão gai nhọn</text>
+
+    <!-- Axes -->
+    <line x1="50" y1="80" x2="700" y2="80" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3 3"/>
+    <line x1="50" y1="125" x2="700" y2="125" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-axis-d)"/>
+    <line x1="50" y1="125" x2="50" y2="35" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-axis-d)"/>
+    <text x="45" y="32" text-anchor="end" font-size="10" font-weight="700" fill="#64748b">D_term</text>
+
+    <!-- Jagged Raw D Waveform -->
+    <path d="M 50 80 L 70 45 L 85 110 L 105 35 L 125 115 L 145 40 L 165 105 L 185 50 L 205 110 L 230 45 L 255 105 L 280 55 L 310 95 L 340 60 L 370 100 L 400 65 L 430 95 L 470 70 L 510 90 L 550 72 L 600 85 L 650 78 L 690 80" fill="none" stroke="#e11d48" stroke-width="1.8"/>
+
+    <!-- Warning Tag -->
+    <rect x="580" y="38" width="120" height="24" rx="4" fill="#ffffff" stroke="#e11d48" stroke-width="1"/>
+    <text x="640" y="54" text-anchor="middle" font-size="10" font-weight="800" fill="#e11d48">⚡ Động cơ rung giật</text>
+  </g>
+
+  <!-- Panel 2: Khâu D đã qua bộ lọc thông thấp -->
+  <g transform="translate(40, 185)">
+    <rect width="720" height="145" rx="8" fill="#f0fdfa" stroke="#ccfbf1" stroke-width="1.2"/>
+    <text x="16" y="24" font-size="13.5" font-weight="800" fill="#0f766e">2. Khâu D đã lọc (Filtered D) — Bộ lọc thông thấp bậc một</text>
+    <text x="430" y="24" font-size="11" fill="#115e59" class="code">D_filt = α·D_raw + (1-α)·D_filt</text>
+
+    <!-- Axes -->
+    <line x1="50" y1="80" x2="700" y2="80" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3 3"/>
+    <line x1="50" y1="125" x2="700" y2="125" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-axis-d)"/>
+    <line x1="50" y1="125" x2="50" y2="35" stroke="#64748b" stroke-width="1.5" marker-end="url(#arr-axis-d)"/>
+    <text x="45" y="32" text-anchor="end" font-size="10" font-weight="700" fill="#64748b">D_term</text>
+
+    <!-- Smooth Filtered D Waveform -->
+    <path d="M 50 80 C 110 55, 180 60, 260 70 C 350 82, 450 78, 550 80 C 620 80, 660 80, 690 80" fill="none" stroke="#0d9488" stroke-width="2.5"/>
+
+    <!-- Smooth Tag -->
+    <rect x="580" y="38" width="120" height="24" rx="4" fill="#ffffff" stroke="#0d9488" stroke-width="1"/>
+    <text x="640" y="54" text-anchor="middle" font-size="10" font-weight="800" fill="#0d9488">✅ Phanh êm ái</text>
+  </g>
+</svg>

@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="880" viewBox="0 0 1200 880" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="title desc">
+  <title id="title">Bảng tra cứu triệu chứng và cách nêm PID</title>
+  <desc id="desc">Bảng hướng dẫn chẩn đoán hiện tượng, nguyên nhân cốt lõi và hướng vặn các núm P, I, D trong thực tế điều khiển.</desc>
+  <defs>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .ink { fill: #0f172a; }
+      .muted { fill: #475569; }
+      .head { fill: #334155; font-size: 15px; font-weight: 800; letter-spacing: 1px; }
+      .badge-text { font-size: 14px; font-weight: 800; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="880" fill="#f8fafc"/>
+  <text x="60" y="54" class="ink" font-size="30" font-weight="800">Bảng tra "Triệu chứng → Nguyên nhân → Cách nêm"</text>
+  <text x="60" y="86" class="muted" font-size="18">Bảo bối thực chiến: nhìn hiện tượng của đường cong để biết chính xác cần vặn núm nào.</text>
+
+  <!-- Table container -->
+  <rect x="55" y="115" width="1090" height="725" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+  
+  <!-- Header row -->
+  <path d="M 55 180 H 1145" stroke="#cbd5e1" stroke-width="2"/>
+  <rect x="56" y="116" width="1088" height="64" rx="9" fill="#f1f5f9"/>
+  <text x="90" y="156" class="head">HIỆN TƯỢNG (TRIỆU CHỨNG)</text>
+  <text x="410" y="156" class="head">NGUYÊN NHÂN CỐT LÕI</text>
+  <text x="790" y="156" class="head">HƯỚNG XỬ LÝ (VẶN NÚM NÀO?)</text>
+
+  <!-- Column dividers -->
+  <path d="M 380 115 V 840 M 760 115 V 840" stroke="#e2e8f0" stroke-width="2"/>
+
+  <!-- Row dividers -->
+  <path d="M 55 290 H 1145 M 55 400 H 1145 M 55 510 H 1145 M 55 620 H 1145 M 55 730 H 1145" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Row 1: Dao động / Lắc lư liên tục -->
+  <rect x="56" y="181" width="8" height="109" fill="#ef4444"/>
+  <rect x="80" y="200" width="130" height="28" rx="6" fill="#fee2e2"/>
+  <text x="145" y="219" text-anchor="middle" fill="#b91c1c" class="badge-text">DAO ĐỘNG MẠNH</text>
+  <text x="80" y="254" class="ink" font-size="18" font-weight="700">Lắc lư qua lại quanh đích,</text>
+  <text x="80" y="276" class="muted" font-size="15">mãi không chịu đứng yên.</text>
+  
+  <text x="410" y="222" class="ink" font-size="16" font-weight="600">• Khâu P quá gắt (kéo quá đà)</text>
+  <text x="410" y="248" class="ink" font-size="16" font-weight="600">• Hoặc khâu I tích nợ quá nhanh (Ti quá nhỏ)</text>
+  <text x="410" y="274" class="ink" font-size="16" font-weight="600">• Hoặc thiếu lực phanh D dập tắt xung</text>
+
+  <rect x="785" y="196" width="335" height="80" rx="7" fill="#f0fdf4" stroke="#bbf7d0"/>
+  <text x="800" y="224" fill="#15803d" font-size="16" font-weight="800">➔ Giảm bớt Kp</text>
+  <text x="800" y="248" fill="#15803d" font-size="16" font-weight="800">➔ Kéo dài Ti (làm sổ nợ chậm lại)</text>
+  <text x="800" y="270" fill="#15803d" font-size="16" font-weight="800">➔ Tăng nhẹ Kd (thêm phanh)</text>
+
+  <!-- Row 2: Vọt lố lớn -->
+  <rect x="56" y="291" width="8" height="109" fill="#f97316"/>
+  <rect x="80" y="310" width="115" height="28" rx="6" fill="#ffedd5"/>
+  <text x="137" y="329" text-anchor="middle" fill="#c2410c" class="badge-text">VỌT LỐ LỚN</text>
+  <text x="80" y="364" class="ink" font-size="18" font-weight="700">Lao vọt qua mặt Rùa,</text>
+  <text x="80" y="386" class="muted" font-size="15">chồm lên cao trước khi về vạch.</text>
+
+  <text x="410" y="336" class="ink" font-size="16" font-weight="600">• Quán tính tích tụ từ khâu I quá dày</text>
+  <text x="410" y="362" class="ink" font-size="16" font-weight="600">• Không nhả ga sớm khi sắp chạm vạch</text>
+  <text x="410" y="388" class="ink" font-size="16" font-weight="600">• Phanh D chưa đủ mạnh hoặc bị tắt</text>
+
+  <rect x="785" y="306" width="335" height="80" rx="7" fill="#f0fdf4" stroke="#bbf7d0"/>
+  <text x="800" y="334" fill="#15803d" font-size="16" font-weight="800">➔ Tăng khâu D (nhả ga trước đèn đỏ)</text>
+  <text x="800" y="358" fill="#15803d" font-size="16" font-weight="800">➔ Tăng Ti (giảm tốc độ ghi sổ nợ)</text>
+  <text x="800" y="380" fill="#15803d" font-size="16" font-weight="800">➔ Giảm nhẹ Kp nếu đang để quá cao</text>
+
+  <!-- Row 3: Ì ạch mãi không tới đích -->
+  <rect x="56" y="401" width="8" height="109" fill="#3b82f6"/>
+  <rect x="80" y="420" width="150" height="28" rx="6" fill="#dbeafe"/>
+  <text x="155" y="439" text-anchor="middle" fill="#1d4ed8" class="badge-text">Ì ẠCH · CHẬM CHẠP</text>
+  <text x="80" y="474" class="ink" font-size="18" font-weight="700">Tiến về đích rất êm,</text>
+  <text x="80" y="496" class="muted" font-size="15">nhưng bò mãi mất vài phút mới tới.</text>
+
+  <text x="410" y="446" class="ink" font-size="16" font-weight="600">• Lực kéo P quá yếu (nhát tay)</text>
+  <text x="410" y="472" class="ink" font-size="16" font-weight="600">• Khâu I ghi sổ quá chậm (Ti quá lớn)</text>
+  <text x="410" y="498" class="ink" font-size="16" font-weight="600">• Hoặc phanh D quá nặng ghìm chặt chân</text>
+
+  <rect x="785" y="416" width="335" height="80" rx="7" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="800" y="444" fill="#1d4ed8" font-size="16" font-weight="800">➔ Tăng Kp để tăng lực bứt phá</text>
+  <text x="800" y="468" fill="#1d4ed8" font-size="16" font-weight="800">➔ Giảm Ti để khâu I đòi nợ ráo riết hơn</text>
+  <text x="800" y="490" fill="#1d4ed8" font-size="16" font-weight="800">➔ Giảm bớt Kd nếu xe bị lì máy</text>
+
+  <!-- Row 4: Kẹt cách đích đúng 1 đoạn -->
+  <rect x="56" y="511" width="8" height="109" fill="#eab308"/>
+  <rect x="80" y="530" width="160" height="28" rx="6" fill="#fef9c3"/>
+  <text x="160" y="549" text-anchor="middle" fill="#854d0e" class="badge-text">KẸT SAI SỐ TỒN DƯ</text>
+  <text x="80" y="584" class="ink" font-size="18" font-weight="700">Đứng im phăng phắc,</text>
+  <text x="80" y="606" class="muted" font-size="15">nhưng luôn cách đích 1m (Chương 3).</text>
+
+  <text x="410" y="556" class="ink" font-size="16" font-weight="600">• Chưa bật khâu I (hoặc I = 0)</text>
+  <text x="410" y="582" class="ink" font-size="16" font-weight="600">• Lực cản/lỗ rò triệt tiêu hết lực kéo P</text>
+  <text x="410" y="608" class="ink" font-size="16" font-weight="600">• Nhớ: D không giúp được gì khi đứng im!</text>
+
+  <rect x="785" y="526" width="335" height="80" rx="7" fill="#fefce8" stroke="#fef08a"/>
+  <text x="800" y="554" fill="#854d0e" font-size="16" font-weight="800">➔ Bật khâu I (thêm cuốn sổ ghi nợ)</text>
+  <text x="800" y="578" fill="#854d0e" font-size="16" font-weight="800">➔ Giảm bớt Ti nếu I bù tải quá chậm</text>
+  <text x="800" y="600" fill="#854d0e" font-size="16" font-weight="800">➔ Khâu I là liều thuốc duy nhất cho mục này</text>
+
+  <!-- Row 5: Chạy ngày càng xa -->
+  <rect x="56" y="621" width="8" height="109" fill="#dc2626"/>
+  <rect x="80" y="640" width="165" height="28" rx="6" fill="#fee2e2"/>
+  <text x="162" y="659" text-anchor="middle" fill="#991b1b" class="badge-text">CHẠY NGÀY CÀNG XA</text>
+  <text x="80" y="694" class="ink" font-size="18" font-weight="700">Càng chạy càng lệch,</text>
+  <text x="80" y="716" class="muted" font-size="15">hệ thống phóng vút ra vô tận.</text>
+
+  <text x="410" y="666" class="ink" font-size="16" font-weight="700" fill="#dc2626">• NGƯỢC CHIỀU VÒNG LẶP (Chương 2)</text>
+  <text x="410" y="692" class="ink" font-size="16" font-weight="600">• Càng thiếu thì máy lại càng đạp lùi!</text>
+  <text x="410" y="718" class="ink" font-size="16" font-weight="600">• Dấu của tín hiệu điều khiển bị đấu sai</text>
+
+  <rect x="785" y="636" width="335" height="80" rx="7" fill="#fef2f2" stroke="#fecaca"/>
+  <text x="800" y="664" fill="#dc2626" font-size="16" font-weight="800">➔ ĐẢO DẤU / ĐẢO CHIỀU ĐIỀU KHIỂN</text>
+  <text x="800" y="688" fill="#dc2626" font-size="16" font-weight="800">➔ Đổi cực động cơ hoặc đổi dấu phép trừ</text>
+  <text x="800" y="710" fill="#dc2626" font-size="15" font-weight="700">(Không phải lỗi do nêm số sai!)</text>
+
+  <!-- Row 6: Luôn lệch dù đã nêm kỹ -->
+  <rect x="56" y="731" width="8" height="108" fill="#8b5cf6"/>
+  <rect x="80" y="750" width="165" height="28" rx="6" fill="#ede9fe"/>
+  <text x="162" y="769" text-anchor="middle" fill="#6d28d9" class="badge-text">LUÔN LỆCH 1 CHIỀU</text>
+  <text x="80" y="804" class="ink" font-size="18" font-weight="700">Màn hình báo đúng đích,</text>
+  <text x="80" y="826" class="muted" font-size="15">nhưng thực tế bên ngoài vẫn sai.</text>
+
+  <text x="410" y="776" class="ink" font-size="16" font-weight="700" fill="#6d28d9">• MẮT CẢM BIẾN BỊ LỆCH (Chương 6)</text>
+  <text x="410" y="802" class="ink" font-size="16" font-weight="600">• Máy trung thành với con số nó thấy,</text>
+  <text x="410" y="826" class="ink" font-size="16" font-weight="600">• Cảm biến đo sai thì nêm số vô ích!</text>
+
+  <rect x="785" y="746" width="335" height="80" rx="7" fill="#f5f3ff" stroke="#ddd6fe"/>
+  <text x="800" y="774" fill="#6d28d9" font-size="16" font-weight="800">➔ HIỆU CHUẨN LẠI CẢM BIẾN</text>
+  <text x="800" y="798" fill="#6d28d9" font-size="16" font-weight="800">➔ Đo đúng trước khi chỉnh số!</text>
+  <text x="800" y="820" fill="#6d28d9" font-size="15" font-weight="700">(Đừng cố vặn PID để bù cảm biến hỏng)</text>
+</svg>

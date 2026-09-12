@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="440" viewBox="0 0 1200 440" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="t24a d24a">
+  <title id="t24a">Sơ đồ khối điều khiển vị trí bánh xe cho mobile robot vi sai</title>
+  <desc id="d24a">Bộ tạo quỹ đạo đưa vào khối động học nghịch, tách thành hai kênh. Mỗi kênh có một điểm cộng so góc đặt với góc encoder, một bộ PID và một ngõ mô-men vào cơ hệ Simscape. Hai đường hồi tiếp pos_1 và pos_2 quay về hai điểm cộng, còn px và py chỉ đi ra XY Graph.</desc>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9.5 5 L 0 8.5 z" fill="#1e293b"/>
+    </marker>
+    <marker id="arf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9.5 5 L 0 8.5 z" fill="#475569"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1 { font-size: 23px; font-weight: 800; fill: #0f172a; }
+      .h2 { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .bt { font-size: 15px; font-weight: 700; fill: #0f172a; }
+      .bs { font-size: 13px; font-weight: 500; fill: #475569; }
+      .sg { font-size: 15px; font-weight: 700; fill: #1e293b; }
+      .sn { font-size: 14px; font-weight: 600; fill: #1e293b; }
+      .fb { font-size: 14px; font-weight: 600; fill: #475569; }
+      .nt { font-size: 13px; font-weight: 500; fill: #64748b; }
+      .wn { font-size: 13px; font-weight: 700; fill: #b45309; }
+      .blk { fill: #ffffff; stroke: #1e293b; stroke-width: 1.8; }
+      .ln  { fill: none; stroke: #1e293b; stroke-width: 1.8; }
+      .lf  { fill: none; stroke: #475569; stroke-width: 1.8; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="440" fill="#ffffff"/>
+  <text x="40" y="42" class="h1">Sơ đồ khối: hai vòng điều khiển vị trí bánh xe</text>
+  <text x="40" y="70" class="h2">Mỗi bánh một vòng kín riêng, đóng bằng encoder khớp quay. Vị trí robot trên sàn không tham gia điều khiển.</text>
+
+  <!-- ===== forward path ===== -->
+  <path d="M 40 225 H 80"  class="ln" marker-end="url(#ar)"/>
+  <text x="56" y="216" class="sn">t</text>
+
+  <rect x="84" y="197" width="140" height="56" class="blk"/>
+  <text x="154" y="219" text-anchor="middle" class="bt">Bộ tạo quỹ đạo</text>
+  <text x="154" y="239" text-anchor="middle" class="bs">ref_path_circle</text>
+
+  <path d="M 224 225 H 340" class="ln" marker-end="url(#ar)"/>
+  <text x="284" y="216" text-anchor="middle" class="bs">x_r , y_r , ψ_r</text>
+
+  <rect x="344" y="189" width="150" height="72" class="blk"/>
+  <text x="419" y="219" text-anchor="middle" class="bt">Động học nghịch</text>
+  <text x="419" y="239" text-anchor="middle" class="bs">xy2wheel_simple</text>
+
+  <path d="M 494 205 H 534 V 160 H 552" class="ln" marker-end="url(#ar)"/>
+  <text x="512" y="196" class="sn">φ_R*</text>
+  <path d="M 494 245 H 534 V 290 H 617" class="ln" marker-end="url(#ar)"/>
+  <text x="512" y="264" class="sn">φ_L*</text>
+
+  <path d="M 556 138 L 556 182 L 602 160 Z" class="blk"/>
+  <text x="570" y="166" class="bt">−1</text>
+  <path d="M 602 160 H 617" class="ln" marker-end="url(#ar)"/>
+
+  <circle cx="640" cy="160" r="17" class="blk"/>
+  <text x="616" y="153" class="sg">+</text>
+  <text x="657" y="140" class="sg">−</text>
+  <circle cx="640" cy="290" r="17" class="blk"/>
+  <text x="616" y="283" class="sg">+</text>
+  <text x="657" y="314" class="sg">−</text>
+
+  <path d="M 657 160 H 684" class="ln" marker-end="url(#ar)"/>
+  <text x="670" y="150" text-anchor="middle" class="sn">e₁</text>
+  <path d="M 657 290 H 684" class="ln" marker-end="url(#ar)"/>
+  <text x="670" y="280" text-anchor="middle" class="sn">e₂</text>
+
+  <rect x="688" y="132" width="152" height="56" class="blk"/>
+  <text x="764" y="154" text-anchor="middle" class="bt">PID — Bánh 1</text>
+  <text x="764" y="174" text-anchor="middle" class="bs">Kp 20 · Ki 1 · Kd 5</text>
+
+  <rect x="688" y="262" width="152" height="56" class="blk"/>
+  <text x="764" y="284" text-anchor="middle" class="bt">PID — Bánh 2</text>
+  <text x="764" y="304" text-anchor="middle" class="bs">Kp 20 · Ki 1 · Kd 5</text>
+
+  <path d="M 840 160 H 886" class="ln" marker-end="url(#ar)"/>
+  <text x="863" y="150" text-anchor="middle" class="sn">τ₁</text>
+  <path d="M 840 290 H 886" class="ln" marker-end="url(#ar)"/>
+  <text x="863" y="280" text-anchor="middle" class="sn">τ₂</text>
+
+  <rect x="890" y="120" width="150" height="220" class="blk"/>
+  <text x="965" y="208" text-anchor="middle" class="bt">Cơ hệ Simscape</text>
+  <text x="965" y="230" text-anchor="middle" class="bs">Subsystem robot</text>
+  <text x="965" y="252" text-anchor="middle" class="bs">2 bánh chủ động</text>
+
+  <!-- ===== outputs ===== -->
+  <path d="M 1040 225 H 1106" class="ln" marker-end="url(#ar)"/>
+  <text x="1073" y="216" text-anchor="middle" class="sn">px , py</text>
+  <rect x="1110" y="205" width="80" height="40" class="blk"/>
+  <text x="1150" y="230" text-anchor="middle" class="bs">XY Graph</text>
+  <text x="1150" y="266" text-anchor="middle" class="wn">không hồi tiếp</text>
+
+  <!-- ===== feedback ===== -->
+  <path d="M 1040 160 H 1085 V 100 H 640 V 141" class="lf" marker-end="url(#arf)"/>
+  <rect x="748" y="76" width="224" height="20" fill="#ffffff"/>
+  <text x="860" y="91" text-anchor="middle" class="fb">pos_1  (encoder bánh 1)</text>
+
+  <path d="M 1040 290 H 1085 V 356 H 640 V 309" class="lf" marker-end="url(#arf)"/>
+  <rect x="748" y="331" width="224" height="20" fill="#ffffff"/>
+  <text x="860" y="346" text-anchor="middle" class="fb">pos_2  (encoder bánh 2)</text>
+
+  <text x="40" y="406" class="nt">Sai số e = φ* − φ_đo  [rad]  ·  Ngõ ra PID giới hạn ở ±10 N·m  ·  Khâu Gain −1 bù chiều trục quay ngược nhau của hai khớp bánh</text>
+</svg>

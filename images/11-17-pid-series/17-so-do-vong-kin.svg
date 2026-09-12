@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="title desc">
+  <title id="title">Sơ Đồ Vòng Lặp Điều Khiển Kín PID Hoàn Chỉnh</title>
+  <desc id="desc">Sơ đồ khối kỹ thuật hoàn chỉnh: Đích đặt, Bộ so sánh, Bộ điều khiển PID (P, I, D), Cơ cấu chấp hành, Đối tượng, Nhiễu tải và Cảm biến phản hồi.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#475569"/>
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-red" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#dc2626"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .ink { fill: #0f172a; }
+      .muted { fill: #64748b; }
+      .block-title { font-size: 16px; font-weight: 800; }
+      .block-sub { font-size: 13px; font-weight: 600; }
+      .sig-name { font-size: 14px; font-weight: 700; fill: #1e293b; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="620" fill="#f8fafc"/>
+  <text x="60" y="52" class="ink" font-size="28" font-weight="800">Góc Kỹ Thuật · Sơ Đồ Khối Vòng Lặp Kín (Closed-Loop PID)</text>
+  <text x="60" y="82" class="muted" font-size="16">Cấu trúc kinh điển của mọi hệ thống tự động hóa phản hồi âm trên toàn thế giới.</text>
+
+  <!-- Main Loop Diagram -->
+  <g transform="translate(60, 110)">
+    
+    <!-- Input: Setpoint (Rùa Vàng) -->
+    <text x="0" y="115" class="sig-name">Giá trị đặt r(t)</text>
+    <text x="0" y="135" fill="#d97706" font-size="13" font-weight="700">(Vị trí Rùa Vàng)</text>
+    <path d="M 120 120 H 180" stroke="#475569" stroke-width="3" marker-end="url(#arrow)"/>
+    <text x="175" y="110" fill="#15803d" font-size="16" font-weight="900">+</text>
+
+    <!-- Summing Junction (So sánh sai số) -->
+    <circle cx="195" cy="120" r="15" fill="#ffffff" stroke="#475569" stroke-width="2.5"/>
+    <path d="M 185 110 L 205 130 M 185 130 L 205 110" stroke="#94a3b8" stroke-width="1.5"/>
+    <text x="195" y="150" text-anchor="middle" fill="#dc2626" font-size="16" font-weight="900">−</text>
+
+    <!-- Signal: Error e(t) -->
+    <path d="M 210 120 H 280" stroke="#475569" stroke-width="3" marker-end="url(#arrow)"/>
+    <text x="245" y="105" text-anchor="middle" class="sig-name">Sai số e(t)</text>
+    <text x="245" y="145" text-anchor="middle" fill="#64748b" font-size="12">còn thiếu</text>
+
+    <!-- PID Controller Box -->
+    <rect x="285" y="30" width="220" height="180" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+    <rect x="285" y="30" width="220" height="32" rx="9" fill="#eff6ff"/>
+    <text x="395" y="52" text-anchor="middle" fill="#1d4ed8" class="block-title">BỘ ĐIỀU KHIỂN PID</text>
+    <text x="395" y="72" text-anchor="middle" fill="#64748b" class="block-sub">(Cái đầu của A-sin)</text>
+    
+    <!-- 3 Internal PID branches -->
+    <rect x="305" y="85" width="180" height="28" rx="4" fill="#dbeafe"/>
+    <text x="395" y="104" text-anchor="middle" fill="#1e40af" font-size="13" font-weight="700">P = Kp · e(t)  [Hiện tại]</text>
+    
+    <rect x="305" y="120" width="180" height="28" rx="4" fill="#fef3c7"/>
+    <text x="395" y="139" text-anchor="middle" fill="#92400e" font-size="13" font-weight="700">I = (Kp/Ti) · ∫ e dt  [Quá khứ]</text>
+    
+    <rect x="305" y="155" width="180" height="28" rx="4" fill="#ffe4e6"/>
+    <text x="395" y="174" text-anchor="middle" fill="#9f1239" font-size="13" font-weight="700">D = Kp·Td · (de/dt)  [Tương lai]</text>
+
+    <!-- Signal: Control Output u(t) -->
+    <path d="M 505 120 H 580" stroke="#475569" stroke-width="3" marker-end="url(#arrow)"/>
+    <text x="542" y="105" text-anchor="middle" class="sig-name">Lệnh u(t)</text>
+    <text x="542" y="145" text-anchor="middle" fill="#64748b" font-size="12">lực kéo</text>
+
+    <!-- Actuator & Process Box -->
+    <rect x="585" y="45" width="230" height="150" rx="10" fill="#ffffff" stroke="#059669" stroke-width="2"/>
+    <rect x="585" y="45" width="230" height="32" rx="9" fill="#ecfdf5"/>
+    <text x="700" y="67" text-anchor="middle" fill="#047857" class="block-title">CHẤP HÀNH &amp; ĐỐI TƯỢNG</text>
+    
+    <text x="700" y="110" text-anchor="middle" class="ink" font-size="15" font-weight="700">Đôi chân A-sin + Xe / Bồn</text>
+    <text x="700" y="135" text-anchor="middle" class="muted" font-size="13">Đặc tính: Trễ Tu &amp; Quán tính Tg</text>
+    <text x="700" y="160" text-anchor="middle" fill="#047857" font-size="13" font-weight="600">(Học trò Loại I / II / III)</text>
+
+    <!-- Disturbance (Nhiễu tải / Băng chuyền) -->
+    <path d="M 700 0 V 40" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="5 3" marker-end="url(#arrow-red)"/>
+    <text x="700" y="-12" text-anchor="middle" fill="#dc2626" font-size="14" font-weight="800">Nhiễu tải d(t)</text>
+    <text x="700" y="-30" text-anchor="middle" fill="#b91c1c" font-size="12">(Băng chuyền kéo lùi / Lỗ rò)</text>
+
+    <!-- Output: y(t) -->
+    <path d="M 815 120 H 940" stroke="#475569" stroke-width="3" marker-end="url(#arrow)"/>
+    <text x="965" y="115" class="sig-name">Vị trí thực tế y(t)</text>
+    <text x="965" y="135" fill="#2563eb" font-size="13" font-weight="700">(Vị trí hiện tại A-sin)</text>
+
+    <!-- Feedback loop downward -->
+    <path d="M 880 120 V 270 H 775" stroke="#475569" stroke-width="3" marker-end="url(#arrow)"/>
+    
+    <!-- Sensor Box (Trọng tài) -->
+    <rect x="545" y="225" width="225" height="90" rx="10" fill="#ffffff" stroke="#7c3aed" stroke-width="2"/>
+    <rect x="545" y="225" width="225" height="28" rx="9" fill="#f5f3ff"/>
+    <text x="657" y="245" text-anchor="middle" fill="#6d28d9" class="block-title">CẢM BIẾN (SENSORS)</text>
+    <text x="657" y="275" text-anchor="middle" class="ink" font-size="14" font-weight="700">Mắt đo của trọng tài</text>
+    <text x="657" y="298" text-anchor="middle" class="muted" font-size="13">Nhịp lấy mẫu Ts + Nhiễu đo</text>
+
+    <!-- Measurement Noise -->
+    <path d="M 657 365 V 320" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="5 3" marker-end="url(#arrow-red)"/>
+    <text x="657" y="385" text-anchor="middle" fill="#dc2626" font-size="13" font-weight="700">Nhiễu đo lường n(t)</text>
+
+    <!-- Feedback to Summing Junction -->
+    <path d="M 545 270 H 195 V 140" stroke="#475569" stroke-width="3" marker-end="url(#arrow)"/>
+    <text x="350" y="260" text-anchor="middle" fill="#6d28d9" font-size="14" font-weight="700">Tín hiệu phản hồi ym(t) (tiếng hô khoảng cách)</text>
+  </g>
+</svg>

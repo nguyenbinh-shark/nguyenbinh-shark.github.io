@@ -1,0 +1,838 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Code Lab 4 — Thư viện PID Hướng đối tượng & Cờ tính năng</title>
+<style>
+  /* ═══════════ PICO-8 LAB EDITION · DESIGN SYSTEM ═══════════ */
+  :root {
+    --bg: #0b0e1a;
+    --panel: #0f1322;
+    --ink: #FFF1E8;
+    --muted: #83769C;
+    --line: #5F574F;
+    --acc: #FFEC27;
+    --blue: #29ADFF;
+    --amber: #FFA300;
+    --rose: #FF77A8;
+    --green: #00E436;
+    --green-dark: #008751;
+    --red: #FF004D;
+    --navy: #1D2B53;
+    --purple: #7E2553;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 14px;
+    color: var(--ink);
+    font-family: "Courier New", ui-monospace, Consolas, monospace;
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(45deg, #0d1122 25%, transparent 25%, transparent 75%, #0d1122 75%),
+      linear-gradient(45deg, #0d1122 25%, transparent 25%, transparent 75%, #0d1122 75%);
+    background-size: 26px 26px;
+    background-position: 0 0, 13px 13px;
+  }
+  .wrap { width: 100%; max-width: 1020px; margin: auto; }
+
+  /* ── Header ── */
+  .header-box {
+    margin-bottom: 12px;
+    padding: 12px 16px;
+    background: var(--navy);
+    border: 2px solid var(--line);
+    box-shadow: 4px 4px 0 #000;
+  }
+  .header-box h1 {
+    margin: 0 0 4px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+    color: var(--acc);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .lab-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background: var(--purple);
+    border: 1px solid rgba(255,255,255,.15);
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: var(--ink);
+    box-shadow: 2px 2px 0 #000;
+    vertical-align: middle;
+  }
+  .header-box p {
+    margin: 0;
+    font-size: 0.84rem;
+    color: #C2C3C7;
+    line-height: 1.5;
+  }
+  .header-box p b { color: var(--acc); }
+
+  /* ── Panel (canvas, tables) ── */
+  .panel {
+    position: relative;
+    border: 2px solid var(--line);
+    background: var(--panel);
+    overflow: hidden;
+    margin-bottom: 12px;
+    box-shadow: 4px 4px 0 #000;
+  }
+  .panel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,.13) 0 1px, transparent 1px 3px);
+  }
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--navy);
+    border-bottom: 2px solid var(--line);
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--acc);
+    flex-wrap: wrap;
+  }
+  .panel canvas { display: block; width: 100%; height: auto; }
+
+  /* ── Main Grid (Chart + Table) ── */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1.8fr 1.2fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  /* ── HUD Stats ── */
+  .hud {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .stat-card {
+    padding: 9px 10px;
+    background: var(--panel);
+    border: 2px solid var(--line);
+    box-shadow: 3px 3px 0 #000;
+    text-align: center;
+  }
+  .stat-card b {
+    display: block;
+    font-size: 1.02rem;
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--acc);
+  }
+  .stat-card span {
+    display: block;
+    margin-top: 3px;
+    font-size: 0.62rem;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .stat-card.warn b { color: var(--red); }
+  .stat-card.good b { color: var(--green); }
+
+  /* ── Slider Cards ── */
+  .controls-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .slider-card {
+    padding: 12px 14px;
+    background: var(--panel);
+    border: 2px solid var(--line);
+    box-shadow: 3px 3px 0 #000;
+  }
+  .slider-card.sp-card { border-color: var(--green-dark); }
+  .slider-card.p-card  { border-color: #1e5f96; }
+  .slider-card.i-card  { border-color: #9c6a1e; }
+  .slider-card.d-card  { border-color: var(--purple); }
+  .slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    gap: 6px;
+  }
+  .slider-header label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+  }
+  .slider-header .val {
+    font-size: 0.9rem;
+    font-weight: 900;
+    white-space: nowrap;
+  }
+  .sp-card .slider-header label, .sp-card .slider-header .val { color: var(--green); }
+  .p-card  .slider-header label, .p-card  .slider-header .val { color: var(--blue); }
+  .i-card  .slider-header label, .i-card  .slider-header .val { color: var(--amber); }
+  .d-card  .slider-header label, .d-card  .slider-header .val { color: var(--rose); }
+  input[type=range] { width: 100%; margin: 6px 0 2px; cursor: pointer; }
+  .sp-card input[type=range] { accent-color: var(--green); }
+  .p-card  input[type=range] { accent-color: var(--blue); }
+  .i-card  input[type=range] { accent-color: var(--amber); }
+  .d-card  input[type=range] { accent-color: var(--rose); }
+  .slider-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.6rem;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  /* ── Bitmask Toggles ── */
+  .toggles-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    background: var(--panel);
+    padding: 10px;
+    border: 2px solid var(--line);
+    box-shadow: 4px 4px 0 #000;
+  }
+  .toggles-title {
+    font-size: 0.76rem;
+    font-weight: 800;
+    color: var(--blue);
+    text-transform: uppercase;
+    margin-right: 8px;
+  }
+  .toggle-label {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--navy); border: 2px solid var(--line);
+    padding: 4px 8px; cursor: pointer; user-select: none;
+    font-size: 0.72rem; font-weight: 700; color: var(--ink);
+  }
+  .toggle-label input { width: 14px; height: 14px; accent-color: var(--acc); cursor: pointer; margin:0; }
+  .toggle-label:hover { border-color: var(--muted); }
+  .hex-badge {
+    background: #141a30; color: var(--blue);
+    padding: 2px 4px; font-size: 0.62rem;
+    border: 1px solid rgba(41,173,255,0.4);
+    font-weight: 800;
+  }
+
+  /* ── Buttons ── */
+  .action-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  button {
+    min-height: 44px;
+    padding: 9px 14px;
+    border: 2px solid #C2C3C7;
+    background: var(--navy);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    user-select: none;
+    box-shadow: 3px 3px 0 #000;
+  }
+  button:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 #000; }
+  button.primary { background: var(--green-dark); border-color: var(--green); }
+  button.warn    { background: #2a0f1e; border-color: var(--red); color: var(--red); }
+
+  /* ── Data Table (Lab-specific) ── */
+  .table-panel { position: relative; }
+  .table-wrap {
+    height: 340px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) var(--panel);
+  }
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.68rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .data-table th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: 7px 6px;
+    background: var(--navy);
+    color: var(--acc);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    text-align: right;
+    border-bottom: 2px solid var(--line);
+    font-size: 0.62rem;
+  }
+  .data-table td {
+    padding: 5px 6px;
+    text-align: right;
+    color: #C2C3C7;
+    border-bottom: 1px solid #1a2040;
+  }
+  .data-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+  .data-table tr:first-child td {
+    background: rgba(255,236,39,.06);
+    color: var(--ink);
+  }
+  .data-table .col-p { color: var(--blue); }
+  .data-table .col-i { color: var(--amber); }
+  .data-table .col-d { color: var(--rose); }
+  .data-table .col-out { color: var(--green); font-weight: 700; }
+  .data-table .col-status { text-align: left; }
+  .status-ok { color: var(--green); font-weight: 700; }
+  .status-blocked { color: var(--red); font-weight: 800; }
+  .status-stalled { color: var(--amber); font-weight: 800; }
+
+  /* ── Coach Box ── */
+  .coach-box {
+    padding: 12px 14px;
+    background: #141a30;
+    border: 2px solid var(--line);
+    box-shadow: 4px 4px 0 #000;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .coach-avatar {
+    width: 40px; height: 40px;
+    border: 2px solid var(--acc);
+    background: var(--navy);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  .coach-content { flex: 1; min-width: 0; }
+  .coach-title {
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+    color: var(--acc);
+    margin-bottom: 3px;
+  }
+  .coach-msg {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #C2C3C7;
+    line-height: 1.5;
+  }
+  .coach-msg b { color: var(--acc); }
+  .coach-msg .alert { color: var(--red); font-weight: 700; }
+
+  @media (max-width: 860px) {
+    body { padding: 8px; }
+    .main-grid { grid-template-columns: 1fr; }
+    .hud { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .controls-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 500px) {
+    .controls-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <!-- Header -->
+  <div class="header-box">
+    <h1>
+      💻 CODE LAB 4 · THƯ VIỆN PID HƯỚNG ĐỐI TƯỢNG & CỜ TÍNH NĂNG
+      <span class="lab-badge">CODE LAB</span>
+    </h1>
+    <p>Mô phỏng bộ điều khiển PID vị trí động cơ, được gói gọn trong một Class. Sử dụng cơ chế <b>Bitmask (Cờ tính năng)</b> để bật/tắt các cải tiến như Deadband, chống nhiễu đầu ra, và phát hiện kẹt động cơ.</p>
+  </div>
+
+  <!-- Toggles Bar -->
+  <div class="toggles-bar">
+    <span class="toggles-title">Cờ tính năng (Bitmask):</span>
+    <label class="toggle-label">
+      <input type="checkbox" id="flag_deadband" checked>
+      <span>DEADBAND</span>
+      <span class="hex-badge">0x20</span>
+    </label>
+    <label class="toggle-label">
+      <input type="checkbox" id="flag_outfilter" checked>
+      <span>OUTPUT_FILTER</span>
+      <span class="hex-badge">0x10</span>
+    </label>
+    <label class="toggle-label">
+      <input type="checkbox" id="flag_errorhandle" checked>
+      <span>ERROR_HANDLE</span>
+      <span class="hex-badge">0x40</span>
+    </label>
+    <label class="toggle-label">
+      <input type="checkbox" id="flag_dmeas" checked>
+      <span>DERIV_ON_MEAS</span>
+      <span class="hex-badge">0x02</span>
+    </label>
+    <label class="toggle-label">
+      <input type="checkbox" id="flag_trap" checked>
+      <span>TRAPEZOID_INT</span>
+      <span class="hex-badge">0x04</span>
+    </label>
+    <label class="toggle-label">
+      <input type="checkbox" id="flag_changi" checked>
+      <span>CHANGING_INT</span>
+      <span class="hex-badge">0x08</span>
+    </label>
+  </div>
+
+  <!-- HUD Stats -->
+  <div class="hud">
+    <div class="stat-card"><b id="hud_angle">0.0°</b><span>Góc hiện tại</span></div>
+    <div class="stat-card"><b id="hud_out">0%</b><span>Đầu ra Output</span></div>
+    <div class="stat-card"><b id="hud_mask" style="color:var(--blue)">0x7E</b><span>Bitmask</span></div>
+    <div class="stat-card" id="hud_alert_card"><b id="hud_alert_status" style="font-size:0.8rem">BÌNH THƯỜNG</b><span>Trạng thái</span></div>
+  </div>
+
+  <!-- Sliders -->
+  <div class="controls-grid">
+    <div class="slider-card sp-card">
+      <div class="slider-header">
+        <label for="sp">Vị trí đặt (SP)</label>
+        <span class="val" id="spv">90°</span>
+      </div>
+      <input id="sp" type="range" min="0" max="180" value="90">
+      <div class="slider-meta"><span>0°</span><span>180°</span></div>
+    </div>
+    <div class="slider-card p-card">
+      <div class="slider-header">
+        <label for="kp">Kp · Tỉ lệ</label>
+        <span class="val" id="kpv">2.50</span>
+      </div>
+      <input id="kp" type="range" min="0" max="6" step="0.1" value="2.5">
+      <div class="slider-meta"><span>0</span><span>6.0</span></div>
+    </div>
+    <div class="slider-card i-card">
+      <div class="slider-header">
+        <label for="ki">Ki · Tích phân</label>
+        <span class="val" id="kiv">0.30</span>
+      </div>
+      <input id="ki" type="range" min="0" max="1.0" step="0.01" value="0.30">
+      <div class="slider-meta"><span>0</span><span>1.0</span></div>
+    </div>
+    <div class="slider-card d-card">
+      <div class="slider-header">
+        <label for="kd">Kd · Vi phân</label>
+        <span class="val" id="kdv">1.50</span>
+      </div>
+      <input id="kd" type="range" min="0" max="4" step="0.05" value="1.50">
+      <div class="slider-meta"><span>0</span><span>4.0</span></div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-row">
+    <button class="primary" id="step" type="button">⏩ TỪNG BƯỚC (1 TICK)</button>
+    <button id="auto" type="button">▶ TỰ CHẠY LIÊN TỤC</button>
+    <button id="reset" type="button">🔄 ĐẶT LẠI</button>
+    <button id="stall_btn" class="warn" type="button">🚨 GIẢ LẬP KẸT ĐỘNG CƠ (STALL)</button>
+  </div>
+
+  <!-- Main Grid: Chart + Table -->
+  <div class="main-grid">
+    <!-- Chart Panel -->
+    <section class="panel">
+      <div class="panel-header">
+        <span>ĐỒ THỊ GÓC ĐỘNG CƠ · THỜI GIAN THỰC</span>
+      </div>
+      <canvas id="chart" width="680" height="340" aria-label="Đồ thị vị trí động cơ"></canvas>
+    </section>
+
+    <!-- Data Table Panel -->
+    <section class="panel table-panel">
+      <div class="panel-header">
+        <span>📋 NHẬT KÝ PID</span>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>t(s)</th>
+              <th>SP(°)</th>
+              <th>PV(°)</th>
+              <th>e</th>
+              <th class="col-p">P</th>
+              <th class="col-i">I</th>
+              <th class="col-d">D</th>
+              <th class="col-out">Out</th>
+              <th class="col-status">Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+  
+  <!-- Coach Box -->
+  <div class="coach-box">
+    <div class="coach-avatar">⚙️</div>
+    <div class="coach-content">
+      <div class="coach-title">HƯỚNG ĐỐI TƯỢNG & BITMASK</div>
+      <p class="coach-msg" id="coachMsg">
+        Thử bật tính năng <b>Giả lập kẹt động cơ</b> và theo dõi! Thuật toán PID được bật cờ <code>0x40 (ERROR_HANDLE)</code> sẽ phát hiện output đạt tối đa mà vị trí không đổi, từ đó tự ngắt hệ thống để bảo vệ cơ khí.
+      </p>
+    </div>
+  </div>
+</main>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const C = $('chart'), ctx = C.getContext('2d');
+let timer = null, is_stalled_mode = false;
+
+// Đối tượng PIDController đóng gói OOP
+class PIDController {
+  constructor(kp, ki, kd, max_out, max_i) {
+    this.kp = kp; this.ki = ki; this.kd = kd;
+    this.max_out = max_out; this.max_i = max_i;
+    this.deadband = 0.8;
+    this.scalar_a = 25.0; this.scalar_b = 5.0;
+    this.out_alpha = 0.35;
+    this.reset();
+  }
+  reset() {
+    this.i_term = 0.0; this.prev_e = 0.0;
+    this.prev_pv = 0.0; this.prev_out = 0.0;
+    this.blocked_count = 0; this.is_blocked = false;
+    this.is_first = true;
+  }
+  calculate(sp, pv, dt, flags) {
+    if (this.is_first) {
+      this.prev_pv = pv; this.prev_e = sp - pv;
+      this.is_first = false; return 0.0;
+    }
+    let error = sp - pv;
+
+    // 1. Deadband
+    if ((flags & 0x20) && Math.abs(error) < this.deadband) {
+      error = 0.0;
+    }
+
+    // 2. Error handling (Stall detection)
+    if (flags & 0x40) {
+      if (this.prev_out >= this.max_out && Math.abs(pv - this.prev_pv) < 0.05) {
+        this.blocked_count++;
+        if (this.blocked_count > 25) { // 2.5 giây kẹt liên tục
+          this.is_blocked = true;
+          return 0.0;
+        }
+      } else {
+        this.blocked_count = Math.max(0, this.blocked_count - 1);
+      }
+    }
+
+    // Khâu P
+    const P = this.kp * error;
+
+    // Khâu I
+    let factor = 1.0;
+    if (flags & 0x08) {
+      const abs_e = Math.abs(error);
+      if (abs_e >= (this.scalar_a + this.scalar_b)) factor = 0.0;
+      else if (abs_e > this.scalar_b) factor = (this.scalar_a - abs_e + this.scalar_b) / this.scalar_a;
+    }
+    let i_step = (flags & 0x04) ? (factor * this.ki * 0.5 * (error + this.prev_e) * dt) : (factor * this.ki * error * dt);
+    this.i_term += i_step;
+    this.i_term = Math.max(-this.max_i, Math.min(this.max_i, this.i_term));
+
+    // Khâu D
+    let D = 0.0;
+    if (flags & 0x02) {
+      D = this.kd * (this.prev_pv - pv) / dt;
+    } else {
+      D = this.kd * (error - this.prev_e) / dt;
+    }
+
+    let out = P + this.i_term + D;
+    out = Math.max(0.0, Math.min(this.max_out, out));
+
+    // Output Filter
+    if (flags & 0x10) {
+      out = this.out_alpha * out + (1.0 - this.out_alpha) * this.prev_out;
+    }
+
+    this.prev_e = error;
+    this.prev_pv = pv;
+    this.prev_out = out;
+    return { P, I: this.i_term, D, out, error };
+  }
+}
+
+const motor_pid = new PIDController(2.5, 0.30, 1.5, 100.0, 30.0);
+let sim_state = { t: 0, angle: 0.0, vel: 0.0, history: [] };
+
+function getBitmask() {
+  let mask = 0x00;
+  if ($('flag_deadband').checked) mask |= 0x20;
+  if ($('flag_outfilter').checked) mask |= 0x10;
+  if ($('flag_errorhandle').checked) mask |= 0x40;
+  if ($('flag_dmeas').checked) mask |= 0x02;
+  if ($('flag_trap').checked) mask |= 0x04;
+  if ($('flag_changi').checked) mask |= 0x08;
+  return mask;
+}
+
+function reset() {
+  motor_pid.reset();
+  is_stalled_mode = false;
+  $('stall_btn').textContent = '🚨 GIẢ LẬP KẸT ĐỘNG CƠ (STALL)';
+  $('stall_btn').className = 'warn';
+  $('stall_btn').style.background = '';
+  $('stall_btn').style.color = '';
+  $('stall_btn').style.borderColor = '';
+  sim_state = { t: 0, angle: 0.0, vel: 0.0, history: [] };
+  $('rows').innerHTML = '';
+  updateHUD(0.0, 0.0, getBitmask(), false, false);
+  draw();
+}
+
+function step() {
+  const sp = +$('sp').value;
+  motor_pid.kp = +$('kp').value;
+  motor_pid.ki = +$('ki').value;
+  motor_pid.kd = +$('kd').value;
+  const dt = 0.1;
+  const mask = getBitmask();
+
+  const res = motor_pid.calculate(sp, sim_state.angle, dt, mask);
+  let out = typeof res === 'number' ? res : res.out;
+
+  // Mô phỏng cơ cấu động cơ vị trí góc
+  if (!is_stalled_mode && !motor_pid.is_blocked) {
+    const torque = (out / 100.0) * 80.0 - sim_state.vel * 2.5;
+    sim_state.vel += torque * dt;
+    sim_state.angle += sim_state.vel * dt;
+    sim_state.angle = Math.max(0.0, Math.min(180.0, sim_state.angle));
+  } else if (is_stalled_mode) {
+    sim_state.vel = 0.0; // Động cơ bị kẹt cứng
+  }
+
+  sim_state.t += dt;
+
+  sim_state.history.push({
+    t: sim_state.t,
+    sp: sp,
+    pv: sim_state.angle,
+    out: out
+  });
+  if (sim_state.history.length > 500) sim_state.history.shift();
+
+  let status_txt = '<span class="status-ok">OK</span>';
+  if (motor_pid.is_blocked) status_txt = '<span class="status-blocked">BLOCKED</span>';
+  else if (is_stalled_mode) status_txt = '<span class="status-stalled">STALLED</span>';
+
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td>${sim_state.t.toFixed(1)}</td>
+    <td>${sp.toFixed(0)}°</td>
+    <td>${sim_state.angle.toFixed(1)}°</td>
+    <td>${res.error !== undefined ? res.error.toFixed(1) : (sp - sim_state.angle).toFixed(1)}</td>
+    <td class="col-p">${res.P ? res.P.toFixed(1) : 0}</td>
+    <td class="col-i">${res.I ? res.I.toFixed(1) : 0}</td>
+    <td class="col-d">${res.D ? res.D.toFixed(1) : 0}</td>
+    <td class="col-out">${out.toFixed(0)}%</td>
+    <td class="col-status">${status_txt}</td>
+  `;
+  $('rows').prepend(tr);
+  while ($('rows').children.length > 60) $('rows').lastChild.remove();
+
+  updateHUD(sim_state.angle, out, mask, is_stalled_mode, motor_pid.is_blocked);
+  draw();
+}
+
+function updateHUD(angle, out, mask, is_stalled, is_blocked) {
+  $('hud_angle').textContent = angle.toFixed(1) + '°';
+  $('hud_out').textContent = out.toFixed(0) + '%';
+  $('hud_mask').textContent = '0x' + mask.toString(16).toUpperCase().padStart(2, '0');
+
+  const alert_card = $('hud_alert_card');
+  const alert_status = $('hud_alert_status');
+  if (is_blocked) {
+    alert_card.className = 'stat-card warn';
+    alert_status.textContent = 'BẢO VỆ NGẮT';
+  } else if (is_stalled) {
+    alert_card.className = 'stat-card warn';
+    alert_status.textContent = 'KẸT CƠ KHÍ';
+  } else {
+    alert_card.className = 'stat-card good';
+    alert_status.textContent = 'BÌNH THƯỜNG';
+  }
+}
+
+function draw() {
+  const W = C.width, H = C.height;
+  ctx.fillStyle = '#0f1322';
+  ctx.fillRect(0, 0, W, H);
+  
+  const padL = 45, padR = 15, padT = 25, padB = 25;
+  const graphW = W - padL - padR;
+  const graphH = H - padT - padB;
+
+  // Lưới ngang (0° đến 180°)
+  ctx.strokeStyle = '#232c4e';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([2, 3]);
+  ctx.fillStyle = '#83769C';
+  ctx.font = '10px "Courier New", monospace';
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'middle';
+
+  for (let angle = 0; angle <= 180; angle += 30) {
+    const y = padT + graphH - (angle / 180) * graphH;
+    ctx.beginPath();
+    ctx.moveTo(padL, y);
+    ctx.lineTo(W - padR, y);
+    ctx.stroke();
+    ctx.fillText(angle + '°', padL - 6, y);
+  }
+  ctx.setLineDash([]);
+
+  if (sim_state.history.length === 0) return;
+
+  const mapX = i => padL + (i / Math.max(1, sim_state.history.length - 1)) * graphW;
+  const mapY_angle = a => padT + graphH - (a / 180) * graphH;
+  const mapY_out = pct => padT + graphH - (pct / 100) * (graphH * 0.4);
+
+  // 1. Vẽ SP (nét đứt cam)
+  ctx.strokeStyle = '#FFA300';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  sim_state.history.forEach((pt, i) => {
+    const x = mapX(i), y = mapY_angle(pt.sp);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // 2. Vẽ Output công suất (xanh lá nhạt)
+  ctx.strokeStyle = 'rgba(0, 228, 54, 0.4)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  sim_state.history.forEach((pt, i) => {
+    const x = mapX(i), y = mapY_out(pt.out);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  // 3. Vẽ Góc thực tế (Xanh dương chính với glow)
+  // Glow layer
+  ctx.strokeStyle = '#29ADFF';
+  ctx.lineWidth = 5;
+  ctx.globalAlpha = 0.15;
+  ctx.beginPath();
+  sim_state.history.forEach((pt, i) => {
+    const x = mapX(i), y = mapY_angle(pt.pv);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  // Main line
+  ctx.strokeStyle = '#29ADFF';
+  ctx.lineWidth = 2.5;
+  ctx.shadowColor = '#29ADFF';
+  ctx.shadowBlur = 6;
+  ctx.beginPath();
+  sim_state.history.forEach((pt, i) => {
+    const x = mapX(i), y = mapY_angle(pt.pv);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Chú giải
+  ctx.font = 'bold 10px "Courier New", monospace';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  ctx.fillStyle = '#29ADFF';
+  ctx.fillText('— Góc động cơ PV (°)', padL + 10, 10);
+  ctx.fillStyle = '#FFA300';
+  ctx.fillText('--- Góc đặt SP', padL + 180, 10);
+  ctx.fillStyle = '#00E436';
+  ctx.fillText('— Output công suất', padL + 300, 10);
+}
+
+function sync() {
+  $('spv').textContent = $('sp').value + '°';
+  $('kpv').textContent = (+ $('kp').value).toFixed(2);
+  $('kiv').textContent = (+ $('ki').value).toFixed(2);
+  $('kdv').textContent = (+ $('kd').value).toFixed(2);
+}
+
+$('step').onclick = step;
+$('auto').onclick = () => {
+  if (timer) {
+    clearInterval(timer);
+    timer = null;
+    $('auto').textContent = '▶ TỰ CHẠY LIÊN TỤC';
+    $('auto').style.background = '';
+  } else {
+    timer = setInterval(() => {
+      for (let i = 0; i < 3; i++) step();
+    }, 50);
+    $('auto').textContent = '⏸ TẠM DỪNG';
+    $('auto').style.background = 'var(--purple)';
+  }
+};
+$('reset').onclick = reset;
+
+$('stall_btn').onclick = () => {
+  is_stalled_mode = !is_stalled_mode;
+  if (is_stalled_mode) {
+    $('stall_btn').textContent = '⚠️ ĐANG KẸT (BẤM ĐỂ NHẢ KẸT)';
+    $('stall_btn').style.background = '#2a0f1e';
+    $('stall_btn').style.color = 'var(--red)';
+    $('stall_btn').style.borderColor = 'var(--red)';
+  } else {
+    $('stall_btn').textContent = '🚨 GIẢ LẬP KẸT ĐỘNG CƠ (STALL)';
+    $('stall_btn').style.background = '';
+    $('stall_btn').style.color = '';
+    $('stall_btn').style.borderColor = '';
+  }
+};
+
+['sp', 'kp', 'ki', 'kd'].forEach(id => $(id).oninput = sync);
+['flag_deadband', 'flag_outfilter', 'flag_errorhandle', 'flag_dmeas', 'flag_trap', 'flag_changi'].forEach(id => $(id).onchange = () => {
+  updateHUD(sim_state.angle, 0, getBitmask(), is_stalled_mode, motor_pid.is_blocked);
+  draw();
+});
+
+sync();
+reset();
+</script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="470" viewBox="0 0 1200 470" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="t2 d2">
+  <title id="t2">Bốn pha của cơ chế nghiêng để lái (lean-to-steer)</title>
+  <desc id="d2">Bốn khung hình mô tả cách vòng ngoài ra lệnh ngả con lắc để kéo xe về gốc tọa độ: phát hiện lệch, ra lệnh ngả, lướt về đích, hãm tốc và dựng thẳng.</desc>
+  <defs>
+    <marker id="fa" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#a16207"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1  { font-size: 24px; font-weight: 800; fill: #0f172a; }
+      .h2  { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .pt  { font-size: 14px; font-weight: 700; fill: #1e293b; }
+      .ps  { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .cap { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .num { font-size: 14px; font-weight: 800; fill: #ffffff; }
+      .tag { font-size: 13px; font-weight: 600; fill: #94a3b8; }
+      .frc { font-size: 14px; font-weight: 700; fill: #a16207; }
+    </style>
+    <g id="rail">
+      <line x1="16" y1="250" x2="259" y2="250" stroke="#94a3b8" stroke-width="2"/>
+      <g stroke="#cbd5e1" stroke-width="1.5">
+        <path d="M20 250 l-8 10 M40 250 l-8 10 M60 250 l-8 10 M80 250 l-8 10 M100 250 l-8 10 M120 250 l-8 10 M140 250 l-8 10 M160 250 l-8 10 M180 250 l-8 10 M200 250 l-8 10 M220 250 l-8 10 M240 250 l-8 10 M258 250 l-8 10"/>
+      </g>
+    </g>
+  </defs>
+
+  <rect width="1200" height="470" fill="#ffffff"/>
+  <text x="20" y="30" class="h1">Nghiêng để lái · bốn pha kéo xe về gốc tọa độ</text>
+  <text x="20" y="56" class="h2">Vòng ngoài không đẩy xe trực tiếp — nó chỉ ra lệnh con lắc ngả, rồi để vòng trong tự kéo xe theo.</text>
+
+  <!-- ================= PHASE 1 ================= -->
+  <g transform="translate(20,78)">
+    <rect x="0" y="0" width="275" height="368" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+    <circle cx="28" cy="30" r="13" fill="#475569"/>
+    <text x="28" y="35" text-anchor="middle" class="num">1</text>
+    <text x="52" y="27" class="pt">Phát hiện lệch vị trí</text>
+    <text x="52" y="46" class="ps">x = +0.6 m · θ = 0°</text>
+
+    <use href="#rail"/>
+    <line x1="100" y1="196" x2="100" y2="266" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <text x="100" y="284" text-anchor="middle" class="tag">đích x = 0</text>
+
+    <line x1="170" y1="222" x2="170" y2="112" stroke="#334155" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="170" cy="108" r="8" fill="#475569"/>
+    <rect x="146" y="222" width="48" height="28" rx="4" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+    <circle cx="158" cy="252" r="5" fill="#94a3b8"/>
+    <circle cx="182" cy="252" r="5" fill="#94a3b8"/>
+
+    <text x="20" y="322" class="cap">Xe đứng lệch phải, con lắc đã thẳng.</text>
+    <text x="20" y="340" class="cap">Đẩy xe sang trái ngay lập tức sẽ làm</text>
+    <text x="20" y="358" class="cap">con lắc đổ về phải.</text>
+  </g>
+
+  <!-- ================= PHASE 2 ================= -->
+  <g transform="translate(315,78)">
+    <rect x="0" y="0" width="275" height="368" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+    <circle cx="28" cy="30" r="13" fill="#475569"/>
+    <text x="28" y="35" text-anchor="middle" class="num">2</text>
+    <text x="52" y="27" class="pt">Ra lệnh ngả có chủ đích</text>
+    <text x="52" y="46" class="ps">θ_ref = −5° (vòng ngoài)</text>
+
+    <use href="#rail"/>
+    <line x1="100" y1="196" x2="100" y2="266" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <text x="100" y="284" text-anchor="middle" class="tag">đích x = 0</text>
+
+    <line x1="170" y1="222" x2="170" y2="118" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <line x1="170" y1="222" x2="147" y2="114" stroke="#334155" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="147" cy="110" r="8" fill="#475569"/>
+    <path d="M 170 160 A 62 62 0 0 0 157 161.4" fill="none" stroke="#a16207" stroke-width="2"/>
+    <path d="M 186 156 L 172 161" stroke="#a16207" stroke-width="1.2"/>
+    <text x="190" y="160" class="frc">θ_ref</text>
+    <rect x="146" y="222" width="48" height="28" rx="4" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+    <circle cx="158" cy="252" r="5" fill="#94a3b8"/>
+    <circle cx="182" cy="252" r="5" fill="#94a3b8"/>
+
+    <text x="20" y="322" class="cap">Vòng ngoài thấy x &gt; 0 nên phát góc</text>
+    <text x="20" y="340" class="cap">đặt âm: yêu cầu con lắc ngả sang</text>
+    <text x="20" y="358" class="cap">trái một góc nhỏ.</text>
+  </g>
+
+  <!-- ================= PHASE 3 ================= -->
+  <g transform="translate(610,78)">
+    <rect x="0" y="0" width="275" height="368" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+    <circle cx="28" cy="30" r="13" fill="#475569"/>
+    <text x="28" y="35" text-anchor="middle" class="num">3</text>
+    <text x="52" y="27" class="pt">Vòng trong đón đầu</text>
+    <text x="52" y="46" class="ps">F &lt; 0 · xe lướt về đích</text>
+
+    <use href="#rail"/>
+    <line x1="100" y1="196" x2="100" y2="266" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <text x="100" y="284" text-anchor="middle" class="tag">đích x = 0</text>
+
+    <line x1="140" y1="222" x2="140" y2="118" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <line x1="140" y1="222" x2="119" y2="114" stroke="#334155" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="119" cy="110" r="8" fill="#475569"/>
+    <rect x="116" y="222" width="48" height="28" rx="4" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+    <circle cx="128" cy="252" r="5" fill="#94a3b8"/>
+    <circle cx="152" cy="252" r="5" fill="#94a3b8"/>
+    <path d="M 212 236 H 170" stroke="#a16207" stroke-width="2.5" marker-end="url(#fa)"/>
+    <text x="219" y="241" class="frc">F</text>
+
+    <text x="20" y="322" class="cap">Con lắc chớm đổ so với θ_ref, vòng</text>
+    <text x="20" y="340" class="cap">trong lập tức tăng tốc xe sang trái để</text>
+    <text x="20" y="358" class="cap">hứng trọng tâm — và xe về gần đích.</text>
+  </g>
+
+  <!-- ================= PHASE 4 ================= -->
+  <g transform="translate(905,78)">
+    <rect x="0" y="0" width="275" height="368" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+    <circle cx="28" cy="30" r="13" fill="#475569"/>
+    <text x="28" y="35" text-anchor="middle" class="num">4</text>
+    <text x="52" y="27" class="pt">Hãm tốc &amp; dựng thẳng</text>
+    <text x="52" y="46" class="ps">x → 0 m · θ → 0°</text>
+
+    <use href="#rail"/>
+    <line x1="100" y1="196" x2="100" y2="266" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <text x="100" y="284" text-anchor="middle" class="tag">đích x = 0</text>
+
+    <line x1="100" y1="222" x2="100" y2="112" stroke="#334155" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="100" cy="108" r="8" fill="#475569"/>
+    <rect x="76" y="222" width="48" height="28" rx="4" fill="#e2e8f0" stroke="#475569" stroke-width="2"/>
+    <circle cx="88" cy="252" r="5" fill="#94a3b8"/>
+    <circle cx="112" cy="252" r="5" fill="#94a3b8"/>
+
+    <text x="20" y="322" class="cap">Sai số vị trí về 0 nên θ_ref cũng về 0.</text>
+    <text x="20" y="340" class="cap">Xe hãm nhẹ để đón con lắc dựng lại.</text>
+    <text x="20" y="358" class="cap">Cả hai biến trạng thái cùng đứng yên.</text>
+  </g>
+</svg>

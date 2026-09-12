@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Chương 5 - Nhả ga trước đèn đỏ (Khâu D & Lực hãm)</title>
+<style>
+  :root{--bg:#0b0e1a;--panel:#0f1322;--ink:#FFF1E8;--muted:#83769C;--line:#5F574F;--acc:#FFEC27;--blue:#29ADFF;--orange:#FFA300;--red:#FF004D;--green:#00E436}
+  *{box-sizing:border-box}
+  body{margin:0;padding:12px;color:var(--ink);font-family:"Courier New",ui-monospace,Consolas,monospace;background-color:var(--bg);background-image:linear-gradient(45deg,#0d1122 25%,transparent 25%,transparent 75%,#0d1122 75%),linear-gradient(45deg,#0d1122 25%,transparent 25%,transparent 75%,#0d1122 75%);background-size:26px 26px;background-position:0 0,13px 13px}
+  .wrap{width:100%;max-width:960px;margin:auto}
+  .intro{margin:0 0 10px;color:#C2C3C7;font-size:.88rem;line-height:1.5}
+  .locked-row{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 10px}
+  .chip{display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:5px 9px;border:2px solid var(--line);background:var(--panel);box-shadow:2px 2px 0 #000;color:#C2C3C7;font-size:.7rem}
+  .chip.locked{background:#141a30}
+  .chip i{font-style:normal;color:var(--muted)}
+  .panel{position:relative;border:2px solid var(--line);background:var(--panel);overflow:hidden;box-shadow:4px 4px 0 #000}
+  .panel::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.13) 0 1px,transparent 1px 3px)}
+  .panel-title{padding:9px 12px;background:#1D2B53;color:var(--acc);border-bottom:2px solid var(--line);font-size:.78rem;font-weight:700;letter-spacing:.06em}
+  .panel canvas{display:block;width:100%;height:auto}
+  canvas.px{image-rendering:pixelated}
+  #brakePanel{margin-top:10px}
+  .hud{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:10px}
+  .stat{min-width:0;padding:9px 10px;border:2px solid var(--line);background:var(--panel);box-shadow:3px 3px 0 #000;text-align:center}
+  .stat b{display:block;font-size:1.02rem;line-height:1.2;color:var(--acc)}
+  .stat span{display:block;margin-top:3px;color:var(--muted);font-size:.6rem;text-transform:uppercase;letter-spacing:.03em}
+  .controls{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .control{flex:3 1 250px;min-width:220px;padding:10px 12px;border:2px solid var(--line);background:var(--panel);box-shadow:3px 3px 0 #000}
+  .control label{display:block;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+  .control label b{float:right;color:var(--acc)}
+  input[type=range]{width:100%;margin:8px 0 0;accent-color:var(--orange)}
+  button{min-height:44px;padding:9px 13px;border:2px solid #C2C3C7;background:#1D2B53;color:var(--ink);font:inherit;font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.02em;cursor:pointer;user-select:none;box-shadow:3px 3px 0 #000;transition:none}
+  button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 #000}
+  button.primary{border-color:var(--green);background:#008751}
+  button.on{border-color:var(--acc);background:var(--orange);color:#1D2B53}
+  button.warn.on{border-color:var(--red);background:var(--red);color:var(--ink)}
+  .preset{flex:1 1 118px}
+  .mode{flex:1 1 140px}
+  .note{margin:8px 2px 0;color:var(--muted);font-size:.76rem;line-height:1.55}
+  .note b{color:#C2C3C7}
+  #graph{display:block;width:100%;height:auto;margin-top:10px;border:2px solid var(--line);background:#0f1322;box-shadow:4px 4px 0 #000}
+  @media(max-width:768px){body{padding:8px}.hud{grid-template-columns:repeat(2,minmax(0,1fr))}.controls .control{flex-basis:100%}.preset,.mode{flex:1 1 135px}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <p class="intro"><strong>Khâu D tạo lực hãm thông minh.</strong> P nhìn hiện tại, I nhớ quá khứ. D nhìn vào <em>tốc độ thu hẹp khoảng cách</em> để hãm tốc trước khi chạm đích, dập tắt dao động của Chương 4.</p>
+  <div class="locked-row">
+    <span class="chip locked"><i>🔒</i> Kp từ Chương 3: <b id="kpLocked">2</b></span>
+    <span class="chip locked"><i>🔒</i> Ki từ Chương 4: <b id="kiLocked">0,15</b></span>
+    <span class="chip"><i>●</i> mô hình: trọng tài hô mỗi 2 s · băng chuyền kéo lùi</span>
+  </div>
+  <section class="panel"><div class="panel-title">ĐƯỜNG ĐUA · A-SIN NHẢ GA & HÃM TỐC TRƯỚC ĐÍCH</div><canvas id="scene" class="px" width="300" height="112" aria-label="A-sin chạy, lực hãm thông minh và ổn định trên vạch"></canvas></section>
+  <section class="panel" id="brakePanel"><div class="panel-title">THANH LỰC HÃM (D) · đo tốc độ thu hẹp khoảng cách</div><canvas id="brakeCanvas" width="900" height="120" aria-label="Thanh lực hãm khâu D"></canvas></section>
+  <div class="hud">
+    <div class="stat"><b id="currentErr">100%</b><span>sai lệch hiện tại (e)</span></div>
+    <div class="stat"><b id="overshoot">0%</b><span>vọt lố lớn nhất</span></div>
+    <div class="stat"><b id="crossings">0</b><span>số nhịp dao động</span></div>
+    <div class="stat"><b id="settling">--</b><span>thời gian ổn định</span></div>
+    <div class="stat"><b id="dForce">0%</b><span>lực hãm D</span></div>
+  </div>
+  <div class="controls">
+    <div class="control"><label for="kd">Lực hãm thông minh (Kd)<b id="kdValue">0,5</b></label><input id="kd" type="range" min="0" max="1.5" step="0.05" value="0.5"></div>
+    <button class="preset" id="zeroKd" type="button">Kd = 0 · vọt lố như Ch4</button>
+    <button class="preset" id="optKd" type="button">Kd vừa đủ · êm ru (0% lố)</button>
+    <button class="preset" id="highKd" type="button">Kd quá gắt · hãm sớm</button>
+    <button class="mode on" id="modeBtn" type="button" aria-pressed="true">PID · có lực hãm D</button>
+    <button class="mode" id="noiseBtn" type="button" aria-pressed="false">⚡ Bật nhiễu đo lường</button>
+    <button class="preset" id="test1mBtn" type="button" title="Thử nghiệm: D có tự xóa được kẹt 1 mét không?">Thử cảnh kẹt 1m</button>
+    <button id="restart" type="button">Chạy lại</button>
+  </div>
+  <canvas id="graph" width="900" height="230" aria-label="Đồ thị so sánh vị trí A-sin giữa PI và PID theo thời gian"></canvas>
+  <p class="note"><b>Ba sự thật thẳng thắn về D trong demo này:</b><br>
+  1. <b>Dập dao động triệt để:</b> Khi để <b>Kd vừa đủ (~0,5)</b>, A-sin tự động nhả ga trước đích và phanh nhẹ, cập bến 100m êm ru với <b>0% vọt lố</b> (không hề vượt qua Rùa). Ngược lại khi bấm <b>Kd = 0</b> (PI cũ), A-sin lao vọt qua mặt Rùa tới ~18,6% và lắc lư trước khi dừng (đường xám đứt đối chiếu).<br>
+  2. <b>D im lặng khi đứng im:</b> Bấm nút "Thử cảnh kẹt 1m", A-sin đứng cách đích 1m như Chương 3. Vì khoảng cách không đổi nên tốc độ thay đổi bằng 0 → Lực phanh D = 0! D không thể tự xóa sai số xác lập, chỉ I mới làm được.<br>
+  3. <b>D rất sợ nhiễu:</b> Bấm "⚡ Bật nhiễu đo lường", trọng tài hô chập chờn ±1,5%. D nhạy cảm với tốc độ giật nên liên tục phát lực hãm giật cục khiến A-sin run rẩy. Đây là lý do trong công nghiệp, người ta hay bỏ D hoặc phải lắp thêm bộ lọc tín hiệu.</p>
+</main>
+<script>
+"use strict";
+const scene=document.getElementById("scene"), brakeCanvas=document.getElementById("brakeCanvas"), graph=document.getElementById("graph");
+const sc=scene.getContext("2d"), bc=brakeCanvas.getContext("2d"), gc=graph.getContext("2d");
+const kd=document.getElementById("kd"), kdValue=document.getElementById("kdValue"), kpLocked=document.getElementById("kpLocked"), kiLocked=document.getElementById("kiLocked");
+const zeroKd=document.getElementById("zeroKd"), optKd=document.getElementById("optKd"), highKd=document.getElementById("highKd"), modeBtn=document.getElementById("modeBtn"), noiseBtn=document.getElementById("noiseBtn"), test1mBtn=document.getElementById("test1mBtn"), restart=document.getElementById("restart");
+const currentErrEl=document.getElementById("currentErr"), overshootEl=document.getElementById("overshoot"), crossingsEl=document.getElementById("crossings"), settlingEl=document.getElementById("settling"), dForceEl=document.getElementById("dForce");
+
+const TARGET=100, MAX_SPEED=8, BELT=1.6, ROUND=120, TIME_SCALE=3, STEP=0.1, SAMPLE=2, SLEW=75, WINDF=0.3;
+let kp=2, ki=0.15, pos=0, integral=0, command=0, actual=0, simTime=0, stepClock=0, sampleLeft=0, last=performance.now(), running=true, useD=true, useNoise=false, startFrom1m=false;
+let prevError=100, lastDeriv=0, rawNoise=0;
+let trace=[], ghost=[], crossings=0, previousSign=1, maxOver=0, settleAt=null, stableClock=0;
+
+try {
+  const savedKp=Number(localStorage.getItem("pid-kp")); if(savedKp>=.5&&savedKp<=8) kp=savedKp;
+} catch(ignore) {}
+kpLocked.textContent=kp.toFixed(1).replace(".0","");
+kiLocked.textContent="0,15";
+
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const fmt=(v,d=1)=>v.toFixed(d).replace(".",",");
+function fmtKd(){const v=Number(kd.value);return v.toFixed(2).replace(/0+$/,"").replace(/\.$/,"").replace(".",",")}
+function kdLabel(){kdValue.textContent=Number(kd.value)===0?"0 · không hãm":fmtKd()}
+
+function computeGhost(){
+  const out=[];let gp=0,gCmd=0,gAct=0,gInt=0,sl=0,t=0,clock=0;
+  while(t<ROUND){
+    const e=(TARGET-gp)/TARGET*100;
+    sl-=STEP;
+    if(sl<=0){
+      let inc=(e/100)*SAMPLE*ki/kp;
+      if((gCmd>=150&&inc>0)||(gCmd<=-150&&inc<0)) inc*=WINDF;
+      gInt+=inc;
+      gCmd=clamp(kp*(e+gInt*100),-150,150);
+      sl+=SAMPLE;
+    }
+    gAct=clamp(gAct+clamp(gCmd-gAct,-SLEW*STEP,SLEW*STEP),-100,100);
+    gp=clamp(gp+(gAct/100*MAX_SPEED-BELT)*STEP,-80,220);
+    t+=STEP;clock+=STEP;
+    if(clock>=.15){out.push({t,p:gp});clock=0}
+  }
+  return out;
+}
+
+function reset(){
+  pos=startFrom1m?99:0;
+  integral=startFrom1m?(BELT/MAX_SPEED*100)/(kp*100):0;
+  command=0;actual=0;simTime=0;stepClock=0;sampleLeft=0;
+  prevError=(TARGET-pos)/TARGET*100;
+  lastDeriv=0;rawNoise=0;
+  trace=[];crossings=0;previousSign=1;maxOver=0;settleAt=null;stableClock=0;
+  running=true;last=performance.now();
+  ghost=computeGhost();
+}
+
+function oneStep(dt){
+  const trueErrorPct=(TARGET-pos)/TARGET*100;
+  sampleLeft-=dt;
+  if(sampleLeft<=0){
+    rawNoise=useNoise?(Math.random()-0.5)*3.2:0;
+    const measuredError=trueErrorPct+rawNoise;
+
+    if(!startFrom1m){
+      let inc=(measuredError/100)*SAMPLE*ki/kp;
+      if((command>=150&&inc>0)||(command<=-150&&inc<0)) inc*=WINDF;
+      integral+=inc;
+      // Phanh D canh lực tích tụ: khi D đang bật, khâu I không dồn quá mức đủ cầm cân băng chuyền
+      const iHold=(BELT/MAX_SPEED*100)/(kp*100);
+      if(useD && Number(kd.value)>0 && integral>iHold) integral=iHold;
+    }
+
+    const deltaE=(measuredError-prevError)/SAMPLE;
+    prevError=measuredError;
+    lastDeriv=deltaE;
+
+    const uP=kp*measuredError;
+    const uI=kp*integral*100;
+
+    let uD=0;
+    const currentKd=useD?Number(kd.value):0;
+    if(currentKd>0 && deltaE<0){
+      uD=currentKd*15*deltaE;
+    }
+
+    command=clamp(uP+uI+uD,-150,150);
+    sampleLeft+=SAMPLE;
+  }
+
+  const targetActual=clamp(command,-100,100);
+  actual=clamp(actual+clamp(targetActual-actual,-SLEW*dt,SLEW*dt),-100,100);
+
+  const motorSpeed=actual/100*MAX_SPEED;
+  const netV=motorSpeed-BELT;
+  pos=clamp(pos+netV*dt,-80,220);
+
+  simTime+=dt;stepClock+=dt;
+  if(stepClock>=.15){
+    trace.push({t:simTime,p:pos});
+    stepClock=0;
+    if(trace.length>800) trace.shift();
+  }
+
+  if(pos>TARGET){
+    maxOver=Math.max(maxOver,pos-TARGET);
+  }
+
+  const currentSign=pos>=TARGET?1:-1;
+  if(trace.length>10 && currentSign!==previousSign && Math.abs(pos-TARGET)>0.5){
+    crossings++;
+    previousSign=currentSign;
+  }
+
+  const currentErr=Math.abs(pos-TARGET);
+  if(currentErr<=1.5 && Math.abs(actual - (BELT/MAX_SPEED*100))<5){
+    stableClock+=dt;
+    if(stableClock>=2.0 && settleAt===null){
+      settleAt=simTime;
+    }
+  } else {
+    stableClock=0;
+  }
+
+  if(simTime>=ROUND) running=false;
+}
+
+function tick(dt){
+  let remain=dt;
+  while(remain>0){
+    const chunk=Math.min(remain,STEP);
+    oneStep(chunk);
+    remain-=chunk;
+  }
+}
+
+/* ══════════════ PIXEL ARCADE KIT (hiển thị only — không đụng mô phỏng) ══════════════ */
+const PX={
+  blk:"#000000",navy:"#1D2B53",purp:"#7E2553",dgrn:"#008751",brn:"#AB5236",
+  dgy:"#5F574F",lgy:"#C2C3C7",wht:"#FFF1E8",red:"#FF004D",org:"#FFA300",
+  yel:"#FFEC27",grn:"#00E436",blu:"#29ADFF",ind:"#83769C",pnk:"#FF77A8",pch:"#FFCCAA"
+};
+
+function drawSprite(c,rows,map,x,y,flip){
+  for(let r=0;r<rows.length;r++){
+    const row=rows[r], n=row.length;
+    for(let i=0;i<n;i++){
+      const k=flip?row[n-1-i]:row[i];
+      if(k===".") continue;
+      c.fillStyle=map[k];
+      c.fillRect(x+i,y+r,1,1);
+    }
+  }
+}
+
+function pxCircle(c,cx,cy,r,col){
+  c.fillStyle=col;
+  for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++)
+    if(dx*dx+dy*dy<=r*r) c.fillRect(cx+dx,cy+dy,1,1);
+}
+
+function plaqueText(c,txt,x,y,col){
+  c.font='bold 8px "Courier New",monospace';
+  c.textAlign="left"; c.textBaseline="alphabetic";
+  const w=c.measureText(txt).width;
+  c.fillStyle="rgba(0,0,0,.55)";
+  c.fillRect(x-2,y-8,w+4,10);
+  c.fillStyle=col;
+  c.fillText(txt,x,y);
+}
+
+function pxArrow(c,x,y,len,col,dir){
+  c.fillStyle=col;
+  const head=5;
+  if(dir>0) c.fillRect(x,y-1,len-head,3); else c.fillRect(x+head,y-1,len-head,3);
+  for(let i=0;i<4;i++){
+    const hw=3-i;
+    const hx=dir>0? x+len-head+i : x+head-1-i;
+    c.fillRect(hx,y-hw,1,hw*2+1);
+  }
+}
+
+/* ── Sprite A-sin (12×18) ── */
+const RPAL={h:PX.brn,s:PX.pch,r:PX.red,y:PX.yel,a:PX.blu,d:PX.navy,p:PX.purp,k:PX.dgy,e:PX.blk,w:PX.wht};
+const RUN_TOP=[
+"...hhhhhh...",
+"..hhhhhhhh..",
+".rrrrrrrrrr.",
+".rrrrrrrrrry",
+"rr.ssssssss.",
+"r..ssessess.",
+"...ssddss...",
+"..p.aaaaaa..",
+".pp.aaaaaa..",
+".ppaaayaaa..",
+".ppaaaaaass.",
+".ppyyyyyyy.."
+];
+const RUN_LEGS_A=[
+"..aaaa.aaa..",
+"..ss....ss..",
+".ss......ss.",
+".ss......ss.",
+"kk........kk",
+"kkk......kkk"
+];
+const RUN_LEGS_B=[
+"..aaaaaaa...",
+"...ss.ss....",
+"...ss..ss...",
+"....ss......",
+"....kk......",
+"...kkk......"
+];
+const RUN_LEGS_IDLE=[
+"..aaaaaa....",
+"...ss.ss....",
+"...ss.ss....",
+"...ss.ss....",
+"...kk.kk....",
+"..kkk.kkk..."
+];
+const RUN_HEAD_PANIC = RUN_TOP.slice(0,5).concat([
+"r..wwswwsww.",
+"...ssdddds.."
+],RUN_TOP.slice(7));
+
+function runner(c,x,y,moving,t,panic){
+  x=Math.round(x); y=Math.round(y);
+  const fr=Math.floor(t*9)%2;
+  if(moving){
+    c.fillStyle=PX.lgy;
+    for(let i=0;i<3;i++){
+      const ph=Math.floor(t*14)+i;
+      c.fillRect(x-4-((ph*3)%6), y-4-((ph*2)%3), 2, 2);
+      c.fillRect(x-8-((ph*5)%8), y-3-((ph*3)%3), 1, 1);
+    }
+  }
+  let top, legs;
+  if(panic){ top=RUN_HEAD_PANIC; legs=RUN_LEGS_IDLE; y-=Math.floor(t*16)%2; }
+  else if(moving){ top=RUN_TOP; legs=fr?RUN_LEGS_A:RUN_LEGS_B; if(fr) y-=1; }
+  else { top=RUN_TOP; legs=RUN_LEGS_IDLE; }
+  drawSprite(c,top.concat(legs),RPAL,x-6,y-18);
+}
+
+/* ── Rùa Vàng ── */
+function turtle(c,x,y,t){
+  x=Math.round(x); y=Math.round(y);
+  const shimmer=Math.floor(t*2)%2;
+  c.fillStyle="rgba(0,0,0,.3)";
+  c.fillRect(x-9,y+10,22,2);
+  c.fillStyle=PX.dgrn;
+  c.fillRect(x-8,y+7,3,3); c.fillRect(x+2,y+7,3,3); c.fillRect(x+6,y+7,3,3);
+  c.fillRect(x-12,y+6,3,2);
+  const shellHi=shimmer?PX.yel:PX.org, shellLo=shimmer?PX.org:PX.brn;
+  c.fillStyle=shellLo; c.fillRect(x-10,y-1,20,8);
+  c.fillStyle=shellHi; c.fillRect(x-9,y-2,18,3); c.fillRect(x-7,y-3,14,1); c.fillRect(x-4,y-4,8,1);
+  c.fillStyle=shellLo;
+  c.fillRect(x-6,y+2,2,2); c.fillRect(x-1,y+2,2,2); c.fillRect(x+4,y+2,2,2);
+  c.fillStyle=PX.dgrn; c.fillRect(x+9,y-2,7,6);
+  c.fillStyle=PX.wht; c.fillRect(x+12,y-1,2,2);
+  c.fillStyle=PX.blk; c.fillRect(x+13,y-1,1,1);
+  c.fillStyle=PX.pnk; c.fillRect(x+11,y+2,2,1);
+  c.fillStyle=PX.yel;
+  c.fillRect(x+10,y-5,2,3); c.fillRect(x+13,y-6,2,4); c.fillRect(x+16,y-5,2,3);
+  c.fillRect(x+10,y-3,8,1);
+  c.fillStyle=PX.red; c.fillRect(x+13,y-4,2,1);
+}
+
+function cld(c,x,y,big){
+  c.fillStyle=PX.lgy;
+  if(big){ c.fillRect(x,y,10,2); c.fillRect(x+2,y-2,6,2); }
+  else   { c.fillRect(x,y,7,2); c.fillRect(x+1,y-1,4,1); }
+}
+
+function drawScene(){
+  const w=scene.width,h=scene.height, t=performance.now()/1000;
+  const currentKd0=useD?Number(kd.value):0;
+  const braking=currentKd0>0 && lastDeriv<0;
+  let shx=0;
+  if(pos>TARGET+2) shx=(Math.floor(t*22)%2)?1:-1;
+  sc.save();
+  sc.translate(shx,0);
+
+  sc.fillStyle=PX.navy; sc.fillRect(-2,0,w+4,32);
+  sc.fillStyle=PX.purp; sc.fillRect(-2,32,w+4,10);
+  sc.fillStyle=PX.pnk;  sc.fillRect(-2,42,w+4,8);
+  pxCircle(sc,254,38,8,PX.org);
+  pxCircle(sc,254,38,6,PX.yel);
+
+  sc.fillStyle=PX.navy;
+  [[0,10],[22,6],[44,15],[70,8],[96,17],[124,10],[150,14],[176,7],[202,12],[228,6],[252,13],[278,8]].forEach(([mx,mh])=>{
+    sc.fillRect(mx,50-mh,26,mh);
+  });
+
+  const cx1=(Math.floor(t*4)%(w+40))-30, cx2=(Math.floor(t*2.5)%(w+40))-30;
+  cld(sc,cx1,18,1); cld(sc,cx2,26,0);
+
+  sc.fillStyle=PX.dgrn; sc.fillRect(-2,50,w+4,5);
+  sc.fillStyle=PX.brn;  sc.fillRect(-2,55,w+4,h-55);
+  sc.fillStyle=PX.dgy;
+  for(let i=0;i<90;i++){
+    const sx=(i*61+17)%w, sy=58+((i*37)%52);
+    if(sy>60) sc.fillRect(sx,sy,1,1);
+  }
+
+  const left=18,right=282,roadY=66,roadH=10;
+  sc.fillStyle=PX.dgy; sc.fillRect(left,roadY,right-left,roadH);
+  sc.fillStyle=PX.blk;
+  const boff=Math.floor(t*10)%14;
+  for(let x=left+4-boff;x<right;x+=14){
+    if(x<left||x>right-6) continue;
+    sc.fillRect(x,roadY+2,3,1); sc.fillRect(x+1,roadY+4,3,1); sc.fillRect(x+2,roadY+6,3,1);
+  }
+  sc.fillStyle=PX.lgy;
+  sc.fillRect(left,roadY-1,right-left,1); sc.fillRect(left,roadY+roadH,right-left,1);
+
+  const targetX=left+TARGET/140*(right-left);
+  const runnerX=left+clamp(pos,0,140)/140*(right-left);
+
+  // cột đích caro
+  for(let yy=52;yy<92;yy+=4){
+    sc.fillStyle=(((yy-52)/4)%2)?PX.yel:PX.blk;
+    sc.fillRect(targetX-3,yy,2,4); sc.fillRect(targetX+1,yy,2,4);
+  }
+  sc.fillStyle=PX.lgy; sc.fillRect(targetX,40,1,10);
+
+  turtle(sc,targetX-8,roadY+roadH-12,t);
+
+  // vệt thắng liệu khi D đang hãm — chỉ vẽ, không đụng mô phỏng
+  if(braking){
+    sc.fillStyle=PX.red;
+    for(let i=0;i<4;i++) sc.fillRect(runnerX-9-i*4,roadY+roadH-1-i,3,1);
+  }
+
+  runner(sc,runnerX,roadY+roadH,Math.abs(actual)>1,t,pos>TARGET+2);
+
+  const isOver=pos>TARGET;
+  plaqueText(sc,isOver?"A-SIN (VƯỢT MẶT RÙA!)":"A-SIN",clamp(runnerX-20,4,214),56,isOver?PX.red:PX.blu);
+  plaqueText(sc,"ĐÍCH 100M",clamp(targetX-18,4,250),56,PX.org);
+
+  // mũi tên băng chuyền kéo lùi
+  pxArrow(sc,190,90,26,PX.red,-1);
+  plaqueText(sc,"BĂNG CHUYỀN KÉO LÙI",96,93,PX.red);
+
+  // HUD
+  plaqueText(sc,"T: "+fmt(Math.min(simTime,ROUND),0)+" S",3,10,PX.yel);
+  plaqueText(sc,"ĐẠP: "+Math.round(actual)+"%",80,10,Math.abs(actual)>1?PX.blu:PX.ind);
+  if(useNoise){
+    plaqueText(sc,"NHIỄU: "+(rawNoise>=0?"+":"")+fmt(rawNoise)+"%",3,21,PX.red);
+  }
+
+  sc.restore();
+}
+
+function drawBrake(){
+  const w=brakeCanvas.width,h=brakeCanvas.height;
+  bc.clearRect(0,0,w,h); bc.fillStyle="#0f1322"; bc.fillRect(0,0,w,h);
+
+  const mid=w/2, maxD=60;
+  const currentKd=useD?Number(kd.value):0;
+  const dVal=(currentKd>0 && lastDeriv<0)?(currentKd*15*lastDeriv):0;
+  const barLen=clamp(Math.abs(dVal)/maxD,0,1)*(w/2-100);
+
+  bc.strokeStyle=PX.dgy; bc.lineWidth=2;
+  bc.beginPath(); bc.moveTo(mid,22); bc.lineTo(mid,h-20); bc.stroke();
+
+  // thanh phanh dạng khối pixel — hãm về bên trái
+  if(dVal < 0){
+    const bw=16, gap=4;
+    const nBlocks=Math.floor(barLen/(bw+gap));
+    for(let i=0;i<nBlocks;i++){
+      bc.fillStyle=(i%2)?PX.org:PX.red;
+      bc.fillRect(mid-6-bw-i*(bw+gap),38,bw,34);
+    }
+    const rem=barLen-nBlocks*(bw+gap);
+    if(rem>0){ bc.fillStyle="rgba(255,0,77,.3)"; bc.fillRect(mid-6-rem,38,rem,34); }
+  }
+
+  bc.font='bold 15px "Courier New",monospace'; bc.textAlign="center";
+  bc.fillStyle=PX.yel;
+  bc.fillText("LỰC HÃM THÔNG MINH (D)",mid,16);
+  bc.font='11px "Courier New",monospace';
+  bc.fillStyle=PX.ind;
+  bc.fillText("◂ ĐANG ÁP SÁT NHANH → TẠO LỰC HÃM LẠI",mid-190,h-7);
+  bc.fillText("ĐÃ DỪNG LẠI → LỰC HÃM D = 0 ▸",mid+190,h-7);
+  bc.fillStyle=Math.abs(dVal)<0.5?PX.dgy:PX.red;
+  bc.font='bold 19px "Courier New",monospace';
+  bc.fillText(Math.abs(dVal)<0.5?"0% (đang đứng im hoặc không chạy tới)":"Lực hãm: -"+fmt(Math.abs(dVal))+"%",mid,h-38);
+}
+
+function drawGraph(){
+  const w=graph.width,h=graph.height,left=54,right=w-18,top=25,bottom=h-32;
+  gc.clearRect(0,0,w,h); gc.fillStyle="#0f1322"; gc.fillRect(0,0,w,h);
+  const y=p=>bottom-(p/160)*(bottom-top);
+
+  gc.fillStyle="rgba(255,236,39,.10)";
+  gc.fillRect(left,y(101),right-left,y(99)-y(101));
+
+  gc.strokeStyle="#232c4e"; gc.lineWidth=1; gc.setLineDash([2,3]);
+  gc.font='11px "Courier New",monospace';
+  gc.fillStyle=PX.ind; gc.textAlign="center";
+  for(let s=0;s<=ROUND;s+=15){
+    const xx=left+s/ROUND*(right-left);
+    gc.beginPath(); gc.moveTo(xx,top); gc.lineTo(xx,bottom); gc.stroke();
+    gc.fillText(s+"s",xx,h-10);
+  }
+  gc.textAlign="right";
+  [0,50,100,150].forEach(v=>{
+    const yy=y(v);
+    gc.beginPath(); gc.moveTo(left,yy); gc.lineTo(right,yy); gc.stroke();
+    gc.fillText(v+" m",left-7,yy+4);
+  });
+  gc.setLineDash([]);
+
+  gc.strokeStyle=PX.org; gc.lineWidth=2; gc.setLineDash([8,5]);
+  gc.beginPath(); gc.moveTo(left,y(TARGET)); gc.lineTo(right,y(TARGET)); gc.stroke();
+  gc.setLineDash([]);
+  gc.fillStyle=PX.org; gc.fillText("Rùa · 100 m",right,y(TARGET)-7);
+
+  const currentKd=useD?Number(kd.value):0;
+  if(currentKd>0 && ghost.length>1 && !startFrom1m){
+    gc.strokeStyle=PX.dgy; gc.lineWidth=2; gc.setLineDash([5,4]);
+    gc.beginPath();
+    ghost.forEach((p,i)=>{
+      const xx=left+p.t/ROUND*(right-left),yy=y(clamp(p.p,0,160));
+      i?gc.lineTo(xx,yy):gc.moveTo(xx,yy);
+    });
+    gc.stroke(); gc.setLineDash([]);
+  }
+
+  if(trace.length>1){
+    const col=(currentKd>0)?(useNoise?PX.red:PX.blu):PX.org;
+    gc.strokeStyle=col; gc.lineWidth=2.5;
+    gc.shadowColor=col; gc.shadowBlur=7;
+    gc.beginPath();
+    trace.forEach((p,i)=>{
+      const xx=left+p.t/ROUND*(right-left),yy=y(clamp(p.p,0,160));
+      i?gc.lineTo(xx,yy):gc.moveTo(xx,yy);
+    });
+    gc.stroke();
+    gc.shadowBlur=0;
+  }
+
+  gc.fillStyle=PX.yel; gc.font='bold 12px "Courier New",monospace'; gc.textAlign="left";
+  if(currentKd>0 && !startFrom1m){
+    gc.fillText("VỊ TRÍ A-SIN (m) · xanh = PID (có lực hãm D) · xám đứt = PI đối chiếu (không có lực hãm, vọt lố)",left,14);
+  } else if(!useD || currentKd===0) {
+    gc.fillText("VỊ TRÍ A-SIN (m) · cam = PI (Kd = 0, không có lực hãm D → vọt lố và dao động)",left,14);
+  } else {
+    gc.fillText("VỊ TRÍ A-SIN (m) · Thử nghiệm kẹt 1m: Khoảng cách đứng yên → Lực hãm D bằng đúng 0%",left,14);
+  }
+}
+
+function update(){
+  const trueErr=TARGET-pos;
+  const errPercent=(TARGET-pos)/TARGET*100;
+
+  if(pos>TARGET){
+    currentErrEl.textContent="vượt +"+fmt(pos-TARGET)+"m ("+fmt(Math.abs(errPercent))+"%)";
+    currentErrEl.style.color="var(--red)";
+  } else if(Math.abs(trueErr)<0.05){
+    currentErrEl.textContent="0,0m (0%)";
+    currentErrEl.style.color="var(--green)";
+  } else {
+    currentErrEl.textContent="thiếu "+fmt(trueErr)+"m ("+fmt(errPercent)+"%)";
+    currentErrEl.style.color="var(--ink)";
+  }
+
+  const currentKd=useD?Number(kd.value):0;
+  const dVal=(currentKd>0 && lastDeriv<0)?(currentKd*15*lastDeriv):0;
+  overshootEl.textContent=fmt(maxOver)+"%";
+  crossingsEl.textContent=crossings;
+  settlingEl.textContent=settleAt===null?"--":fmt(settleAt)+" s";
+  dForceEl.textContent=Math.abs(dVal)<0.5?"0%":"hãm -"+fmt(Math.abs(dVal))+"%";
+  kdLabel();
+  modeBtn.textContent=useD?"PID · có lực hãm thông minh":"PI · tắt lực hãm D";
+  noiseBtn.classList.toggle("warn",useNoise);
+  noiseBtn.classList.toggle("on",useNoise);
+  noiseBtn.setAttribute("aria-pressed",String(useNoise));
+  noiseBtn.textContent=useNoise?"⚡ Đang bật nhiễu":"⚡ Bật nhiễu đo lường";
+}
+
+function loop(now){
+  const dt=Math.min((now-last)/1000*TIME_SCALE,.12);
+  last=now;
+  if(running) tick(dt);
+  update();drawScene();drawBrake();drawGraph();
+  requestAnimationFrame(loop);
+}
+
+kd.addEventListener("input",()=>{
+  kdLabel();
+  reset();
+});
+
+zeroKd.addEventListener("click",()=>{
+  kd.value=0;
+  useD=true;
+  startFrom1m=false;
+  reset();
+});
+
+optKd.addEventListener("click",()=>{
+  kd.value=0.5;
+  useD=true;
+  startFrom1m=false;
+  reset();
+});
+
+highKd.addEventListener("click",()=>{
+  kd.value=1.2;
+  useD=true;
+  startFrom1m=false;
+  reset();
+});
+
+modeBtn.addEventListener("click",()=>{
+  useD=!useD;
+  modeBtn.classList.toggle("on",useD);
+  modeBtn.setAttribute("aria-pressed",String(useD));
+  reset();
+});
+
+noiseBtn.addEventListener("click",()=>{
+  useNoise=!useNoise;
+  reset();
+});
+
+test1mBtn.addEventListener("click",()=>{
+  startFrom1m=true;
+  kd.value=0.5;
+  useD=true;
+  reset();
+});
+
+restart.addEventListener("click",()=>{
+  startFrom1m=false;
+  reset();
+});
+
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

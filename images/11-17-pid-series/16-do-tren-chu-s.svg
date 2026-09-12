@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="title desc">
+  <title id="title">Đọc đường cong chữ S: thời gian trễ Tu và thời gian lên dốc Tg</title>
+  <desc id="desc">Đồ thị gồm lệnh bậc thang ở phía trên và đáp ứng chữ S ở phía dưới. Tu là khoảng từ lúc lệnh đổi đến khi đáp ứng bắt đầu nhúc nhích; Tg là khoảng leo dốc sau đó.</desc>
+  <defs>
+    <style>
+      text { font-family: Inter, "Segoe UI", Arial, sans-serif; }
+      .ink { fill: #0f172a; }
+      .muted { fill: #475569; }
+      .axis { stroke: #64748b; stroke-width: 2.5; }
+      .grid { stroke: #e2e8f0; stroke-width: 2; stroke-dasharray: 6 8; }
+      .guide { stroke: #94a3b8; stroke-width: 2; stroke-dasharray: 7 8; }
+      .cap { font-size: 15px; font-weight: 800; letter-spacing: 1px; }
+    </style>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-rose" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#e11d48"/>
+    </marker>
+    <marker id="arrow-amber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#d97706"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="760" fill="#f8fafc"/>
+  <text x="60" y="55" class="ink" font-size="32" font-weight="800">Đọc một đường cong chữ S</text>
+  <text x="60" y="87" class="muted" font-size="19">Lệnh đã đổi, nhưng đối tượng cần thời gian để nghe và leo tới mức mới.</text>
+
+  <rect x="55" y="121" width="1090" height="513" rx="9" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+  <rect x="75" y="143" width="1050" height="182" rx="7" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="100" y="175" fill="#1d4ed8" class="cap">PHẦN TRÊN · LỆNH ĐƯA VÀO</text>
+  <text x="100" y="202" class="ink" font-size="19" font-weight="700">Lệnh bậc thang</text>
+
+  <!-- top step chart -->
+  <path d="M 125 282 H 1044" class="axis" fill="none"/>
+  <path d="M 125 282 V 218" class="axis" fill="none"/>
+  <path d="M 125 282 H 345 V 210 H 1044" fill="none" stroke="#2563eb" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M 345 194 V 543" class="guide" fill="none"/>
+  <text x="344" y="303" text-anchor="middle" fill="#1d4ed8" font-size="15" font-weight="800">lệnh đổi</text>
+  <text x="1044" y="303" text-anchor="end" class="muted" font-size="15">thời gian →</text>
+  <text x="105" y="220" text-anchor="end" fill="#1d4ed8" font-size="15" font-weight="700">mức mới</text>
+  <text x="105" y="288" text-anchor="end" class="muted" font-size="15">mức cũ</text>
+  <circle cx="345" cy="210" r="8" fill="#ffffff" stroke="#2563eb" stroke-width="4"/>
+  <path d="M 360 204 C 389 178, 416 177, 445 190" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow-blue)"/>
+  <text x="457" y="188" fill="#1d4ed8" font-size="15" font-weight="700">trọng tài hô một bước mới</text>
+
+  <rect x="75" y="344" width="1050" height="267" rx="7" fill="#ffffff" stroke="#e2e8f0"/>
+  <text x="100" y="377" fill="#b45309" class="cap">PHẦN DƯỚI · ĐỐI TƯỢNG TRẢ LỜI</text>
+  <text x="100" y="404" class="ink" font-size="19" font-weight="700">Đáp ứng chữ S</text>
+
+  <!-- bottom response graph -->
+  <path d="M 125 565 H 1044" class="axis" fill="none"/>
+  <path d="M 125 565 V 424" class="axis" fill="none"/>
+  <path d="M 125 565 H 485 C 520 565 540 556 566 537 C 609 506 630 453 676 438 C 722 423 770 421 820 421 H 1044" fill="none" stroke="#d97706" stroke-width="7" stroke-linecap="round"/>
+  <path d="M 125 421 H 1044" class="grid" fill="none"/>
+  <path d="M 125 565 H 1044" class="grid" fill="none"/>
+  <text x="105" y="428" text-anchor="end" fill="#b45309" font-size="15" font-weight="700">x mới</text>
+  <text x="105" y="571" text-anchor="end" class="muted" font-size="15">x cũ</text>
+
+  <!-- guides and markers -->
+  <path d="M 485 402 V 589 M 820 402 V 589" class="guide" fill="none"/>
+  <circle cx="485" cy="565" r="8" fill="#ffffff" stroke="#e11d48" stroke-width="4"/>
+  <circle cx="820" cy="421" r="8" fill="#ffffff" stroke="#059669" stroke-width="4"/>
+  <path d="M 345 615 H 485" stroke="#e11d48" stroke-width="4" marker-start="url(#arrow-rose)" marker-end="url(#arrow-rose)"/>
+  <rect x="351" y="588" width="128" height="31" rx="6" fill="#fff1f2" stroke="#fecdd3"/>
+  <text x="415" y="609" text-anchor="middle" fill="#be123c" font-size="16" font-weight="800">Tu · thời gian trễ</text>
+
+  <path d="M 485 395 H 820" stroke="#d97706" stroke-width="4" marker-start="url(#arrow-amber)" marker-end="url(#arrow-amber)"/>
+  <rect x="581" y="365" width="142" height="31" rx="6" fill="#fff7ed" stroke="#fed7aa"/>
+  <text x="652" y="386" text-anchor="middle" fill="#b45309" font-size="16" font-weight="800">Tg · lên dốc</text>
+
+  <!-- tangent and callouts -->
+  <path d="M 536 550 L 705 420" fill="none" stroke="#d97706" stroke-width="3" stroke-dasharray="8 7"/>
+  <text x="695" y="466" fill="#b45309" font-size="15" font-weight="700">đoạn dốc mạnh</text>
+  <path d="M 474 543 C 442 520, 420 500, 405 477" fill="none" stroke="#e11d48" stroke-width="3" marker-end="url(#arrow-rose)"/>
+  <text x="220" y="467" fill="#be123c" font-size="15" font-weight="700">chưa nhúc nhích</text>
+  <text x="900" y="446" fill="#047857" font-size="15" font-weight="700">gần cân bằng</text>
+
+  <!-- explainer strip -->
+  <rect x="55" y="658" width="1090" height="70" rx="8" fill="#0f172a"/>
+  <circle cx="93" cy="693" r="17" fill="#2563eb"/>
+  <text x="93" y="699" text-anchor="middle" fill="#ffffff" font-size="18" font-weight="900">1</text>
+  <text x="124" y="687" fill="#ffffff" font-size="17" font-weight="800">Lệnh đổi</text>
+  <text x="124" y="710" fill="#cbd5e1" font-size="15">→</text>
+  <circle cx="220" cy="693" r="17" fill="#e11d48"/>
+  <text x="220" y="699" text-anchor="middle" fill="#ffffff" font-size="18" font-weight="900">2</text>
+  <text x="251" y="687" fill="#ffffff" font-size="17" font-weight="800">Chờ Tu</text>
+  <text x="251" y="710" fill="#cbd5e1" font-size="15">→</text>
+  <circle cx="345" cy="693" r="17" fill="#d97706"/>
+  <text x="345" y="699" text-anchor="middle" fill="#ffffff" font-size="18" font-weight="900">3</text>
+  <text x="376" y="687" fill="#ffffff" font-size="17" font-weight="800">Leo trong Tg</text>
+  <text x="376" y="710" fill="#cbd5e1" font-size="15">→</text>
+  <text x="520" y="697" fill="#ffffff" font-size="17" font-weight="800">Chọn nhịp hô dựa trên đối tượng, không dựa trên sốt ruột.</text>
+</svg>
