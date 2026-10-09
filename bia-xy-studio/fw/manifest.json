@@ -1,0 +1,61 @@
+{
+  "generated": "2026-10-02T22:57:59.525Z",
+  "devices": {
+    "tay_cam": {
+      "name": "Tay cầm",
+      "version": "1.0.1",
+      "chip": "ESP32-S3",
+      "flash_mb": 16,
+      "parts": [
+        {
+          "path": "tay_cam/bootloader.bin",
+          "offset": 0,
+          "size": 15104
+        },
+        {
+          "path": "tay_cam/partitions.bin",
+          "offset": 32768,
+          "size": 3072
+        },
+        {
+          "path": "tay_cam/boot_app0.bin",
+          "offset": 57344,
+          "size": 8192
+        },
+        {
+          "path": "tay_cam/firmware.bin",
+          "offset": 65536,
+          "size": 1268560
+        }
+      ]
+    },
+    "bia": {
+      "name": "Bia",
+      "version": "2.2-xy",
+      "chip": "ESP32-S3",
+      "flash_mb": 8,
+      "parts": [
+        {
+          "path": "bia/bootloader.bin",
+          "offset": 0,
+          "size": 15104
+        },
+        {
+          "path": "bia/partitions.bin",
+          "offset": 32768,
+          "size": 3072
+        },
+        {
+          "path": "bia/boot_app0.bin",
+          "offset": 57344,
+          "size": 8192
+        },
+        {
+          "path": "bia/firmware.bin",
+          "offset": 65536,
+          "size": 805200
+        }
+      ]
+    }
+  }
+}

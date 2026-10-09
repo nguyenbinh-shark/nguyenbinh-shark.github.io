@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="580" viewBox="0 0 1200 580" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="t1 d1">
+  <title id="t1">Kiến trúc điều khiển Cascade-PID cho hệ con lắc ngược trên xe đẩy</title>
+  <desc id="d1">Sơ đồ khối hai vòng kín lồng nhau: vòng ngoài điều khiển vị trí xe sinh ra góc nghiêng đặt, vòng trong cân bằng góc sinh ra lực đẩy tác động lên cơ hệ Simscape Multibody.</desc>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#64748b"/>
+    </marker>
+    <marker id="arf" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#94a3b8"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1   { font-size: 24px; font-weight: 800; fill: #0f172a; }
+      .h2   { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .pl   { font-size: 14px; font-weight: 700; fill: #64748b; letter-spacing: .06em; }
+      .bt   { font-size: 15px; font-weight: 700; fill: #1e293b; }
+      .bs   { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .sig  { font-size: 15px; font-weight: 600; fill: #475569; }
+      .sgn  { font-size: 15px; font-weight: 700; fill: #475569; }
+      .fb   { font-size: 14px; font-weight: 600; fill: #94a3b8; }
+      .sub  { font-size: 12px; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="580" fill="#ffffff"/>
+  <text x="40" y="46" class="h1">Kiến trúc Cascade-PID · hai vòng kín lồng nhau</text>
+  <text x="40" y="74" class="h2">Một lực đẩy F(t) duy nhất điều khiển đồng thời hai bậc tự do: góc lắc θ và vị trí xe x.</text>
+  <line x1="40" y1="96" x2="1160" y2="96" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- Panels -->
+  <rect x="100" y="160" width="470" height="180" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text x="120" y="184" class="pl">VÒNG NGOÀI · VỊ TRÍ XE (CHẬM)</text>
+
+  <rect x="592" y="160" width="258" height="180" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text x="612" y="184" class="pl">VÒNG TRONG · GÓC LẮC (NHANH)</text>
+
+  <!-- Forward path -->
+  <text x="40" y="245" class="sig">x<tspan class="sub" dy="4">ref</tspan><tspan dy="-4"> = 0 m</tspan></text>
+  <path d="M 40 260 H 128" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+
+  <circle cx="148" cy="260" r="17" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+  <path d="M 138 250 L 158 270 M 138 270 L 158 250" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text x="130" y="240" class="sgn">+</text>
+  <text x="130" y="298" class="sgn">−</text>
+
+  <path d="M 165 260 H 222" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="194" y="248" text-anchor="middle" class="fb">e<tspan class="sub" dy="3">x</tspan></text>
+
+  <rect x="226" y="220" width="142" height="82" rx="8" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+  <text x="297" y="252" text-anchor="middle" class="bt">PID Vị Trí</text>
+  <text x="297" y="273" text-anchor="middle" class="bs">K<tspan class="sub" dy="3">p</tspan><tspan dy="-3"> = 0.1</tspan></text>
+  <text x="297" y="291" text-anchor="middle" class="bs">K<tspan class="sub" dy="3">i</tspan><tspan dy="-3"> = 0 · </tspan>K<tspan class="sub" dy="3">d</tspan><tspan dy="-3"> = 0…0.05</tspan></text>
+
+  <path d="M 368 260 H 412" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+
+  <rect x="416" y="220" width="132" height="82" rx="8" fill="#fffbeb" stroke="#a16207" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="482" y="250" text-anchor="middle" class="bt" fill="#a16207">Bão Hòa Góc</text>
+  <text x="482" y="271" text-anchor="middle" class="bs" fill="#a16207">±8° … ±12°</text>
+  <text x="482" y="289" text-anchor="middle" class="bs" fill="#a16207">(nên bổ sung)</text>
+
+  <path d="M 548 260 H 584" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="566" y="248" text-anchor="middle" class="fb">θ<tspan class="sub" dy="3">ref</tspan></text>
+
+  <circle cx="622" cy="260" r="17" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+  <path d="M 612 250 L 632 270 M 612 270 L 632 250" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text x="604" y="240" class="sgn">+</text>
+  <text x="604" y="298" class="sgn">−</text>
+
+  <path d="M 639 260 H 686" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="663" y="248" text-anchor="middle" class="fb">e<tspan class="sub" dy="3">θ</tspan></text>
+
+  <rect x="690" y="220" width="142" height="82" rx="8" fill="#ffffff" stroke="#1e293b" stroke-width="2.5"/>
+  <text x="761" y="252" text-anchor="middle" class="bt">PID Cân Bằng</text>
+  <text x="761" y="273" text-anchor="middle" class="bs">K<tspan class="sub" dy="3">p</tspan><tspan dy="-3"> = 50 · </tspan>K<tspan class="sub" dy="3">i</tspan><tspan dy="-3"> = 0.5</tspan></text>
+  <text x="761" y="291" text-anchor="middle" class="bs">K<tspan class="sub" dy="3">d</tspan><tspan dy="-3"> = 5 · N = 100</tspan></text>
+
+  <path d="M 832 260 H 878" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+
+  <circle cx="896" cy="260" r="17" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+  <path d="M 886 250 L 906 270 M 886 270 L 906 250" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text x="878" y="240" class="sgn">+</text>
+  <text x="914" y="298" class="sgn">+</text>
+  <path d="M 896 162 V 238" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arf)"/>
+  <text x="896" y="150" text-anchor="middle" class="fb">Xung nhiễu ngoại lực</text>
+
+  <path d="M 913 260 H 952" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="934" y="248" text-anchor="middle" class="fb">F(t)</text>
+
+  <rect x="958" y="208" width="182" height="106" rx="8" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="1049" y="242" text-anchor="middle" class="bt">Cơ Hệ Cart-Pendulum</text>
+  <text x="1049" y="265" text-anchor="middle" class="bs">Simscape Multibody 3D</text>
+  <text x="1049" y="284" text-anchor="middle" class="bs">Cart M = 0.5 kg</text>
+  <text x="1049" y="302" text-anchor="middle" class="bs">Pole m = 0.2 kg</text>
+
+  <!-- Feedback -->
+  <path d="M 1140 314 V 400 H 622 V 281" stroke="#94a3b8" stroke-width="2" fill="none" marker-end="url(#arf)"/>
+  <rect x="826" y="388" width="188" height="24" rx="4" fill="#ffffff"/>
+  <text x="920" y="405" text-anchor="middle" class="fb">Hồi tiếp góc lắc θ(t)</text>
+
+  <path d="M 1156 314 V 470 H 148 V 281" stroke="#94a3b8" stroke-width="2" fill="none" marker-end="url(#arf)"/>
+  <rect x="560" y="452" width="120" height="36" rx="5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="620" y="475" text-anchor="middle" class="sig">Gain = −1</text>
+  <rect x="780" y="459" width="180" height="22" rx="4" fill="#ffffff"/>
+  <text x="870" y="475" text-anchor="middle" class="fb">Hồi tiếp vị trí xe x(t)</text>
+
+  <!-- Footnote -->
+  <line x1="40" y1="518" x2="1160" y2="518" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="40" y="542" class="bs">Cả hai vòng chạy rời rạc ở T<tspan class="sub" dy="3">s</tspan><tspan dy="-3"> = 1 ms. Phân tách nhanh/chậm nằm ở độ lợi vòng, không nằm ở chu kỳ lấy mẫu.</tspan></text>
+  <text x="40" y="562" class="bs">Khối nét đứt màu hổ phách chưa có trong file .slx đi kèm — đây là phần bạn nên tự bổ sung trước khi chạy trên phần cứng thật.</text>
+</svg>

@@ -1,0 +1,2059 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Studio tay cầm · Bia tập bắn</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap">
+<style>
+/* ============================================================
+ * Studio tay cam qua cap USB-C:
+ *   - "Tay cam": ban sao man hinh tay cam (lib/hmi dich sang WebAssembly,
+ *     hmi_remote.js), thao tac o day = cham tren tay cam.
+ *   - "Thiet ke bai tap": ve diem, toc do / dung tung diem, luu vao flash tay cam
+ *     hoac vao "Bai cua toi" tren cloud (dang nhap Google, Supabase).
+ *   - "Dong bo": ghep doi tay cam bang ma 6 so, chon bai tay cam tu tai qua WiFi.
+ * Mo bang Chrome / Edge (can Web Serial). Khong can cai dat gi.
+ * Giao thuc: lib/core/core_serial.c (1 dong JSON / lenh, 921600).
+ * ============================================================ */
+:root {
+  --bg: #E9EDF0; --card: #FFFFFF; --text: #16222B; --muted: #4A5963; --line: #E1E6EA;
+  --border: #CBD3D9; --header: #0E3A4A; --nav: #16222B; --nav-text: #C5D0D6; --nav-active: #2C4452;
+  --primary: #0B6E8A; --primary-weak: #E3F1F5; --ok: #1B7F3B; --ok-bg: #E4F2E8;
+  --danger: #B3261E; --danger-bg: #FBE9E7; --warn: #8A4B00; --warn-bg: #FDF0E1;
+  --zone: #F4B48C; --radius: 10px;
+  font-family: 'Be Vietnam Pro', 'Segoe UI', system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font-size: 14px; }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: default; opacity: .45; }
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+.app { display: grid; grid-template-rows: 56px 1fr; grid-template-columns: 180px 1fr; height: 100vh; }
+header { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; padding: 0 16px;
+  background: var(--header); color: #fff; }
+header h1 { font-size: 16px; font-weight: 700; letter-spacing: .04em; margin: 0; }
+header .sub { color: #B9D3DC; font-size: 13px; }
+header .grow { flex: 1; }
+.pill { display: inline-flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px; border-radius: 15px;
+  font-size: 13px; font-weight: 600; background: #4A5963; color: #E3E9EC; }
+.pill.on { background: var(--ok); color: #fff; }
+.pill.demo { background: #B35900; color: #fff; }
+.pill .dot { width: 8px; height: 8px; border-radius: 4px; background: currentColor; }
+
+nav { background: var(--nav); display: flex; flex-direction: column; padding: 8px 0; }
+nav button { all: unset; display: flex; align-items: center; gap: 10px; height: 46px; padding: 0 18px;
+  color: var(--nav-text); font-weight: 500; cursor: pointer; }
+nav button[aria-selected="true"] { background: var(--nav-active); color: #fff; font-weight: 700; }
+nav button:hover { background: #22343F; }
+nav svg { width: 18px; height: 18px; flex: none; }
+nav .grow { flex: 1; }
+nav .estop { margin: 8px 12px; height: 56px; justify-content: center; border-radius: var(--radius);
+  background: var(--danger); color: #fff; font-weight: 700; }
+nav .estop:hover { background: #8F1E17; }
+nav .credit { padding: 0 16px; font-size: 11px; color: #6E808B; text-decoration: none; }
+nav .credit:hover { color: var(--nav-text); text-decoration: underline; }
+
+main { overflow: auto; padding: 16px; min-width: 0; }
+.tab { display: none; } .tab.show { display: block; }
+.card { background: var(--card); border-radius: 12px; padding: 14px 16px; }
+.card h2 { font-size: 15px; margin: 0 0 10px; }
+.muted { color: var(--muted); } .small { font-size: 12px; }
+.row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.grow { flex: 1; }
+
+.btn { height: 38px; padding: 0 14px; border-radius: 8px; border: 2px solid var(--text); background: #fff;
+  font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+.btn:hover:not(:disabled) { background: #EEF2F4; }
+.btn.pri { background: var(--primary); border-color: var(--primary); color: #fff; }
+.btn.pri:hover:not(:disabled) { background: #095A71; }
+.btn.dark { background: var(--text); color: #fff; }
+.btn.dark:hover:not(:disabled) { background: #2C4452; }
+.btn.danger { border-color: var(--danger); color: var(--danger); }
+.btn.danger:hover:not(:disabled) { background: var(--danger-bg); }
+.btn.sm { height: 30px; padding: 0 10px; font-size: 13px; border-width: 1.5px; }
+.btn.ghost { border-color: var(--border); }
+header .btn { border-color: #B9D3DC; background: transparent; color: #fff; height: 34px; }
+header .btn:hover:not(:disabled) { background: #1B4B5D; }
+header .btn.pri { background: #fff; color: var(--header); border-color: #fff; }
+
+input[type=text], input[type=number], select { height: 34px; border: 1.5px solid var(--border); border-radius: 7px;
+  padding: 0 8px; background: #fff; min-width: 0; }
+input:focus, select:focus { border-color: var(--primary); outline: none; }
+label.f { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); font-weight: 600; }
+
+.seg { display: inline-flex; border: 1.5px solid var(--border); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; background: #fff; height: 32px; padding: 0 12px; font-weight: 600; font-size: 13px; }
+.seg button + button { border-left: 1.5px solid var(--border); }
+.seg button[aria-pressed="true"] { background: var(--text); color: #fff; }
+
+/* ---------- Bai tap ---------- */
+.ex-grid { display: grid; grid-template-columns: 230px minmax(360px, 1fr) 410px; gap: 14px; align-items: start; }
+.ex-list { display: flex; flex-direction: column; gap: 6px; max-height: calc(100vh - 210px); overflow: auto; }
+.ex-item { all: unset; display: flex; flex-direction: column; gap: 2px; padding: 9px 11px; border-radius: 8px;
+  border: 2px solid var(--line); cursor: pointer; }
+.ex-item:hover { border-color: var(--border); }
+.ex-item[aria-selected="true"] { border-color: var(--primary); background: var(--primary-weak); }
+.ex-item b { font-weight: 600; }
+.badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 4px;
+  background: var(--line); color: var(--muted); margin-left: 6px; vertical-align: 1px; }
+.badge.new { background: var(--warn-bg); color: var(--warn); }
+
+.canvas-wrap { position: relative; background: #F4F6F7; border: 1px solid var(--border); border-radius: 10px; }
+canvas { display: block; width: 100%; touch-action: none; }
+#cv { aspect-ratio: 16 / 10; cursor: crosshair; }
+.coord { position: absolute; left: 10px; bottom: 8px; font-size: 12px; color: var(--muted);
+  background: rgba(255,255,255,.85); padding: 2px 6px; border-radius: 4px; font-variant-numeric: tabular-nums; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 8px; }
+.legend i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 5px; vertical-align: -2px; }
+
+table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; }
+th { text-align: left; font-size: 12px; color: var(--muted); font-weight: 600; padding: 6px 4px; border-bottom: 2px solid var(--text); }
+td { padding: 4px; border-bottom: 1px solid var(--line); }
+#pts td { padding: 3px 2px; }
+#pts td input { width: 100%; height: 30px; padding: 0 5px; font-size: 13px; }
+#pts th { padding: 6px 2px; }
+#pts col.c-xy { width: 70px; } #pts col.c-sp { width: 58px; } #pts col.c-dw { width: 66px; }
+#pts tr.sel td { background: var(--primary-weak); }
+#pts tr.bad td { background: var(--danger-bg); }
+#pts .idx { width: 24px; font-weight: 700; text-align: center; }
+#pts .act { white-space: nowrap; width: 76px; text-align: right; }
+.iconbtn { width: 23px; height: 26px; border: 1px solid var(--border); background: #fff; border-radius: 6px;
+  display: inline-flex; align-items: center; justify-content: center; padding: 0; }
+.iconbtn:hover:not(:disabled) { background: #EEF2F4; }
+.pts-wrap { max-height: 300px; overflow: auto; margin: 8px 0; }
+
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; font-size: 13px; }
+.stats b { font-variant-numeric: tabular-nums; }
+.msg { padding: 8px 10px; border-radius: 8px; font-size: 13px; font-weight: 600; margin-top: 8px; }
+.msg.ok { background: var(--ok-bg); color: var(--ok); }
+.msg.err { background: var(--danger-bg); color: var(--danger); }
+.msg.warn { background: var(--warn-bg); color: var(--warn); }
+.stack { display: flex; flex-direction: column; gap: 12px; }
+
+/* ---------- Tay cam (ban sao) ---------- */
+/* vua chieu cao cua so: man 5:3 + vien 24 px; chua header, tieu de, hang nut ben duoi */
+.hh-wrap { display: flex; flex-direction: column; gap: 12px; max-width: min(1200px, calc((100vh - 270px) * 5 / 3 + 24px)); min-width: 320px; margin: 0 auto; }
+.bezel { background: #16222B; border-radius: 18px; padding: 12px; box-shadow: 0 8px 28px rgba(22,34,43,.25); }
+.screen { position: relative; aspect-ratio: 5 / 3; border-radius: 6px; overflow: hidden; background: #0F1A21; }
+#hh { width: 100%; height: 100%; display: block; touch-action: none; cursor: pointer; }
+.cover { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 12px; padding: 24px; background: rgba(15,26,33,.92); color: #E3E9EC; text-align: center; line-height: 1.5; }
+.cover b { font-size: 19px; color: #fff; }
+.cover .muted { color: #B9C6CD; }
+.cover .btn:not(.pri) { color: var(--text); }
+.spin { width: 28px; height: 28px; border-radius: 50%; border: 3px solid rgba(255,255,255,.25); border-top-color: #fff;
+  animation: spin 0.9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
+.hh-bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+/* ---------- Console ---------- */
+#con { height: calc(100vh - 230px); overflow: auto; background: #0F1A21; color: #CFE3EA; border-radius: 10px;
+  padding: 10px 12px; font: 12px/1.5 ui-monospace, Consolas, monospace; white-space: pre-wrap; word-break: break-all; }
+#con .tx { color: #8FD3FF; } #con .rx { color: #B6F0C2; } #con .log { color: #9AA9B3; } #con .er { color: #FF9C94; }
+
+.overlay { position: fixed; inset: 0; background: rgba(22,34,43,.55); display: none; align-items: center; justify-content: center; z-index: 10; }
+.overlay.show { display: flex; }
+.dialog { background: #fff; border-radius: 14px; padding: 20px; width: min(460px, 92vw); display: flex; flex-direction: column; gap: 12px; }
+.dialog h3 { margin: 0; font-size: 18px; }
+
+.toast { position: fixed; right: 16px; bottom: 16px; padding: 10px 14px; border-radius: 10px; color: #fff; font-weight: 600;
+  background: var(--text); opacity: 0; transform: translateY(8px); transition: .2s; pointer-events: none; max-width: 420px; z-index: 20; }
+.toast.show { opacity: 1; transform: none; }
+.toast.err { background: var(--danger); } .toast.ok { background: var(--ok); }
+
+.empty { padding: 40px 20px; text-align: center; color: var(--muted); }
+.empty.sm { padding: 14px 8px; font-size: 13px; line-height: 1.5; }
+
+/* ---------- Cloud: tai khoan, thu vien, dong bo tay cam ---------- */
+#acct { color: #B9D3DC; font-size: 13px; max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ex-list.half { max-height: calc(50vh - 150px); min-height: 60px; }
+.list-h { display: flex; align-items: baseline; gap: 8px; margin-top: 4px; }
+.list-h h2 { margin: 0; flex: 1; }
+.badge.cloud { background: var(--primary-weak); color: var(--primary); }
+.sync-grid { display: grid; grid-template-columns: 340px minmax(360px, 640px); gap: 14px; align-items: start; }
+.dv-item { all: unset; display: flex; flex-direction: column; gap: 2px; padding: 9px 11px; border-radius: 8px;
+  border: 2px solid var(--line); cursor: pointer; }
+.dv-item:hover { border-color: var(--border); }
+.dv-item[aria-selected="true"] { border-color: var(--primary); background: var(--primary-weak); }
+.pick { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+.pick input[type=checkbox] { width: 18px; height: 18px; flex: none; }
+.pick .pos { width: 22px; text-align: center; font-weight: 700; color: var(--primary); flex: none; }
+.pick .nm { flex: 1; min-width: 0; }
+.pick.off .nm { color: var(--muted); }
+#dv-ex { max-height: calc(100vh - 330px); overflow: auto; }
+/* ---------- Cap nhat phan mem ---------- */
+.fw-grid { display: grid; grid-template-columns: minmax(320px, 460px) minmax(320px, 1fr); gap: 14px; align-items: start; }
+.fw-devs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.fw-dev { all: unset; display: flex; flex-direction: column; gap: 3px; padding: 12px; border-radius: 10px; border: 2px solid var(--line); cursor: pointer; }
+.fw-dev:hover { border-color: var(--border); }
+.fw-dev[aria-checked="true"] { border-color: var(--primary); background: var(--primary-weak); }
+.fw-dev b { font-size: 15px; }
+.fw-steps { margin: 0; padding-left: 20px; line-height: 1.6; font-size: 13px; }
+.fw-bar { height: 10px; border-radius: 5px; background: var(--line); overflow: hidden; }
+.fw-bar div { height: 100%; width: 0; background: var(--primary); transition: width .2s; }
+.fw-log { height: 260px; overflow: auto; margin: 0; background: #0F1A21; color: #CFE3EA; border-radius: 8px; padding: 8px 10px;
+  font: 12px/1.45 ui-monospace, Consolas, monospace; white-space: pre-wrap; word-break: break-all; }
+@media (max-width: 1000px) { .fw-grid { grid-template-columns: 1fr; } }
+#pair-code { width: 110px; font-size: 18px; letter-spacing: .15em; text-align: center; }
+
+@media (max-width: 1250px) {
+  .ex-grid { grid-template-columns: 220px 1fr; }
+  .ex-side { grid-column: 1 / -1; }
+}
+@media (max-width: 760px) {
+  .app { grid-template-columns: 1fr; grid-template-rows: 56px auto 1fr; }
+  nav { flex-direction: row; overflow-x: auto; padding: 0; }
+  nav .grow, nav .credit { display: none; }
+  nav .estop { height: 40px; margin: 3px 6px; padding: 0 12px; }
+  .ex-grid, .sync-grid { grid-template-columns: 1fr; }
+  header .sub, #acct { display: none; }
+}
+@media (max-width: 1000px) { .sync-grid { grid-template-columns: 1fr; } }
+
+/* ---------- Huong dan su dung ---------- */
+nav button[data-tab="guide"] { font-size: 13px; padding: 0 12px; gap: 8px; }
+.guide-hero { max-width: 1140px; margin: 0 auto 14px; padding: 24px; }
+.guide-kicker { color: var(--primary); font-weight: 700; font-size: 12px; letter-spacing: .08em; }
+.guide-hero h2 { font-size: 26px; margin: 10px 0; }
+.guide-hero p { max-width: 760px; line-height: 1.7; color: var(--muted); }
+.guide-downloads a { text-decoration: none; height: auto; min-height: 38px; padding: 9px 14px; }
+.guide-grid { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 14px; max-width: 1140px; margin: auto; align-items: start; }
+.guide-toc { position: sticky; top: 0; display: flex; flex-direction: column; gap: 5px; }
+.guide-toc b { margin-bottom: 8px; }
+.guide-toc a { color: var(--primary); text-decoration: none; padding: 8px 0; }
+.guide-toc a:hover { text-decoration: underline; }
+.guide-body { padding: 8px 28px 24px; line-height: 1.8; }
+.guide-body section { scroll-margin-top: 16px; padding: 12px 0 20px; }
+.guide-body section + section { border-top: 1px solid var(--line); }
+.guide-body h3 { font-size: 19px; line-height: 1.4; margin: 12px 0; color: var(--header); }
+.guide-body li { margin: 8px 0; }.guide-body p { margin: 12px 0; }
+.guide-body a { color: var(--primary); }.guide-body dt { font-weight: 700; margin-top: 12px; }
+.guide-body dd { margin: 4px 0 12px; color: var(--muted); }
+.guide-flow { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 14px; background: var(--primary-weak); border-radius: 8px; }
+.guide-flow span { font-weight: 700; }.guide-flow b { font-size: 12px; color: var(--primary); }
+.guide-figure { margin: 18px 0; padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: #F7F9FA; }
+.guide-figure a { display: block; text-align: center; }
+.guide-figure img { display: block; max-width: 100%; height: auto; margin: auto; border-radius: 4px; }
+.guide-figure figcaption { font-size: 12px; line-height: 1.6; margin-top: 8px; color: var(--muted); }
+.guide-figure img.portrait { max-height: 580px; width: auto; }
+.guide-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.guide-pair .guide-figure { margin: 8px 0; }
+@media (max-width: 1000px) { .guide-pair { grid-template-columns: 1fr; } }
+@media (max-width: 760px) {
+  nav [data-tab], nav .estop { flex: none; white-space: nowrap; }
+  .guide-grid { grid-template-columns: 1fr; }.guide-toc { position: static; }
+  .guide-body { padding: 8px 18px 20px; }.guide-hero { padding: 18px; }
+  .guide-hero h2 { font-size: 22px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>BIA TẬP BẮN</h1><span class="sub">/ Studio tay cầm</span>
+    <span class="grow"></span>
+    <span id="acct"></span>
+    <span id="g-btn" class="g-btn" hidden></span>
+    <button id="b-login" class="btn" type="button" hidden>Đăng nhập Google</button>
+    <button id="b-logout" class="btn" type="button" hidden>Đăng xuất</button>
+    <span id="conn" class="pill"><span class="dot"></span><span id="conn-text">Chưa kết nối</span></span>
+    <button id="b-connect" class="btn pri" type="button">Kết nối USB</button>
+    <button id="b-demo" class="btn" type="button">Dùng thử (không cần tay cầm)</button>
+    <button id="b-disconnect" class="btn" type="button" hidden>Ngắt</button>
+  </header>
+
+  <nav aria-label="Mục">
+    <button type="button" data-tab="hh" aria-selected="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="13" rx="2"/><path d="M6 21h12"/></svg>Tay cầm</button>
+    <button type="button" data-tab="ex" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="17" r="2"/><circle cx="12" cy="7" r="2"/><circle cx="19" cy="15" r="2"/><path d="M6.5 15.5 10.5 8.8M13.6 8.3l3.9 5.2"/></svg>Thiết kế bài tập</button>
+    <button type="button" data-tab="sync" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a5 5 0 0 1-.6-9.96A7 7 0 0 1 20 9.5a4.5 4.5 0 0 1-1.5 8.5"/><path d="M12 12v8M9 17l3 3 3-3"/></svg>Đồng bộ</button>
+    <button type="button" data-tab="fw" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg>Cập nhật</button>
+    <button type="button" data-tab="guide" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v15M12 5C8 2 3 3 2 4v15c3-2 7-2 10 1 3-3 7-3 10-1V4c-1-1-6-2-10 1Z"/></svg>Hướng dẫn sử dụng</button>
+    <button type="button" data-tab="con" aria-selected="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6l5 5-5 5M11 17h9"/></svg>Console</button>
+    <span class="grow"></span>
+    <a class="credit" href="https://nguyenbinh-shark.github.io/" target="_blank" rel="noopener">Tác giả: Trần Nguyên Bình</a>
+    <button type="button" class="estop" id="b-estop">DỪNG TẤT CẢ</button>
+  </nav>
+
+  <main>
+    <!-- ================= TAY CAM ================= -->
+    <section class="tab show" id="tab-hh" aria-label="Tay cầm">
+      <div class="hh-wrap">
+        <div class="hh-bar">
+          <h2 class="grow" style="margin:0;font-size:15px">Màn hình tay cầm <span class="muted small" id="hh-sub"></span></h2>
+        </div>
+        <div class="bezel">
+          <div class="screen">
+            <canvas id="hh" width="800" height="480" aria-label="Bản sao màn hình tay cầm: bấm chuột như chạm trên tay cầm"></canvas>
+            <div class="cover" id="hh-cover">
+              <div class="spin" id="hh-spin" hidden></div>
+              <b id="hh-cover-title">Chưa kết nối tay cầm</b>
+              <span class="muted" id="hh-cover-text">Cắm cáp USB-C của tay cầm vào máy tính rồi bấm “Kết nối USB”.<br>Chưa có tay cầm: bấm “Dùng thử” để chạy tay cầm ảo.</span>
+              <div class="row" id="hh-cover-btns">
+                <button class="btn pri" type="button" data-go="connect">Kết nối USB</button>
+                <button class="btn" type="button" data-go="demo">Dùng thử</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="msg warn" id="hh-warn" hidden>Đang điều khiển tay cầm thật: CHẠY / ĐI TỚI / VỀ GỐC bấm ở đây làm bia chuyển động thật. Đảm bảo không có người trong vùng chạy.</div>
+        <div class="card hh-bar small" id="hh-demo-keys" hidden>
+          <span class="muted" style="font-weight:600">Giả lập sự cố (tay cầm ảo):</span>
+          <button class="btn sm ghost" type="button" data-k="o">Bia cuối mất sóng</button>
+          <button class="btn sm ghost" type="button" data-k="f">Bia cuối kẹt cơ cấu</button>
+          <button class="btn sm ghost" type="button" data-k="n">Bia cuối không trả lời</button>
+          <button class="btn sm ghost" type="button" data-k="p">Bật / tắt bia chưa ghép</button>
+          <button class="btn sm ghost" type="button" data-k="b">Đổi pin tay cầm</button>
+        </div>
+        <div class="muted small">Bấm chuột = chạm. Mọi thay đổi (cài đặt, bia, bài) lưu vào bộ nhớ tay cầm, tắt nguồn vẫn còn.
+          Thiết kế bài chi tiết (điểm, tốc độ, thời gian dừng) ở mục “Thiết kế bài tập”.</div>
+      </div>
+    </section>
+
+    <!-- ================= BAI TAP ================= -->
+    <section class="tab" id="tab-ex" aria-label="Thiết kế bài tập">
+      <div class="ex-grid">
+        <div class="card stack">
+          <div class="list-h"><h2>Bài của tôi</h2><span id="cl-count" class="muted small"></span></div>
+          <div id="cl-list" class="ex-list half"></div>
+          <div class="list-h"><h2>Trên tay cầm</h2><span id="ex-count" class="muted small"></span></div>
+          <div id="ex-list" class="ex-list half"></div>
+          <button id="b-new" class="btn pri" type="button">+ Bài mới</button>
+          <div class="row">
+            <button id="b-import" class="btn sm ghost grow" type="button">Nhập file…</button>
+            <button id="b-export-all" class="btn sm ghost grow" type="button">Xuất file</button>
+          </div>
+          <input id="f-import" type="file" accept=".json,application/json" hidden>
+        </div>
+
+        <div class="card stack">
+          <div class="row">
+            <h2 class="grow" style="margin:0">Vùng làm việc</h2>
+            <label class="row small muted" style="gap:6px"><span class="switch"><input type="checkbox" id="snap" checked><span></span></span>Bắt lưới 5 mm</label>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="cv" aria-label="Khung vẽ bài: bấm để thêm điểm, kéo để di chuyển"></canvas>
+            <div class="coord" id="coord">—</div>
+          </div>
+          <div class="legend">
+            <span><i style="background:#F5CDB2;outline:1.5px solid #A65A2E"></i>Vùng làm việc (không đặt điểm ra ngoài viền)</span>
+            <span><i style="background:#0B6E8A"></i>Điểm bài</span>
+            <span><i style="background:#B3261E"></i>Điểm lỗi</span>
+          </div>
+          <div class="muted small">Bấm vùng trống để thêm điểm · kéo điểm để di chuyển · bấm 1 điểm để chọn · Delete xóa điểm đang chọn · Shift + bấm lên đường nối để chèn điểm.</div>
+          <div class="row">
+            <button id="b-play" class="btn dark sm" type="button">▶ Xem chạy thử</button>
+            <label class="row small muted" style="gap:6px">Tốc độ lệnh
+              <select id="sim-speed"><option value="60">Chậm · 60</option><option value="120" selected>Vừa · 120</option><option value="200">Nhanh · 200</option></select></label>
+            <label class="row small muted" style="gap:6px">Dừng mỗi điểm
+              <select id="sim-dwell"><option value="0">Không</option><option value="1000" selected>1 s</option><option value="2000">2 s</option></select></label>
+          </div>
+          <canvas id="mech" style="aspect-ratio: 1/1; background:#F4F6F7; border-radius:8px" aria-label="Hình cơ cấu 5 khâu khi chạy thử"></canvas>
+        </div>
+
+        <div class="card stack ex-side">
+          <div class="row">
+            <label class="f grow">Tên bài<input id="ex-name" type="text" maxlength="30" placeholder="VD: Zích zắc nhanh"></label>
+          </div>
+          <div class="row">
+            <span class="muted small" style="font-weight:600">Kiểu</span>
+            <div class="seg" id="ex-kind" role="group" aria-label="Kiểu bài">
+              <button type="button" data-v="0" aria-pressed="true">Qua lại</button>
+              <button type="button" data-v="1" aria-pressed="false">Lặp vòng</button>
+              <button type="button" data-v="2" aria-pressed="false">Ngẫu nhiên</button>
+            </div>
+          </div>
+          <div class="muted small" id="kind-desc"></div>
+
+          <div id="pts-box">
+            <div class="row"><b class="grow">Điểm <span id="pt-count" class="muted small"></span></b>
+              <select id="gen" aria-label="Tạo nhanh">
+                <option value="">Tạo nhanh…</option>
+                <option value="hline">Đường ngang</option>
+                <option value="vline">Đường dọc</option>
+                <option value="circle">Vòng tròn</option>
+                <option value="zigzag">Zích zắc</option>
+                <option value="rect">Hình chữ nhật</option>
+                <option value="random">Ngẫu nhiên</option>
+              </select>
+              <input id="gen-n" type="number" min="2" max="24" value="6" style="width:56px" aria-label="Số điểm">
+            </div>
+            <div class="pts-wrap">
+              <table id="pts">
+                <colgroup><col><col class="c-xy"><col class="c-xy"><col class="c-sp"><col class="c-dw"><col></colgroup>
+                <thead><tr><th>#</th><th>X (mm)</th><th>Y (mm)</th><th title="mm/s · để trống = theo tốc độ lệnh CHẠY">mm/s</th><th title="Dừng tại điểm · để trống = theo lệnh CHẠY">Dừng ms</th><th></th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <div class="muted small">Tốc độ / dừng để trống = theo lựa chọn trên tay cầm lúc bấm CHẠY.</div>
+          </div>
+
+          <div class="stats" id="stats"></div>
+          <div id="ex-msg"></div>
+
+          <div class="row">
+            <button id="b-save" class="btn pri grow" type="button">Lưu vào tay cầm</button>
+            <button id="b-save-new" class="btn grow" type="button">Lưu thành bài mới</button>
+          </div>
+          <div class="row" id="xfer-row">
+            <button id="b-to-cloud" class="btn sm grow" type="button">Chép vào Bài của tôi</button>
+            <button id="b-to-dev" class="btn sm grow" type="button">Gửi xuống tay cầm (USB)</button>
+          </div>
+          <div class="row">
+            <button id="b-export" class="btn sm ghost grow" type="button">Tải file .json</button>
+            <button id="b-del" class="btn sm danger grow" type="button">Xóa bài</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= DONG BO TAY CAM (cloud) ================= -->
+    <section class="tab" id="tab-sync" aria-label="Đồng bộ tay cầm">
+      <div class="card empty" id="sync-login">
+        <b>Đăng nhập Google để đồng bộ bài xuống tay cầm qua WiFi.</b><br>
+        <span class="small">Bài soạn ở nhà lưu trên cloud. Tay cầm có WiFi là tự tải về, không cần cáp.</span><br><br>
+        <button class="btn pri" type="button" data-go="login">Đăng nhập Google</button>
+        <span class="g-btn" style="display:inline-block" hidden></span>
+      </div>
+      <div class="sync-grid" id="sync-main" hidden>
+        <div class="card stack">
+          <h2>Tay cầm của tôi</h2>
+          <div id="dv-list" class="stack" style="gap:6px"></div>
+          <div class="stack" style="gap:8px; border-top:1px solid var(--line); padding-top:12px">
+            <b>Thêm tay cầm</b>
+            <div class="muted small">Trên tay cầm, mở mục ghép đôi cloud: màn hình hiện mã 6 số (dùng được 15 phút). Nhập mã đó vào đây.</div>
+            <div class="row">
+              <input id="pair-code" type="text" inputmode="numeric" maxlength="6" placeholder="000000" aria-label="Mã 6 số">
+              <input id="pair-name" type="text" class="grow" maxlength="30" placeholder="Tên, VD: Sân A" aria-label="Tên tay cầm">
+            </div>
+            <button id="b-pair" class="btn pri" type="button">Ghép đôi</button>
+          </div>
+        </div>
+
+        <div class="card stack" id="dv-box">
+          <div class="empty sm" id="dv-none">Chưa có tay cầm nào. Thêm tay cầm bằng mã 6 số ở bên trái.</div>
+          <div class="stack" id="dv-detail" hidden>
+            <div class="row">
+              <label class="f grow">Tên tay cầm<input id="dv-name" type="text" maxlength="30"></label>
+              <button id="b-dv-del" class="btn sm danger" type="button" style="align-self:flex-end">Gỡ tay cầm</button>
+            </div>
+            <div class="muted small" id="dv-meta"></div>
+            <div class="list-h"><b class="grow">Bài nạp xuống tay cầm này</b><span id="dv-count" class="muted small"></span></div>
+            <div class="muted small">Tick bài muốn có trên tay cầm. Số thứ tự là thứ tự trong danh sách bài trên tay cầm.
+              Khi tay cầm đồng bộ, các bài tự tạo trên tay cầm được thay bằng đúng danh sách này.</div>
+            <div id="dv-ex"></div>
+            <div class="row">
+              <button id="b-dv-save" class="btn pri grow" type="button">Lưu danh sách</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CAP NHAT PHAN MEM ================= -->
+    <section class="tab" id="tab-fw" aria-label="Cập nhật phần mềm">
+      <div class="fw-grid">
+        <div class="card stack">
+          <h2>Chọn thiết bị cần cập nhật</h2>
+          <div class="fw-devs" id="fw-devs" role="radiogroup" aria-label="Thiết bị"></div>
+          <div class="msg warn" id="fw-none" hidden></div>
+          <ol class="fw-steps">
+            <li>Cắm cáp USB của <b class="fw-devname">thiết bị</b> vào máy tính. Không cần mở “Kết nối USB” ở trên.</li>
+            <li>Bấm <b>Nạp phần mềm</b> rồi chọn cổng của thiết bị (tay cầm: <code>USB-SERIAL CH340</code>).</li>
+            <li>Đợi thanh tiến độ chạy hết, thiết bị tự khởi động lại. <b>Không rút cáp khi đang nạp.</b></li>
+          </ol>
+          <div class="muted small">Cài đặt, danh sách bia và bài tự tạo được giữ nguyên: chỉ ghi phần chương trình, không xóa bộ nhớ.</div>
+          <label class="row small muted" style="gap:6px"><span class="switch"><input type="checkbox" id="fw-slow"><span></span></span>Nạp chậm (dùng khi nạp nhanh bị lỗi)</label>
+          <button id="b-fw-flash" class="btn pri" type="button">Nạp phần mềm</button>
+        </div>
+        <div class="card stack">
+          <div class="row"><h2 class="grow" style="margin:0">Tiến độ</h2><span id="fw-chip" class="muted small"></span></div>
+          <div class="fw-bar"><div id="fw-bar"></div></div>
+          <div id="fw-status" class="small" style="font-weight:600">Chưa nạp.</div>
+          <pre id="fw-log" class="fw-log" aria-live="polite"></pre>
+          <div class="muted small">Nạp lỗi giữa chừng: cắm lại cáp và nạp lại. Nếu vẫn không vào được chế độ nạp, giữ nút BOOT trên mạch trong lúc cắm cáp rồi thử lại.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= HUONG DAN ================= -->
+    <section class="tab" id="tab-guide" aria-label="Hướng dẫn sử dụng">
+      <div class="guide-hero card">
+        <span class="guide-kicker">BIA XY STUDIO · HƯỚNG DẪN</span>
+        <h2>Từ kết nối đến bài tập đầu tiên</h2>
+        <p>Mở web, ghép bia, tạo đường chạy và vận hành từ tay cầm. Đọc nhanh bên dưới hoặc tải sổ tay có mục lục, bài mẫu và bảng xử lý lỗi.</p>
+        <p class="muted small">Ảnh thao tác chụp từ giao diện đang chạy; màn hình tay cầm dùng Dùng thử. Khung cam và số đánh dấu nút cần bấm. Bấm ảnh để xem lớn.</p>
+        <div class="row guide-downloads">
+          <a class="btn pri" href="huong-dan/huong-dan-su-dung.html" target="_blank" rel="noopener">Đọc sổ tay / In A4</a>
+          <a class="btn" href="huong-dan/huong-dan-su-dung.pdf" download>Tải PDF</a>
+          <a class="btn" href="huong-dan/huong-dan-su-dung.docx" download>Tải Word</a>
+          <a class="btn ghost" href="huong-dan/bai-mau-ngang-3-diem.json" download>Tải bài mẫu JSON</a>
+        </div>
+      </div>
+      <div class="guide-grid">
+        <aside class="card guide-toc" aria-label="Mục lục hướng dẫn nhanh">
+          <b>Tra cứu nhanh</b>
+          <a href="#guide-start">1. Bắt đầu</a>
+          <a href="#guide-connect">2. Các kết nối</a>
+          <a href="#guide-pair">3. Ghép bia</a>
+          <a href="#guide-design">4. Tạo bài tập</a>
+          <a href="#guide-run">5. Sử dụng bia</a>
+          <a href="#guide-cloud">6. Cloud và sao lưu</a>
+          <a href="#guide-firmware">7. Cập nhật firmware</a>
+          <a href="#guide-fix">8. Khi gặp lỗi</a>
+        </aside>
+        <article class="card guide-body">
+          <section id="guide-start">
+            <h3>1. Bắt đầu với Dùng thử</h3>
+            <p>Bấm <strong>Dùng thử (không cần tay cầm)</strong> để làm quen trên tay cầm ảo. Trong tab <strong>Tay cầm</strong>, bấm chuột như chạm màn hình; thử các trang Điều khiển, Bài chạy và Quản lý bia.</p>
+            <p>Dữ liệu của tay cầm ảo mất khi tải lại trang. Muốn giữ bài, tải JSON hoặc bấm lưu vào Bài của tôi khi đã đăng nhập. <strong>Xem chạy thử</strong> trong bộ thiết kế chỉ chạy mô phỏng.</p>
+            <button class="btn sm ghost" type="button" data-guide-tab="hh">Mở tab Tay cầm</button>
+
+<!-- GUIDE_FIGURES_START -->
+<figure class="guide-figure"><a href="huong-dan/images/02-tong-quan.png" target="_blank" rel="noopener" title="Mở ảnh kích thước đầy đủ"><img src="huong-dan/images/02-tong-quan.png" alt="Hình 1. Tổng quan tay cầm trong Dùng thử: (1) menu chuyển trang; (2) DỪNG TẤT CẢ luôn nằm ở góc dưới bên trái." width="800" height="480" loading="lazy"></a><figcaption>Hình 1. Tổng quan tay cầm trong Dùng thử: (1) menu chuyển trang; (2) DỪNG TẤT CẢ luôn nằm ở góc dưới bên trái.</figcaption></figure>
+<!-- GUIDE_FIGURES_END -->
+</section>
+          <section id="guide-connect">
+            <h3>2. Kết nối máy tính, tay cầm và bia</h3>
+            <div class="guide-flow" aria-label="Sơ đồ kết nối"><span>Máy tính / Studio</span><b>↔ USB-C ↔</b><span>Tay cầm</span><b>↔ ESP-NOW ↔</b><span>Bia XY</span></div>
+            <ol>
+              <li>Dùng <strong>Chrome hoặc Edge trên máy tính</strong>. Dừng bia trước khi nối USB vì một số driver có thể làm tay cầm khởi động lại lúc mở cổng.</li>
+              <li>Cắm cáp USB-C <strong>truyền dữ liệu vào tay cầm</strong>, bấm <strong>Kết nối USB</strong>, chọn cổng tay cầm (thường là USB-SERIAL CH340).</li>
+              <li>Chờ bản sao màn hình hiện ra và chỉ báo kết nối cập nhật. Chip <strong>PC</strong> xuất hiện trên tay cầm thật.</li>
+            </ol>
+            <p>USB nối web với tay cầm; <strong>ESP-NOW</strong> nối tay cầm với bia, không cần Internet. Mạng <strong>BIA_TAP_BAN_xxxx</strong> do từng bia phát dành cho trang cấu hình cục bộ, dùng mật khẩu riêng và IP được bàn giao. Mạng này khác với cloud.</p>
+            <p><strong>Ngắt USB hoặc đóng trang không dừng bia.</strong> Bấm DỪNG BÀI hoặc DỪNG TẤT CẢ rồi quan sát bia dừng trước khi kết thúc.</p>
+
+<!-- GUIDE_FIGURES_START -->
+<figure class="guide-figure"><a href="huong-dan/images/01-ket-noi.png" target="_blank" rel="noopener" title="Mở ảnh kích thước đầy đủ"><img src="huong-dan/images/01-ket-noi.png" alt="Hình 2. Màn hình mở Studio: (1) Kết nối USB cho tay cầm thật; (2) Dùng thử để làm quen khi chưa có thiết bị." width="800" height="480" loading="lazy"></a><figcaption>Hình 2. Màn hình mở Studio: (1) Kết nối USB cho tay cầm thật; (2) Dùng thử để làm quen khi chưa có thiết bị.</figcaption></figure>
+<!-- GUIDE_FIGURES_END -->
+</section>
+          <section id="guide-pair">
+            <h3>3. Ghép bia với tay cầm</h3>
+            <ol>
+              <li>Bật nguồn bia, đặt bia và tay cầm cùng kênh ESP-NOW.</li>
+              <li>Trong màn hình tay cầm, mở <strong>Quản lý bia → TÌM BIA MỚI</strong>.</li>
+              <li>Bấm <strong>Nhận diện</strong> để xác định bia, rồi <strong>GHÉP → XONG</strong>. Nhận diện có thể làm bia chuyển động.</li>
+              <li>Đổi tên dễ nhận biết và kiểm tra bia trực tuyến, không báo lỗi. Có thể dùng <strong>NHẬP MAC</strong> nếu biết địa chỉ của đúng bia.</li>
+            </ol>
+            <p>Một tay cầm quản lý tối đa <strong>8 bia</strong>. Danh sách ghép và cài đặt giữ sau khi tắt nguồn.</p>
+
+<!-- GUIDE_FIGURES_START -->
+<figure class="guide-figure"><a href="huong-dan/images/03-quan-ly-bia.png" target="_blank" rel="noopener" title="Mở ảnh kích thước đầy đủ"><img src="huong-dan/images/03-quan-ly-bia.png" alt="Hình 3. Quản lý bia: (1) chọn bia trong danh sách đã ghép; (2) TÌM BIA MỚI mở cửa sổ quét." width="800" height="480" loading="lazy"></a><figcaption>Hình 3. Quản lý bia: (1) chọn bia trong danh sách đã ghép; (2) TÌM BIA MỚI mở cửa sổ quét.</figcaption></figure>
+<figure class="guide-figure"><a href="huong-dan/images/04-tim-ghep-bia.png" target="_blank" rel="noopener" title="Mở ảnh kích thước đầy đủ"><img src="huong-dan/images/04-tim-ghep-bia.png" alt="Hình 4. Cửa sổ tìm bia: (1) Nhận diện để kiểm tra đúng bia; (2) GHÉP đúng dòng; (3) XONG để đóng. MAC và tín hiệu trong ảnh là dữ liệu bia ảo." width="800" height="480" loading="lazy"></a><figcaption>Hình 4. Cửa sổ tìm bia: (1) Nhận diện để kiểm tra đúng bia; (2) GHÉP đúng dòng; (3) XONG để đóng. MAC và tín hiệu trong ảnh là dữ liệu bia ảo.</figcaption></figure>
+<!-- GUIDE_FIGURES_END -->
+</section>
+          <section id="guide-design">
+            <h3>4. Tạo bài tập đầu tiên</h3>
+            <ol>
+              <li>Mở <strong>Thiết kế bài tập → + Bài mới</strong>, đặt tên ngắn.</li>
+              <li>Chọn <strong>Qua lại</strong> để đi rồi trở ngược, hoặc <strong>Lặp vòng</strong> để nối điểm cuối về điểm đầu.</li>
+              <li>Bấm trong vùng tô màu để thêm điểm, kéo để sửa; nhập chính xác X, Y trong bảng. Shift + bấm đường nối để chèn; ↑ / ↓ đổi thứ tự; ✕ xóa điểm.</li>
+              <li>Nhập tốc độ và dừng từng điểm, hoặc để trống để theo lệnh chạy. <strong>Dừng 0</strong> là không dừng; <strong>dừng trống</strong> là theo lệnh.</li>
+              <li>Bấm <strong>▶ Xem chạy thử</strong>, kiểm tra đường nối và các thông báo lỗi, rồi bấm nút Lưu phù hợp.</li>
+            </ol>
+            <p>Ví dụ <strong>Ngang 3 diem</strong>: Qua lại; ba điểm <strong>(−40, 320), (40, 320), (120, 320)</strong> mm; mỗi điểm 60 mm/s, dừng 1000 ms. Dùng <strong>Nhập file…</strong> để mở JSON mẫu tải ở đầu trang, rồi bấm Lưu.</p>
+            <p>Mỗi bài tối đa <strong>24 điểm</strong>; tay cầm có <strong>6 bài có sẵn + 26 bài tự tạo</strong>. Bài có sẵn cần <strong>Nhân bản để sửa</strong>. Tốc độ riêng 5–400 mm/s vẫn chịu trần tốc độ của tay cầm; dừng tối đa 60000 ms.</p>
+            <p>Bài mới khi đã đăng nhập được lưu vào <strong>Bài của tôi</strong>. Muốn có trên thiết bị, bấm <strong>Gửi xuống tay cầm (USB)</strong>. Khi chưa đăng nhập và đã nối USB, bài mới lưu trực tiếp vào tay cầm. Chờ thông báo thành công; trang không tự lưu mọi thay đổi.</p>
+            <button class="btn sm ghost" type="button" data-guide-tab="ex">Mở Thiết kế bài tập</button>
+
+<!-- GUIDE_FIGURES_START -->
+<figure class="guide-figure"><a href="huong-dan/images/06-bai-moi.png" target="_blank" rel="noopener" title="Mở ảnh kích thước đầy đủ"><img src="huong-dan/images/06-bai-moi.png" alt="Hình 5. Bộ sửa bài mới: (1) nhập tên; (2) chọn kiểu Qua lại cho bài Ngang 3 diem; (3) tạo nhanh danh sách điểm." width="410" height="507" loading="lazy" class="portrait"></a><figcaption>Hình 5. Bộ sửa bài mới: (1) nhập tên; (2) chọn kiểu Qua lại cho bài Ngang 3 diem; (3) tạo nhanh danh sách điểm.</figcaption></figure>
+<figure class="guide-figure"><a href="huong-dan/images/07-toa-do-toc-do.png" target="_blank" rel="noopener" title="Mở ảnh kích thước đầy đủ"><img src="huong-dan/images/07-toa-do-toc-do.png" alt="Hình 6. Bài Ngang 3 diem: (1) tọa độ, tốc độ 60 mm/s và dừng 1000 ms; (2) lưu bài; (3) tải JSON. Trong ảnh, nơi lưu là tay cầm ảo." width="410" height="618" loading="lazy" class="portrait"></a><figcaption>Hình 6. Bài Ngang 3 diem: (1) tọa độ, tốc độ 60 mm/s và dừng 1000 ms; (2) lưu bài; (3) tải JSON. Trong ảnh, nơi lưu là tay cầm ảo.</figcaption></figure>
+<figure class="guide-figure"><a href="huong-dan/images/08-xem-chay-thu.png" target="_blank" rel="noopener" title="Mở ảnh kích thước đầy đủ"><img src="huong-dan/images/08-xem-chay-thu.png" alt="Hình 7. Xem đường chạy: (1) nút chạy/dừng mô phỏng; (2) tốc độ lệnh cho ô để trống; (3) dừng mỗi điểm cho ô để trống. Ba điểm mẫu có thông số riêng nên dùng 60 mm/s và 1000 ms." width="545" height="555" loading="lazy" class="portrait"></a><figcaption>Hình 7. Xem đường chạy: (1) nút chạy/dừng mô phỏng; (2) tốc độ lệnh cho ô để trống; (3) dừng mỗi điểm cho ô để trống. Ba điểm mẫu có thông số riêng nên dùng 60 mm/s và 1000 ms.</figcaption></figure>
+<!-- GUIDE_FIGURES_END -->
+</section>
+          <section id="guide-run">
+            <h3>5. Chạy bài trên bia thật</h3>
+            <p>Trong <strong>Điều khiển</strong>, chọn bia → Kịch bản → bài → tốc độ → <strong>CHẠY</strong>. Dùng <strong>Chỉnh tay</strong> để dịch bước nhỏ hoặc <strong>Ngẫu nhiên</strong> để bia tự chọn điểm.</p>
+            <p>Trong <strong>Bài chạy</strong>, chọn bài → Bia tham gia → Cùng lúc / So le / Luân phiên → tốc độ → thời gian → <strong>BẮT ĐẦU</strong>. Dùng <strong>TẠM DỪNG / TIẾP TỤC</strong> hoặc <strong>DỪNG BÀI</strong>. Kiểm tra trạng thái và xác nhận lệnh của từng bia.</p>
+            <div class="msg warn"><strong>Trước khi chạy:</strong> kiểm tra cơ cấu, nguồn và vùng chuyển động; thử với một bia ở tốc độ chậm. CHẠY / ĐI TỚI / Về gốc gửi từ bản sao màn hình làm bia thật chuyển động. Khi có bất thường, bấm DỪNG TẤT CẢ và kiểm tra bia đã dừng thực tế.</div>
+            <p>Bài đã nạp có thể chạy trực tiếp từ tay cầm khi không nối máy tính. Hệ thống hiện không có cảm biến ghi nhận phát trúng và không tự chấm điểm.</p>
+
+<!-- GUIDE_FIGURES_START -->
+<figure class="guide-figure"><a href="huong-dan/images/10-dieu-khien.png" target="_blank" rel="noopener" title="Mở ảnh kích thước đầy đủ"><img src="huong-dan/images/10-dieu-khien.png" alt="Hình 8. Điều khiển một bia: (1) chọn bia; (2) chọn Kịch bản; (3) tốc độ; (4) CHẠY. Ảnh dùng bài có sẵn Con lắc ngang; chọn bài của bạn trong danh sách khi vận hành." width="800" height="480" loading="lazy"></a><figcaption>Hình 8. Điều khiển một bia: (1) chọn bia; (2) chọn Kịch bản; (3) tốc độ; (4) CHẠY. Ảnh dùng bài có sẵn Con lắc ngang; chọn bài của bạn trong danh sách khi vận hành.</figcaption></figure>
+<figure class="guide-figure"><a href="huong-dan/images/11-chon-bai-chay.png" target="_blank" rel="noopener" title="Mở ảnh kích thước đầy đủ"><img src="huong-dan/images/11-chon-bai-chay.png" alt="Hình 9. Thiết lập phiên: (1) chọn bài; (2) chọn bia tham gia; (3) cách phối hợp; (4) tốc độ và thời gian; (5) BẮT ĐẦU." width="800" height="480" loading="lazy"></a><figcaption>Hình 9. Thiết lập phiên: (1) chọn bài; (2) chọn bia tham gia; (3) cách phối hợp; (4) tốc độ và thời gian; (5) BẮT ĐẦU.</figcaption></figure>
+<figure class="guide-figure"><a href="huong-dan/images/12-dang-chay.png" target="_blank" rel="noopener" title="Mở ảnh kích thước đầy đủ"><img src="huong-dan/images/12-dang-chay.png" alt="Hình 10. Phiên đang chạy: (1) tên bài và thời gian; (2) TẠM DỪNG; (3) DỪNG BÀI. Mỗi bia có ô trạng thái riêng." width="800" height="480" loading="lazy"></a><figcaption>Hình 10. Phiên đang chạy: (1) tên bài và thời gian; (2) TẠM DỪNG; (3) DỪNG BÀI. Mỗi bia có ô trạng thái riêng.</figcaption></figure>
+<figure class="guide-figure"><a href="huong-dan/images/13-tam-dung.png" target="_blank" rel="noopener" title="Mở ảnh kích thước đầy đủ"><img src="huong-dan/images/13-tam-dung.png" alt="Hình 11. Phiên tạm dừng: (1) TIẾP TỤC để chạy lại; (2) DỪNG BÀI để kết thúc phiên." width="800" height="480" loading="lazy"></a><figcaption>Hình 11. Phiên tạm dừng: (1) TIẾP TỤC để chạy lại; (2) DỪNG BÀI để kết thúc phiên.</figcaption></figure>
+<!-- GUIDE_FIGURES_END -->
+</section>
+          <section id="guide-cloud">
+            <h3>6. Bài của tôi, đồng bộ và sao lưu</h3>
+            <p>Trên bản web trực tuyến, <strong>Đăng nhập Google</strong> để lưu Bài của tôi và mở lại trên máy khác. Dùng <strong>Chép vào Bài của tôi</strong> hoặc <strong>Gửi xuống tay cầm (USB)</strong> để chuyển bản bài giữa tài khoản và thiết bị.</p>
+            <div class="msg warn"><strong>Đồng bộ WiFi cần firmware hỗ trợ:</strong> tay cầm hiện tại chưa có phần kết nối Internet, tạo mã 6 số hoặc tải bài cloud. Dùng USB để chuyển bài. Màn hình Đồng bộ trên web có sẵn để quản lý danh sách; lưu danh sách chưa có nghĩa tay cầm đã nhận bài.</div>
+            <p>Với firmware hỗ trợ cloud, ghép bằng mã 6 số rồi chọn tối đa 26 bài và bấm <strong>Lưu danh sách</strong>. Danh sách đồng bộ sẽ thay các bài tự tạo trên tay cầm theo thiết kế; sao lưu trước và kiểm tra kết quả trên thiết bị.</p>
+            <p><strong>Tải file .json</strong> xuất một bài. <strong>Xuất file</strong> ưu tiên thư viện cloud nếu đã đăng nhập và có bài; nếu cần sao lưu tay cầm, xuất từng bài hoặc đăng xuất trước. Nhập một bài chỉ mở vào bộ sửa, cần bấm Lưu để giữ.</p>
+
+<!-- GUIDE_FIGURES_START -->
+<figure class="guide-figure"><a href="huong-dan/images/18-cloud-dang-nhap.png" target="_blank" rel="noopener" title="Mở ảnh kích thước đầy đủ"><img src="huong-dan/images/18-cloud-dang-nhap.png" alt="Hình 12. Màn Đồng bộ trước khi đăng nhập: bấm Đăng nhập Google. Đồng bộ xuống thiết bị chỉ dùng được với firmware hỗ trợ cloud như mục 8.2 trong sổ tay; ảnh này chưa có thiết bị ghép cloud." width="820" height="175" loading="lazy"></a><figcaption>Hình 12. Màn Đồng bộ trước khi đăng nhập: bấm Đăng nhập Google. Đồng bộ xuống thiết bị chỉ dùng được với firmware hỗ trợ cloud như mục 8.2 trong sổ tay; ảnh này chưa có thiết bị ghép cloud.</figcaption></figure>
+<figure class="guide-figure"><a href="huong-dan/images/09-luu-va-sao-luu.png" target="_blank" rel="noopener" title="Mở ảnh kích thước đầy đủ"><img src="huong-dan/images/09-luu-va-sao-luu.png" alt="Hình 13. Danh sách bài và sao lưu: (1) bài Ngang 3 diem đã có trên tay cầm ảo; (2) Nhập file; (3) Xuất file danh sách." width="230" height="640" loading="lazy" class="portrait"></a><figcaption>Hình 13. Danh sách bài và sao lưu: (1) bài Ngang 3 diem đã có trên tay cầm ảo; (2) Nhập file; (3) Xuất file danh sách.</figcaption></figure>
+<!-- GUIDE_FIGURES_END -->
+</section>
+          <section id="guide-firmware">
+            <h3>7. Cập nhật firmware tay cầm và bia</h3>
+            <ol>
+              <li>Mở website Studio bằng <strong>Chrome hoặc Edge trên máy tính</strong>, giữ Internet để tải firmware. Sao lưu bài ra JSON, ghi lại cài đặt và <strong>DỪNG TẤT CẢ</strong>; quan sát bia dừng.</li>
+              <li>Mở tab <strong>Cập nhật</strong>, chọn đúng <strong>Tay cầm</strong> hoặc <strong>Bia</strong>, kiểm tra bản mới nhất. Cắm cáp USB truyền dữ liệu trực tiếp vào thiết bị đó; cập nhật từng thiết bị riêng.</li>
+              <li>Bấm <strong>Nạp phần mềm</strong>, chọn đúng cổng (tay cầm thường là <strong>USB-SERIAL CH340</strong>). Không cần bấm Kết nối USB trước. Nếu được hỏi, chọn <strong>Ngắt và tiếp tục</strong> để nhường cổng đang dùng.</li>
+              <li>Chờ trạng thái <strong>Xong</strong> và thiết bị khởi động lại. <strong>Không rút cáp, tắt nguồn hoặc đóng trang khi đang nạp.</strong></li>
+              <li>Kết nối lại, kiểm tra phiên bản, bài tập, danh sách bia và cài đặt; kiểm tra hiệu chuẩn bia rồi thử một bài chậm.</li>
+            </ol>
+            <p>Chưa có gói firmware trên web thì chưa nạp được. Nạp lỗi: đóng chương trình đang giữ cổng, cắm lại cáp và thử <strong>Nạp chậm</strong>. Nếu không vào chế độ nạp, làm theo chỉ dẫn BOOT và tài liệu của board. Không xác nhận nạp khi thiết bị thực tế khác loại đang chọn.</p>
+            <p><a href="huong-dan/huong-dan-su-dung.html" target="_blank" rel="noopener">Xem mục 10.5 trong sổ tay</a> để đọc đầy đủ quy trình và lưu ý sao lưu.</p>
+            <button class="btn sm ghost" type="button" data-guide-tab="fw">Mở tab Cập nhật</button>
+          
+<!-- GUIDE_FIGURES_START -->
+<figure class="guide-figure"><a href="huong-dan/images/17-cap-nhat.png" target="_blank" rel="noopener" title="Mở ảnh kích thước đầy đủ"><img src="huong-dan/images/17-cap-nhat.png" alt="Hình 14. Tab Cập nhật trong bộ web chưa có gói firmware: nút nạp bị khóa. Chỉ thực hiện quy trình nạp khi đã có bản phát hành đúng thiết bị." width="1228" height="423" loading="lazy"></a><figcaption>Hình 14. Tab Cập nhật trong bộ web chưa có gói firmware: nút nạp bị khóa. Chỉ thực hiện quy trình nạp khi đã có bản phát hành đúng thiết bị.</figcaption></figure>
+<!-- GUIDE_FIGURES_END -->
+</section>
+          <section id="guide-fix">
+            <h3>8. Khi gặp lỗi</h3>
+            <dl>
+              <dt>Không thấy cổng USB</dt><dd>Kiểm tra cáp dữ liệu, trình duyệt và driver CH340; đóng Serial Monitor hoặc tab khác đang giữ cổng.</dd>
+              <dt>Không thấy bia / mất sóng</dt><dd>Kiểm tra nguồn, cùng kênh ESP-NOW và tình trạng ghép. Dừng và nhận lại trạng thái trước khi chạy tiếp.</dd>
+              <dt>Không lưu được bài</dt><dd>Kiểm tra nơi lưu, đăng nhập/kết nối, tên ngắn, điểm hợp lệ và số chỗ bài còn trống.</dd>
+              <dt>Không có mã cloud trên tay cầm</dt><dd>Firmware hiện tại chưa hỗ trợ; chuyển bài bằng USB.</dd>
+            </dl>
+            <p>Sổ tay đầy đủ có hướng dẫn WiFi hiệu chuẩn, ba bài mẫu, bảng lỗi và phiếu bàn giao. <a href="huong-dan/huong-dan-su-dung.html" target="_blank" rel="noopener">Mở sổ tay</a> để tra cứu hoặc in A4.</p>
+            <p>Tab <strong>Cập nhật</strong> dùng để nạp phần mềm cho đúng tay cầm hoặc bia qua USB khi đã có bản phát hành. Nếu chưa có gói trên web, chưa nạp được. Sao lưu bài, dừng bia và chọn đúng thiết bị trước khi nạp; xem mục 10.5 trong sổ tay.</p>
+            <p class="muted small">Tài liệu 1.1 · 03/10/2026 · Trần Nguyên Bình</p>
+
+<!-- GUIDE_FIGURES_START -->
+<figure class="guide-figure"><a href="huong-dan/images/15-cai-dat-an-toan.png" target="_blank" rel="noopener" title="Mở ảnh kích thước đầy đủ"><img src="huong-dan/images/15-cai-dat-an-toan.png" alt="Hình 15. Cài đặt → An toàn: bật hỏi lại trước khi CHẠY khi cần; chọn trần Tốc độ tối đa. Giá trị 300 mm/s trong ảnh là cấu hình của tay cầm ảo." width="800" height="480" loading="lazy"></a><figcaption>Hình 15. Cài đặt → An toàn: bật hỏi lại trước khi CHẠY khi cần; chọn trần Tốc độ tối đa. Giá trị 300 mm/s trong ảnh là cấu hình của tay cầm ảo.</figcaption></figure>
+<!-- GUIDE_FIGURES_END -->
+</section>
+        </article>
+      </div>
+    </section>
+
+    <!-- ================= CONSOLE ================= -->
+    <section class="tab" id="tab-con" aria-label="Console">
+      <div class="card stack">
+        <div id="con" aria-live="polite"></div>
+        <div class="row">
+          <input id="con-in" type="text" class="grow" placeholder='{"cmd":"hello"}' aria-label="Lệnh JSON">
+          <button id="b-con-send" class="btn pri" type="button">Gửi</button>
+          <button id="b-con-clear" class="btn" type="button">Xóa</button>
+        </div>
+        <div class="row small muted">
+          <label class="row" style="gap:6px"><span class="switch"><input type="checkbox" id="con-stream"><span></span></span>Hiện luồng trạng thái ({"ev":"m"} ~10 dòng/s)</label>
+        </div>
+        <div class="muted small">Lệnh: hello · ping · watch · settings · settings_set · ex_list · ex_get · ex_put · ex_del · status · log · act · ses_start · ses_pause · ses_stop · ses_close · scan · target_pair · target_unpair · target_rename · identify · stop_all · reboot.
+          Chi tiết: đầu file lib/core/core_serial.c.</div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="overlay" id="ov" role="dialog" aria-modal="true" aria-labelledby="dlg-title">
+  <div class="dialog">
+    <h3 id="dlg-title"></h3>
+    <div id="dlg-body"></div>
+    <div class="row" style="justify-content:flex-end">
+      <button id="dlg-no" class="btn" type="button">Hủy</button>
+      <button id="dlg-yes" class="btn pri" type="button">Đồng ý</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+'use strict';
+/* ============================================================
+ * Hinh hoc - khop src/ik_5bar.c va lib/hmi/rig_view.c
+ * ============================================================ */
+const PTS_MAX = 24, BAUD = 921600, RP_ID = 900000;   /* id >= RP_ID: lenh cua ban sao (remote_port.c) */
+let EX_MAX = 32;
+let ZONE = { x0: -70, x1: 150, y0: 245, y1: 395, hx: 40, hy: 320, l0: 80, l1: 180, l2: 250 };
+
+function sol(A, B, C, plus) {
+  const d = A * A + B * B - C * C;
+  if (d < 0) return null;
+  const s = Math.sqrt(d);
+  return 2 * Math.atan((B + (plus ? s : -s)) / (A + C));
+}
+/* Tra khuyu trai B, khuyu phai D va goc giua 2 khau xa tai E (do) */
+function ik(x, y, z = ZONE) {
+  const { l0: L0, l1: L1, l2: L2 } = z, up = y >= 0;     /* chon nghiem nhu bia/src/ik_5bar.c */
+  const t1 = sol(2 * x * L1, 2 * y * L1, x * x + y * y + L1 * L1 - L2 * L2, up);
+  const t2 = sol(2 * (x - L0) * L1, 2 * y * L1, (L0 - x) ** 2 + y * y + L1 * L1 - L2 * L2, !up);
+  if (t1 === null || t2 === null) return null;
+  const B = [L1 * Math.cos(t1), L1 * Math.sin(t1)], D = [L0 + L1 * Math.cos(t2), L1 * Math.sin(t2)];
+  const v1 = [B[0] - x, B[1] - y], v2 = [D[0] - x, D[1] - y];
+  const cosE = (v1[0] * v2[0] + v1[1] * v2[1]) / (L2 * L2);
+  const angE = Math.acos(Math.max(-1, Math.min(1, cosE))) * 180 / Math.PI;
+  return { B, D, angE, t1: t1 * 180 / Math.PI, t2: t2 * 180 / Math.PI };
+}
+/* Goc servo 180 do quy ve he toa do IK (CCW tu truc +X):
+ * theta1 lay trong [0, 360), theta2 trong (-180, 180]. */
+const JOINT = { t1: [45, 225], t2: [-45, 135] };     /* doi xung guong: t2 = 180 - t1 */
+function jointOk(r) {
+  const a1 = (r.t1 + 360) % 360;
+  return a1 >= JOINT.t1[0] && a1 <= JOINT.t1[1] && r.t2 >= JOINT.t2[0] && r.t2 <= JOINT.t2[1];
+}
+const angOk = r => r.angE >= 30 && r.angE <= 150;
+/* Vung dat diem: doi xung quanh truc giua 2 servo (x = l0/2). Tinh theo
+ * u = |x - l0/2|:  u <= U, tren YT thi u <= UT, cach tam R1..R2 (y > 0),
+ * 4 loai goc (moi ben) bo tron ban kinh F:
+ *   A: canh u = U  gap cung R1 (loi)     B: canh u = U  gap y = YT (loi)
+ *   C: y = YT      gap u = UT  (lom)     D: canh u = UT gap cung R2 (loi)
+ * => X trong -140…220, tren Y 320 thi X trong -70…150, cach tam 200…410 mm.
+ * Khop ws_region() trong lib/core/core_ex.c. */
+const REGION = { U: 180, UT: 110, YT: 320, R1: 200, R2: 410, F: 20 };
+function inRegion(x, y, z = ZONE) {
+  const G = REGION, F = G.F, u = Math.abs(x - z.l0 / 2), h = Math.hypot(u, y);
+  if (y <= 0 || h > G.R2) return false;
+  if (u > G.U || h < G.R1) return false;
+  if (y > G.YT && u > G.UT) {             /* goc lom C: lap them phan bo */
+    const cu = G.UT + F, cy = G.YT + F;
+    return u < cu && y < cy && Math.hypot(u - cu, y - cy) >= F;
+  }
+  let cu = G.U - F, cy = Math.sqrt((G.R1 + F) ** 2 - cu * cu);              /* A */
+  if (y < cy && cu * y - cy * u < 0 && Math.hypot(u - cu, y - cy) > F) return false;
+  cu = G.U - F; cy = G.YT - F;                                             /* B */
+  if (u > cu && y > cy && Math.hypot(u - cu, y - cy) > F) return false;
+  cu = G.UT - F; cy = Math.sqrt((G.R2 - F) ** 2 - cu * cu);                /* D */
+  if (y > cy && cu * y - cy * u < 0 && Math.hypot(u - cu, y - cy) > F) return false;
+  return true;
+}
+/* Diem dat duoc = trong REGION, giai duoc IK, servo trong JOINT, xa diem ky di.
+ * Khop core_ex_check() (lib/core/core_ex.c). Tra loi hoac null. */
+function wsProblem(x, y, z = ZONE) {
+  if (y <= 0) return 'dưới trục servo';
+  if (!inRegion(x, y, z)) return 'ngoài vùng làm việc';
+  const r = ik(x, y, z);
+  if (!r) return 'cơ cấu không với tới';
+  if (!jointOk(r)) return 'servo vượt giới hạn góc';
+  if (!angOk(r)) return 'gần điểm kỳ dị (góc ' + r.angE.toFixed(0) + '°)';
+  return null;
+}
+function ptProblem(p, z = ZONE) {
+  const w = wsProblem(p[0], p[1], z);
+  if (w) return w;
+  if (p[2] && (p[2] < 5 || p[2] > 400)) return 'tốc độ phải 5–400';
+  if (p[3] > 60000) return 'dừng tối đa 60 s';
+  return null;
+}
+const round1 = v => Math.round(v * 10) / 10;
+
+/* ============================================================
+ * Giao dien tay cam WebAssembly (tools/web/build_wasm.sh)
+ *   demo   : hmi_demo.js   - tay cam ao (lib/core + bia ao) chay trong trang
+ *   remote : hmi_remote.js - guong tay cam that, lenh di qua cong serial
+ * ============================================================ */
+function loadScript(src, name) {
+  if (window[name]) return Promise.resolve(window[name]);
+  return new Promise((res, rej) => {
+    const sc = document.createElement('script'); sc.src = src + '?v=1.0.1';
+    sc.onload = () => res(window[name]);
+    sc.onerror = () => rej(new Error('Thiếu ' + src + ' (chạy tools/web/build_wasm.sh)'));
+    document.head.appendChild(sc);
+  });
+}
+const hmi = {
+  M: null, kind: null, raf: 0, img: null, ready: false, readySince: 0, fb: 0, dirty: 0,
+  ctx: null,
+  async load(kind) {
+    if (this.M && this.kind === kind) return;
+    this.stop();
+    const factory = await loadScript(kind === 'demo' ? 'hmi_demo.js' : 'hmi_remote.js', kind === 'demo' ? 'HmiDemo' : 'HmiRemote');
+    const M = await factory({ print: t => console.debug(t), printErr: t => console.debug(t) });   /* log [NVS]... cua tay cam ao */
+    /* demo: dong tay cam ao tra loi -> nhu nhan tu cong serial
+       remote: dong guong muon gui -> ghi ra cong serial */
+    M.onTx = kind === 'demo' ? t => link.fromDevice(t) : t => link.writeRaw(t, false);
+    M._web_init(2);
+    this.fb = M._web_fb(); this.dirty = M._web_dirty() >> 2;
+    this.M = M; this.kind = kind; this.img = null; this.ready = false;
+    this.ctx = $('#hh').getContext('2d');
+    const tick = () => {
+      if (this.M !== M) return;
+      const r = M._web_frame();
+      if ((r === 1) !== this.ready) { this.ready = r === 1; updateCover(); }
+      this.blit();
+      this.raf = requestAnimationFrame(tick);
+    };
+    this.raf = requestAnimationFrame(tick);
+  },
+  blit() {
+    const M = this.M, H = M.HEAP32, d = this.dirty;
+    if (H[d + 2] < 0) return;
+    const x0 = H[d], y0 = H[d + 1], x1 = H[d + 2], y1 = H[d + 3];
+    H[d + 2] = -1;
+    if (!this.img || this.img.data.buffer !== M.HEAPU8.buffer)
+      this.img = new ImageData(new Uint8ClampedArray(M.HEAPU8.buffer, this.fb, 800 * 480 * 4), 800, 480);
+    this.ctx.putImageData(this.img, 0, 0, x0, y0, x1 - x0 + 1, y1 - y0 + 1);
+  },
+  rx(line) {
+    if (!this.M) return;
+    const p = this.M.stringToNewUTF8(line); this.M._web_rx(p); this.M._free(p);
+  },
+  stop() {
+    cancelAnimationFrame(this.raf);
+    this.M = null; this.kind = null; this.ready = false;
+  },
+};
+
+/* Cham: toa do canvas CSS -> 800x480 (goi luc khoi dong) */
+function initHmiInput() {
+  const c = $('#hh');
+  let down = false;
+  const pos = e => { const r = c.getBoundingClientRect(); return [Math.round((e.clientX - r.left) * 800 / r.width), Math.round((e.clientY - r.top) * 480 / r.height)]; };
+  c.addEventListener('pointerdown', e => { if (!hmi.ready) return; down = true; c.setPointerCapture(e.pointerId); hmi.M._web_pointer(...pos(e), 1); });
+  c.addEventListener('pointermove', e => { if (down && hmi.M) hmi.M._web_pointer(...pos(e), 1); });
+  const up = e => { if (!down) return; down = false; if (hmi.M) hmi.M._web_pointer(...pos(e), 0); };
+  c.addEventListener('pointerup', up); c.addEventListener('pointercancel', up);
+  document.querySelectorAll('#hh-demo-keys [data-k]').forEach(b => b.onclick = () => { if (hmi.kind === 'demo') hmi.M._web_key(b.dataset.k.charCodeAt(0)); });
+  document.querySelectorAll('#hh-cover [data-go]').forEach(b => b.onclick = () => $(b.dataset.go === 'demo' ? '#b-demo' : '#b-connect').click());
+}
+
+/* ============================================================
+ * Ket noi: Web Serial (tay cam that) hoac tay cam ao.
+ * Moi dong JSON tu tay cam: guong (ban sao) + tra loi yeu cau co id.
+ * ============================================================ */
+const link = {
+  mode: null,           // 'serial' | 'demo' | null
+  port: null, reader: null, writer: null,
+  nextId: 1, pending: new Map(), buf: '', pingTimer: 0, lost: false, enc: new TextEncoder(),
+
+  async connectSerial() {
+    if (!('serial' in navigator)) throw new Error('Trình duyệt không hỗ trợ Web Serial. Dùng Chrome hoặc Edge bản mới.');
+    const port = await navigator.serial.requestPort();
+    await port.open({ baudRate: BAUD, bufferSize: 65536 });
+    /* CH340/CH343 noi DTR/RTS vao EN/IO0 (mach tu nap): EN thap khi RTS=1, DTR=0.
+     * Ha RTS TRUOC roi moi ha DTR - ha ca hai 1 lan thi driver doi DTR truoc,
+     * di qua RTS=1/DTR=0 => tay cam khoi dong lai, mat lenh hello. */
+    try {
+      await port.setSignals({ requestToSend: false });
+      await port.setSignals({ dataTerminalReady: false });
+    } catch (e) { /* bo qua */ }
+    this.port = port; this.mode = 'serial'; this.lost = false;
+    this.writer = port.writable.getWriter();
+    this.readLoop();
+    port.addEventListener('disconnect', () => this.closed('Tay cầm đã rút cáp'));
+    await hmi.load('remote');
+    hmi.M._web_link(1);
+    this.startPing();
+  },
+  async startDemo() {
+    await hmi.load('demo');
+    this.mode = 'demo'; this.lost = false;
+    this.startPing();
+  },
+  startPing() {
+    clearInterval(this.pingTimer);
+    this.pingTimer = setInterval(() => this.mode && this.writeRaw('{"cmd":"ping","id":999999}', true), 1500);
+  },
+
+  async readLoop() {
+    const dec = new TextDecoder();
+    try {
+      this.reader = this.port.readable.getReader();
+      for (;;) {
+        const { value, done } = await this.reader.read();
+        if (done) break;
+        this.fromDevice(dec.decode(value, { stream: true }));
+      }
+    } catch (e) { this.closed('Mất kết nối: ' + e.message); }
+  },
+  /* Chu tu tay cam (that hoac ao), co the nhieu dong / nua dong */
+  fromDevice(text) {
+    this.buf += text;
+    let k;
+    while ((k = this.buf.indexOf('\n')) >= 0) {
+      const line = this.buf.slice(0, k).replace(/\r$/, ''); this.buf = this.buf.slice(k + 1);
+      if (line) this.onLine(line);
+    }
+  },
+  onLine(line) {
+    if (!line.startsWith('{')) { conLog(line, 'log'); return; }
+    if (hmi.kind === 'remote') hmi.rx(line);
+    let msg; try { msg = JSON.parse(line); } catch (e) { conLog(line, 'er'); return; }
+    if (msg.ev) { if ($('#con-stream').checked) conLog(line, 'rx'); return; }
+    if (msg.id >= RP_ID) {
+      if (msg.id === 999999) return;                     /* ping */
+      if (!msg.ok) { conLog(line, 'er'); toast(msg.err || 'Tay cầm từ chối lệnh', 'err'); }
+      return;
+    }
+    const p = this.pending.get(msg.id);
+    if (p) { this.pending.delete(msg.id); clearTimeout(p.to); if (!p.quiet) conLog(line, 'rx'); p.resolve(msg); }
+    else conLog(line, 'rx');
+  },
+  /* Ghi 1 hoac nhieu dong toi tay cam. quiet: khong ghi Console */
+  writeRaw(text, quiet) {
+    for (const line of text.split('\n')) {
+      if (!line) continue;
+      if (!quiet && !/"cmd":"(watch|ping|ex_list|ex_get)"/.test(line)) conLog(line, 'tx');
+      if (this.mode === 'serial' && this.writer) this.writer.write(this.enc.encode(line + '\n')).catch(() => {});
+      else if (this.mode === 'demo') hmi.rx(line);
+    }
+  },
+  send(req, quiet) {
+    if (!this.mode) return Promise.reject(new Error('Chưa kết nối tay cầm'));
+    const id = this.nextId++, line = JSON.stringify({ ...req, id });
+    return new Promise((resolve, reject) => {
+      const to = setTimeout(() => { this.pending.delete(id); reject(new Error('Tay cầm không trả lời (' + req.cmd + ')')); }, 2500);
+      this.pending.set(id, { resolve, to, quiet });
+      this.writeRaw(line, quiet);
+    });
+  },
+  async disconnect() {
+    try { if (this.reader) await this.reader.cancel(); } catch (e) { /* bo qua */ }
+    try { if (this.writer) this.writer.releaseLock(); } catch (e) { /* bo qua */ }
+    try { if (this.port) await this.port.close(); } catch (e) { /* bo qua */ }
+    this.closed('Đã ngắt', true);
+  },
+  closed(why, byUser) {
+    if (!this.mode) return;
+    const was = this.mode;
+    this.mode = null; this.port = this.reader = this.writer = null; this.buf = '';
+    clearInterval(this.pingTimer);
+    this.pending.forEach(p => clearTimeout(p.to)); this.pending.clear();
+    if (was === 'demo') hmi.stop();
+    else if (hmi.M) hmi.M._web_link(0);
+    this.lost = was === 'serial' && !byUser;
+    onDisconnected(why);
+  },
+};
+
+/* Gui yeu cau, bao loi bang toast. Tra ve msg hoac null. */
+async function call(req, { quiet = false, toastErr = true } = {}) {
+  try {
+    const r = await link.send(req, quiet);
+    if (!r.ok && toastErr) toast(r.err || 'Lỗi', 'err');
+    return r;
+  } catch (e) { if (toastErr) toast(e.message, 'err'); return null; }
+}
+
+/* ============================================================
+ * Tien ich giao dien
+ * ============================================================ */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+let toastTimer;
+function toast(text, kind = '') {
+  const t = $('#toast'); t.textContent = text; t.className = 'toast show ' + kind;
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.className = 'toast', 3200);
+}
+function conLog(text, cls) {
+  const c = $('#con'), atEnd = c.scrollTop + c.clientHeight >= c.scrollHeight - 4;
+  const d = document.createElement('div'); d.className = cls;
+  d.textContent = (cls === 'tx' ? '→ ' : cls === 'rx' ? '← ' : '  ') + text; c.appendChild(d);
+  while (c.childElementCount > 600) c.firstChild.remove();
+  if (atEnd) c.scrollTop = c.scrollHeight;
+}
+function confirmBox(title, body, yes = 'Đồng ý', danger = false) {
+  return new Promise(res => {
+    $('#dlg-title').textContent = title; $('#dlg-body').textContent = body;
+    const y = $('#dlg-yes'), n = $('#dlg-no'); y.textContent = yes; y.className = 'btn ' + (danger ? 'danger' : 'pri');
+    $('#ov').classList.add('show'); y.focus();
+    const done = v => { $('#ov').classList.remove('show'); y.onclick = n.onclick = null; res(v); };
+    y.onclick = () => done(true); n.onclick = () => done(false);
+  });
+}
+function setSeg(seg, v) { seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.v == v))); }
+function download(name, obj) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' }));
+  a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
+/* ============================================================
+ * Trang thai ket noi + chuyen tab
+ * ============================================================ */
+let curTab = 'hh';
+function showTab(t) {
+  curTab = t;
+  document.querySelectorAll('nav [data-tab]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === t)));
+  document.querySelectorAll('.tab').forEach(s => s.classList.toggle('show', s.id === 'tab-' + t));
+  if (t === 'ex') resizeCanvases();
+  if (t === 'sync') cloud.gsiRender();
+}
+document.querySelectorAll('nav [data-tab]').forEach(b => b.onclick = () => showTab(b.dataset.tab));
+
+function setConn(state, text) {
+  const p = $('#conn'); p.className = 'pill ' + (state === 'serial' ? 'on' : state === 'demo' ? 'demo' : '');
+  $('#conn-text').textContent = text;
+  $('#b-connect').hidden = $('#b-demo').hidden = !!state;
+  $('#b-disconnect').hidden = !state;
+  $('#hh-warn').hidden = state !== 'serial';
+  $('#hh-demo-keys').hidden = state !== 'demo';
+  updateCover();
+}
+let readyTimer = 0;
+function updateCover() {
+  const cov = $('#hh-cover'), spin = $('#hh-spin'), btns = $('#hh-cover-btns');
+  const T = (t, x, sp, b) => { $('#hh-cover-title').textContent = t; $('#hh-cover-text').innerHTML = x; spin.hidden = !sp; btns.hidden = !b; cov.hidden = false; };
+  clearTimeout(readyTimer);
+  if (link.mode && hmi.ready) { cov.hidden = true; $('#hh-sub').textContent = link.mode === 'demo' ? '· tay cầm ảo' : '· bản sao trực tiếp'; return; }
+  $('#hh-sub').textContent = '';
+  if (link.mode) {
+    T('Đang đọc dữ liệu tay cầm…', 'Bia, cài đặt, thư viện bài.', true, false);
+    readyTimer = setTimeout(() => { if (link.mode && !hmi.ready) T('Tay cầm chưa trả lời', 'Kiểm tra tay cầm đã nạp firmware mới (giao thức 2) và đang bật.<br>Console có thể có thêm thông tin.', true, false); }, 6000);
+  } else if (link.lost) {
+    T('Mất kết nối tay cầm', 'Cáp USB bị rút hoặc tay cầm khởi động lại.', false, true);
+  } else {
+    T('Chưa kết nối tay cầm', 'Cắm cáp USB-C của tay cầm vào máy tính rồi bấm “Kết nối USB”.<br>Chưa có tay cầm: bấm “Dùng thử” để chạy tay cầm ảo.', false, true);
+  }
+}
+async function onConnected() {
+  /* Tay cam co the vua khoi dong lai luc mo cong (~1.5 s): thu hello vai lan */
+  let h = null;
+  for (let k = 0; k < 4 && link.mode && !(h && h.ok); k++)
+    h = await call({ cmd: 'hello' }, { toastErr: k === 3 });
+  if (!h || !h.ok) { link.mode === 'demo' ? link.closed('Tay cầm ảo không chạy') : link.disconnect(); return; }
+  if ((h.proto || 1) < 2) toast('Firmware tay cầm cũ (giao thức ' + (h.proto || 1) + '): bản sao màn hình cần nạp firmware mới', 'err');
+  if (h.zone) ZONE = h.zone;
+  if (h.ex_max) EX_MAX = h.ex_max;
+  setConn(link.mode, link.mode === 'demo' ? 'Dùng thử · tay cầm ảo' : `Tay cầm ${h.fw} · ${h.mac}`);
+  conLog(`Đã kết nối: fw ${h.fw}, MAC ${h.mac}, giao thức ${h.proto}`, 'log');
+  await loadExList();
+  resizeCanvases();
+}
+function onDisconnected(why) {
+  setConn(null, 'Chưa kết nối'); toast(why); conLog(why, 'log');
+  renderExList(); renderEditor();
+}
+$('#b-connect').onclick = async () => {
+  try { await link.connectSerial(); setConn('serial', 'Đang kết nối…'); await onConnected(); }
+  catch (e) { if (e.name !== 'NotFoundError') toast(e.message, 'err'); if (link.mode) link.disconnect(); }
+};
+$('#b-demo').onclick = async () => {
+  try { await link.startDemo(); setConn('demo', 'Đang mở tay cầm ảo…'); await onConnected(); }
+  catch (e) { toast(e.message, 'err'); }
+};
+$('#b-disconnect').onclick = () => link.mode === 'demo' ? link.closed('Đã thoát chế độ dùng thử', true) : link.disconnect();
+$('#b-estop').onclick = async () => {
+  const r = await call({ cmd: 'stop_all' });
+  if (r && r.ok) toast('Đã gửi DỪNG TẤT CẢ · xem xác nhận trên màn tay cầm', 'ok');
+};
+
+/* ============================================================
+ * BAI TAP
+ * ============================================================ */
+const ed = {
+  list: [],             // ex_list tu tay cam
+  src: 'new',           // bai dang mo: 'new' (chua luu) | 'dev' (tren tay cam) | 'cloud' (Bai cua toi)
+  sel: -1,              // chi so bai dang mo tren tay cam (src 'dev')
+  cid: null,            // id bai tren cloud (src 'cloud')
+  ex: { name: '', kind: 0, pts: [], ro: 0 },
+  dirty: false,
+  selPt: -1,
+  drag: -1,
+};
+const KIND_DESC = [
+  'Qua lại: 1 → 2 → … → cuối → … → 1 (con lắc).',
+  'Lặp vòng: 1 → 2 → … → cuối → 1 (khép kín).',
+  'Ngẫu nhiên: bia tự chọn điểm trong vùng chạy, không cần điểm.',
+];
+const KIND_NAME = ['qua lại', 'lặp', 'ngẫu nhiên'];
+
+async function loadExList(selectIdx) {
+  const r = await call({ cmd: 'ex_list' }, { quiet: true });
+  if (!r || !r.ok) return;
+  ed.list = r.ex;
+  renderExList();
+  if (selectIdx != null) await openEx(selectIdx);
+  else if (ed.src === 'new' && !ed.dirty && !ed.ex.pts.length && ed.list.length) await openEx(ed.list.findIndex(e => !e.ro) >= 0 ? ed.list.findIndex(e => !e.ro) : 0);
+}
+/* Muc "Bai moi · chua luu" nam o dau danh sach se nhan bai khi bam Luu */
+function newItem() {
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'ex-item'; b.setAttribute('aria-selected', 'true');
+  b.innerHTML = `<b>${esc(ed.ex.name || 'Bài mới')}<span class="badge new">chưa lưu</span></b><span class="muted small">${ed.ex.pts.length} điểm</span>`;
+  return b;
+}
+const showNew = () => ed.src === 'new' && (ed.dirty || ed.ex.pts.length > 0);
+function renderExList() {
+  renderCloudList();
+  const box = $('#ex-list'); box.innerHTML = '';
+  const user = ed.list.filter(e => !e.ro).length;
+  $('#ex-count').textContent = link.mode ? `${ed.list.length}/${EX_MAX} · ${user} tự tạo` : '';
+  if (!link.mode) { box.innerHTML = '<div class="empty sm">Cắm cáp và bấm “Kết nối USB”, hoặc bấm “Dùng thử”.</div>'; return; }
+  if (showNew() && !cloud.user) box.appendChild(newItem());
+  for (const e of ed.list) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'ex-item';
+    const on = ed.src === 'dev' && e.i === ed.sel;
+    b.setAttribute('aria-selected', String(on));
+    b.innerHTML = `<b>${esc(e.name)}${e.ro ? '<span class="badge">có sẵn</span>' : ''}${on && ed.dirty ? '<span class="badge new">đang sửa</span>' : ''}</b>
+      <span class="muted small">${e.kind === 2 ? 'bia tự chọn điểm' : e.n + ' điểm · ' + KIND_NAME[e.kind]}</span>`;
+    b.onclick = () => openEx(e.i);
+    box.appendChild(b);
+  }
+}
+function renderCloudList() {
+  const box = $('#cl-list'); box.innerHTML = '';
+  $('#cl-count').textContent = cloud.user ? `${cloud.list.length} bài` : '';
+  if (!cloud.user) {
+    box.innerHTML = cloud.failed
+      ? '<div class="empty sm">Không mở được thư viện cloud (mất mạng?). Vẫn lưu được vào tay cầm qua cáp.</div>'
+      : '<div class="empty sm">Đăng nhập Google (góc trên bên phải) để lưu bài trên cloud, mở lại ở máy nào cũng được.</div>';
+    return;
+  }
+  if (showNew()) box.appendChild(newItem());
+  for (const e of cloud.list) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'ex-item';
+    const on = ed.src === 'cloud' && e.id === ed.cid;
+    b.setAttribute('aria-selected', String(on));
+    b.innerHTML = `<b>${esc(e.name)}${on && ed.dirty ? '<span class="badge new">đang sửa</span>' : ''}</b>
+      <span class="muted small">${e.pts.length} điểm · ${KIND_NAME[e.kind]}</span>`;
+    b.onclick = () => openCloud(e.id);
+    box.appendChild(b);
+  }
+  if (!cloud.list.length && !showNew()) box.innerHTML = '<div class="empty sm">Chưa có bài. Bấm “+ Bài mới” để soạn.</div>';
+}
+async function guardDirty() {
+  return !ed.dirty || confirmBox('Bỏ thay đổi chưa lưu?', 'Bài đang sửa có thay đổi chưa lưu.', 'Bỏ thay đổi', true);
+}
+const normPts = pts => (pts || []).map(p => [+p[0], +p[1], +p[2] || 0, p[3] == null ? -1 : +p[3]]);
+async function openEx(i) {
+  if (ed.src === 'dev' && i === ed.sel && !ed.dirty) return;
+  if (!(await guardDirty())) return;
+  const r = await call({ cmd: 'ex_get', i }, { quiet: true });
+  if (!r || !r.ok) return;
+  ed.src = 'dev'; ed.sel = i; ed.cid = null;
+  ed.ex = { name: r.ex.name, kind: r.ex.kind, ro: r.ex.ro, pts: normPts(r.ex.pts) };
+  ed.dirty = false; ed.selPt = -1; stopAnim();
+  renderEditor(); renderExList();
+}
+async function openCloud(id) {
+  if (ed.src === 'cloud' && id === ed.cid && !ed.dirty) return;
+  if (!(await guardDirty())) return;
+  const e = cloud.list.find(x => x.id === id);
+  if (!e) return;
+  ed.src = 'cloud'; ed.cid = id; ed.sel = -1;
+  ed.ex = { name: e.name, kind: e.kind, ro: 0, pts: normPts(e.pts) };
+  ed.dirty = false; ed.selPt = -1; stopAnim();
+  renderEditor(); renderExList();
+}
+function markDirty() { ed.dirty = true; renderEditor(); renderExList(); }
+
+function renderEditor() {
+  const ex = ed.ex, ro = !!ex.ro;
+  $('#ex-name').value = ex.name; $('#ex-name').disabled = ro;
+  setSeg($('#ex-kind'), ex.kind);
+  $('#ex-kind').querySelectorAll('button').forEach(b => b.disabled = ro);
+  $('#kind-desc').textContent = KIND_DESC[ex.kind];
+  $('#pts-box').style.display = ex.kind === 2 ? 'none' : '';
+  $('#gen').disabled = $('#gen-n').disabled = ro;
+  $('#pt-count').textContent = `${ex.pts.length}/${PTS_MAX}`;
+
+  const tb = $('#pts tbody'); tb.innerHTML = '';
+  ex.pts.forEach((p, k) => {
+    const bad = ptProblem(p);
+    const tr = document.createElement('tr');
+    if (k === ed.selPt) tr.className = 'sel';
+    if (bad) { tr.className += ' bad'; tr.title = bad; }
+    const inp = (v, f, ph) => `<input type="number" step="${f === 0 || f === 1 ? 0.5 : 10}" data-f="${f}" value="${v}" placeholder="${ph || ''}" ${ro ? 'disabled' : ''} aria-label="${['X', 'Y', 'Tốc độ', 'Dừng'][f]} điểm ${k + 1}">`;
+    tr.innerHTML = `<td class="idx">${k + 1}</td><td>${inp(p[0], 0)}</td><td>${inp(p[1], 1)}</td>
+      <td>${inp(p[2] || '', 2, 'lệnh')}</td><td>${inp(p[3] < 0 ? '' : p[3], 3, 'lệnh')}</td>
+      <td class="act"><button class="iconbtn" data-a="up" ${ro || !k ? 'disabled' : ''} aria-label="Lên">↑</button>
+        <button class="iconbtn" data-a="dn" ${ro || k === ex.pts.length - 1 ? 'disabled' : ''} aria-label="Xuống">↓</button>
+        <button class="iconbtn" data-a="rm" ${ro ? 'disabled' : ''} aria-label="Xóa điểm">✕</button></td>`;
+    tr.onclick = ev => { if (ev.target.tagName !== 'INPUT' && ev.target.tagName !== 'BUTTON') { ed.selPt = k; renderEditor(); } };
+    tr.querySelectorAll('input').forEach(i => i.onchange = () => {
+      const f = +i.dataset.f, v = i.value.trim();
+      if (f <= 1) {
+        const q = [p[0], p[1]]; q[f] = round1(Number(v) || 0);
+        if (!canPlace(...q) && canPlace(p[0], p[1])) { toast('Ngoài vùng làm việc: ' + wsProblem(...q), 'err'); i.value = p[f]; return; }
+        p[f] = q[f];
+      } else if (f === 2) p[2] = v === '' ? 0 : Math.round(Number(v));
+      else p[3] = v === '' ? -1 : Math.round(Number(v));
+      ed.selPt = k; markDirty();
+    });
+    tr.querySelectorAll('button').forEach(b => b.onclick = () => {
+      const a = b.dataset.a;
+      if (a === 'rm') { ex.pts.splice(k, 1); ed.selPt = -1; }
+      else { const j = a === 'up' ? k - 1 : k + 1; [ex.pts[k], ex.pts[j]] = [ex.pts[j], ex.pts[k]]; ed.selPt = j; }
+      markDirty();
+    });
+    tb.appendChild(tr);
+  });
+
+  renderStats();
+  renderSaveButtons();
+  drawEditor();
+}
+/* Bai moi: luu vao "Bai cua toi" neu da dang nhap, khong thi vao tay cam */
+const saveTarget = () => ed.src === 'cloud' || (ed.src === 'new' && cloud.user) ? 'cloud' : 'dev';
+function renderSaveButtons() {
+  const ro = !!ed.ex.ro, dev = !!link.mode, tgt = saveTarget();
+  const can = tgt === 'cloud' ? !!cloud.user : dev;
+  const s = $('#b-save'), n = $('#b-save-new');
+  s.disabled = ro || !can || (ed.src !== 'new' && !ed.dirty);
+  s.textContent = tgt === 'cloud' ? (ed.src === 'new' ? 'Lưu vào Bài của tôi' : 'Lưu')
+    : ed.src === 'dev' ? 'Lưu vào tay cầm' : 'Lưu bài mới vào tay cầm';
+  n.disabled = !(ed.src === 'dev' ? dev : can) || !ed.ex.name;
+  n.textContent = ro ? 'Nhân bản để sửa' : 'Lưu thành bài mới';
+  n.hidden = ed.src === 'new' && !ro;
+  /* chep qua lai giua cloud va tay cam */
+  const toCloud = $('#b-to-cloud'), toDev = $('#b-to-dev');
+  toCloud.hidden = !(cloud.user && ed.src === 'dev');
+  toDev.hidden = !(dev && ed.src === 'cloud');
+  toCloud.disabled = toDev.disabled = ed.ex.kind === 2 || ed.ex.pts.length < 1;
+  $('#xfer-row').hidden = toCloud.hidden && toDev.hidden;
+  $('#b-del').disabled = ro || ed.src === 'new' || (ed.src === 'dev' && !dev);
+  $('#b-del').textContent = ed.src === 'cloud' ? 'Xóa khỏi Bài của tôi' : 'Xóa bài';
+}
+
+function legs(ex) {
+  const n = ex.pts.length;
+  if (n < 2) return [];
+  const order = ex.kind === 0 ? [...Array(n).keys(), ...Array.from({ length: n - 2 }, (_, i) => n - 2 - i), 0] : [...Array(n).keys(), 0];
+  const out = [];
+  for (let i = 1; i < order.length; i++) out.push([order[i - 1], order[i]]);
+  return out;
+}
+function cycleStats(ex) {
+  const spd = +$('#sim-speed').value, dw = +$('#sim-dwell').value;
+  let dist = 0, time = 0;
+  for (const [a, b] of legs(ex)) {
+    const A = ex.pts[a], B = ex.pts[b], d = Math.hypot(B[0] - A[0], B[1] - A[1]);
+    dist += d; time += d / (B[2] || spd) + (B[3] >= 0 ? B[3] : dw) / 1000;
+  }
+  return { dist, time };
+}
+function renderStats() {
+  const ex = ed.ex, box = $('#stats'), msg = $('#ex-msg');
+  if (ex.kind === 2) { box.innerHTML = '<span class="muted">Bài ngẫu nhiên: thời gian phụ thuộc điểm bia tự chọn.</span>'; msg.innerHTML = ''; return; }
+  const { dist, time } = cycleStats(ex);
+  const probs = ex.pts.map((p, k) => [k, ptProblem(p)]).filter(x => x[1]);
+  const maxSp = Math.max(0, ...ex.pts.map(p => p[2] || 0));
+  box.innerHTML = `<span class="muted">Quãng đường / chu kỳ</span><b>${dist.toFixed(0)} mm</b>
+    <span class="muted">Thời gian / chu kỳ</span><b>${time.toFixed(1)} s</b>
+    <span class="muted">Chu kỳ / 3 phút</span><b>${time > 0 ? (180 / time).toFixed(1) : '—'}</b>
+    <span class="muted">Tốc độ riêng cao nhất</span><b>${maxSp ? maxSp + ' mm/s' : 'theo lệnh'}</b>`;
+  const parts = [];
+  if (!ex.name && !ex.ro) parts.push('<div class="msg warn">Chưa đặt tên bài.</div>');
+  if (ex.pts.length < 2) parts.push('<div class="msg warn">Cần ít nhất 2 điểm.</div>');
+  if (probs.length) parts.push(`<div class="msg err">${probs.slice(0, 3).map(([k, p]) => `Điểm ${k + 1}: ${esc(p)}`).join('<br>')}${probs.length > 3 ? '<br>…' : ''}</div>`);
+  else if (ex.pts.length >= 2) parts.push('<div class="msg ok">Mọi điểm trong vùng làm việc, servo với tới được.</div>');
+  msg.innerHTML = parts.join('');
+}
+
+/* ---------- Khung ve ---------- */
+const cv = $('#cv'), ctx = cv.getContext('2d'), mech = $('#mech'), mctx = mech.getContext('2d');
+let view = { s: 1, ox: 0, oy: 0 };
+function resizeCanvases() {
+  for (const c of [cv, mech]) {
+    const r = c.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+    if (!r.width) continue;
+    c.width = Math.round(r.width * dpr); c.height = Math.round(r.height * dpr);
+    c.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  drawEditor(); drawMech(anim.pos);
+}
+window.addEventListener('resize', resizeCanvases);
+
+/* Khung bao vung dat diem duoc (wsProblem == null), quet luoi 1 lan */
+let dBox = null, dBoxKey = '';
+function designBox() {
+  const key = [ZONE.l0, ZONE.l1, ZONE.l2, ...JOINT.t1, ...JOINT.t2, ...Object.values(REGION)].join(',');
+  if (key === dBoxKey) return dBox;
+  const R = ZONE.l1 + ZONE.l2, b = { x0: ZONE.x0, x1: ZONE.x1, y0: ZONE.y0, y1: ZONE.y1 };
+  for (let x = -R; x <= ZONE.l0 + R; x += 4) for (let y = 2; y <= R; y += 4) {
+    if (wsProblem(x, y)) continue;
+    b.x0 = Math.min(b.x0, x); b.x1 = Math.max(b.x1, x); b.y0 = Math.min(b.y0, y); b.y1 = Math.max(b.y1, y);
+  }
+  dBoxKey = key; dBox = b;
+  return b;
+}
+function makeView(w, h) {
+  const m = 15, d = designBox(), x0 = d.x0 - m, x1 = d.x1 + m, y0 = d.y0 - m, y1 = d.y1 + m;
+  const s = Math.min(w / (x1 - x0), h / (y1 - y0));
+  return { s, ox: (w - (x1 - x0) * s) / 2 - x0 * s, oy: (h - (y1 - y0) * s) / 2 + y1 * s };
+}
+const toPx = (x, y, v = view) => [v.ox + x * v.s, v.oy - y * v.s];
+const toMm = (px, py, v = view) => [(px - v.ox) / v.s, (v.oy - py) / v.s];
+const ptPx = p => toPx(p[0], p[1]);
+
+let reachImg = null, reachKey = '';
+/* Vung lam viec (cung 1 hinh cho khung ve bai va hinh co cau): nen cam + vien dam.
+ * servo: to them xam nhat cho cho servo toi duoc nhung nam ngoai vung. */
+const RG_FILL = '#F5CDB2', RG_EDGE = '#A65A2E', RG_SERVO = '#E3E8EB';
+function regionLayer(w, h, v, servo) {
+  const step = 2, c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d'), nx = Math.ceil(w / step), ny = Math.ceil(h / step), ok = new Uint8Array(nx * ny);
+  for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
+    const [x, y] = toMm((i + 0.5) * step, (j + 0.5) * step, v);
+    if (canPlace(x, y)) ok[j * nx + i] = 1;
+    else if (servo) { const r = ik(x, y); if (r && jointOk(r)) { g.fillStyle = RG_SERVO; g.fillRect(i * step, j * step, step, step); } }
+  }
+  const at = (i, j) => i >= 0 && j >= 0 && i < nx && j < ny && ok[j * nx + i];
+  for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
+    if (!ok[j * nx + i]) continue;
+    g.fillStyle = !at(i - 1, j) || !at(i + 1, j) || !at(i, j - 1) || !at(i, j + 1) ? RG_EDGE : RG_FILL;
+    g.fillRect(i * step, j * step, step, step);
+  }
+  return c;
+}
+function reachLayer(w, h) {
+  const key = [w, h, view.s, view.ox, view.oy, ...Object.values(ZONE), dBoxKey].join(',');
+  if (key === reachKey) return reachImg;
+  reachKey = key; reachImg = regionLayer(w, h, view, false);
+  return reachImg;
+}
+
+function drawEditor() {
+  const r = cv.getBoundingClientRect(), w = r.width, h = r.height;
+  if (!w) return;
+  view = makeView(w, h);
+  ctx.clearRect(0, 0, w, h);
+  ctx.drawImage(reachLayer(w, h), 0, 0, w, h);
+
+  /* luoi 10 mm */
+  ctx.strokeStyle = 'rgba(54,68,78,.08)'; ctx.lineWidth = 1;
+  const [gx0, gy1] = toMm(0, 0), [gx1, gy0] = toMm(w, h);
+  for (let x = Math.ceil(gx0 / 10) * 10; x <= gx1; x += 10) { const [px] = toPx(x, 0); ctx.beginPath(); ctx.moveTo(px, 0); ctx.lineTo(px, h); ctx.stroke(); }
+  for (let y = Math.ceil(gy0 / 10) * 10; y <= gy1; y += 10) { const [, py] = toPx(0, y); ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(w, py); ctx.stroke(); }
+
+
+  /* goc */
+  const [hx, hy] = toPx(ZONE.hx, ZONE.hy);
+  ctx.strokeStyle = '#36444E'; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(hx, hy, 7, 0, 7); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(hx - 11, hy); ctx.lineTo(hx + 11, hy); ctx.moveTo(hx, hy - 11); ctx.lineTo(hx, hy + 11); ctx.stroke();
+
+  const ex = ed.ex;
+  if (ex.kind !== 2 && ex.pts.length) {
+    /* duong noi + mui ten huong */
+    const L = legs(ex).filter((l, i, arr) => ex.kind === 1 || i < ex.pts.length - 1);
+    ctx.strokeStyle = 'rgba(11,110,138,.75)'; ctx.lineWidth = 2;
+    for (const [a, b] of L) {
+      const [ax, ay] = ptPx(ex.pts[a]), [bx, by] = ptPx(ex.pts[b]);
+      ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+      const mx = (ax + bx) / 2, my = (ay + by) / 2, an = Math.atan2(by - ay, bx - ax);
+      ctx.beginPath(); ctx.moveTo(mx + 7 * Math.cos(an), my + 7 * Math.sin(an));
+      ctx.lineTo(mx + 7 * Math.cos(an + 2.5), my + 7 * Math.sin(an + 2.5)); ctx.lineTo(mx + 7 * Math.cos(an - 2.5), my + 7 * Math.sin(an - 2.5));
+      ctx.closePath(); ctx.fillStyle = 'rgba(11,110,138,.85)'; ctx.fill();
+    }
+    /* diem */
+    ex.pts.forEach((p, k) => {
+      const [px, py] = toPx(p[0], p[1]), bad = ptProblem(p), sel = k === ed.selPt;
+      ctx.beginPath(); ctx.arc(px, py, sel ? 12 : 10, 0, 7);
+      ctx.fillStyle = bad ? '#B3261E' : sel ? '#16222B' : '#0B6E8A'; ctx.fill();
+      ctx.lineWidth = 2; ctx.strokeStyle = '#fff'; ctx.stroke();
+      ctx.fillStyle = '#fff'; ctx.font = '600 11px "Be Vietnam Pro", sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(String(k + 1), px, py + 0.5);
+      if (p[3] > 0 || p[2]) {
+        ctx.fillStyle = '#4A5963'; ctx.font = '11px "Be Vietnam Pro", sans-serif'; ctx.textAlign = 'left';
+        ctx.fillText([p[2] ? p[2] + ' mm/s' : '', p[3] > 0 ? (p[3] / 1000).toFixed(1) + ' s' : ''].filter(Boolean).join(' · '), px + 14, py - 10);
+      }
+      ctx.textBaseline = 'alphabetic'; ctx.textAlign = 'left';
+    });
+  }
+  /* dau muc tieu khi chay thu */
+  if (anim.pos) {
+    const [px, py] = toPx(...anim.pos);
+    ctx.beginPath(); ctx.arc(px, py, 15, 0, 7); ctx.fillStyle = 'rgba(179,89,0,.85)'; ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(px, py, 6, 0, 7); ctx.stroke();
+  }
+}
+
+/* Tam bia cam dung truoc co cau (mm, doi xung quanh trung diem 2 truc servo,
+ * y = 0 tai truc servo). Uoc luong tu anh, thay bang so do that khi co. */
+const BOARD = { w: 380, bottom: -190, shoulder: 350, neck: 200, top: 520, r: 20 };
+function boardPath(g, P) {
+  const c = ZONE.l0 / 2, B = BOARD, L = c - B.w / 2, R = c + B.w / 2, nl = c - B.neck / 2, nr = c + B.neck / 2;
+  const pts = [[L, B.bottom], [L, B.shoulder], [nl, B.shoulder], [nl, B.top], [nr, B.top], [nr, B.shoulder], [R, B.shoulder], [R, B.bottom]].map(p => P(...p));
+  const rad = B.r * Math.abs(P(1, 0)[0] - P(0, 0)[0]);
+  g.beginPath();
+  g.moveTo((pts[0][0] + pts[7][0]) / 2, pts[0][1]);
+  for (let i = 0; i < 8; i++) { const a = pts[i], b = pts[(i + 1) % 8]; g.arcTo(a[0], a[1], b[0], b[1], rad); }
+  g.closePath();
+}
+
+/* Bia hinh dau nguoi gan tai diem cuoi E, xoay theo phuong (trung diem 2 servo -> E).
+ * Hinh theo don vi rieng giong lib/hmi/rig_view.c (rong 124, y huong xuong);
+ * HEAD_MM = be rong that cua bia (uoc luong tu anh). */
+const HEAD_MM = 180, HEAD_U = HEAD_MM / 124, HEAD_TOP = 240;
+function drawHead(g, P, x, y, live) {
+  const a = Math.atan2(x - ZONE.l0 / 2, y), ca = Math.cos(a), sa = Math.sin(a);
+  const R = (lx, ly) => { lx *= HEAD_U; ly *= HEAD_U; return P(x + lx * ca - ly * sa, y - (lx * sa + ly * ca)); };
+  const poly = pts => { g.beginPath(); pts.forEach((q, i) => i ? g.lineTo(...q) : g.moveTo(...q)); g.closePath(); };
+  /* de gan bia */
+  poly([R(-40, -14), R(40, -14), R(40, 0), R(-40, 0)]);
+  g.fillStyle = '#9AA5AE'; g.fill();
+  /* than + dau */
+  const rim = [R(-38, -14), R(38, -14), R(38, -92), R(62, -136)];
+  for (let i = 0; i <= 12; i++) { const th = Math.PI * i / 12; rim.push(R(62 * Math.cos(th), -178 - 62 * Math.sin(th))); }
+  rim.push(R(-62, -136), R(-38, -92));
+  poly(rim);
+  g.fillStyle = 'rgba(255,255,255,.92)'; g.fill();
+  g.strokeStyle = '#6B7780'; g.lineWidth = 1.5; g.stroke();
+  /* tam ngam */
+  const [cx, cy] = R(0, -180), rr = 10 * HEAD_U * Math.abs(P(1, 0)[0] - P(0, 0)[0]);
+  g.strokeStyle = live ? '#B35900' : '#6B7780'; g.lineWidth = 1.5;
+  g.beginPath(); g.arc(cx, cy, rr, 0, 7); g.stroke();
+  g.beginPath(); g.moveTo(...R(-20, -180)); g.lineTo(...R(20, -180)); g.moveTo(...R(0, -200)); g.lineTo(...R(0, -160)); g.stroke();
+}
+
+/* Lop vung lam viec cho hinh co cau; ve lai khi doi kich thuoc / khung nhin */
+let wsImg = null, wsImgKey = '';
+function workspaceLayer(w, h, v) {
+  const key = [w, h, v.s, v.ox, v.oy, dBoxKey].join(',');
+  if (key === wsImgKey) return wsImg;
+  wsImgKey = key; wsImg = regionLayer(w, h, v, false);
+  return wsImg;
+}
+
+/* Co cau toan bo (nho) */
+function drawMech(pos) {
+  const r = mech.getBoundingClientRect(), w = r.width, h = r.height;
+  if (!w) return;
+  mctx.clearRect(0, 0, w, h);
+  const bc = ZONE.l0 / 2, ws = designBox();
+  const x0 = Math.min(ws.x0, -ZONE.l1, bc - BOARD.w / 2) - 15, x1 = Math.max(ws.x1, ZONE.l0 + ZONE.l1, bc + BOARD.w / 2) + 15;
+  const y0 = Math.min(ws.y0, BOARD.bottom) - 45, y1 = Math.max(ws.y1, ZONE.y1 + HEAD_TOP * HEAD_U, BOARD.top) + 15;
+  const s = Math.min(w / (x1 - x0), h / (y1 - y0)), v = { s, ox: (w - (x1 - x0) * s) / 2 - x0 * s, oy: (h - (y1 - y0) * s) / 2 + y1 * s };
+  const P = (x, y) => toPx(x, y, v);
+  mctx.drawImage(workspaceLayer(Math.round(w), Math.round(h), v), 0, 0);
+  const p = pos || [ZONE.hx, ZONE.hy], k = ik(p[0], p[1]);
+  if (ed.ex.kind !== 2 && ed.ex.pts.length > 1) {
+    mctx.strokeStyle = 'rgba(11,110,138,.6)'; mctx.lineWidth = 1.5; mctx.beginPath();
+    ed.ex.pts.forEach((q, i) => { const [x, y] = P(q[0], q[1]); i ? mctx.lineTo(x, y) : mctx.moveTo(x, y); });
+    if (ed.ex.kind === 1) mctx.closePath();
+    mctx.stroke();
+  }
+  const [ax, ay] = P(0, 0), [cx2, cy2] = P(ZONE.l0, 0), [ex, ey] = P(...p);
+  mctx.fillStyle = '#B8C2C9'; mctx.fillRect(ax - 16, ay - 4, cx2 - ax + 32, 14);
+  if (k) {
+    const [bx, by] = P(...k.B), [dx, dy] = P(...k.D);
+    mctx.strokeStyle = '#6B7780'; mctx.lineWidth = 3; mctx.lineCap = 'round';
+    mctx.beginPath(); mctx.moveTo(ax, ay); mctx.lineTo(bx, by); mctx.lineTo(ex, ey); mctx.lineTo(dx, dy); mctx.lineTo(cx2, cy2); mctx.stroke();
+    for (const [x, y] of [[bx, by], [dx, dy]]) { mctx.beginPath(); mctx.arc(x, y, 4, 0, 7); mctx.fillStyle = '#fff'; mctx.fill(); mctx.strokeStyle = '#6B7780'; mctx.lineWidth = 1.5; mctx.stroke(); }
+  }
+  for (const [x, y] of [[ax, ay], [cx2, cy2]]) { mctx.beginPath(); mctx.arc(x, y, 5, 0, 7); mctx.fillStyle = '#36444E'; mctx.fill(); }
+  drawHead(mctx, P, p[0], p[1], !!pos);
+  mctx.beginPath(); mctx.arc(ex, ey, 4, 0, 7); mctx.fillStyle = '#fff'; mctx.fill(); mctx.strokeStyle = '#36444E'; mctx.lineWidth = 1.5; mctx.stroke();
+  /* tam bia cam phia truoc: chi vien net dut, ve sau cung de khong bi che */
+  boardPath(mctx, P);
+  mctx.setLineDash([7, 5]); mctx.strokeStyle = '#D9622B'; mctx.lineWidth = 1.5; mctx.stroke(); mctx.setLineDash([]);
+  const [lx, ly] = P(bc - BOARD.w / 2, BOARD.bottom);
+  mctx.fillStyle = '#D9622B'; mctx.font = '11px "Be Vietnam Pro", sans-serif'; mctx.fillText('Tấm bia (phía trước)', lx + 6, ly - 6);
+  mctx.fillStyle = '#6B7780'; mctx.font = '11px "Be Vietnam Pro", sans-serif';
+  mctx.fillText(`Cam: vùng làm việc (cách tâm 2 servo ${REGION.R1}…${REGION.R2} mm, góc bo ${REGION.F} mm)`, 8, h - 8);
+  mctx.fillStyle = '#4A5963'; mctx.font = '12px "Be Vietnam Pro", sans-serif';
+  mctx.fillText(k ?`θ1 ${k.t1.toFixed(1)}° · θ2 ${k.t2.toFixed(1)}° · góc tại điểm cuối ${k.angE.toFixed(0)}°` : 'Cơ cấu không với tới điểm này', 8, 16);
+}
+
+/* ---------- Thao tac chuot ---------- */
+function snapMm(v) { return $('#snap').checked ? Math.round(v / 5) * 5 : round1(v); }
+/* Vung dat diem la gioi han cung: khong them / keo / dich diem ra ngoai */
+const canPlace = (x, y) => !wsProblem(x, y);
+/* Di tu a toi b; b ngoai vung thi dung o mep vung tren doan a-b */
+function towardEdge(ax, ay, bx, by) {
+  if (canPlace(bx, by)) return [bx, by];
+  if (!canPlace(ax, ay)) return [ax, ay];
+  let lo = 0, hi = 1;
+  for (let i = 0; i < 14; i++) { const m = (lo + hi) / 2; if (canPlace(ax + (bx - ax) * m, ay + (by - ay) * m)) lo = m; else hi = m; }
+  const q = [round1(ax + (bx - ax) * lo), round1(ay + (by - ay) * lo)];
+  return canPlace(...q) ? q : [ax, ay];
+}
+function hitPoint(px, py) {
+  for (let k = ed.ex.pts.length - 1; k >= 0; k--) { const [x, y] = ptPx(ed.ex.pts[k]); if (Math.hypot(x - px, y - py) <= 12) return k; }
+  return -1;
+}
+function hitSegment(px, py) {
+  const L = legs(ed.ex).filter((l, i) => ed.ex.kind === 1 || i < ed.ex.pts.length - 1);
+  for (const [a, b] of L) {
+    const [ax, ay] = ptPx(ed.ex.pts[a]), [bx, by] = ptPx(ed.ex.pts[b]);
+    const t = Math.max(0, Math.min(1, ((px - ax) * (bx - ax) + (py - ay) * (by - ay)) / ((bx - ax) ** 2 + (by - ay) ** 2 || 1)));
+    /* chen giua a va b; doan khep vong (cuoi -> dau) thi chen vao cuoi */
+    if (Math.hypot(ax + t * (bx - ax) - px, ay + t * (by - ay) - py) < 8) return b === 0 ? ed.ex.pts.length : Math.max(a, b);
+  }
+  return -1;
+}
+function evPos(e) { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+let downAt = null;
+cv.addEventListener('pointerdown', e => {
+  if (ed.ex.kind === 2) return;
+  const [px, py] = evPos(e), k = hitPoint(px, py);
+  downAt = [px, py];
+  if (k >= 0) { ed.selPt = k; ed.moved = false; if (!ed.ex.ro) { ed.drag = k; cv.setPointerCapture(e.pointerId); } renderEditor(); return; }
+  if (ed.ex.ro) return;
+  if (ed.ex.pts.length >= PTS_MAX) { toast(`Tối đa ${PTS_MAX} điểm`, 'err'); return; }
+  const raw = toMm(px, py), sn = raw.map(snapMm);
+  const [x, y] = canPlace(...sn) ? sn : raw.map(round1);
+  if (!canPlace(x, y)) { toast('Ngoài vùng làm việc: không đặt điểm ở đây', 'err'); return; }
+  const at = e.shiftKey ? hitSegment(px, py) : -1;
+  if (at >= 0) { ed.ex.pts.splice(at, 0, [x, y, 0, -1]); ed.selPt = at; }
+  else { ed.ex.pts.push([x, y, 0, -1]); ed.selPt = ed.ex.pts.length - 1; }
+  markDirty();
+});
+cv.addEventListener('pointermove', e => {
+  const [px, py] = evPos(e), [x, y] = toMm(px, py);
+  const wp = wsProblem(x, y);
+  $('#coord').textContent = `X ${x.toFixed(1)} · Y ${y.toFixed(1)} mm${wp ? ' · ' + wp : ''}`;
+  if (ed.drag < 0) return;
+  const p = ed.ex.pts[ed.drag], [nx, ny] = towardEdge(p[0], p[1], snapMm(x), snapMm(y));
+  if (p[0] !== nx || p[1] !== ny) { p[0] = nx; p[1] = ny; ed.moved = true; ed.dirty = true; drawEditor(); drawMech([nx, ny]); }
+});
+cv.addEventListener('pointerup', () => { if (ed.drag >= 0) { ed.drag = -1; if (ed.moved) markDirty(); else renderEditor(); } });
+cv.addEventListener('pointerleave', () => $('#coord').textContent = '—');
+document.addEventListener('keydown', e => {
+  if (curTab !== 'ex' || ed.ex.ro || ed.selPt < 0 || /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) return;
+  const p = ed.ex.pts[ed.selPt]; if (!p) return;
+  const st = e.shiftKey ? 10 : 1, mv = { ArrowLeft: [-st, 0], ArrowRight: [st, 0], ArrowUp: [0, st], ArrowDown: [0, -st] }[e.key];
+  if (e.key === 'Delete' || e.key === 'Backspace') { ed.ex.pts.splice(ed.selPt, 1); ed.selPt = Math.min(ed.selPt, ed.ex.pts.length - 1); markDirty(); e.preventDefault(); }
+  else if (mv) { [p[0], p[1]] = towardEdge(p[0], p[1], round1(p[0] + mv[0]), round1(p[1] + mv[1])); markDirty(); e.preventDefault(); }
+});
+
+/* ---------- Form ---------- */
+$('#ex-name').oninput = e => { ed.ex.name = e.target.value; ed.dirty = true; renderExList(); renderStats(); renderSaveButtons(); };
+$('#ex-kind').onclick = e => { const b = e.target.closest('button'); if (!b || ed.ex.ro) return; ed.ex.kind = +b.dataset.v; markDirty(); };
+$('#sim-speed').onchange = $('#sim-dwell').onchange = () => renderStats();
+
+$('#gen').onchange = async e => {
+  const kind = e.target.value; e.target.value = '';
+  if (!kind || ed.ex.ro) return;
+  if (ed.ex.pts.length && !(await confirmBox('Thay toàn bộ điểm?', 'Các điểm hiện tại sẽ bị thay bằng mẫu mới.', 'Thay'))) return;
+  const n = Math.max(2, Math.min(PTS_MAX, +$('#gen-n').value || 6)), z = ZONE, m = 12;
+  const W = z.x1 - z.x0 - 2 * m, H = z.y1 - z.y0 - 2 * m, cx = (z.x0 + z.x1) / 2, cy = (z.y0 + z.y1) / 2;
+  const P = (x, y) => [round1(x), round1(y), 0, -1];
+  let pts = [];
+  if (kind === 'hline') pts = Array.from({ length: n }, (_, i) => P(z.x0 + m + W * i / (n - 1), cy));
+  if (kind === 'vline') pts = Array.from({ length: n }, (_, i) => P(cx, z.y1 - m - H * i / (n - 1)));
+  if (kind === 'circle') pts = Array.from({ length: n }, (_, i) => { const a = 2 * Math.PI * i / n; return P(cx + 0.45 * Math.min(W, H) * Math.cos(a), cy + 0.45 * Math.min(W, H) * Math.sin(a)); });
+  if (kind === 'zigzag') pts = Array.from({ length: n }, (_, i) => P(z.x0 + m + W * i / (n - 1), i % 2 ? z.y0 + m : z.y1 - m));
+  if (kind === 'rect') pts = [P(z.x0 + m, z.y1 - m), P(z.x1 - m, z.y1 - m), P(z.x1 - m, z.y0 + m), P(z.x0 + m, z.y0 + m)];
+  if (kind === 'random') pts = Array.from({ length: n }, () => P(z.x0 + m + Math.random() * W, z.y0 + m + Math.random() * H));
+  ed.ex.pts = pts; ed.ex.kind = kind === 'hline' || kind === 'vline' ? 0 : 1; ed.selPt = -1;
+  markDirty();
+};
+
+$('#b-new').onclick = async () => {
+  if (!(await guardDirty())) return;
+  newBlank(); $('#ex-name').focus();
+};
+function newBlank() {
+  ed.src = 'new'; ed.sel = -1; ed.cid = null; ed.ex = { name: '', kind: 1, pts: [], ro: 0 }; ed.dirty = false; ed.selPt = -1; stopAnim();
+  renderEditor(); renderExList();
+}
+function exPayload() {
+  return { name: ed.ex.name.trim(), kind: ed.ex.kind, pts: ed.ex.kind === 2 ? [] : ed.ex.pts.map(p => [p[0], p[1], p[2] || 0, p[3] < 0 ? -1 : p[3]]) };
+}
+const NAME_BYTES = 39;      /* hmi_ex_t.name[40], UTF-8 */
+/* Kiem tra truoc khi luu; tra payload hoac null (da bao loi) */
+function checkedPayload(toCloud) {
+  const payload = exPayload();
+  if (!payload.name) { toast('Đặt tên bài trước khi lưu', 'err'); $('#ex-name').focus(); return null; }
+  if (new TextEncoder().encode(payload.name).length > NAME_BYTES) { toast('Tên bài quá dài, rút ngắn lại', 'err'); $('#ex-name').focus(); return null; }
+  const bad = payload.pts.map((p, k) => [k, ptProblem(p)]).find(x => x[1]);
+  if (bad) { toast(`Điểm ${bad[0] + 1}: ${bad[1]}`, 'err'); return null; }
+  if (toCloud && payload.kind === 2) { toast('Bài ngẫu nhiên có sẵn trên tay cầm, không cần lưu lên cloud', 'err'); return null; }
+  if (toCloud && !payload.pts.length) { toast('Bài cần ít nhất 1 điểm', 'err'); return null; }
+  return payload;
+}
+async function saveEx(asNew) {
+  if (ed.ex.ro && asNew) { ed.ex = { ...ed.ex, ro: 0, name: ed.ex.name + ' (bản sao)' }; ed.src = 'new'; ed.sel = -1; ed.cid = null; markDirty(); $('#ex-name').focus(); return; }
+  const tgt = saveTarget(), payload = checkedPayload(tgt === 'cloud');
+  if (!payload) return;
+  if (tgt === 'cloud') {
+    const row = await cloud.save(payload, asNew || ed.src !== 'cloud' ? null : ed.cid);
+    if (!row) return;
+    ed.src = 'cloud'; ed.cid = row.id; ed.sel = -1; ed.dirty = false;
+    toast('Đã lưu “' + payload.name + '” vào Bài của tôi', 'ok');
+    renderEditor(); renderExList();
+    return;
+  }
+  const r = await call({ cmd: 'ex_put', i: asNew || ed.src !== 'dev' ? -1 : ed.sel, ex: payload });
+  if (!r || !r.ok) return;
+  ed.src = 'dev'; ed.dirty = false; ed.sel = r.i; ed.cid = null;
+  toast('Đã lưu “' + payload.name + '” vào tay cầm', 'ok');
+  await loadExList(); renderEditor(); renderExList();
+}
+$('#b-save').onclick = () => saveEx(false);
+$('#b-save-new').onclick = () => saveEx(true);
+/* Chep bai dang mo sang noi kia, bai dang mo giu nguyen */
+$('#b-to-cloud').onclick = async () => {
+  const payload = checkedPayload(true);
+  if (payload && await cloud.save(payload, null)) toast('Đã chép “' + payload.name + '” vào Bài của tôi', 'ok');
+};
+$('#b-to-dev').onclick = async () => {
+  const payload = checkedPayload(false);
+  if (!payload) return;
+  const r = await call({ cmd: 'ex_put', i: -1, ex: payload });
+  if (!r || !r.ok) return;
+  toast('Đã gửi “' + payload.name + '” xuống tay cầm', 'ok');
+  await loadExList();
+};
+$('#b-del').onclick = async () => {
+  if (ed.src === 'new' || ed.ex.ro) return;
+  if (ed.src === 'cloud') {
+    if (!(await confirmBox(`Xóa bài “${ed.ex.name}”?`, 'Bài bị xóa khỏi Bài của tôi và khỏi danh sách nạp của mọi tay cầm. Bài đã nạp trên tay cầm vẫn còn đến lần đồng bộ sau.', 'Xóa bài', true))) return;
+    if (!(await cloud.remove(ed.cid))) return;
+  } else {
+    if (!(await confirmBox(`Xóa bài “${ed.ex.name}”?`, 'Bài bị xóa khỏi tay cầm. Các bài sau lùi lên 1 vị trí.', 'Xóa bài', true))) return;
+    const r = await call({ cmd: 'ex_del', i: ed.sel });
+    if (!r || !r.ok) return;
+    await loadExList();
+  }
+  toast('Đã xóa bài', 'ok'); newBlank();
+};
+$('#b-export').onclick = () => download((ed.ex.name || 'bai') .replace(/[^\p{L}\p{N}]+/gu, '_') + '.json', { format: 'bia-ex', v: 1, zone: ZONE, ex: [exPayload()] });
+$('#b-export-all').onclick = async () => {
+  if (cloud.user && cloud.list.length) {
+    download('bai_cua_toi_' + new Date().toISOString().slice(0, 10) + '.json',
+      { format: 'bia-ex', v: 1, zone: ZONE, ex: cloud.list.map(e => ({ name: e.name, kind: e.kind, pts: e.pts })) });
+    return;
+  }
+  const all = [];
+  for (const e of ed.list.filter(x => !x.ro)) { const r = await call({ cmd: 'ex_get', i: e.i }, { quiet: true }); if (r && r.ok) all.push({ name: r.ex.name, kind: r.ex.kind, pts: r.ex.pts }); }
+  if (!all.length) { toast('Chưa có bài tự tạo để xuất'); return; }
+  download('bai_tap_tay_cam.json', { format: 'bia-ex', v: 1, zone: ZONE, ex: all });
+};
+$('#b-import').onclick = () => $('#f-import').click();
+$('#f-import').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = '';
+  if (!f) return;
+  let data; try { data = JSON.parse(await f.text()); } catch (er) { toast('File không phải JSON', 'err'); return; }
+  const list = Array.isArray(data) ? data : data.ex;
+  if (!Array.isArray(list) || !list.length) { toast('File không có bài nào', 'err'); return; }
+  if (list.length === 1) {
+    if (!(await guardDirty())) return;
+    const x = list[0];
+    ed.src = 'new'; ed.sel = -1; ed.cid = null; ed.ex = { name: String(x.name || ''), kind: x.kind | 0, ro: 0, pts: normPts(x.pts) };
+    ed.dirty = true; ed.selPt = -1; renderEditor(); renderExList(); toast('Đã mở bài từ file · bấm Lưu để giữ lại');
+    return;
+  }
+  const toCloud = !!cloud.user;
+  if (!toCloud && !link.mode) { toast('Đăng nhập hoặc kết nối tay cầm trước khi nhập nhiều bài', 'err'); return; }
+  if (!(await confirmBox(`Nhập ${list.length} bài vào ${toCloud ? 'Bài của tôi' : 'tay cầm'}?`,
+    toCloud ? 'Mỗi bài được thêm thành bài mới.' : 'Mỗi bài được thêm thành bài mới (nếu còn chỗ).', 'Nhập'))) return;
+  let ok = 0;
+  for (const x of list) {
+    const ex = { name: String(x.name || 'Bài').trim(), kind: x.kind | 0, pts: normPts(x.pts) };
+    if (toCloud) { if (ex.kind !== 2 && await cloud.save(ex, null, true)) ok++; }
+    else { const r = await call({ cmd: 'ex_put', i: -1, ex }); if (r && r.ok) ok++; }
+  }
+  toast(`Đã nhập ${ok}/${list.length} bài`, ok ? 'ok' : 'err');
+  if (toCloud) renderExList(); else await loadExList();
+};
+
+/* ---------- Chay thu (mo phong thoi gian that) ---------- */
+const anim = { on: false, pos: null, raf: 0 };
+function stopAnim() { anim.on = false; anim.pos = null; cancelAnimationFrame(anim.raf); $('#b-play').textContent = '▶ Xem chạy thử'; drawEditor(); drawMech(null); }
+$('#b-play').onclick = () => {
+  if (anim.on) { stopAnim(); return; }
+  const ex = ed.ex, L = legs(ex);
+  if (ex.kind === 2 || L.length === 0) { toast('Cần ít nhất 2 điểm (bài không ngẫu nhiên) để chạy thử'); return; }
+  const spd = +$('#sim-speed').value, dw = +$('#sim-dwell').value;
+  const seq = [];      // [x0,y0,x1,y1,tMove,tDwell]
+  for (const [a, b] of L) { const A = ex.pts[a], B = ex.pts[b]; seq.push([A[0], A[1], B[0], B[1], Math.hypot(B[0] - A[0], B[1] - A[1]) / (B[2] || spd), (B[3] >= 0 ? B[3] : dw) / 1000]); }
+  const total = seq.reduce((s, q) => s + q[4] + q[5], 0);
+  anim.on = true; $('#b-play').textContent = '■ Dừng chạy thử';
+  const t0 = performance.now();
+  const tick = now => {
+    if (!anim.on) return;
+    let t = (Math.max(0, now - t0) / 1000) % total;   /* moc rAF co the som hon t0 */
+    for (const q of seq) {
+      if (t <= q[4]) { const f = q[4] ? t / q[4] : 1; anim.pos = [q[0] + (q[2] - q[0]) * f, q[1] + (q[3] - q[1]) * f]; break; }
+      t -= q[4];
+      if (t <= q[5]) { anim.pos = [q[2], q[3]]; break; }
+      t -= q[5];
+    }
+    drawEditor(); drawMech(anim.pos);
+    anim.raf = requestAnimationFrame(tick);
+  };
+  anim.raf = requestAnimationFrame(tick);
+};
+
+/* ============================================================
+ * CLOUD (Supabase): dang nhap Google, "Bai cua toi", tay cam ghep doi.
+ * Bang + quyen: tools/cloud/schema.sql. Key duoi day la publishable
+ * (cong khai); quyen that nam o RLS phia server.
+ * ============================================================ */
+const SUPA_URL = 'https://rwqihaxwsgwodzyqndpb.supabase.co';
+const SUPA_KEY = 'sb_publishable_E6KtX4yHGIaYgtisRl68vg_ASKVcI0C';
+const SUPA_JS = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js';
+/* OAuth client "Web application" trong Google Cloud (cong khai). Co gia tri thi
+ * dung nut Google ngay tren trang (Google hien ten mien cua trang, khong hien
+ * supabase.co) roi doi ID token lay phien Supabase. De trong: chuyen huong OAuth. */
+const GOOGLE_CLIENT_ID = '514709293741-1qaigisp3me63ste5dvge082k8v690u6.apps.googleusercontent.com';
+const GSI_JS = 'https://accounts.google.com/gsi/client';
+const DEV_EX_MAX = 26;      /* bai tu tao toi da tren 1 tay cam (schema.sql) */
+const EX_COLS = 'id,name,kind,pts,updated_at';
+
+const cloud = {
+  db: null, user: null, list: [], failed: false,
+  gsi: false,           // nut Google Identity Services dang dung
+  nonce: '',
+  async init() {
+    try {
+      await loadScript(SUPA_JS, 'supabase');
+      this.db = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+    } catch (e) { this.failed = true; renderAcct(); renderExList(); return; }
+    this.db.auth.onAuthStateChange((ev, session) => {
+      const u = session ? session.user : null;
+      if ((u && u.id) === (this.user && this.user.id)) return;
+      this.user = u;
+      setTimeout(() => this.onUser(), 0);   /* khong goi db ngay trong callback auth */
+    });
+    renderAcct();
+    if (GOOGLE_CLIENT_ID && window.isSecureContext && location.protocol !== 'file:') {
+      try { await loadScript(GSI_JS, 'google'); this.gsi = true; renderAcct(); await this.gsiSetup(); }
+      catch (e) { this.gsi = false; renderAcct(); }   /* chan script Google: quay ve chuyen huong */
+    }
+  },
+  /* Moi lan dang nhap 1 nonce moi: Google ky nonce da bam vao ID token,
+   * Supabase so voi nonce goc => token khong dung lai duoc. */
+  async gsiSetup() {
+    const raw = Array.from(crypto.getRandomValues(new Uint8Array(16)), b => b.toString(16).padStart(2, '0')).join('');
+    const hash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw))), b => b.toString(16).padStart(2, '0')).join('');
+    this.nonce = raw;
+    google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID, nonce: hash, context: 'signin', ux_mode: 'popup',
+      callback: r => this.onCredential(r),
+    });
+    this.gsiRender();
+  },
+  /* Ve nut khi khung dang hien (khung an thi nut co the bi co ve 0) */
+  gsiRender() {
+    if (!this.gsi || this.user || !this.nonce) return;
+    document.querySelectorAll('.g-btn').forEach(el => {
+      if (!el.offsetParent) return;
+      el.innerHTML = '';
+      google.accounts.id.renderButton(el, { theme: 'outline', size: 'medium', shape: 'pill', text: 'signin_with', locale: 'vi' });
+    });
+  },
+  async onCredential(r) {
+    const { error } = await this.db.auth.signInWithIdToken({ provider: 'google', token: r.credential, nonce: this.nonce });
+    if (error) toast(cloudErr(error), 'err');
+    await this.gsiSetup();
+  },
+  async onUser() {
+    renderAcct();
+    if (!this.user) {
+      this.list = []; devs.list = []; devs.cur = null; devs.picks = []; devs.dirty = false;
+      if (ed.src === 'cloud') { ed.src = 'new'; ed.cid = null; ed.dirty = true; }   /* giu noi dung dang sua */
+      renderEditor(); renderExList(); renderSync();
+      return;
+    }
+    await this.load();
+    await devs.load();
+    renderEditor();
+  },
+  login() {
+    if (location.protocol === 'file:') { toast('Mở Studio từ link web để đăng nhập', 'err'); return; }
+    if (!this.db) { toast('Không kết nối được cloud (mất mạng?)', 'err'); return; }
+    this.db.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: location.origin + location.pathname } })
+      .then(({ error }) => { if (error) toast(cloudErr(error), 'err'); });
+  },
+  async logout() {
+    const { error } = await this.db.auth.signOut();
+    if (error) toast(cloudErr(error), 'err');
+    if (this.gsi) google.accounts.id.disableAutoSelect();
+  },
+  async load() {
+    const { data, error } = await this.db.from('exercises').select(EX_COLS).order('updated_at', { ascending: false });
+    if (error) { toast(cloudErr(error), 'err'); return false; }
+    this.list = data; renderExList();
+    return true;
+  },
+  /* id null = them moi. Tra hang da luu, hoac null (da bao loi) */
+  async save(ex, id, quiet) {
+    const row = { name: ex.name, kind: ex.kind, pts: ex.pts };
+    const q = id ? this.db.from('exercises').update(row).eq('id', id) : this.db.from('exercises').insert(row);
+    const { data, error } = await q.select(EX_COLS).single();
+    if (error) { if (!quiet) toast(cloudErr(error), 'err'); return null; }
+    this.list = [data, ...this.list.filter(e => e.id !== data.id)];
+    renderExList();
+    return data;
+  },
+  async remove(id) {
+    const { error } = await this.db.from('exercises').delete().eq('id', id);
+    if (error) { toast(cloudErr(error), 'err'); return false; }
+    this.list = this.list.filter(e => e.id !== id);
+    devs.picks = devs.picks.filter(x => x !== id);
+    renderSync();
+    return true;
+  },
+};
+function cloudErr(e) {
+  const m = (e && e.message) || String(e);
+  if (/fetch|network/i.test(m)) return 'Mất mạng: chưa lưu được lên cloud';
+  if (e && e.code === '23514') return 'Bài không hợp lệ (tên tối đa 39 byte, 1–24 điểm)';
+  if (/JWT|expired/i.test(m)) return 'Phiên đăng nhập hết hạn, đăng nhập lại';
+  return m;
+}
+function renderAcct() {
+  const u = cloud.user;
+  $('#acct').textContent = u ? u.email : '';
+  $('#b-login').hidden = !!u || cloud.failed || cloud.gsi;
+  $('#g-btn').hidden = !!u || !cloud.gsi;
+  $('#b-logout').hidden = !u;
+  document.querySelectorAll('#sync-login [data-go="login"]').forEach(b => b.hidden = cloud.gsi);
+  document.querySelectorAll('#sync-login .g-btn').forEach(b => b.hidden = !cloud.gsi);
+  if (!u) cloud.gsiRender();
+  renderSync();
+}
+$('#b-login').onclick = () => cloud.login();
+$('#b-logout').onclick = () => cloud.logout();
+document.querySelectorAll('#sync-login [data-go="login"]').forEach(b => b.onclick = () => cloud.login());
+
+/* ---------- Tay cam ghep doi + danh sach bai nap ---------- */
+const devs = {
+  list: [], cur: null,
+  picks: [],            // id bai cloud, theo thu tu tren tay cam
+  dirty: false,
+  async load() {
+    const { data, error } = await cloud.db.from('devices').select('id,name,last_sync,created_at').order('created_at');
+    if (error) { toast(cloudErr(error), 'err'); return; }
+    this.list = data;
+    if (!data.some(d => d.id === this.cur)) this.cur = data.length ? data[0].id : null;
+    await this.loadPicks();
+  },
+  async loadPicks() {
+    this.picks = []; this.dirty = false;
+    if (this.cur) {
+      const { data, error } = await cloud.db.from('device_exercises').select('exercise_id,position').eq('device_id', this.cur).order('position');
+      if (error) toast(cloudErr(error), 'err');
+      else this.picks = data.map(r => r.exercise_id);
+    }
+    renderSync();
+  },
+  async select(id) {
+    if (id === this.cur) return;
+    if (this.dirty && !(await confirmBox('Bỏ danh sách chưa lưu?', 'Danh sách bài của tay cầm đang chọn chưa được lưu.', 'Bỏ thay đổi', true))) return;
+    this.cur = id;
+    await this.loadPicks();
+  },
+  async savePicks() {
+    const id = this.cur;
+    const { error: e1 } = await cloud.db.from('device_exercises').delete().eq('device_id', id);
+    if (e1) { toast(cloudErr(e1), 'err'); return; }
+    if (this.picks.length) {
+      const rows = this.picks.map((x, k) => ({ device_id: id, exercise_id: x, position: k }));
+      const { error: e2 } = await cloud.db.from('device_exercises').insert(rows);
+      if (e2) { toast(cloudErr(e2), 'err'); return; }
+    }
+    this.dirty = false; renderSync();
+    toast('Đã lưu · tay cầm nhận bài ở lần đồng bộ tới', 'ok');
+  },
+};
+const fmtTime = t => t ? new Date(t).toLocaleString('vi-VN', { dateStyle: 'short', timeStyle: 'short' }) : 'chưa lần nào';
+
+function renderSync() {
+  const on = !!cloud.user;
+  $('#sync-login').hidden = on; $('#sync-main').hidden = !on;
+  if (!on) return;
+  const box = $('#dv-list'); box.innerHTML = '';
+  for (const d of devs.list) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'dv-item';
+    b.setAttribute('aria-selected', String(d.id === devs.cur));
+    b.innerHTML = `<b>${esc(d.name)}</b><span class="muted small">Đồng bộ gần nhất: ${fmtTime(d.last_sync)}</span>`;
+    b.onclick = () => devs.select(d.id);
+    box.appendChild(b);
+  }
+  if (!devs.list.length) box.innerHTML = '<div class="empty sm">Chưa ghép đôi tay cầm nào.</div>';
+
+  const d = devs.list.find(x => x.id === devs.cur);
+  $('#dv-none').hidden = !!d; $('#dv-detail').hidden = !d;
+  if (!d) return;
+  if (document.activeElement !== $('#dv-name')) $('#dv-name').value = d.name;
+  $('#dv-meta').textContent = `Ghép đôi ${fmtTime(d.created_at)} · đồng bộ gần nhất: ${fmtTime(d.last_sync)}`;
+  $('#dv-count').textContent = `${devs.picks.length}/${DEV_EX_MAX}`;
+
+  const byId = new Map(cloud.list.map(e => [e.id, e]));
+  const rows = [...devs.picks.filter(id => byId.has(id)).map(id => byId.get(id)), ...cloud.list.filter(e => !devs.picks.includes(e.id))];
+  const list = $('#dv-ex'); list.innerHTML = '';
+  if (!rows.length) list.innerHTML = '<div class="empty sm">Bài của tôi đang trống. Soạn bài ở mục “Thiết kế bài tập”.</div>';
+  const full = devs.picks.length >= DEV_EX_MAX;
+  rows.forEach(e => {
+    const k = devs.picks.indexOf(e.id), on = k >= 0;
+    const r = document.createElement('div'); r.className = 'pick' + (on ? '' : ' off');
+    r.innerHTML = `<input type="checkbox" ${on ? 'checked' : ''} ${!on && full ? 'disabled' : ''} aria-label="Nạp bài ${esc(e.name)}">
+      <span class="pos">${on ? k + 1 : ''}</span>
+      <span class="nm"><b>${esc(e.name)}</b> <span class="muted small">${e.pts.length} điểm · ${KIND_NAME[e.kind]}</span></span>
+      ${on ? `<button class="iconbtn" type="button" data-a="up" ${k === 0 ? 'disabled' : ''} aria-label="Lên">↑</button>
+        <button class="iconbtn" type="button" data-a="dn" ${k === devs.picks.length - 1 ? 'disabled' : ''} aria-label="Xuống">↓</button>` : ''}`;
+    r.querySelector('input').onchange = ev => {
+      if (ev.target.checked) devs.picks.push(e.id); else devs.picks.splice(devs.picks.indexOf(e.id), 1);
+      devs.dirty = true; renderSync();
+    };
+    r.querySelectorAll('button').forEach(b => b.onclick = () => {
+      const j = b.dataset.a === 'up' ? k - 1 : k + 1;
+      [devs.picks[k], devs.picks[j]] = [devs.picks[j], devs.picks[k]];
+      devs.dirty = true; renderSync();
+    });
+    list.appendChild(r);
+  });
+  $('#b-dv-save').disabled = !devs.dirty;
+  $('#b-dv-save').textContent = devs.dirty ? 'Lưu danh sách' : 'Đã lưu danh sách';
+}
+$('#b-dv-save').onclick = () => devs.savePicks();
+$('#pair-code').oninput = e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 6); };
+$('#b-pair').onclick = async () => {
+  const code = $('#pair-code').value;
+  if (code.length !== 6) { toast('Nhập đủ 6 số đang hiện trên tay cầm', 'err'); $('#pair-code').focus(); return; }
+  const { data, error } = await cloud.db.rpc('device_claim', { p_code: code, p_name: $('#pair-name').value.trim() || null });
+  if (error) { toast(/invalid_code/.test(error.message) ? 'Mã sai hoặc đã hết hạn. Lấy mã mới trên tay cầm.' : cloudErr(error), 'err'); return; }
+  $('#pair-code').value = $('#pair-name').value = '';
+  devs.cur = data; devs.dirty = false;
+  await devs.load();
+  toast('Đã ghép đôi tay cầm · chọn bài để nạp', 'ok');
+};
+$('#dv-name').onchange = async e => {
+  const d = devs.list.find(x => x.id === devs.cur), name = e.target.value.trim();
+  if (!d) return;
+  if (!name) { e.target.value = d.name; return; }
+  const { error } = await cloud.db.from('devices').update({ name }).eq('id', d.id);
+  if (error) { toast(cloudErr(error), 'err'); e.target.value = d.name; return; }
+  d.name = name; renderSync(); toast('Đã đổi tên tay cầm', 'ok');
+};
+$('#b-dv-del').onclick = async () => {
+  const d = devs.list.find(x => x.id === devs.cur);
+  if (!d) return;
+  if (!(await confirmBox(`Gỡ “${d.name}”?`, 'Tay cầm này không đồng bộ được nữa cho đến khi ghép đôi lại bằng mã mới. Bài đã nạp trên tay cầm vẫn còn.', 'Gỡ tay cầm', true))) return;
+  const { error } = await cloud.db.from('devices').delete().eq('id', d.id);
+  if (error) { toast(cloudErr(error), 'err'); return; }
+  devs.cur = null; devs.dirty = false;
+  await devs.load();
+  toast('Đã gỡ tay cầm', 'ok');
+};
+
+/* ============================================================
+ * CAP NHAT PHAN MEM: nap firmware tay cam / bia qua Web Serial (esptool-js).
+ * Ban phat hanh: fw/manifest.json + fw/<thiet bi>/*.bin (tools/web/release_fw.sh).
+ * Doc lap voi "Ket noi USB": mo cong rieng o che do nap, xong thi dong.
+ * ============================================================ */
+const ESPTOOL_JS = 'https://cdn.jsdelivr.net/npm/esptool-js@0.7.0/bundle.js';
+const CRYPTO_JS = 'https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js';
+const fw = { manifest: null, dev: 'tay_cam', busy: false };
+
+function fwLog(t) { const l = $('#fw-log'); l.textContent += t; l.scrollTop = l.scrollHeight; }
+function fwStatus(t, kind = '') { const s = $('#fw-status'); s.textContent = t; s.style.color = kind === 'err' ? 'var(--danger)' : kind === 'ok' ? 'var(--ok)' : ''; }
+function fwBar(f) { $('#fw-bar').style.width = Math.round(f * 100) + '%'; }
+
+async function fwLoad() {
+  try {
+    const r = await fetch('fw/manifest.json', { cache: 'no-store' });
+    if (!r.ok) throw new Error(r.status);
+    fw.manifest = await r.json();
+  } catch (e) { fw.manifest = null; }
+  renderFw();
+}
+function renderFw() {
+  const m = fw.manifest, box = $('#fw-devs'); box.innerHTML = '';
+  const none = $('#fw-none');
+  none.hidden = !!m;
+  if (!m) none.textContent = location.protocol === 'file:'
+    ? 'Mở Studio từ link web để cập nhật phần mềm.'
+    : 'Chưa có bản phần mềm trên web (chạy tools/web/release_fw.sh).';
+  for (const [key, d] of Object.entries(m ? m.devices : {})) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'fw-dev';
+    b.setAttribute('role', 'radio'); b.setAttribute('aria-checked', String(key === fw.dev));
+    const size = d.parts.reduce((s, p) => s + p.size, 0);
+    b.innerHTML = `<b>${esc(d.name)}</b><span class="small">Bản mới nhất: <b>${esc(d.version)}</b></span>
+      <span class="muted small">${(size / 1048576).toFixed(1)} MB · ${new Date(m.generated).toLocaleDateString('vi-VN')}</span>`;
+    b.onclick = () => { if (!fw.busy) { fw.dev = key; renderFw(); } };
+    box.appendChild(b);
+  }
+  const d = m && m.devices[fw.dev];
+  document.querySelectorAll('.fw-devname').forEach(e => e.textContent = d ? d.name.toLowerCase() : 'thiết bị');
+  const btn = $('#b-fw-flash');
+  btn.disabled = !d || fw.busy || !('serial' in navigator);
+  btn.textContent = fw.busy ? 'Đang nạp…' : d ? `Nạp phần mềm ${d.name.toLowerCase()} ${d.version}` : 'Nạp phần mềm';
+  if (!('serial' in navigator)) btn.title = 'Cần Chrome hoặc Edge (Web Serial)';
+}
+
+async function fwFlash() {
+  const d = fw.manifest && fw.manifest.devices[fw.dev];
+  if (!d || fw.busy) return;
+  if (link.mode === 'serial') {
+    if (!(await confirmBox('Ngắt kết nối màn hình?', 'Studio đang kết nối USB với tay cầm. Cần ngắt để dùng cổng cho việc nạp.', 'Ngắt và tiếp tục'))) return;
+    await link.disconnect();
+  }
+  let port;
+  try { port = await navigator.serial.requestPort(); }
+  catch (e) { return; }                                   /* bo chon cong */
+  fw.busy = true; renderFw();
+  $('#fw-log').textContent = ''; $('#fw-chip').textContent = ''; fwBar(0);
+  let transport = null;
+  try {
+    fwStatus('Đang tải phần mềm…');
+    const [esp] = await Promise.all([import(ESPTOOL_JS), loadScript(CRYPTO_JS, 'CryptoJS')]);
+    const files = await Promise.all(d.parts.map(async p => {
+      const r = await fetch('fw/' + p.path, { cache: 'no-store' });
+      if (!r.ok) throw new Error('Không tải được ' + p.path);
+      return { data: new Uint8Array(await r.arrayBuffer()), address: p.offset };
+    }));
+
+    fwStatus('Đang vào chế độ nạp…');
+    const slow = $('#fw-slow').checked, baud = slow ? 115200 : 921600;
+    transport = new esp.Transport(port, false);
+    const loader = new esp.ESPLoader({
+      transport, baudrate: baud, romBaudrate: slow ? baud : 115200,
+      terminal: { clean() {}, write: t => fwLog(t), writeLine: t => fwLog(t + '\n') },
+    });
+    const chip = await loader.main();
+    const flash = await loader.detectFlashSize();
+    $('#fw-chip').textContent = `${chip} · flash ${flash || '?'}`;
+
+    /* Chan nap nham: dung loai chip, du flash; bia va tay cam deu la ESP32-S3,
+     * tay cam 16 MB => bia ma thay 16 MB thi hoi lai. */
+    if (!/ESP32-S3/i.test(chip)) throw new Error(`Thiết bị là ${chip}, không phải ${d.chip}. Kiểm tra lại cáp / thiết bị.`);
+    const mb = parseInt(flash, 10) || 0;
+    if (mb && mb < d.flash_mb) throw new Error(`Bộ nhớ ${flash} nhỏ hơn ${d.flash_mb} MB: đây không phải ${d.name.toLowerCase()}.`);
+    if (fw.dev === 'bia' && mb >= 16 &&
+        !(await confirmBox('Đây có phải bia không?', `Thiết bị có bộ nhớ ${flash}, giống tay cầm. Nạp phần mềm BIA vào tay cầm sẽ làm tay cầm ngừng hoạt động.`, 'Đúng là bia, nạp tiếp', true)))
+      throw new Error('Đã hủy.');
+
+    fwStatus(`Đang nạp ${d.name.toLowerCase()} ${d.version}… không rút cáp`);
+    const total = files.reduce((s, f) => s + f.data.length, 0), done = files.map(() => 0);
+    await loader.writeFlash({
+      fileArray: files, flashMode: 'keep', flashFreq: 'keep', flashSize: 'keep', eraseAll: false, compress: true,
+      reportProgress: (i, written, size) => { done[i] = files[i].data.length * written / size; fwBar(done.reduce((s, v) => s + v, 0) / total); },
+      calculateMD5Hash: img => CryptoJS.MD5(CryptoJS.lib.WordArray.create(img)).toString(),
+    });
+    fwBar(1);
+    await loader.after('hard_reset');
+    fwStatus(`Xong: ${d.name.toLowerCase()} đã chạy bản ${d.version}.`, 'ok');
+    toast(`Đã cập nhật ${d.name.toLowerCase()} lên ${d.version}`, 'ok');
+  } catch (e) {
+    fwStatus('Lỗi: ' + (e && e.message || e), 'err');
+    fwLog('\n' + (e && e.stack || e) + '\n');
+  } finally {
+    try { if (transport) await transport.disconnect(); } catch (e) { /* bo qua */ }
+    fw.busy = false; renderFw();
+  }
+}
+$('#b-fw-flash').onclick = fwFlash;
+
+/* ============================================================
+ * CONSOLE
+ * ============================================================ */
+$('#b-con-send').onclick = async () => {
+  const t = $('#con-in').value.trim(); if (!t) return;
+  let req; try { req = JSON.parse(t); } catch (e) { toast('Không phải JSON', 'err'); return; }
+  await call(req, { toastErr: false });
+};
+$('#con-in').onkeydown = e => { if (e.key === 'Enter') $('#b-con-send').click(); };
+$('#b-con-clear').onclick = () => $('#con').innerHTML = '';
+
+/* ============================================================
+ * Khoi dong
+ * ============================================================ */
+window.addEventListener('beforeunload', e => { if (ed.dirty || devs.dirty || fw.busy) { e.preventDefault(); e.returnValue = ''; } });
+initHmiInput(); renderEditor(); renderExList(); renderSync(); resizeCanvases(); updateCover();
+document.querySelectorAll('[data-guide-tab]').forEach(b => b.onclick = () => showTab(b.dataset.guideTab));
+if (location.hash === '#guide') showTab('guide');
+cloud.init(); fwLoad();
+if (!('serial' in navigator)) { $('#b-connect').disabled = true; $('#b-connect').title = 'Cần Chrome hoặc Edge (Web Serial)'; }
+/* #demo&tab=ex&open=6&play : mo thang che do dung thu (chup man hinh / huong dan) */
+const hp = new URLSearchParams(location.hash.slice(1));
+if (hp.get('tab')) showTab(hp.get('tab'));
+if (hp.has('demo')) $('#b-demo').click();
+if (hp.has('demo')) setTimeout(() => { if (hp.get('open')) openEx(+hp.get('open')); if (hp.has('play')) setTimeout(() => $('#b-play').click(), 300); }, 1500);
+</script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 570" role="img" aria-labelledby="title desc">
+  <title id="title">Quy ước góc của tay máy hai khâu</title>
+  <desc id="desc">Khớp vai tại gốc, khâu một màu xanh, khâu hai màu cam. Nhìn từ +Z về gốc, chiều dương của cả hai khớp là ngược chiều kim đồng hồ. Trong tư thế minh họa, q1 dương, đo từ trục +X đến khâu một; q2 âm, đo theo chiều kim đồng hồ từ hướng kéo dài của khâu một đến khâu hai. Trọng lực hướng xuống.</desc>
+  <defs>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-orange" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#ea580c"/>
+    </marker>
+    <marker id="arrow-gray" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#475569"/>
+    </marker>
+    <style>
+      .label{font:600 24px system-ui,-apple-system,"Segoe UI",sans-serif;fill:#172033}
+      .small{font:19px system-ui,-apple-system,"Segoe UI",sans-serif;fill:#334155}
+      .math{font:italic 600 25px Georgia,serif}
+      .axis{stroke:#64748b;stroke-width:3;marker-end:url(#arrow-gray)}
+      .guide{stroke:#94a3b8;stroke-width:2.5;stroke-dasharray:9 8}
+    </style>
+  </defs>
+
+  <rect width="1000" height="570" rx="22" fill="#f8fafc"/>
+  <rect x="22" y="22" width="956" height="526" rx="18" fill="none" stroke="#d8e1ec" stroke-width="2"/>
+
+  <text class="small" x="316" y="65">Chiều dương của cả hai khớp: ngược chiều kim đồng hồ</text>
+  <text class="small" x="316" y="94">(nhìn từ +Z về gốc)</text>
+
+  <!-- World frame and base -->
+  <line class="axis" x1="205" y1="425" x2="535" y2="425"/>
+  <line class="axis" x1="205" y1="425" x2="205" y2="115"/>
+  <text class="label" x="548" y="433">+X</text>
+  <text class="label" x="175" y="102">+Y</text>
+  <rect x="132" y="426" width="146" height="42" rx="6" fill="#334155"/>
+  <path d="M145 468l-25 28m70-28l-25 28m70-28l-25 28m70-28l-25 28" stroke="#64748b" stroke-width="5"/>
+  <circle cx="205" cy="425" r="24" fill="#fff" stroke="#172033" stroke-width="7"/>
+
+  <!-- Links -->
+  <line x1="205" y1="425" x2="520" y2="245" stroke="#1d4ed8" stroke-width="30" stroke-linecap="round"/>
+  <line class="guide" x1="520" y1="245" x2="770" y2="102"/>
+  <line x1="520" y1="245" x2="805" y2="340" stroke="#ea580c" stroke-width="26" stroke-linecap="round"/>
+  <circle cx="520" cy="245" r="22" fill="#fff" stroke="#172033" stroke-width="7"/>
+  <circle cx="805" cy="340" r="27" fill="#7e22ce" stroke="#581c87" stroke-width="5"/>
+
+  <!-- Centers of mass -->
+  <circle cx="363" cy="335" r="9" fill="#facc15" stroke="#854d0e" stroke-width="3"/>
+  <circle cx="663" cy="293" r="9" fill="#facc15" stroke="#854d0e" stroke-width="3"/>
+  <text class="small" x="320" y="315">G₁</text>
+  <text class="small" x="670" y="280">G₂</text>
+
+  <!-- Positive q1: counterclockwise from World +X to link 1 -->
+  <path d="M305 425 A100 100 0 0 0 291.824 375.386" fill="none" stroke="#2563eb" stroke-width="5" marker-end="url(#arrow-blue)"/>
+  <text class="label math" x="325" y="405">q₁ &gt; 0</text>
+
+  <!-- Negative q2: clockwise from the link-1 extension to link 2 -->
+  <path d="M613.770 191.417 A108 108 0 0 1 622.458 279.153" fill="none" stroke="#ea580c" stroke-width="5" marker-end="url(#arrow-orange)"/>
+  <text class="label math" x="634" y="225">q₂ &lt; 0</text>
+
+  <!-- Dimensions -->
+  <text class="label math" x="360" y="360" fill="#1d4ed8">L₁</text>
+  <text class="label math" x="655" y="320" fill="#c2410c">L₂</text>
+  <text class="small" x="780" y="385">tải 0,20 kg</text>
+
+  <!-- Gravity -->
+  <line x1="900" y1="105" x2="900" y2="205" stroke="#475569" stroke-width="5" marker-end="url(#arrow-gray)"/>
+  <text class="label math" x="920" y="165">g</text>
+
+  <text class="small" x="316" y="520">q₁: góc tuyệt đối so với +X</text>
+  <text class="small" x="610" y="520">q₂: góc tương đối so với khâu 1</text>
+</svg>

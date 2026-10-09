@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="650" viewBox="0 0 1200 650" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="title desc">
+  <title id="title">Tỉ lệ vàng 4–5 giữa thời gian tích phân Ti và thời gian vi phân Td</title>
+  <desc id="desc">Kinh nghiệm thực chiến từ các kỹ sư Siemens: giữ tỉ số Ti trên Td trong khoảng 4 đến 5 giúp hệ thống vừa sạch sai số vừa triệt tiêu dao động mượt mà.</desc>
+  <defs>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .ink { fill: #0f172a; }
+      .muted { fill: #475569; }
+      .head { fill: #334155; font-size: 15px; font-weight: 800; letter-spacing: 1px; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="650" fill="#f8fafc"/>
+  <text x="60" y="55" class="ink" font-size="30" font-weight="800">Tỉ lệ vàng của Siemens: Ti / Td = 4 ~ 5</text>
+  <text x="60" y="88" class="muted" font-size="18">Bí kíp kinh nghiệm công nghiệp: Sổ nợ (Ti) phải dài gấp 4 đến 5 lần Chiếc phanh (Td).</text>
+
+  <!-- Main Comparison Card -->
+  <rect x="55" y="125" width="1090" height="340" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+
+  <!-- Ti Bar (Orange) -->
+  <text x="90" y="175" fill="#b45309" font-size="20" font-weight="800">Ti (Thời gian tích phân — Sổ nợ)</text>
+  <text x="90" y="200" class="muted" font-size="15">Khoảng thời gian cần để khâu I tạo ra lực đẩy bằng đúng khâu P</text>
+
+  <!-- 4 to 5 blocks for Ti -->
+  <g transform="translate(90, 215)">
+    <rect x="0" y="0" width="180" height="56" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+    <text x="90" y="35" text-anchor="middle" fill="#b45309" font-size="18" font-weight="800">1 × Td</text>
+
+    <rect x="195" y="0" width="180" height="56" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+    <text x="285" y="35" text-anchor="middle" fill="#b45309" font-size="18" font-weight="800">2 × Td</text>
+
+    <rect x="390" y="0" width="180" height="56" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+    <text x="480" y="35" text-anchor="middle" fill="#b45309" font-size="18" font-weight="800">3 × Td</text>
+
+    <rect x="585" y="0" width="180" height="56" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+    <text x="675" y="35" text-anchor="middle" fill="#b45309" font-size="18" font-weight="800">4 × Td</text>
+
+    <rect x="780" y="0" width="180" height="56" rx="6" fill="#fffbeb" stroke="#f59e0b" stroke-width="2" stroke-dasharray="6 4"/>
+    <text x="870" y="35" text-anchor="middle" fill="#d97706" font-size="18" font-weight="800">5 × Td (tùy chọn)</text>
+  </g>
+
+  <!-- Divider -->
+  <path d="M 90 295 H 1100" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Td Bar (Rose) -->
+  <text x="90" y="335" fill="#be123c" font-size="20" font-weight="800">Td (Thời gian vi phân — Chiếc phanh)</text>
+  <text x="90" y="360" class="muted" font-size="15">Khoảng thời gian nhìn trước để chuẩn bị nhả ga đạp phanh</text>
+
+  <g transform="translate(90, 375)">
+    <rect x="0" y="0" width="180" height="56" rx="6" fill="#ffe4e6" stroke="#e11d48" stroke-width="2"/>
+    <text x="90" y="35" text-anchor="middle" fill="#be123c" font-size="18" font-weight="800">1 đơn vị Td</text>
+    
+    <text x="210" y="35" fill="#047857" font-size="18" font-weight="800">➔ Tỉ số Ti / Td = 4 đến 5 là "Vùng cân bằng tối ưu"</text>
+  </g>
+
+  <!-- 3 Bottom Warning Cards -->
+  <!-- Case 1: Ti quá nhỏ -->
+  <g transform="translate(55, 485)">
+    <rect width="345" height="135" rx="10" fill="#fef2f2" stroke="#fca5a5" stroke-width="1.5"/>
+    <text x="20" y="32" fill="#b91c1c" font-size="16" font-weight="800">⚠️ NẾU Ti QUÁ NHỎ (&lt; 3 Td)</text>
+    <text x="20" y="62" class="ink" font-size="15" font-weight="600">Sổ nợ tích lũy quá hung hăng.</text>
+    <text x="20" y="86" class="muted" font-size="14">Phanh D không đủ sức ghìm lại.</text>
+    <text x="20" y="112" fill="#dc2626" font-size="14" font-weight="700">Hậu quả: Vọt lố cao, dao động dữ dội.</text>
+  </g>
+
+  <!-- Case 2: Tỉ lệ vàng 4 - 5 -->
+  <g transform="translate(425, 485)">
+    <rect width="350" height="135" rx="10" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+    <text x="20" y="32" fill="#15803d" font-size="16" font-weight="800">✅ TỈ LỆ VÀNG (Ti / Td = 4 ~ 5)</text>
+    <text x="20" y="62" class="ink" font-size="15" font-weight="600">Sổ nợ xóa sai số dứt khoát.</text>
+    <text x="20" y="86" class="muted" font-size="14">Phanh D vào đúng nhịp trước vạch.</text>
+    <text x="20" y="112" fill="#16a34a" font-size="14" font-weight="700">Kết quả: 0% vọt lố, cập bến êm ru.</text>
+  </g>
+
+  <!-- Case 3: Ti quá lớn -->
+  <g transform="translate(800, 485)">
+    <rect width="345" height="135" rx="10" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+    <text x="20" y="32" fill="#1d4ed8" font-size="16" font-weight="800">⏳ NẾU Ti QUÁ LỚN (&gt; 6 Td)</text>
+    <text x="20" y="62" class="ink" font-size="15" font-weight="600">Sổ nợ ghi chép quá uể oải.</text>
+    <text x="20" y="86" class="muted" font-size="14">Triệt tiêu lực cản rất chậm chạp.</text>
+    <text x="20" y="112" fill="#2563eb" font-size="14" font-weight="700">Hậu quả: Ì ạch, lâu về đích.</text>
+  </g>
+</svg>

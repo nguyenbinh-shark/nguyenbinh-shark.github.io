@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640" role="img" aria-labelledby="t1 d1">
+  <title id="t1">Quỹ đạo cực khi tăng p</title>
+  <desc id="d1">Mặt phẳng s, nửa trên. Khi p tăng từ 0.001 đến 100000, cặp cực phức đi từ cực vòng hở -0.37 cộng 0.89j ra xa theo đường zeta 0.707. Cực thực chậm đi từ gốc tọa độ vào zero tại -0.154 nhưng không bao giờ vượt qua nó.</desc>
+  <defs>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1 { font-size: 24px; font-weight: 800; fill: #0f172a; }
+      .h2 { font-size: 16px; font-weight: 500; fill: #64748b; }
+      .pt { font-size: 16px; font-weight: 700; fill: #1e293b; }
+      .ax { font-size: 14px; font-weight: 500; fill: #64748b; font-variant-numeric: tabular-nums; }
+      .axl { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .lg { font-size: 15px; font-weight: 500; fill: #334155; }
+      .an { font-size: 14px; font-weight: 600; fill: #334155; }
+      .anm { font-size: 14px; font-weight: 500; fill: #475569; }
+      .m { font-family: "Times New Roman", "STIX Two Text", Times, serif; font-style: italic; }
+    </style>
+  </defs>
+  <rect width="960" height="640" fill="#ffffff"/>
+<text x="30" y="42" class="h1">Tăng p: cặp cực nhanh chạy ra xa, cực chậm bị zero hút vào</text>
+<text x="30" y="68" class="h2">Cực vòng kín của A − BK khi p tăng từ 0.001 đến 100 000 · nửa dưới mặt phẳng s đối xứng, không vẽ</text>
+<line x1="30" y1="86" x2="930" y2="86" stroke="#e2e8f0"/>
+<line x1="90.0" y1="550.0" x2="610.0" y2="550.0" stroke="#cbd5e1"/>
+<text x="82.0" y="555.0" class="ax" text-anchor="end">0</text>
+<line x1="90.0" y1="461.1" x2="610.0" y2="461.1" stroke="#e2e8f0"/>
+<text x="82.0" y="466.1" class="ax" text-anchor="end">1</text>
+<line x1="90.0" y1="372.2" x2="610.0" y2="372.2" stroke="#e2e8f0"/>
+<text x="82.0" y="377.2" class="ax" text-anchor="end">2</text>
+<line x1="90.0" y1="283.3" x2="610.0" y2="283.3" stroke="#e2e8f0"/>
+<text x="82.0" y="288.3" class="ax" text-anchor="end">3</text>
+<line x1="90.0" y1="194.4" x2="610.0" y2="194.4" stroke="#e2e8f0"/>
+<text x="82.0" y="199.4" class="ax" text-anchor="end">4</text>
+<line x1="144.7" y1="550.0" x2="144.7" y2="555.0" stroke="#cbd5e1"/>
+<text x="144.7" y="571.0" class="ax" text-anchor="middle">−4</text>
+<line x1="254.2" y1="550.0" x2="254.2" y2="555.0" stroke="#cbd5e1"/>
+<text x="254.2" y="571.0" class="ax" text-anchor="middle">−3</text>
+<line x1="363.7" y1="550.0" x2="363.7" y2="555.0" stroke="#cbd5e1"/>
+<text x="363.7" y="571.0" class="ax" text-anchor="middle">−2</text>
+<line x1="473.2" y1="550.0" x2="473.2" y2="555.0" stroke="#cbd5e1"/>
+<text x="473.2" y="571.0" class="ax" text-anchor="middle">−1</text>
+<line x1="582.6" y1="550.0" x2="582.6" y2="555.0" stroke="#cbd5e1"/>
+<text x="582.6" y="571.0" class="ax" text-anchor="middle">0</text>
+<line x1="90.0" y1="550.0" x2="610.0" y2="550.0" stroke="#cbd5e1"/>
+<text x="90.0" y="136.0" class="pt">Mặt phẳng s (nửa trên)</text>
+<text x="610.0" y="592.0" class="axl" text-anchor="end">phần thực (1/s)</text>
+<line x1="582.6" y1="150.0" x2="582.6" y2="550.0" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="None"/>
+<line x1="582.6" y1="550.0" x2="90.0" y2="150.0" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 5"/>
+<text x="100.9" y="265.6" class="anm" text-anchor="start">ζ = 0.707</text>
+<polyline points="542.1,471.2 531.2,467.0 517.8,460.9 503.3,453.4 490.8,446.3 460.8,427.6 441.8,414.8 413.9,395.2 357.6,353.6 285.1,297.9 213.8,242.0 99.0,150.7" fill="none" stroke="#eb6834" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+<circle cx="542.1" cy="471.2" r="5" fill="#94a3b8" stroke="#ffffff" stroke-width="2"/>
+<text x="552.1" y="465.2" class="an" text-anchor="start">vòng hở</text>
+<circle cx="497.2" cy="449.9" r="5" fill="#eb6834" stroke="#ffffff" stroke-width="2"/>
+<text x="509.2" y="454.9" class="an" text-anchor="start">p = 2</text>
+<circle cx="472.6" cy="435.2" r="5" fill="#eb6834" stroke="#ffffff" stroke-width="2"/>
+<text x="484.6" y="440.2" class="an" text-anchor="start">p = 4.76</text>
+<circle cx="370.2" cy="363.0" r="5" fill="#eb6834" stroke="#ffffff" stroke-width="2"/>
+<text x="382.2" y="368.0" class="an" text-anchor="start">p = 50</text>
+<circle cx="119.8" cy="167.3" r="5" fill="#eb6834" stroke="#ffffff" stroke-width="2"/>
+<text x="129.8" y="172.3" class="an" text-anchor="start">p = 1000</text>
+<text x="559.8" y="540.0" class="anm" text-anchor="end">zero −0.154</text>
+<circle cx="565.8" cy="550.0" r="6" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+<line x1="688.9" y1="550.0" x2="688.9" y2="555.0" stroke="#cbd5e1"/>
+<text x="688.9" y="571.0" class="ax" text-anchor="middle">−0.15</text>
+<line x1="761.1" y1="550.0" x2="761.1" y2="555.0" stroke="#cbd5e1"/>
+<text x="761.1" y="571.0" class="ax" text-anchor="middle">−0.1</text>
+<line x1="833.3" y1="550.0" x2="833.3" y2="555.0" stroke="#cbd5e1"/>
+<text x="833.3" y="571.0" class="ax" text-anchor="middle">−0.05</text>
+<line x1="905.6" y1="550.0" x2="905.6" y2="555.0" stroke="#cbd5e1"/>
+<text x="905.6" y="571.0" class="ax" text-anchor="middle">0</text>
+<line x1="660.0" y1="550.0" x2="920.0" y2="550.0" stroke="#cbd5e1"/>
+<text x="660.0" y="136.0" class="pt">Phóng to trục thực</text>
+<text x="920.0" y="592.0" class="axl" text-anchor="end">phần thực (1/s)</text>
+<line x1="660.0" y1="350.0" x2="920.0" y2="350.0" stroke="#cbd5e1" stroke-width="1.5"/>
+<line x1="896.8" y1="350.0" x2="682.9" y2="350.0" stroke="#2a78d6" stroke-width="5" stroke-linecap="round"/>
+<circle cx="683.0" cy="350.0" r="7" fill="#ffffff" stroke="#0f172a" stroke-width="2"/>
+<circle cx="896.7" cy="350.0" r="4" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<line x1="896.7" y1="344.0" x2="896.7" y2="238.0" stroke="#94a3b8" stroke-width="1"/>
+<text x="896.7" y="230.0" class="anm" text-anchor="middle">p = 0.001</text>
+<circle cx="712.4" cy="350.0" r="4" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<line x1="712.4" y1="344.0" x2="712.4" y2="278.0" stroke="#94a3b8" stroke-width="1"/>
+<text x="712.4" y="270.0" class="anm" text-anchor="middle">p = 2</text>
+<circle cx="697.0" cy="350.0" r="4" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<line x1="697.0" y1="344.0" x2="697.0" y2="310.0" stroke="#94a3b8" stroke-width="1"/>
+<text x="697.0" y="302.0" class="anm" text-anchor="middle">p = 4.76</text>
+<circle cx="684.4" cy="350.0" r="4" fill="#2a78d6" stroke="#ffffff" stroke-width="2"/>
+<line x1="684.4" y1="356.0" x2="684.4" y2="412.0" stroke="#94a3b8" stroke-width="1"/>
+<text x="684.4" y="430.0" class="anm" text-anchor="middle">p = 50</text>
+<text x="683.0" y="398.0" class="an" text-anchor="middle">zero</text>
+<text x="790.0" y="490.0" class="anm" text-anchor="middle">cực chậm trượt dần</text>
+<text x="790.0" y="508.0" class="anm" text-anchor="middle">vào zero, không vượt qua</text>
+<text x="30.0" y="612.0" class="anm" text-anchor="start">Cực chậm của p = 2 cách zero 0.020; của p = 50 chỉ còn 0.001. Xem vì sao điều đó quyết định thời gian lắng ở mục 6.2.</text>
+</svg>

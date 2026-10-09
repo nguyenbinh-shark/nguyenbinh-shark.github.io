@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="690" viewBox="0 0 1000 690" role="img" aria-labelledby="t1 d1">
+  <title id="t1">Quy trình năm bước từ cơ hệ đến phương trình trạng thái</title>
+  <desc id="d1">Bước 1 chọn tọa độ suy rộng. Bước 2 viết phương trình chuyển động bằng một trong ba cách: Newton–Euler tách vật, Lagrange theo năng lượng, hoặc để máy làm bằng Symbolic Math hay Simscape. Cả ba cách hội tụ về cùng một dạng chính tắc M(q) nhân gia tốc cộng C nhân vận tốc cộng G bằng tau. Bước 3 chọn vector trạng thái và giải gia tốc thành phương trình trạng thái phi tuyến. Bước 4 tuyến tính hóa tại điểm cân bằng. Bước 5 chọn ma trận C, D theo cảm biến.</desc>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#64748b"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1 { font-size: 24px; font-weight: 800; fill: #0f172a; }
+      .h2 { font-size: 16px; font-weight: 500; fill: #64748b; }
+      .st { font-size: 14px; font-weight: 800; fill: #64748b; letter-spacing: .06em; }
+      .bt { font-size: 17px; font-weight: 700; fill: #1e293b; }
+      .bs { font-size: 15px; font-weight: 500; fill: #64748b; }
+      .ref { font-size: 14px; font-weight: 600; fill: #94a3b8; }
+      .mt { font-family: "Times New Roman", "STIX Two Text", Times, serif; font-style: italic; font-size: 22px; fill: #92400e; }
+      .ms { font-family: "Times New Roman", "STIX Two Text", Times, serif; font-style: italic; font-size: 18px; fill: #334155; }
+      .btA { font-size: 15px; font-weight: 600; fill: #a16207; }
+    </style>
+  </defs>
+
+  <rect width="1000" height="690" fill="#ffffff"/>
+  <text x="40" y="46" class="h1">Từ cơ hệ đến A, B, C, D: ba con đường, một điểm hẹn</text>
+  <text x="40" y="74" class="h2">Phương pháp chỉ khác nhau ở bước 2. Từ dạng chính tắc trở đi, mọi hệ cơ đều đi cùng một đường.</text>
+  <line x1="40" y1="94" x2="960" y2="94" stroke="#e2e8f0"/>
+
+  <!-- Step 1 -->
+  <text x="300" y="124" class="st">BƯỚC 1</text>
+  <rect x="300" y="132" width="400" height="66" rx="10" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+  <text x="500" y="160" text-anchor="middle" class="bt">Chọn tọa độ suy rộng q, quy ước dấu</text>
+  <text x="500" y="185" text-anchor="middle" class="ms">con lắc trên xe: q = [x, θ]</text>
+
+  <path d="M 420 198 L 180 252" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <path d="M 500 198 V 252" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <path d="M 580 198 L 820 252" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+
+  <!-- Step 2 -->
+  <text x="40" y="246" class="st">BƯỚC 2</text>
+  <rect x="40" y="256" width="280" height="96" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="180" y="284" text-anchor="middle" class="bt">Newton–Euler · tách vật</text>
+  <text x="180" y="308" text-anchor="middle" class="bs">lực và mô-men từng vật,</text>
+  <text x="180" y="328" text-anchor="middle" class="bs">rồi khử nội lực</text>
+  <text x="300" y="344" text-anchor="end" class="ref">mục 4</text>
+
+  <rect x="360" y="256" width="280" height="96" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="500" y="284" text-anchor="middle" class="bt">Lagrange · năng lượng</text>
+  <text x="500" y="308" text-anchor="middle" class="bs">động năng, thế năng,</text>
+  <text x="500" y="328" text-anchor="middle" class="bs">lực suy rộng; không có nội lực</text>
+  <text x="620" y="344" text-anchor="end" class="ref">mục 5</text>
+
+  <rect x="680" y="256" width="280" height="96" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="820" y="284" text-anchor="middle" class="bt">Để máy làm</text>
+  <text x="820" y="308" text-anchor="middle" class="bs">Symbolic Math Toolbox,</text>
+  <text x="820" y="328" text-anchor="middle" class="bs">hoặc tuyến tính hóa Simscape</text>
+  <text x="940" y="344" text-anchor="end" class="ref">mục 6</text>
+
+  <path d="M 180 352 L 380 404" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <path d="M 500 352 V 404" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <path d="M 820 352 L 620 404" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+
+  <!-- Canonical form -->
+  <rect x="250" y="408" width="500" height="86" rx="10" fill="#fffbeb" stroke="#b45309" stroke-width="2.5"/>
+  <text x="500" y="446" text-anchor="middle" class="mt">M(q) q̈ + C(q, q̇) q̇ + G(q) = τ</text>
+  <text x="500" y="476" text-anchor="middle" class="btA">dạng chính tắc · mọi cách đều về đây (mục 7)</text>
+
+  <path d="M 500 494 V 520 H 180 V 544" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+
+  <!-- Steps 3-5 -->
+  <text x="40" y="540" class="st">BƯỚC 3</text>
+  <rect x="40" y="548" width="280" height="86" rx="10" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+  <text x="180" y="578" text-anchor="middle" class="ms">ṡ = f(s, u)</text>
+  <text x="180" y="604" text-anchor="middle" class="bs">chọn s = [q; q̇], giải ra q̈</text>
+
+  <path d="M 320 591 H 356" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="360" y="540" class="st">BƯỚC 4</text>
+  <rect x="360" y="548" width="280" height="86" rx="10" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+  <text x="500" y="578" text-anchor="middle" class="bt">Tuyến tính hóa</text>
+  <text x="500" y="604" text-anchor="middle" class="bs">Jacobian tại điểm cân bằng</text>
+
+  <path d="M 640 591 H 676" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="680" y="540" class="st">BƯỚC 5</text>
+  <rect x="680" y="548" width="280" height="86" rx="10" fill="#ffffff" stroke="#1e293b" stroke-width="2.5"/>
+  <text x="820" y="578" text-anchor="middle" class="ms">ṡ = As + Bu,  y = Cs + Du</text>
+  <text x="820" y="604" text-anchor="middle" class="bs">C, D chọn theo cảm biến</text>
+
+  <text x="40" y="668" class="ref">Bước 3–5: mục 8.</text>
+</svg>

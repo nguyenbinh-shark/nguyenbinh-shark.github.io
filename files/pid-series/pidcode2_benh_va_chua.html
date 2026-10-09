@@ -1,0 +1,880 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Code Lab 2 — Phòng khám PID</title>
+<style>
+  /* ═══════════ PICO-8 LAB EDITION · DESIGN SYSTEM ═══════════ */
+  :root {
+    --bg: #0b0e1a;
+    --panel: #0f1322;
+    --ink: #FFF1E8;
+    --muted: #83769C;
+    --line: #5F574F;
+    --acc: #FFEC27;
+    --blue: #29ADFF;
+    --amber: #FFA300;
+    --rose: #FF77A8;
+    --green: #00E436;
+    --green-dark: #008751;
+    --red: #FF004D;
+    --navy: #1D2B53;
+    --purple: #7E2553;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 14px;
+    color: var(--ink);
+    font-family: "Courier New", ui-monospace, Consolas, monospace;
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(45deg, #0d1122 25%, transparent 25%, transparent 75%, #0d1122 75%),
+      linear-gradient(45deg, #0d1122 25%, transparent 25%, transparent 75%, #0d1122 75%);
+    background-size: 26px 26px;
+    background-position: 0 0, 13px 13px;
+  }
+  .wrap { width: 100%; max-width: 1020px; margin: auto; }
+
+  /* ── Header ── */
+  .header-box {
+    margin-bottom: 12px;
+    padding: 12px 16px;
+    background: var(--navy);
+    border: 2px solid var(--line);
+    box-shadow: 4px 4px 0 #000;
+  }
+  .header-box h1 {
+    margin: 0 0 4px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+    color: var(--acc);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .lab-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background: var(--purple);
+    border: 1px solid rgba(255,255,255,.15);
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: var(--ink);
+    box-shadow: 2px 2px 0 #000;
+    vertical-align: middle;
+  }
+  .header-box p {
+    margin: 0;
+    font-size: 0.84rem;
+    color: #C2C3C7;
+    line-height: 1.5;
+  }
+  .header-box p b { color: var(--acc); }
+
+  /* ── Preset Tabs ── */
+  .preset-bar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .preset-tab {
+    flex: 1 1 140px;
+    padding: 9px 12px;
+    background: var(--panel);
+    border: 2px solid var(--line);
+    box-shadow: 3px 3px 0 #000;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    color: var(--ink);
+    font-size: 0.76rem;
+    font-weight: 700;
+  }
+  .preset-tab:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 #000; }
+  .preset-tab.active {
+    border-color: var(--acc);
+    background: #1a2340;
+    box-shadow: 3px 3px 0 #000, inset 0 0 0 1px rgba(255,236,39,.25);
+  }
+  .preset-tab .ptitle { color: var(--acc); text-transform: uppercase; letter-spacing: .03em; }
+  .preset-tab .pdesc { display: block; margin-top: 3px; font-size: 0.68rem; color: var(--muted); font-weight: 600; }
+
+  /* ── Toggles ── */
+  .toggles-panel {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--panel);
+    border: 2px solid var(--line);
+    box-shadow: 3px 3px 0 #000;
+    margin-bottom: 12px;
+  }
+  .toggle-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.76rem;
+    font-weight: 800;
+    cursor: pointer;
+    user-select: none;
+    color: #C2C3C7;
+  }
+  .toggle-label input { width: 16px; height: 16px; cursor: pointer; accent-color: var(--acc); }
+  .toggle-tag {
+    font-size: 0.62rem;
+    padding: 2px 6px;
+    background: var(--navy);
+    color: var(--acc);
+    border: 1px solid var(--line);
+    text-transform: uppercase;
+  }
+  .toggle-tag.bug { background: #2a0f1e; color: var(--red); border-color: var(--red); }
+  .toggle-tag.cure { background: var(--green-dark); color: var(--ink); border-color: var(--green); }
+
+  /* ── HUD Stats ── */
+  .hud {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .stat-card {
+    padding: 9px 10px;
+    background: var(--panel);
+    border: 2px solid var(--line);
+    box-shadow: 3px 3px 0 #000;
+    text-align: center;
+  }
+  .stat-card b {
+    display: block;
+    font-size: 1.02rem;
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--acc);
+  }
+  .stat-card span {
+    display: block;
+    margin-top: 3px;
+    font-size: 0.62rem;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .stat-card.warn b { color: var(--red); }
+  .stat-card.good b { color: var(--green); }
+  #hud_alert {
+    grid-column: span 4;
+    background: #2a0f1e;
+    border-color: var(--red);
+    color: var(--red);
+    font-weight: 800;
+    font-size: 0.8rem;
+    padding: 8px;
+    text-align: center;
+    text-transform: uppercase;
+    display: none;
+    box-shadow: 3px 3px 0 #000;
+  }
+
+  /* ── Slider Cards ── */
+  .controls-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .slider-card {
+    padding: 12px 14px;
+    background: var(--panel);
+    border: 2px solid var(--line);
+    box-shadow: 3px 3px 0 #000;
+  }
+  .slider-card.sp-card { border-color: var(--green-dark); }
+  .slider-card.p-card  { border-color: #1e5f96; }
+  .slider-card.i-card  { border-color: #9c6a1e; }
+  .slider-card.d-card  { border-color: var(--purple); }
+  .slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    gap: 6px;
+  }
+  .slider-header label {
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+  }
+  .slider-header .val {
+    font-size: 0.9rem;
+    font-weight: 900;
+    white-space: nowrap;
+  }
+  .sp-card .slider-header label, .sp-card .slider-header .val { color: var(--green); }
+  .p-card  .slider-header label, .p-card  .slider-header .val { color: var(--blue); }
+  .i-card  .slider-header label, .i-card  .slider-header .val { color: var(--amber); }
+  .d-card  .slider-header label, .d-card  .slider-header .val { color: var(--rose); }
+  input[type=range] { width: 100%; margin: 6px 0 2px; cursor: pointer; }
+  .sp-card input[type=range] { accent-color: var(--green); }
+  .p-card  input[type=range] { accent-color: var(--blue); }
+  .i-card  input[type=range] { accent-color: var(--amber); }
+  .d-card  input[type=range] { accent-color: var(--rose); }
+
+  /* ── Buttons ── */
+  .action-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  button {
+    min-height: 44px;
+    padding: 9px 14px;
+    border: 2px solid #C2C3C7;
+    background: var(--navy);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    user-select: none;
+    box-shadow: 3px 3px 0 #000;
+  }
+  button:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 #000; }
+  button.primary { background: var(--green-dark); border-color: var(--green); }
+  button.warn    { background: #2a0f1e; border-color: var(--red); color: var(--red); }
+
+  /* ── Main Grid (Chart + Table) ── */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1.7fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .panel {
+    position: relative;
+    border: 2px solid var(--line);
+    background: var(--panel);
+    overflow: hidden;
+    box-shadow: 4px 4px 0 #000;
+  }
+  .panel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,.13) 0 1px, transparent 1px 3px);
+  }
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--navy);
+    border-bottom: 2px solid var(--line);
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--acc);
+    flex-wrap: wrap;
+  }
+  .panel canvas { display: block; width: 100%; height: auto; }
+
+  /* ── Data Table ── */
+  .table-panel { position: relative; }
+  .table-wrap {
+    height: 340px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) var(--panel);
+  }
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.68rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .data-table th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: 7px 6px;
+    background: var(--navy);
+    color: var(--acc);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    text-align: right;
+    border-bottom: 2px solid var(--line);
+    font-size: 0.62rem;
+  }
+  .data-table td {
+    padding: 5px 6px;
+    text-align: right;
+    color: #C2C3C7;
+    border-bottom: 1px solid #1a2040;
+  }
+  .data-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+  .data-table tr:first-child td {
+    background: rgba(255,236,39,.06);
+    color: var(--ink);
+  }
+  .data-table .col-p { color: var(--blue); }
+  .data-table .col-i { color: var(--amber); }
+  .data-table .col-d { color: var(--rose); }
+  .data-table .col-out { color: var(--green); font-weight: 700; }
+  .status-cell { font-weight: 700; font-size: 0.6rem; padding: 2px 4px; border-radius: 2px; text-transform: uppercase; }
+  .status-ok { background: var(--green-dark); color: var(--ink); }
+  .status-sat { background: #2a0f1e; color: var(--red); border: 1px solid var(--red); }
+  .status-wind { background: #3d2a00; color: var(--amber); border: 1px solid var(--amber); }
+
+  /* ── Coach Box ── */
+  .coach-box {
+    padding: 12px 14px;
+    background: #141a30;
+    border: 2px solid var(--line);
+    box-shadow: 4px 4px 0 #000;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .coach-avatar {
+    width: 40px; height: 40px;
+    border: 2px solid var(--acc);
+    background: var(--navy);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  .coach-content { flex: 1; min-width: 0; }
+  .coach-title {
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+    color: var(--acc);
+    margin-bottom: 3px;
+  }
+  .coach-msg {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #C2C3C7;
+    line-height: 1.5;
+  }
+  .coach-msg b { color: var(--acc); }
+  .coach-msg .alert { color: var(--red); font-weight: 700; }
+
+  @media (max-width: 860px) {
+    body { padding: 8px; }
+    .main-grid { grid-template-columns: 1fr; }
+    .hud { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .controls-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .preset-bar { flex-direction: column; }
+  }
+  @media (max-width: 500px) {
+    .controls-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <!-- Header -->
+  <div class="header-box">
+    <h1>
+      💻 CODE LAB 2 · PHÒNG KHÁM PID — 5 BỆNH VÀ 5 TOA THUỐC
+      <span class="lab-badge">CODE LAB</span>
+    </h1>
+    <p>Nhận diện và khắc phục các vấn đề thực tế khi triển khai PID: <b>Integral Windup</b>, <b>Nhiễu cảm biến</b>, <b>bão hòa ngõ ra</b>...</p>
+  </div>
+
+  <!-- Preset Tabs -->
+  <div class="preset-bar">
+    <button class="preset-tab active" data-preset="1">
+      <span class="ptitle">① Bệnh Windup</span>
+      <span class="pdesc">Dồn lực quá đà, vọt lố +31%</span>
+    </button>
+    <button class="preset-tab" data-preset="2">
+      <span class="ptitle">② Đã chữa Windup</span>
+      <span class="pdesc">Chống dồn lực quá đà (Clamping)</span>
+    </button>
+    <button class="preset-tab" data-preset="3">
+      <span class="ptitle">③ Bệnh D giật</span>
+      <span class="pdesc">Nhiễu ADC ±0.5°C gây rung ngõ ra</span>
+    </button>
+    <button class="preset-tab" data-preset="4">
+      <span class="ptitle">④ Đã chữa D</span>
+      <span class="pdesc">Lọc thông thấp cho khâu D</span>
+    </button>
+  </div>
+
+  <!-- Toggles -->
+  <div class="toggles-panel">
+    <label class="toggle-label">
+      <input type="checkbox" id="chk_windup" checked>
+      <span>Anti-windup (Clamping)</span>
+      <span class="toggle-tag cure">Toa 2</span>
+    </label>
+    <label class="toggle-label">
+      <input type="checkbox" id="chk_dfilter" checked>
+      <span>Lọc D thông thấp</span>
+      <span class="toggle-tag cure">Toa 3</span>
+    </label>
+    <label class="toggle-label">
+      <input type="checkbox" id="chk_sat" checked>
+      <span>Bão hòa 0–100%</span>
+      <span class="toggle-tag cure">Toa 1</span>
+    </label>
+    <label class="toggle-label">
+      <input type="checkbox" id="chk_noise">
+      <span>Nhiễu cảm biến ±0.5°C</span>
+      <span class="toggle-tag bug">Nhiễu</span>
+    </label>
+  </div>
+
+  <!-- HUD Stats -->
+  <div class="hud">
+    <div class="stat-card"><b id="hud_temp">20.0°C</b><span>Nhiệt độ hiện tại</span></div>
+    <div class="stat-card" id="chip_over"><b id="over">0.0%</b><span>Vọt lố</span></div>
+    <div class="stat-card"><b id="hud_imax">0.0</b><span>Max I_term</span></div>
+    <div class="stat-card"><b id="hud_djitter">0.0</b><span>Độ rung D</span></div>
+    <div id="hud_alert">⚠️ CẢNH BÁO</div>
+  </div>
+
+  <!-- Sliders -->
+  <div class="controls-grid">
+    <div class="slider-card sp-card">
+      <div class="slider-header">
+        <label>Nhiệt đặt</label>
+        <span class="val" id="spv">60°C</span>
+      </div>
+      <input id="sp" type="range" min="30" max="80" value="60">
+    </div>
+    <div class="slider-card p-card">
+      <div class="slider-header">
+        <label>Kp</label>
+        <span class="val" id="kpv">2.00</span>
+      </div>
+      <input id="kp" type="range" min="0" max="5" step=".05" value="2.0">
+    </div>
+    <div class="slider-card i-card">
+      <div class="slider-header">
+        <label>Ki</label>
+        <span class="val" id="kiv">0.35</span>
+      </div>
+      <input id="ki" type="range" min="0" max="1.0" step=".01" value="0.35">
+    </div>
+    <div class="slider-card d-card">
+      <div class="slider-header">
+        <label>Kd</label>
+        <span class="val" id="kdv">0.80</span>
+      </div>
+      <input id="kd" type="range" min="0" max="3" step=".05" value="0.80">
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-row">
+    <button class="primary" id="step">⏩ TỪNG BƯỚC</button>
+    <button id="auto">▶ TỰ CHẠY</button>
+    <button id="reset">🔄 ĐẶT LẠI</button>
+  </div>
+
+  <!-- Main Grid: Chart + Table -->
+  <div class="main-grid">
+    <section class="panel">
+      <div class="panel-header">
+        <span>ĐỒ THỊ NHIỆT ĐỘ · THỜI GIAN THỰC</span>
+      </div>
+      <canvas id="chart" width="680" height="340"></canvas>
+    </section>
+    
+    <section class="panel table-panel">
+      <div class="panel-header">
+        <span>📋 NHẬT KÝ TÍNH TOÁN PID</span>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>t(s)</th>
+              <th>T(°C)</th>
+              <th>e</th>
+              <th class="col-p">P</th>
+              <th class="col-i">I</th>
+              <th class="col-d">D</th>
+              <th class="col-out">Out</th>
+              <th>Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- Coach Box -->
+  <div class="coach-box">
+    <div class="coach-avatar">👨‍⚕️</div>
+    <div class="coach-content">
+      <div class="coach-title">LỜI KHUYÊN TỪ PHÒNG KHÁM PID</div>
+      <p class="coach-msg" id="coachMsg">
+        Chào mừng đến với phòng khám! Hãy thử chọn <b>Bệnh Windup</b> để xem hiện tượng dồn lực quá đà của khâu I do bộ bão hòa ngõ ra gây ra.
+      </p>
+    </div>
+  </div>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const C = $('chart'), ctx = C.getContext('2d');
+let state, timer = null;
+
+const presets = {
+  "1": { kp: 2.0, ki: 0.35, kd: 0.8, windup: false, dfilter: false, sat: true, noise: false },
+  "2": { kp: 2.0, ki: 0.35, kd: 0.8, windup: true,  dfilter: true,  sat: true, noise: false },
+  "3": { kp: 2.0, ki: 0.08, kd: 1.5, windup: true,  dfilter: false, sat: true, noise: true },
+  "4": { kp: 2.0, ki: 0.08, kd: 1.5, windup: true,  dfilter: true,  sat: true, noise: true }
+};
+
+const presetTabs = document.querySelectorAll(".preset-tab");
+const coachMsgs = {
+  "1": "<b>Bệnh Windup:</b> Khi ngõ ra bị giới hạn ở 100%, khâu I vẫn tiếp tục dồn lực quá đà khiến cho khi nhiệt độ đạt đích, I mất quá nhiều thời gian để xả lực, gây vọt lố nghiêm trọng.",
+  "2": "<b>Chữa Windup (Clamping):</b> Thuật toán ngưng dồn lực vào khâu I khi ngõ ra đã đạt tới giới hạn (bão hòa) và sai số vẫn cùng dấu. Nhiệt độ sẽ tiến đến đích mượt mà hơn.",
+  "3": "<b>Bệnh D giật:</b> Cảm biến thực tế luôn có nhiễu. Khâu D (vi phân) rất nhạy cảm với nhiễu này, khuếch đại chúng lên thành những tín hiệu điều khiển giật cục liên tục, gây hại cho cơ cấu chấp hành.",
+  "4": "<b>Chữa D giật:</b> Bằng cách dùng một bộ lọc thông thấp (Low-pass filter) cho tín hiệu D, ta làm mịn đạo hàm. Hệ thống vẫn giữ được khả năng phản ứng nhanh nhưng tín hiệu ngõ ra êm ái hơn rất nhiều."
+};
+
+function selectPreset(key) {
+  const p = presets[key];
+  if (!p) return;
+  $('kp').value = p.kp;
+  $('ki').value = p.ki;
+  $('kd').value = p.kd;
+  $('chk_windup').checked = p.windup;
+  $('chk_dfilter').checked = p.dfilter;
+  $('chk_sat').checked = p.sat;
+  $('chk_noise').checked = p.noise;
+  sync();
+  reset();
+
+  presetTabs.forEach(tab => tab.classList.remove("active"));
+  document.querySelector(`[data-preset="${key}"]`).classList.add("active");
+  $('coachMsg').innerHTML = coachMsgs[key];
+}
+
+presetTabs.forEach(tab => {
+  tab.addEventListener("click", () => {
+    selectPreset(tab.dataset.preset);
+  });
+});
+
+function reset() {
+  state = {
+    t: 0,
+    T: 20.0,
+    I: 0.0,
+    prev_e: 0.0,
+    d_filt: 0.0,
+    peak_T: 20.0,
+    max_I: 0.0,
+    d_jitter_sum: 0,
+    steps: 0,
+    history: []
+  };
+  $('rows').innerHTML = '';
+  updateHUD(20.0, 0, 0, 0, 0, 0, false, false);
+  draw();
+}
+
+function step() {
+  const sp = +$('sp').value;
+  const kp = +$('kp').value;
+  const ki = +$('ki').value;
+  const kd = +$('kd').value;
+  const dt = 0.1;
+
+  const en_windup = $('chk_windup').checked;
+  const en_dfilter = $('chk_dfilter').checked;
+  const en_sat = $('chk_sat').checked;
+  const en_noise = $('chk_noise').checked;
+
+  // 1. Đọc cảm biến (kèm nhiễu nếu bật)
+  const noise_val = en_noise ? (Math.random() - 0.5) * 1.0 : 0.0;
+  const measured_T = state.T + noise_val;
+  const error = sp - measured_T;
+
+  // 2. Khâu P
+  const P = kp * error;
+
+  // 3. Khâu D
+  const d_raw = state.steps > 0 ? (kd * (error - state.prev_e) / dt) : 0.0;
+  let D = d_raw;
+  if (en_dfilter) {
+    const alpha = 0.25;
+    state.d_filt = alpha * d_raw + (1.0 - alpha) * state.d_filt;
+    D = state.d_filt;
+  }
+
+  // 4. Khâu I (Anti-windup clamping)
+  const tentative_out = P + state.I + D;
+  if (en_windup) {
+    const is_saturated = (tentative_out >= 100.0 && error > 0) || (tentative_out <= 0.0 && error < 0);
+    if (!is_saturated) {
+      state.I += ki * error * dt;
+    }
+    state.I = Math.max(-25.0, Math.min(25.0, state.I));
+  } else {
+    state.I += ki * error * dt;
+  }
+  state.max_I = Math.max(state.max_I, Math.abs(state.I));
+
+  // 5. Ngõ ra PID
+  let out = P + state.I + D;
+  const raw_out = out;
+  if (en_sat) {
+    out = Math.max(0.0, Math.min(100.0, out));
+  }
+
+  // Cơ cấu chấp hành nhiệt
+  const heater_power = Math.max(0.0, Math.min(100.0, out));
+  state.T += (heater_power * 0.05 - (state.T - 20.0) * 0.015) * dt;
+
+  state.t += dt;
+  state.steps++;
+  state.prev_e = error;
+  state.peak_T = Math.max(state.peak_T, state.T);
+  if (state.steps > 10) state.d_jitter_sum += Math.abs(D);
+
+  state.history.push({
+    t: state.t,
+    T: state.T,
+    meas: measured_T,
+    sp: sp,
+    out: out,
+    I: state.I,
+    D: D
+  });
+  if (state.history.length > 500) state.history.shift();
+
+  // Bảng trạng thái
+  const is_sat_status = out >= 100.0 || out <= 0.0;
+  const is_wind_status = !en_windup && state.I > 30.0;
+  let status_html = '<span class="status-cell status-ok">Ổn định</span>';
+  if (is_wind_status) status_html = '<span class="status-cell status-wind">Phình nợ!</span>';
+  else if (is_sat_status) status_html = '<span class="status-cell status-sat">Bão hòa</span>';
+
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td>${state.t.toFixed(1)}</td>
+    <td>${state.T.toFixed(1)}</td>
+    <td>${error.toFixed(1)}</td>
+    <td class="col-p">${P.toFixed(1)}</td>
+    <td class="col-i">${state.I.toFixed(1)}</td>
+    <td class="col-d">${D.toFixed(1)}</td>
+    <td class="col-out">${out.toFixed(0)}%</td>
+    <td>${status_html}</td>
+  `;
+  $('rows').prepend(tr);
+  while ($('rows').children.length > 60) $('rows').lastChild.remove();
+
+  const alert_el = $('hud_alert');
+  if (is_wind_status) {
+    alert_el.style.display = 'block';
+    alert_el.textContent = '⚠️ Dồn lực quá đà (Integral Windup)!';
+  } else if (is_sat_status) {
+    alert_el.style.display = 'block';
+    alert_el.textContent = `⚡ Lệnh ${out.toFixed(0)}% → Lò đạt trần 100%`;
+  } else {
+    alert_el.style.display = 'none';
+  }
+
+  updateHUD(state.T, sp, state.peak_T, state.max_I, state.d_jitter_sum / Math.max(1, state.steps - 10), out, is_sat_status, is_wind_status);
+  draw();
+}
+
+function updateHUD(T, sp, peak, maxI, d_jitter, out, is_sat, is_wind) {
+  $('hud_temp').textContent = T.toFixed(1) + '°C';
+  const over_pct = Math.max(0, (peak - sp) / Math.max(1, sp - 20) * 100);
+  $('over').textContent = over_pct.toFixed(1) + '%';
+  if (over_pct > 15) {
+    $('chip_over').className = 'stat-card warn';
+  } else {
+    $('chip_over').className = 'stat-card good';
+  }
+  $('hud_imax').textContent = maxI.toFixed(1);
+  $('hud_djitter').textContent = d_jitter.toFixed(2);
+
+  const alert_el = $('hud_alert');
+  if (is_wind) {
+    alert_el.style.display = 'block';
+    alert_el.textContent = '⚠️ Dồn lực quá đà (Integral Windup)!';
+  } else if (is_sat) {
+    alert_el.style.display = 'block';
+    alert_el.textContent = `⚡ Lệnh ${out.toFixed(0)}% → Lò đạt trần 100%`;
+  } else {
+    alert_el.style.display = 'none';
+  }
+}
+
+function draw() {
+  ctx.clearRect(0, 0, C.width, C.height);
+  const W = C.width, H = C.height;
+  
+  ctx.fillStyle = "#0f1322";
+  ctx.fillRect(0, 0, W, H);
+
+  const padL = 45, padR = 15, padT = 25, padB = 25;
+  const graphW = W - padL - padR;
+  const graphH = H - padT - padB;
+
+  // Lưới ngang (°C: 20 đến 80)
+  ctx.strokeStyle = '#232c4e';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([2, 3]);
+  ctx.font = '10px "Courier New", monospace';
+  ctx.textAlign = 'right';
+  ctx.textBaseline = "middle";
+
+  for (let temp = 20; temp <= 80; temp += 10) {
+    const y = padT + graphH - ((temp - 20) / 60) * graphH;
+    ctx.beginPath();
+    ctx.moveTo(padL, y);
+    ctx.lineTo(W - padR, y);
+    ctx.stroke();
+    ctx.fillStyle = '#83769C';
+    ctx.fillText(temp + '°', padL - 6, y);
+  }
+  ctx.setLineDash([]);
+
+  if (state.history.length === 0) return;
+
+  const mapX = i => padL + (i / Math.max(1, state.history.length - 1)) * graphW;
+  const mapY_temp = temp => padT + graphH - ((temp - 20) / 60) * graphH;
+  const mapY_out = pct => padT + graphH - (pct / 100) * (graphH * 0.4);
+
+  // 1. Vẽ Setpoint SP (nét đứt)
+  const sp = +$('sp').value;
+  const spY = mapY_temp(sp);
+  ctx.strokeStyle = '#FFA300';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([6, 4]);
+  ctx.beginPath();
+  ctx.moveTo(padL, spY);
+  ctx.lineTo(W - padR, spY);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // 2. Vẽ dải Output công suất & I_term
+  ctx.strokeStyle = 'rgba(255, 163, 0, 0.4)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  state.history.forEach((pt, i) => {
+    const x = mapX(i), y = mapY_out(pt.I * 2);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+
+  // 3. Vẽ nhiệt độ đo được (kèm nhiễu mờ nếu có)
+  if ($('chk_noise').checked) {
+    ctx.strokeStyle = 'rgba(255, 119, 168, 0.4)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    state.history.forEach((pt, i) => {
+      const x = mapX(i), y = mapY_temp(pt.meas);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+  }
+
+  // 4. Vẽ nhiệt độ thực T (đường xanh chính có glow)
+  ctx.strokeStyle = '#29ADFF';
+  ctx.lineWidth = 5;
+  ctx.globalAlpha = 0.15;
+  ctx.beginPath();
+  state.history.forEach((pt, i) => {
+    const x = mapX(i), y = mapY_temp(pt.T);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  ctx.strokeStyle = '#29ADFF';
+  ctx.lineWidth = 2.5;
+  ctx.shadowColor = '#29ADFF';
+  ctx.shadowBlur = 6;
+  ctx.beginPath();
+  state.history.forEach((pt, i) => {
+    const x = mapX(i), y = mapY_temp(pt.T);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  });
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Chú giải
+  ctx.font = '11px "Courier New", monospace';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  
+  // Legend box
+  ctx.fillStyle = 'rgba(15, 19, 34, 0.8)';
+  ctx.fillRect(padL + 10, 10, 260, 22);
+
+  ctx.fillStyle = '#29ADFF';
+  ctx.fillText('— Nhiệt độ T', padL + 16, 15);
+  ctx.fillStyle = '#FFA300';
+  ctx.fillText('--- Setpoint', padL + 116, 15);
+  ctx.fillStyle = 'rgba(255, 163, 0, 0.8)';
+  ctx.fillText('— Lực tích tụ I', padL + 206, 15);
+}
+
+function sync() {
+  $('spv').textContent = $('sp').value + '°C';
+  $('kpv').textContent = (+ $('kp').value).toFixed(2);
+  $('kiv').textContent = (+ $('ki').value).toFixed(2);
+  $('kdv').textContent = (+ $('kd').value).toFixed(2);
+}
+
+$('step').onclick = step;
+$('auto').onclick = () => {
+  if (timer) {
+    clearInterval(timer);
+    timer = null;
+    $('auto').textContent = '▶ TỰ CHẠY';
+    $('auto').classList.remove('warn');
+  } else {
+    timer = setInterval(() => {
+      for (let i = 0; i < 3; i++) step();
+    }, 50);
+    $('auto').textContent = '⏸ TẠM DỪNG';
+    $('auto').classList.add('warn');
+  }
+};
+$('reset').onclick = reset;
+
+['sp', 'kp', 'ki', 'kd'].forEach(id => $(id).oninput = sync);
+['chk_windup', 'chk_dfilter', 'chk_sat', 'chk_noise'].forEach(id => $(id).onchange = draw);
+
+sync();
+reset();
+selectPreset("1"); // Default to preset 1
+</script>
+</body>
+</html>

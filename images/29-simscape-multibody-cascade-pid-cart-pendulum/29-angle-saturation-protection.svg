@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="540" viewBox="0 0 1200 540" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="t4 d4">
+  <title id="t4">Đặc tuyến khâu bão hòa góc đặt và hậu quả khi thiếu nó</title>
+  <desc id="d4">Đồ thị vào–ra của khâu bão hòa: đoạn giữa tuyến tính hệ số 1, hai đầu bị kẹp phẳng ở cộng trừ mười độ. Bên phải liệt kê chuỗi hậu quả khi bỏ khâu bão hòa với sai số vị trí ba mét.</desc>
+  <defs>
+    <marker id="ax" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#64748b"/>
+    </marker>
+    <marker id="dn" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#b45309"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1  { font-size: 24px; font-weight: 800; fill: #0f172a; }
+      .h2  { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .al  { font-size: 15px; font-weight: 700; fill: #475569; }
+      .tk  { font-size: 14px; font-weight: 600; fill: #64748b; }
+      .zn  { font-size: 14px; font-weight: 700; fill: #94a3b8; letter-spacing: .04em; }
+      .zw  { font-size: 14px; font-weight: 700; fill: #b45309; letter-spacing: .04em; }
+      .pt  { font-size: 15px; font-weight: 800; fill: #1e293b; }
+      .st  { font-size: 15px; font-weight: 500; fill: #475569; }
+      .sn  { font-size: 14px; font-weight: 500; fill: #64748b; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="540" fill="#ffffff"/>
+  <text x="40" y="44" class="h1">Khâu bão hòa góc đặt · giữ hệ ở trong vùng tuyến tính</text>
+  <text x="40" y="72" class="h2">Vòng ngoài được phép “xin” góc nghiêng bao nhiêu cũng được — khâu bão hòa quyết định vòng trong thực sự nhận được bao nhiêu.</text>
+
+  <!-- ================= TRANSFER CURVE ================= -->
+  <g>
+    <!-- zones -->
+    <rect x="90" y="130" width="150" height="320" fill="#fffbeb"/>
+    <rect x="480" y="130" width="160" height="320" fill="#fffbeb"/>
+    <rect x="240" y="130" width="240" height="320" fill="#f8fafc"/>
+
+    <!-- axes -->
+    <path d="M 90 290 H 650" stroke="#64748b" stroke-width="2" marker-end="url(#ax)"/>
+    <path d="M 360 460 V 120" stroke="#64748b" stroke-width="2" marker-end="url(#ax)"/>
+
+    <!-- guides -->
+    <path d="M 240 290 V 410 M 360 410 H 240" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <path d="M 480 290 V 170 M 360 170 H 480" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="4 4"/>
+
+    <!-- the saturation characteristic -->
+    <path d="M 100 410 L 240 410 L 480 170 L 620 170" fill="none" stroke="#1e293b" stroke-width="3.5" stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="240" cy="410" r="5" fill="#ffffff" stroke="#1e293b" stroke-width="2.5"/>
+    <circle cx="480" cy="170" r="5" fill="#ffffff" stroke="#1e293b" stroke-width="2.5"/>
+
+    <!-- axis labels -->
+    <text x="646" y="316" text-anchor="end" class="al">θ_ref thô (từ PID vị trí)</text>
+    <text x="372" y="134" class="al">θ_ref sau bão hòa</text>
+
+    <text x="352" y="308" text-anchor="end" class="tk">0</text>
+    <text x="350" y="175" text-anchor="end" class="tk">+10°</text>
+    <text x="350" y="415" text-anchor="end" class="tk">−10°</text>
+
+    <!-- zone captions -->
+    <text x="360" y="470" text-anchor="middle" class="zn">VÙNG TUYẾN TÍNH · HỆ SỐ 1</text>
+    <text x="165" y="470" text-anchor="middle" class="zw">BỊ KẸP</text>
+    <text x="560" y="470" text-anchor="middle" class="zw">BỊ KẸP</text>
+
+    <text x="300" y="200" text-anchor="middle" class="sn">sin θ ≈ θ còn đúng ở đây</text>
+  </g>
+
+  <!-- ================= CONSEQUENCE PANEL ================= -->
+  <g>
+    <rect x="700" y="130" width="460" height="340" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+    <rect x="700" y="130" width="6" height="340" rx="3" fill="#b45309"/>
+
+    <text x="732" y="166" class="pt">Nếu bỏ khâu bão hòa</text>
+    <text x="732" y="188" class="sn">Ví dụ xe bị đẩy văng ra xa mốc đặt tới 3 m.</text>
+
+    <text x="732" y="232" class="st">Sai số vị trí</text>
+    <text x="1128" y="232" text-anchor="end" class="pt">e_x = 3.0 m</text>
+    <path d="M 732 246 H 1128" stroke="#f1f5f9" stroke-width="1.5"/>
+    <path d="M 748 252 V 268" stroke="#b45309" stroke-width="1.5" marker-end="url(#dn)"/>
+    <text x="768" y="266" class="sn">nhân với K_p = 0.1</text>
+
+    <text x="732" y="300" class="st">Góc đặt vòng ngoài sinh ra</text>
+    <text x="1128" y="300" text-anchor="end" class="pt">θ_ref = 0.30 rad ≈ 17.2°</text>
+    <path d="M 732 314 H 1128" stroke="#f1f5f9" stroke-width="1.5"/>
+    <path d="M 748 320 V 336" stroke="#b45309" stroke-width="1.5" marker-end="url(#dn)"/>
+    <text x="768" y="334" class="sn">vượt ngưỡng tuyến tính 15°</text>
+
+    <text x="732" y="368" class="st">Mô hình tuyến tính hóa</text>
+    <text x="1128" y="368" text-anchor="end" class="pt">sin θ ≈ θ không còn đúng</text>
+    <path d="M 732 382 H 1128" stroke="#f1f5f9" stroke-width="1.5"/>
+    <path d="M 748 388 V 404" stroke="#b45309" stroke-width="1.5" marker-end="url(#dn)"/>
+    <text x="768" y="402" class="sn">mômen trọng lực vượt lực đẩy tối đa</text>
+
+    <rect x="732" y="418" width="396" height="36" rx="6" fill="#fffbeb" stroke="#fcd34d" stroke-width="1.5"/>
+    <text x="930" y="441" text-anchor="middle" class="pt" fill="#b45309">Con lắc đổ, không cứu vãn được</text>
+  </g>
+
+  <line x1="40" y1="500" x2="1160" y2="500" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="40" y="524" class="sn">Giá trị thường dùng: θ_max từ 8° đến 12° (0.14 – 0.20 rad). Càng nặng tải và càng yếu động cơ thì càng nên kẹp chặt.</text>
+</svg>

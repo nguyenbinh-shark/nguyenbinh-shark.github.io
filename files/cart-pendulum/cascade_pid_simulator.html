@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Mô Phỏng Trực Quan Cascade-PID Con Lắc Ngược</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+</head>
+<body class="bg-transparent text-[var(--foreground)] antialiased p-4 select-none font-sans">
+  <div class="max-w-4xl mx-auto bg-[var(--card)] text-[var(--foreground)] border border-[var(--border)] rounded-2xl p-6 shadow-md">
+    
+    <!-- Header -->
+    <div class="flex flex-wrap items-center justify-between gap-4 border-b border-[var(--border)] pb-4 mb-4">
+      <div>
+        <h2 class="text-xl font-bold tracking-tight text-[var(--foreground)] flex items-center gap-2">
+          <span>🎯</span> Mô Phỏng Tương Tác: Cascade-PID vs Single-PID
+        </h2>
+        <p class="text-xs text-[var(--muted-foreground)] mt-1">
+          Quan sát phản xạ giữ thăng bằng và cơ chế triệt tiêu hiện tượng trôi xe (Cart Drift) khi chịu ngoại lực tác động.
+        </p>
+      </div>
+
+      <!-- Mode Selector Tabs -->
+      <div class="flex items-center bg-[var(--background)] p-1 rounded-xl border border-[var(--border)]">
+        <button id="btn-mode-cascade" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-sky-600 text-white shadow-sm transition-all">
+          Cascade-PID (Vòng Kép)
+        </button>
+        <button id="btn-mode-single" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-all">
+          Single-PID (1 Vòng Góc)
+        </button>
+      </div>
+    </div>
+
+    <!-- Canvas Simulation Area -->
+    <div class="relative w-full rounded-xl overflow-hidden border border-[var(--border)] bg-slate-950 flex flex-col items-center justify-center">
+      <canvas id="simCanvas" width="800" height="340" class="w-full h-auto cursor-grab active:cursor-grabbing block"></canvas>
+      
+      <!-- Live Overlay Stats -->
+      <div class="absolute top-3 left-3 bg-slate-900/85 backdrop-blur-md border border-slate-700/60 rounded-lg px-3 py-2 text-xs text-slate-200 font-mono space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span>Góc lắc &theta;: <b id="stat-theta" class="text-sky-300">0.00°</b></span>
+        </div>
+        <div>Vị trí xe x: <b id="stat-x" class="text-amber-300">0.00 m</b></div>
+        <div>Góc đặt &theta;<sub>ref</sub>: <b id="stat-theta-ref" class="text-purple-300">0.00°</b></div>
+        <div>Lực F: <b id="stat-force" class="text-emerald-300">0.0 N</b></div>
+      </div>
+
+      <!-- Mode Indicator Badge -->
+      <div id="mode-badge" class="absolute top-3 right-3 px-3 py-1 bg-sky-500/20 text-sky-300 border border-sky-500/40 rounded-full text-[11px] font-semibold backdrop-blur">
+        Chế độ: Cascade-PID (Kéo xe về x = 0m)
+      </div>
+
+      <!-- Interaction Tip -->
+      <div class="absolute bottom-3 left-3 text-[11px] text-slate-400 font-sans pointer-events-none bg-slate-900/60 px-2.5 py-1 rounded-md border border-slate-800">
+        💡 Mẹo: Dùng chuột kéo xe sang trái/phải để thử thách bộ điều khiển
+      </div>
+
+      <!-- Action Button Group (Bottom Right) -->
+      <div class="absolute bottom-3 right-3 flex gap-2">
+        <button id="btn-disturb-left" class="px-2.5 py-1.5 bg-rose-600/90 hover:bg-rose-500 text-white rounded-lg text-xs font-semibold shadow backdrop-blur transition-all flex items-center gap-1">
+          <span>👈</span> Đẩy Trái (15N)
+        </button>
+        <button id="btn-disturb-right" class="px-2.5 py-1.5 bg-rose-600/90 hover:bg-rose-500 text-white rounded-lg text-xs font-semibold shadow backdrop-blur transition-all flex items-center gap-1">
+          <span>👉</span> Đẩy Phải (15N)
+        </button>
+        <button id="btn-reset" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-lg text-xs font-semibold border border-slate-600 transition-all">
+          ↺ Đặt Lại
+        </button>
+      </div>
+    </div>
+
+    <!-- Parameter & Status Explanations -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-xs">
+      <div class="p-3.5 bg-[var(--background)] rounded-xl border border-[var(--border)]">
+        <h4 class="font-bold text-sky-500 mb-1 flex items-center gap-1.5">
+          <span>🔹</span> Vòng Ngoài (Position Loop):
+        </h4>
+        <p class="text-[var(--muted-foreground)] leading-relaxed">
+          Đo sai số vị trí <span class="font-mono text-[var(--foreground)]">e_x = 0 - x</span> và sinh góc nghiêng mong muốn <span class="font-mono text-amber-500">&theta;_ref</span> (kẹp an toàn &plusmn;10°).
+        </p>
+      </div>
+      <div class="p-3.5 bg-[var(--background)] rounded-xl border border-[var(--border)]">
+        <h4 class="font-bold text-emerald-500 mb-1 flex items-center gap-1.5">
+          <span>⚡</span> Vòng Trong (Angle Loop 1kHz):
+        </h4>
+        <p class="text-[var(--muted-foreground)] leading-relaxed">
+          Đo sai số góc <span class="font-mono text-[var(--foreground)]">e_&theta; = &theta;_ref - &theta;</span> và phản xạ xuất lực <span class="font-mono text-emerald-500">F(t)</span> đẩy xe đón đầu trọng tâm.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Physical parameters (matching Simscape model)
+    const M = 0.5;    // Cart mass (kg)
+    const m = 0.2;    // Pendulum mass (kg)
+    const L = 0.6;    // Pendulum length (m)
+    const l = L / 2;  // Distance to COM (m)
+    const I = (1/12) * m * L * L;
+    const g = 9.80665;
+
+    let mode = 'cascade'; // 'cascade' | 'single'
+    let state = [0, 0, 0, 0]; // [x, v, theta, omega] (rad, rad/s)
+    let theta_ref = 0.0;
+    let force_ctrl = 0.0;
+    let disturbance = 0.0;
+    let disturbTimer = 0;
+
+    // Controllers
+    const inner_Kp = 50.0, inner_Ki = 0.5, inner_Kd = 5.0;
+    let inner_I = 0.0;
+
+    const outer_Kp = 0.12, outer_Kd = 0.06;
+
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const statTheta = document.getElementById('stat-theta');
+    const statX = document.getElementById('stat-x');
+    const statThetaRef = document.getElementById('stat-theta-ref');
+    const statForce = document.getElementById('stat-force');
+    const modeBadge = document.getElementById('mode-badge');
+
+    const btnCascade = document.getElementById('btn-mode-cascade');
+    const btnSingle = document.getElementById('btn-mode-single');
+    const btnDisturbL = document.getElementById('btn-disturb-left');
+    const btnDisturbR = document.getElementById('btn-disturb-right');
+    const btnReset = document.getElementById('btn-reset');
+
+    function setMode(newMode) {
+      mode = newMode;
+      if (mode === 'cascade') {
+        btnCascade.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-sky-600 text-white shadow-sm transition-all';
+        btnSingle.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-all';
+        modeBadge.className = 'absolute top-3 right-3 px-3 py-1 bg-sky-500/20 text-sky-300 border border-sky-500/40 rounded-full text-[11px] font-semibold backdrop-blur';
+        modeBadge.innerText = 'Chế độ: Cascade-PID (Kéo xe về x = 0m)';
+      } else {
+        btnSingle.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-amber-600 text-white shadow-sm transition-all';
+        btnCascade.className = 'px-3.5 py-1.5 rounded-lg text-xs font-semibold text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-all';
+        modeBadge.className = 'absolute top-3 right-3 px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-full text-[11px] font-semibold backdrop-blur';
+        modeBadge.innerText = 'Chế độ: Single-PID (Xe bị trôi dạt vô tận)';
+      }
+    }
+
+    btnCascade.onclick = () => setMode('cascade');
+    btnSingle.onclick = () => setMode('single');
+
+    function triggerDisturbance(dir) {
+      disturbance = dir * 15.0; // Gentle realistic force: 15 N
+      disturbTimer = 0.05;      // 50 ms impulse duration (J = 0.75 Ns)
+    }
+    btnDisturbL.onclick = () => triggerDisturbance(-1);
+    btnDisturbR.onclick = () => triggerDisturbance(1);
+
+    function resetSimulation() {
+      state = [0, 0, 0, 0];
+      inner_I = 0;
+      theta_ref = 0;
+      force_ctrl = 0;
+      disturbance = 0;
+      disturbTimer = 0;
+    }
+    btnReset.onclick = resetSimulation;
+
+    // Mouse & Touch drag interaction
+    let isDragging = false;
+    const handleStart = () => { isDragging = true; };
+    const handleEnd = () => { isDragging = false; };
+    const handleMove = (clientX) => {
+      if (!isDragging) return;
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = (clientX - rect.left) / rect.width * canvas.width;
+      const scaleX = 260; // px/m
+      const newX = (mouseX - canvas.width / 2) / scaleX;
+      state[0] = Math.max(-1.3, Math.min(1.3, newX));
+      state[1] = 0;
+    };
+
+    canvas.onmousedown = handleStart;
+    window.onmouseup = handleEnd;
+    canvas.onmousemove = (e) => handleMove(e.clientX);
+
+    canvas.addEventListener('touchstart', (e) => { handleStart(); e.preventDefault(); }, { passive: false });
+    window.addEventListener('touchend', handleEnd);
+    canvas.addEventListener('touchmove', (e) => {
+      if (e.touches.length > 0) {
+        handleMove(e.touches[0].clientX);
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    // RK4 Simulation
+    function ode(s, F) {
+      const [x, v, th, w] = s;
+      const cos_t = Math.cos(th);
+      const sin_t = Math.sin(th);
+      const d1 = M + m;
+      const d2 = m * l * cos_t;
+      const d3 = I + m * l * l;
+      const b1 = F + m * l * w * w * sin_t;
+      const b2 = m * g * l * sin_t;
+      const det = d1 * d3 - d2 * d2;
+      const x_acc = (d3 * b1 - d2 * b2) / det;
+      const th_acc = (d1 * b2 - d2 * b1) / det;
+      return [v, x_acc, w, th_acc];
+    }
+
+    let lastTime = performance.now();
+    function animate(currentTime) {
+      const delta = Math.min((currentTime - lastTime) / 1000, 0.05);
+      lastTime = currentTime;
+
+      const subSteps = 20;
+      const dt = delta / subSteps;
+
+      for (let step = 0; step < subSteps; step++) {
+        if (mode === 'single') {
+          theta_ref = 0.0;
+        } else {
+          // Cascade Outer Loop
+          const raw_ref = -(outer_Kp * (state[0] - 0) + outer_Kd * state[1]);
+          const max_rad = 10 * Math.PI / 180;
+          theta_ref = Math.max(-max_rad, Math.min(max_rad, raw_ref));
+        }
+
+        // Inner Loop
+        const e_th = theta_ref - state[2];
+        inner_I += e_th * dt;
+        force_ctrl = inner_Kp * (state[2] - theta_ref) + inner_Kd * state[3] + inner_Ki * (-inner_I);
+
+        // Disturbance
+        let f_ext = force_ctrl;
+        if (disturbTimer > 0) {
+          f_ext += disturbance;
+          disturbTimer -= dt;
+        }
+
+        // RK4 step
+        const k1 = ode(state, f_ext);
+        const s2 = state.map((v, i) => v + 0.5 * dt * k1[i]);
+        const k2 = ode(s2, f_ext);
+        const s3 = state.map((v, i) => v + 0.5 * dt * k2[i]);
+        const k3 = ode(s3, f_ext);
+        const s4 = state.map((v, i) => v + dt * k3[i]);
+        const k4 = ode(s4, f_ext);
+
+        for (let i = 0; i < 4; i++) {
+          state[i] += (dt / 6) * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]);
+        }
+      }
+
+      // Update HUD
+      const degTheta = (state[2] * 180 / Math.PI).toFixed(2);
+      const degRef = (theta_ref * 180 / Math.PI).toFixed(2);
+      statTheta.innerText = `${degTheta}°`;
+      statX.innerText = `${state[0].toFixed(3)} m`;
+      statThetaRef.innerText = `${degRef}°`;
+      statForce.innerText = `${force_ctrl.toFixed(1)} N`;
+
+      render();
+      requestAnimationFrame(animate);
+    }
+
+    function render() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const centerX = canvas.width / 2;
+      const groundY = 240;
+      const scale = 260; // px per meter
+
+      // Rail Line
+      ctx.strokeStyle = '#334155';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(40, groundY);
+      ctx.lineTo(canvas.width - 40, groundY);
+      ctx.stroke();
+
+      // Rail markings
+      ctx.strokeStyle = '#475569';
+      ctx.lineWidth = 1.5;
+      for (let m = -1.2; m <= 1.2; m += 0.2) {
+        const px = centerX + m * scale;
+        ctx.beginPath();
+        ctx.moveTo(px, groundY);
+        ctx.lineTo(px, groundY + (Math.abs(m) < 0.01 ? 12 : 6));
+        ctx.stroke();
+      }
+
+      // Target reference line (x=0)
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 1.8;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      ctx.moveTo(centerX, groundY - 140);
+      ctx.lineTo(centerX, groundY + 20);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = '#ef4444';
+      ctx.font = '10px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('Đích x = 0', centerX, groundY + 28);
+
+      // Cart
+      const cartX = centerX + state[0] * scale;
+      const cartW = 90;
+      const cartH = 44;
+      const cartY = groundY - cartH - 8;
+
+      // Force Arrow if active
+      if (Math.abs(force_ctrl) > 0.5) {
+        const arrowLen = Math.max(-60, Math.min(60, force_ctrl * 1.2));
+        ctx.strokeStyle = '#f59e0b';
+        ctx.fillStyle = '#f59e0b';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(cartX, cartY + cartH / 2);
+        ctx.lineTo(cartX + arrowLen, cartY + cartH / 2);
+        ctx.stroke();
+      }
+
+      // Cart Body
+      ctx.fillStyle = '#ea580c';
+      ctx.strokeStyle = '#9a3412';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(cartX - cartW / 2, cartY, cartW, cartH, 6);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.fillText('CART', cartX, cartY + 26);
+
+      // Wheels
+      ctx.fillStyle = '#1e293b';
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 2;
+      [cartX - 26, cartX + 26].forEach(wx => {
+        ctx.beginPath();
+        ctx.arc(wx, groundY - 8, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      });
+
+      // Pivot
+      const pivotX = cartX;
+      const pivotY = cartY;
+
+      // Desired Angle Reference Line (Ghosted yellow line)
+      if (mode === 'cascade') {
+        const refLen = 140;
+        const refTipX = pivotX + refLen * Math.sin(theta_ref);
+        const refTipY = pivotY - refLen * Math.cos(theta_ref);
+        ctx.strokeStyle = 'rgba(251, 191, 36, 0.45)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(pivotX, pivotY);
+        ctx.lineTo(refTipX, refTipY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // Pendulum Rod
+      const rodLen = 140;
+      const tipX = pivotX + rodLen * Math.sin(state[2]);
+      const tipY = pivotY - rodLen * Math.cos(state[2]);
+
+      ctx.strokeStyle = '#0284c7';
+      ctx.lineWidth = 6;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.moveTo(pivotX, pivotY);
+      ctx.lineTo(tipX, tipY);
+      ctx.stroke();
+
+      // Pivot Joint Circle
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.arc(pivotX, pivotY, 6, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Tip Mass
+      ctx.fillStyle = '#0284c7';
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(tipX, tipY, 12, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+    }
+
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>

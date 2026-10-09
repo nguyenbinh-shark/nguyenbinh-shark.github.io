@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700" role="img" aria-labelledby="t1 d1">
+  <title id="t1">Bốn câu hỏi để chọn thuật toán điều khiển cho một hệ mới</title>
+  <desc id="d1">Cây quyết định đi từ trên xuống. Câu 1: mỗi cơ cấu chấp hành lo một đại lượng và các kênh ít ảnh hưởng nhau? Có thì dùng PID từng kênh. Câu 2: mô hình tuyến tính hóa quanh điểm làm việc có điều khiển được không? Không thì dùng luật phi tuyến. Câu 3: có mô hình A, B và đo đủ trạng thái không? Không thì dùng Cascade-PID dò tay. Câu 4: ràng buộc cứng có bị chạm thường xuyên không? Có thì dùng MPC, không thì dùng LQR.</desc>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#64748b"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1 { font-size: 24px; font-weight: 800; fill: #0f172a; }
+      .h2 { font-size: 16px; font-weight: 500; fill: #64748b; }
+      .qn { font-size: 15px; font-weight: 800; fill: #64748b; letter-spacing: .05em; }
+      .q  { font-size: 17px; font-weight: 600; fill: #1e293b; }
+      .yn { font-size: 16px; font-weight: 700; fill: #475569; }
+      .lt { font-size: 18px; font-weight: 800; fill: #1e293b; }
+      .ls { font-size: 15px; font-weight: 500; fill: #64748b; }
+      .ltA { font-size: 19px; font-weight: 800; fill: #92400e; }
+      .lsA { font-size: 15px; font-weight: 600; fill: #a16207; }
+    </style>
+  </defs>
+
+  <rect width="1000" height="700" fill="#ffffff"/>
+  <text x="40" y="46" class="h1">Đứng trước một hệ mới: bốn câu hỏi trước khi chọn thuật toán</text>
+  <text x="40" y="74" class="h2">Đi từ trên xuống. Dừng ở câu đầu tiên mà câu trả lời rẽ sang nhánh bên phải.</text>
+  <line x1="40" y1="94" x2="960" y2="94" stroke="#e2e8f0"/>
+
+  <!-- Q1 -->
+  <rect x="40" y="118" width="540" height="84" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="62" y="146" class="qn">CÂU 1</text>
+  <text x="62" y="170" class="q">Mỗi cơ cấu chấp hành chỉ lo một đại lượng,</text>
+  <text x="62" y="192" class="q">và các kênh gần như không ảnh hưởng nhau?</text>
+  <path d="M 580 160 H 664" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="622" y="150" text-anchor="middle" class="yn">Có</text>
+  <rect x="670" y="124" width="290" height="72" rx="10" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+  <text x="690" y="154" class="lt">PID từng kênh</text>
+  <text x="690" y="178" class="ls">Động cơ bánh Omron · Bài 4–5</text>
+
+  <path d="M 310 202 V 240" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="322" y="227" class="yn">Không</text>
+
+  <!-- Q2 -->
+  <rect x="40" y="244" width="540" height="84" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="62" y="272" class="qn">CÂU 2</text>
+  <text x="62" y="296" class="q">Quanh điểm làm việc, mô hình tuyến tính hóa</text>
+  <text x="62" y="318" class="q">có điều khiển được (controllable) không?</text>
+  <path d="M 580 286 H 664" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="622" y="276" text-anchor="middle" class="yn">Không</text>
+  <rect x="670" y="250" width="290" height="72" rx="10" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+  <text x="690" y="280" class="lt">Luật phi tuyến</text>
+  <text x="690" y="304" class="ls">Mobile robot vi sai · Kanayama · Bài 6</text>
+
+  <path d="M 310 328 V 366" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="322" y="353" class="yn">Có</text>
+
+  <!-- Q3 -->
+  <rect x="40" y="370" width="540" height="84" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="62" y="398" class="qn">CÂU 3</text>
+  <text x="62" y="422" class="q">Có mô hình A, B đủ tin, và đo (hoặc ước lượng)</text>
+  <text x="62" y="444" class="q">được đủ mọi biến trạng thái?</text>
+  <path d="M 580 412 H 664" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="622" y="402" text-anchor="middle" class="yn">Không</text>
+  <rect x="670" y="376" width="290" height="72" rx="10" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+  <text x="690" y="406" class="lt">Cascade-PID, dò tay</text>
+  <text x="690" y="430" class="ls">Con lắc ngược · Bài 3</text>
+
+  <path d="M 310 454 V 492" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="322" y="479" class="yn">Có</text>
+
+  <!-- Q4 -->
+  <rect x="40" y="496" width="540" height="84" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <text x="62" y="524" class="qn">CÂU 4</text>
+  <text x="62" y="548" class="q">Ràng buộc cứng (lực tối đa, góc, chiều dài ray)</text>
+  <text x="62" y="570" class="q">bị chạm thường xuyên khi vận hành?</text>
+  <path d="M 580 538 H 664" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="622" y="528" text-anchor="middle" class="yn">Có</text>
+  <rect x="670" y="502" width="290" height="72" rx="10" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+  <text x="690" y="532" class="lt">MPC</text>
+  <text x="690" y="556" class="ls">Tối ưu có ràng buộc · bài sau</text>
+
+  <path d="M 310 580 V 614" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="322" y="604" class="yn">Không</text>
+
+  <!-- LQR leaf -->
+  <rect x="40" y="618" width="920" height="64" rx="10" fill="#fffbeb" stroke="#b45309" stroke-width="2.5"/>
+  <text x="62" y="657" class="ltA">LQR</text>
+  <text x="120" y="657" class="lsA">(+ LQI nếu có nhiễu hằng) · con lắc ngược, xe hai bánh tự cân bằng, robot bánh-chân · bài này</text>
+</svg>

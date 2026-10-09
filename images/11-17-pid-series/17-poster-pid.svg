@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="title desc">
+  <title id="title">Poster Tổng Kết Ba Khâu PID: P - I - D</title>
+  <desc id="desc">Tổng kết bản chất 3 khâu PID qua 3 chiều thời gian: P nhìn hiện tại (lực kéo), I nhìn quá khứ (sổ ghi nợ), D nhìn tương lai (chiếc phanh thông minh).</desc>
+  <defs>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .title { font-size: 34px; font-weight: 800; fill: #0f172a; }
+      .sub { font-size: 19px; fill: #475569; }
+      .card-letter { font-size: 64px; font-weight: 900; }
+      .card-title { font-size: 22px; font-weight: 800; }
+      .card-time { font-size: 15px; font-weight: 800; letter-spacing: 1.2px; }
+      .card-desc { font-size: 16px; font-weight: 500; fill: #334155; line-height: 1.4; }
+      .card-rule { font-size: 15px; font-weight: 700; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="760" fill="#f8fafc"/>
+
+  <!-- Header -->
+  <text x="600" y="65" text-anchor="middle" class="title">BẢN ĐỒ BA KHÂU CỦA MỌI HỆ ĐIỀU KHIỂN TỰ ĐỘNG</text>
+  <text x="600" y="100" text-anchor="middle" class="sub">Ba góc nhìn thời gian — Cùng chung một sứ mệnh đưa hệ thống về đích êm ái</text>
+
+  <!-- Card 1: P (HIỆN TẠI) -->
+  <g transform="translate(60, 135)">
+    <rect width="330" height="520" rx="14" fill="#ffffff" stroke="#93c5fd" stroke-width="2.5"/>
+    <rect width="330" height="12" rx="6" fill="#2563eb"/>
+    
+    <!-- Header Box -->
+    <rect x="25" y="30" width="280" height="110" rx="10" fill="#eff6ff"/>
+    <circle cx="75" cy="85" r="36" fill="#dbeafe" stroke="#2563eb" stroke-width="2"/>
+    <text x="75" y="106" text-anchor="middle" fill="#1d4ed8" class="card-letter">P</text>
+    <text x="130" y="70" fill="#2563eb" class="card-time">HIỆN TẠI</text>
+    <text x="130" y="98" fill="#1e3a8a" class="card-title">LỰC KÉO</text>
+    <text x="130" y="120" fill="#64748b" font-size="14" font-weight="600">Khâu tỉ lệ</text>
+
+    <!-- Body -->
+    <text x="25" y="175" fill="#1e293b" font-size="17" font-weight="700">Cách A-sin hành động:</text>
+    <text x="25" y="205" class="card-desc">Càng ở xa Rùa thì chạy càng gắt,</text>
+    <text x="25" y="230" class="card-desc">càng lại gần thì càng nhẹ chân.</text>
+
+    <!-- Visual Box -->
+    <rect x="25" y="255" width="280" height="95" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+    <path d="M 45 302 H 285" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4 4"/>
+    <circle cx="75" cy="302" r="14" fill="#2563eb"/>
+    <text x="75" y="307" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="800">P</text>
+    <path d="M 95 302 H 220" stroke="#2563eb" stroke-width="4" stroke-linecap="round"/>
+    <polygon points="225,302 215,296 215,308" fill="#2563eb"/>
+    <circle cx="260" cy="302" r="10" fill="#f59e0b"/>
+    <text x="160" y="335" text-anchor="middle" fill="#1d4ed8" font-size="13" font-weight="700">Lực kéo tỉ lệ với khoảng cách</text>
+
+    <!-- Pros & Cons -->
+    <rect x="25" y="365" width="280" height="70" rx="7" fill="#eff6ff"/>
+    <text x="38" y="390" fill="#1d4ed8" class="card-rule">✓ Phản ứng tức thì, bứt tốc nhanh</text>
+    <text x="38" y="415" fill="#dc2626" class="card-rule">✗ Mãi mãi kẹt lại sai số tồn dư</text>
+
+    <!-- Bottom summary -->
+    <rect x="25" y="450" width="280" height="48" rx="6" fill="#1e40af"/>
+    <text x="165" y="480" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="800">Chương 3 · Mãi mãi cách 1m</text>
+  </g>
+
+  <!-- Card 2: I (QUÁ KHỨ) -->
+  <g transform="translate(435, 135)">
+    <rect width="330" height="520" rx="14" fill="#ffffff" stroke="#fcd34d" stroke-width="2.5"/>
+    <rect width="330" height="12" rx="6" fill="#d97706"/>
+    
+    <!-- Header Box -->
+    <rect x="25" y="30" width="280" height="110" rx="10" fill="#fffbeb"/>
+    <circle cx="75" cy="85" r="36" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+    <text x="75" y="106" text-anchor="middle" fill="#b45309" class="card-letter">I</text>
+    <text x="130" y="70" fill="#d97706" class="card-time">QUÁ KHỨ</text>
+    <text x="130" y="98" fill="#78350f" class="card-title">SỔ GHI NỢ</text>
+    <text x="130" y="120" fill="#64748b" font-size="14" font-weight="600">Khâu tích phân</text>
+
+    <!-- Body -->
+    <text x="25" y="175" fill="#1e293b" font-size="17" font-weight="700">Cách A-sin hành động:</text>
+    <text x="25" y="205" class="card-desc">Mỗi giây còn thiếu 1 mét đều ghi sổ.</text>
+    <text x="25" y="230" class="card-desc">Nợ càng dày thì dồn lực trả cho hết.</text>
+
+    <!-- Visual Box -->
+    <rect x="25" y="255" width="280" height="95" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+    <rect x="50" y="275" width="40" height="50" rx="4" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+    <path d="M 58 288 H 82 M 58 298 H 82 M 58 308 H 75" stroke="#d97706" stroke-width="2"/>
+    <path d="M 105 300 H 220" stroke="#d97706" stroke-width="4" stroke-linecap="round"/>
+    <polygon points="225,300 215,294 215,306" fill="#d97706"/>
+    <circle cx="260" cy="300" r="10" fill="#f59e0b"/>
+    <text x="160" y="335" text-anchor="middle" fill="#b45309" font-size="13" font-weight="700">Cộng dồn mọi sai số cũ</text>
+
+    <!-- Pros & Cons -->
+    <rect x="25" y="365" width="280" height="70" rx="7" fill="#fffbeb"/>
+    <text x="38" y="390" fill="#15803d" class="card-rule">✓ Xóa sạch 100% sai số tồn dư</text>
+    <text x="38" y="415" fill="#dc2626" class="card-rule">✗ Gây vọt lố và dao động qua lại</text>
+
+    <!-- Bottom summary -->
+    <rect x="25" y="450" width="280" height="48" rx="6" fill="#b45309"/>
+    <text x="165" y="480" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="800">Chương 4 · Cuốn sổ ghi nợ</text>
+  </g>
+
+  <!-- Card 3: D (TƯƠNG LAI) -->
+  <g transform="translate(810, 135)">
+    <rect width="330" height="520" rx="14" fill="#ffffff" stroke="#fda4af" stroke-width="2.5"/>
+    <rect width="330" height="12" rx="6" fill="#e11d48"/>
+    
+    <!-- Header Box -->
+    <rect x="25" y="30" width="280" height="110" rx="10" fill="#fff1f2"/>
+    <circle cx="75" cy="85" r="36" fill="#ffe4e6" stroke="#e11d48" stroke-width="2"/>
+    <text x="75" y="106" text-anchor="middle" fill="#be123c" class="card-letter">D</text>
+    <text x="130" y="70" fill="#e11d48" class="card-time">TƯƠNG LAI</text>
+    <text x="130" y="98" fill="#881337" class="card-title">CHIẾC PHANH</text>
+    <text x="130" y="120" fill="#64748b" font-size="14" font-weight="600">Khâu vi phân</text>
+
+    <!-- Body -->
+    <text x="25" y="175" fill="#1e293b" font-size="17" font-weight="700">Cách A-sin hành động:</text>
+    <text x="25" y="205" class="card-desc">Thấy tốc độ lao tới vạch quá gắt,</text>
+    <text x="25" y="230" class="card-desc">đạp phanh nhả ga trước đèn đỏ.</text>
+
+    <!-- Visual Box -->
+    <rect x="25" y="255" width="280" height="95" rx="8" fill="#f8fafc" stroke="#e2e8f0"/>
+    <circle cx="65" cy="302" r="14" fill="#e11d48"/>
+    <text x="65" y="307" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="800">D</text>
+    <path d="M 215 302 H 105" stroke="#e11d48" stroke-width="4" stroke-linecap="round"/>
+    <polygon points="98,302 108,296 108,308" fill="#e11d48"/>
+    <circle cx="260" cy="302" r="10" fill="#f59e0b"/>
+    <text x="160" y="335" text-anchor="middle" fill="#be123c" font-size="13" font-weight="700">Phanh ngược chiều vận tốc tới</text>
+
+    <!-- Pros & Cons -->
+    <rect x="25" y="365" width="280" height="70" rx="7" fill="#fff1f2"/>
+    <text x="38" y="390" fill="#15803d" class="card-rule">✓ Dập tắt vọt lố, dừng êm ru</text>
+    <text x="38" y="415" fill="#dc2626" class="card-rule">✗ Im khi đứng im, rất sợ nhiễu</text>
+
+    <!-- Bottom summary -->
+    <rect x="25" y="450" width="280" height="48" rx="6" fill="#be123c"/>
+    <text x="165" y="480" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="800">Chương 5 · Nhả ga trước đèn đỏ</text>
+  </g>
+
+  <!-- Footer Tagline -->
+  <rect x="60" y="680" width="1080" height="52" rx="10" fill="#0f172a"/>
+  <text x="600" y="712" text-anchor="middle" fill="#ffffff" font-size="17" font-weight="700">
+    P kéo mạnh (Hiện tại) + I xóa thiếu (Quá khứ) + D hãm êm (Tương lai) = Bộ ba hoàn hảo của điều khiển tự động
+  </text>
+</svg>

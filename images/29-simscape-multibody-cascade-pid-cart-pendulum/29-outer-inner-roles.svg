@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="616" viewBox="0 0 1200 616" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="t3 d3">
+  <title id="t3">Phân vai giữa vòng ngoài và vòng trong trong điều khiển tầng</title>
+  <desc id="d3">Bảng so sánh nhiệm vụ, tín hiệu vào, tín hiệu ra và đặc tính động học của vòng ngoài điều khiển vị trí và vòng trong cân bằng góc, kèm thang minh họa tỷ lệ băng thông ba đến mười lần.</desc>
+  <defs>
+    <marker id="s1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#64748b"/>
+    </marker>
+    <marker id="s0" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 9 1 L 0 5 L 9 9 z" fill="#64748b"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1  { font-size: 24px; font-weight: 800; fill: #0f172a; }
+      .h2  { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .ch  { font-size: 16px; font-weight: 800; fill: #ffffff; letter-spacing: .03em; }
+      .cs  { font-size: 14px; font-weight: 500; fill: #cbd5e1; }
+      .rl  { font-size: 13px; font-weight: 700; fill: #94a3b8; letter-spacing: .08em; }
+      .rv  { font-size: 15px; font-weight: 700; fill: #1e293b; }
+      .rn  { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .ax  { font-size: 14px; font-weight: 600; fill: #64748b; }
+      .axb { font-size: 15px; font-weight: 700; fill: #1e293b; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="616" fill="#ffffff"/>
+  <text x="40" y="44" class="h1">Hai vòng, hai vai trò, hai thang thời gian</text>
+  <text x="40" y="72" class="h2">Vòng ngoài quyết định “đi đâu”, vòng trong lo “đừng ngã”. Không vòng nào làm thay việc của vòng kia.</text>
+
+  <!-- ============ CARD: OUTER ============ -->
+  <g>
+    <rect x="40" y="110" width="545" height="336" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <path d="M 40 120 a 10 10 0 0 1 10 -10 h 525 a 10 10 0 0 1 10 10 v 32 h -545 z" fill="#475569"/>
+    <text x="64" y="140" class="ch">VÒNG NGOÀI — VỊ TRÍ XE</text>
+    <text x="561" y="140" text-anchor="end" class="cs">Outer / Slow Loop</text>
+
+    <text x="64" y="192" class="rl">NHIỆM VỤ</text>
+    <text x="64" y="214" class="rv">Đưa xe về mốc x_ref và giữ nó ở đó</text>
+    <text x="64" y="232" class="rn">Đây chính là khâu triệt tiêu hiện tượng trôi xe</text>
+
+    <text x="64" y="254" class="rl">TÍN HIỆU VÀO</text>
+    <text x="64" y="276" class="rv">Sai số vị trí e_x = x_ref − x(t)</text>
+    <text x="64" y="294" class="rn">Lấy từ cổng “x Cart” của khối Simscape, qua Gain = −1</text>
+
+    <text x="64" y="316" class="rl">TÍN HIỆU RA</text>
+    <text x="64" y="338" class="rv">Góc nghiêng mong muốn θ_ref</text>
+    <text x="64" y="356" class="rn">Không phải lực — đây là setpoint cấp cho vòng trong</text>
+
+    <text x="64" y="378" class="rl">ĐẶC TÍNH ĐỘNG HỌC</text>
+    <text x="64" y="400" class="rv">Chậm — độ lợi nhỏ, đáp ứng êm</text>
+    <text x="64" y="418" class="rn">Quán tính khối lượng xe M lớn hơn nhiều quán tính thanh lắc</text>
+  </g>
+
+  <!-- ============ CARD: INNER ============ -->
+  <g>
+    <rect x="615" y="110" width="545" height="336" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5"/>
+    <path d="M 615 120 a 10 10 0 0 1 10 -10 h 525 a 10 10 0 0 1 10 10 v 32 h -545 z" fill="#1e293b"/>
+    <text x="639" y="140" class="ch">VÒNG TRONG — GÓC LẮC</text>
+    <text x="1136" y="140" text-anchor="end" class="cs">Inner / Fast Loop</text>
+
+    <text x="639" y="192" class="rl">NHIỆM VỤ</text>
+    <text x="639" y="214" class="rv">Bám góc đặt θ_ref, không để con lắc đổ</text>
+    <text x="639" y="232" class="rn">Vòng này hỏng là cả hệ sụp — nó phải ổn định trước</text>
+
+    <text x="639" y="254" class="rl">TÍN HIỆU VÀO</text>
+    <text x="639" y="276" class="rv">Sai số góc e_θ = θ_ref − θ(t)</text>
+    <text x="639" y="294" class="rn">θ_ref đến từ vòng ngoài, θ lấy từ cổng “q pendulum”</text>
+
+    <text x="639" y="316" class="rl">TÍN HIỆU RA</text>
+    <text x="639" y="338" class="rv">Lực đẩy xe F(t)</text>
+    <text x="639" y="356" class="rn">Cấp thẳng vào khớp trượt (Prismatic Joint) của cơ hệ</text>
+
+    <text x="639" y="378" class="rl">ĐẶC TÍNH ĐỘNG HỌC</text>
+    <text x="639" y="400" class="rv">Nhanh — độ lợi lớn, phản ứng tức thì</text>
+    <text x="639" y="418" class="rn">Con lắc rời vùng tuyến tính chỉ sau vài chục mili-giây</text>
+  </g>
+
+  <!-- ============ BANDWIDTH LADDER ============ -->
+  <text x="40" y="502" class="axb">Điều kiện sống còn của điều khiển tầng: tách bạch băng thông</text>
+
+  <line x1="40" y1="556" x2="1160" y2="556" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="1160" y="588" text-anchor="end" class="ax">băng thông vòng kín (rad/s) →</text>
+
+  <line x1="300" y1="538" x2="300" y2="574" stroke="#64748b" stroke-width="2"/>
+  <text x="300" y="532" text-anchor="middle" class="axb">ω_outer</text>
+  <text x="300" y="592" text-anchor="middle" class="ax">vòng ngoài</text>
+
+  <line x1="900" y1="538" x2="900" y2="574" stroke="#1e293b" stroke-width="2.5"/>
+  <text x="900" y="532" text-anchor="middle" class="axb">ω_inner</text>
+  <text x="900" y="592" text-anchor="middle" class="ax">vòng trong</text>
+
+  <path d="M 312 540 H 888" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5 4" marker-start="url(#s0)" marker-end="url(#s1)"/>
+  <rect x="540" y="542" width="120" height="26" rx="4" fill="#ffffff"/>
+  <text x="600" y="561" text-anchor="middle" class="axb">nhanh hơn 3–10×</text>
+</svg>

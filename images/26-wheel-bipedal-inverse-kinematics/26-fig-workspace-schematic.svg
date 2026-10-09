@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1056 888" role="img">
+  <title>Sơ đồ vùng làm việc — giao hai vành khăn</title>
+  <desc>Vùng làm việc của điểm B là giao của vành khăn 4≤r≤18 quanh O(0,0) và vành khăn 4≤r≤18 quanh D(8,0): gồm hai thùy trên/dưới nối với nhau bởi hai cánh bên dọc y=0 (x∈[−10,−4] và x∈[12,18]). Giữa hai hông là dải chết; hai lỗ trong tiếp xúc nhau tại điểm kỳ dị S(4,0) nơi disc=0.</desc>
+  <style>
+    text{font-family:Helvetica,Arial,sans-serif;fill:#24292f;font-size:18px;paint-order:stroke;stroke:#ffffff;stroke-width:4px;stroke-linejoin:round}
+    .tick{font-size:15px}
+  </style>
+  <rect width="1056" height="888" fill="#ffffff"/>
+
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b0b0b0"/>
+    </marker>
+  </defs>
+
+  <!-- Trục tọa độ -->
+  <line x1="24" y1="444" x2="1030" y2="444" stroke="#b0b0b0" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="444" y1="864" x2="444" y2="26" stroke="#b0b0b0" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="1036" y="450">x</text>
+  <text x="452" y="42">y</text>
+  <line x1="234" y1="444" x2="234" y2="452" stroke="#b0b0b0" stroke-width="1.5"/>
+  <line x1="528" y1="444" x2="528" y2="452" stroke="#b0b0b0" stroke-width="1.5"/>
+  <line x1="822" y1="444" x2="822" y2="452" stroke="#b0b0b0" stroke-width="1.5"/>
+  <text class="tick" x="234" y="472" text-anchor="middle">−10</text>
+  <text class="tick" x="528" y="472" text-anchor="middle">4</text>
+  <text class="tick" x="822" y="472" text-anchor="middle">18</text>
+
+  <!-- Hai vành khăn (vùng giao tự đậm hơn = vùng làm việc) -->
+  <path fill-rule="evenodd" fill="#0969da" fill-opacity="0.18" stroke="#0969da" stroke-opacity="0.55" stroke-width="1.5"
+        d="M 822 444 A 378 378 0 1 0 66 444 A 378 378 0 1 0 822 444 Z
+           M 528 444 A 84 84 0 1 0 360 444 A 84 84 0 1 0 528 444 Z"/>
+  <path fill-rule="evenodd" fill="#1a7f37" fill-opacity="0.18" stroke="#1a7f37" stroke-opacity="0.55" stroke-width="1.5"
+        d="M 990 444 A 378 378 0 1 0 234 444 A 378 378 0 1 0 990 444 Z
+           M 696 444 A 84 84 0 1 0 528 444 A 84 84 0 1 0 696 444 Z"/>
+
+  <!-- Dải chết dọc y=0 giữa hai hông (chừa gap quanh điểm kỳ dị) -->
+  <line x1="360" y1="444" x2="514" y2="444" stroke="#cf222e" stroke-width="5"/>
+  <line x1="542" y1="444" x2="696" y2="444" stroke="#cf222e" stroke-width="5"/>
+  <text x="528" y="418" text-anchor="middle" fill="#cf222e" font-size="17px">Dải chết dọc y = 0 (−4 &lt; x &lt; 12, x ≠ 4)</text>
+
+  <!-- Hai cánh bên: y = 0 đi qua được -->
+  <line x1="234" y1="444" x2="360" y2="444" stroke="#1a7f37" stroke-width="7"/>
+  <line x1="696" y1="444" x2="822" y2="444" stroke="#1a7f37" stroke-width="7"/>
+  <text x="297" y="478" text-anchor="middle" fill="#1a7f37" font-size="16px">x ∈ [−10, −4]</text>
+  <text x="759" y="478" text-anchor="middle" fill="#1a7f37" font-size="16px">x ∈ [12, 18] — qua đây đổi thùy được</text>
+
+  <!-- Điểm kỳ dị, hông, giao vành ngoài -->
+  <circle cx="528" cy="444" r="6" fill="#cf222e" stroke="#24292f" stroke-width="1.5"/>
+  <text x="528" y="512" text-anchor="middle" fill="#cf222e" font-size="17px">S(4, 0) — điểm kỳ dị: disc = 0, hai nghiệm hợp nhất</text>
+  <circle cx="444" cy="444" r="5" fill="#24292f"/>
+  <circle cx="612" cy="444" r="5" fill="#24292f"/>
+  <text x="432" y="540" text-anchor="end">O (hip trái)</text>
+  <text x="624" y="540">D (hip phải)</text>
+  <circle cx="528" cy="75.4" r="4" fill="#24292f"/>
+  <circle cx="528" cy="812.6" r="4" fill="#24292f"/>
+  <text x="540" y="68" font-size="15px">hai vành ngoài giao nhau tại (4, ±17.55)</text>
+
+  <!-- Nhãn hai thùy -->
+  <text x="528" y="196" text-anchor="middle" font-size="21px" font-weight="bold">Thùy trên (y &gt; 0)</text>
+  <text x="528" y="722" text-anchor="middle" font-size="21px" font-weight="bold">Thùy dưới (y &lt; 0)</text>
+
+  <!-- Chú giải -->
+  <g>
+    <rect x="36" y="36" width="404" height="238" rx="6" fill="#ffffff" fill-opacity="0.88" stroke="#d0d7de"/>
+    <rect x="52" y="54" width="26" height="16" fill="#0969da" fill-opacity="0.18" stroke="#0969da" stroke-opacity="0.55"/>
+    <text x="88" y="68" font-size="17px">Vành khăn quanh O: 4 ≤ |OB| ≤ 18</text>
+    <rect x="52" y="84" width="26" height="16" fill="#1a7f37" fill-opacity="0.18" stroke="#1a7f37" stroke-opacity="0.55"/>
+    <text x="88" y="98" font-size="17px">Vành khăn quanh D: 4 ≤ |DB| ≤ 18</text>
+    <rect x="52" y="114" width="15" height="16" fill="#0969da" fill-opacity="0.18"/>
+    <rect x="63" y="114" width="15" height="16" fill="#1a7f37" fill-opacity="0.18"/>
+    <text x="88" y="128" font-size="17px">Vùng làm việc = giao hai vành (đậm hơn)</text>
+    <line x1="52" y1="156" x2="78" y2="156" stroke="#cf222e" stroke-width="5"/>
+    <text x="88" y="162" font-size="17px">Dải chết dọc y = 0 giữa hai hông</text>
+    <line x1="52" y1="186" x2="78" y2="186" stroke="#1a7f37" stroke-width="7"/>
+    <text x="88" y="192" font-size="17px">y = 0 đi qua được: x ∈ [−10, −4] ∪ [12, 18]</text>
+    <circle cx="65" cy="220" r="6" fill="#cf222e"/>
+    <text x="88" y="226" font-size="17px">Điểm kỳ dị S(4, 0): disc = 0, hai nghiệm hợp nhất</text>
+  </g>
+</svg>

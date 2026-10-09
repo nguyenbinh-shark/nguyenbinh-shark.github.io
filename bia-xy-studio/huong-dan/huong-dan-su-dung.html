@@ -1,0 +1,347 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hướng dẫn sử dụng Bia XY Studio · Sổ tay 1.1</title><style>
+:root{font-family:Arial,'Segoe UI',sans-serif;color:#172b35;background:#edf1f3}
+*{box-sizing:border-box}body{margin:0;font-size:16px;line-height:1.65}
+.toolbar{position:sticky;top:0;z-index:2;display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:12px 24px;background:#123e50;color:white}
+.toolbar a{color:white}.toolbar button{font:inherit;font-weight:bold;background:white;color:#123e50;border:0;border-radius:6px;padding:9px 14px;cursor:pointer}.toolbar .grow{flex:1}
+main{max-width:920px;margin:24px auto;background:white;padding:48px 64px;box-shadow:0 8px 28px #142e3c15}
+h1,h2,h3{color:#123e50;line-height:1.3}h1{font-size:36px;letter-spacing:.03em;margin:20px 0}h2{font-size:26px;margin:48px 0 20px}h3{font-size:19px;margin:26px 0 10px}
+p{margin:12px 0}li{margin:8px 0}a{color:#08657e;overflow-wrap:anywhere}code{font-family:Consolas,monospace;font-size:.9em;overflow-wrap:anywhere}
+.cover{border-bottom:3px solid #123e50;padding-bottom:28px}.cover h2{font-size:23px;margin:16px 0 30px}.connection-diagram{width:100%;height:auto;margin:12px 0}
+table{width:100%;border-collapse:collapse;margin:18px 0;font-size:14px;line-height:1.5}th,td{border:1px solid #c8d5dc;padding:9px 10px;vertical-align:top;overflow-wrap:anywhere}th{background:#e8f0f3;text-align:left}tr:nth-child(even) td{background:#f8fafb}
+.contents{padding:18px 24px;background:#f3f7f8}.contents a{display:block;padding:3px 0;text-decoration:none}
+.chapter{scroll-margin-top:90px}.edition{font-size:13px;color:#536a76}
+figure{margin:24px 0;padding:12px;border:1px solid #d1dde3;border-radius:8px;background:#f8fafb;break-inside:avoid}
+figure a{display:block;text-align:center}figure img{display:block;max-width:100%;width:auto;height:auto;margin:0 auto;border:1px solid #c8d5dc}
+figcaption{font-size:13px;line-height:1.5;color:#365b6a;margin-top:10px}figure img.portrait{max-height:650px}
+@media(max-width:700px){main{padding:24px 18px;margin:0}h1{font-size:28px}.toolbar{padding:10px 16px}table{font-size:12px}td,th{padding:6px}}
+@page{size:A4;margin:18mm 17mm 19mm 20mm}
+@media print{
+ :root{background:white;color:#111}body{font-size:10.5pt;line-height:1.48}.toolbar{display:none}main{width:auto;max-width:none;margin:0;padding:0;box-shadow:none}
+ .cover{min-height:246mm;break-after:page;border:0;padding-top:12mm}.cover h1{font-size:28pt}.cover h2{font-size:18pt;margin:10mm 0 12mm}
+ h2.chapter{break-before:page;margin-top:0;font-size:19pt}h3{font-size:12.5pt}h1,h2,h3{break-after:avoid}p{orphans:3;widows:3}li{margin:5px 0}
+ table{font-size:9pt;line-height:1.35}thead{display:table-header-group}tr{break-inside:avoid}th,td{padding:6px 7px}a{color:inherit;text-decoration:none}.contents{background:white;padding:0}.contents a{padding:4px 0}
+ .connection-diagram{margin:8mm 0}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ figure{padding:0;border:0;background:white;margin:5mm 0;break-inside:avoid}figure img{max-width:160mm;max-height:130mm;width:auto;height:auto}figure img.portrait{max-height:130mm}figcaption{font-size:9pt;line-height:1.4;margin-top:2mm}
+}
+</style></head><body>
+<div class="toolbar"><a href="../index.html#guide">← Bia XY Studio</a><span class="grow"></span><a href="huong-dan-su-dung.pdf" download>PDF</a><a href="huong-dan-su-dung.docx" download>Word</a><button type="button" onclick="window.print()">In / Lưu PDF</button></div>
+<main><section class="cover">
+<h1>HƯỚNG DẪN SỬ DỤNG BIA XY STUDIO</h1>
+<h2>Sổ tay website, tay cầm và bia di động XY</h2>
+<p>Tác giả: Trần Nguyên Bình<br>Phiên bản tài liệu: 1.1 · Có ảnh thao tác · Ngày 03/10/2026</p>
+<p>Website: <a href="https://nguyenbinh-shark.github.io/bia-xy-studio/">https://nguyenbinh-shark.github.io/bia-xy-studio/</a></p>
+<p>Tài liệu dành cho người vận hành hệ thống: mở website, kết nối tay cầm, ghép bia, tạo bài tập, chạy một hoặc nhiều bia và sao lưu dữ liệu. Tên nút trong tài liệu giữ theo giao diện tiếng Việt hiện tại.</p>
+<p><strong>Cách đọc ảnh:</strong> ảnh thao tác chụp từ giao diện đang chạy; các màn hình tay cầm dùng chế độ Dùng thử. Khung màu cam và số 1, 2, 3 đánh dấu nút/ô cần thao tác. Bấm ảnh trong bản web để mở kích thước đầy đủ. Ảnh mô phỏng không xác nhận đã kết nối phần cứng hoặc đã nạp bài cloud.</p>
+<p><strong>Phạm vi phiên bản:</strong> USB, mô phỏng, thiết kế bài và điều khiển bia qua ESP-NOW đã có trong mã nguồn được đối chiếu. Website có thư viện cloud và màn hình Đồng bộ; firmware tay cầm hiện tại chưa có chức năng kết nối Internet, tạo mã ghép cloud hoặc tải bài qua WiFi. Vì vậy, chuyển bài xuống tay cầm bằng USB là quy trình sử dụng hiện tại. Chương 8 mô tả điều kiện của đồng bộ cloud để người dùng nhận biết đúng khả năng thiết bị.</p>
+<p>Tài liệu mô tả thao tác phần mềm và vận hành cơ cấu bia. Kết quả mô phỏng không thay thế kiểm tra trên thiết bị đã lắp thực tế. Hệ thống hiện không có cảm biến ghi nhận phát trúng và không tự chấm điểm bài tập.</p>
+<svg class="connection-diagram" viewBox="0 0 680 136" role="img" aria-label="Máy tính nối USB với tay cầm; tay cầm nối ESP-NOW với bia">
+<g fill="#edf4f6" stroke="#bfd3db"><rect x="4" y="28" width="180" height="78" rx="12"/><rect x="250" y="28" width="180" height="78" rx="12"/><rect x="496" y="28" width="180" height="78" rx="12"/></g>
+<g fill="#133c4b" font-family="Arial,sans-serif" font-size="18" text-anchor="middle"><text x="94" y="62">Máy tính</text><text x="94" y="85">Bia XY Studio</text><text x="340" y="73">Tay cầm</text><text x="586" y="73">Bia XY</text></g>
+<g stroke="#0b6e8a" stroke-width="2"><path d="M186 67h62m-8-5 8 5-8 5M184 67l8-5m-8 5 8 5"/><path d="M432 67h62m-8-5 8 5-8 5M432 67l8-5m-8 5 8 5"/></g>
+<g fill="#365b6a" font-family="Arial,sans-serif" font-size="12" text-anchor="middle"><text x="217" y="45">USB-C</text><text x="463" y="45">ESP-NOW</text></g></svg>
+</section>
+<h2 class="chapter" id="contents">Mục lục</h2>
+<nav class="contents" aria-label="Mục lục">
+<a href="#chapter-1">1. Nhận biết hệ thống và các kết nối</a>
+<a href="#chapter-2">2. Chuẩn bị và sử dụng lần đầu</a>
+<a href="#chapter-3">3. Kết nối website với tay cầm qua USB</a>
+<a href="#chapter-4">4. Ghép và quản lý bia</a>
+<a href="#chapter-5">5. Tạo bài tập trên website</a>
+<a href="#chapter-6">6. Ba bài mẫu thực hành</a>
+<a href="#chapter-7">7. Điều khiển và chạy bài trên bia</a>
+<a href="#chapter-8">8. Tài khoản, cloud và đồng bộ</a>
+<a href="#chapter-9">9. Sao lưu và chuyển bài bằng file</a>
+<a href="#chapter-10">10. Cài đặt và hiệu chuẩn</a>
+<a href="#chapter-11">11. Xử lý sự cố</a>
+<a href="#chapter-12">12. Phiếu kiểm tra, bàn giao và nhật ký</a>
+<a href="#chapter-13">Phụ lục A. Giới hạn và đơn vị</a>
+<a href="#chapter-14">Phụ lục B. Thuật ngữ và file bài mẫu</a>
+</nav>
+<h2 class="chapter" id="chapter-1">1. Nhận biết hệ thống và các kết nối</h2>
+<h3>1.1. Ba thành phần chính</h3>
+<p><strong>Website Bia XY Studio</strong> chạy trong trình duyệt. Website có bản sao màn hình tay cầm, bộ thiết kế bài tập và nơi quản lý bài lưu trên tài khoản. Có thể soạn bài và xem mô phỏng trước khi dùng thiết bị thật.</p>
+<p><strong>Tay cầm</strong> là bộ điều khiển có màn hình cảm ứng. Tay cầm lưu danh sách bia, cài đặt và bài tự tạo; gửi lệnh đến bia bằng ESP-NOW. Sau khi đã nạp bài, có thể vận hành trực tiếp từ tay cầm mà không cần giữ máy tính kết nối.</p>
+<p><strong>Bia XY</strong> là cơ cấu chuyển động mục tiêu trong mặt phẳng. Bia nhận lệnh từ tay cầm và báo trạng thái về. Mỗi bia còn có một mạng WiFi riêng để truy cập trang cấu hình tại chỗ.</p>
+<h3>1.2. Phân biệt bốn đường kết nối</h3>
+<table><thead><tr><th scope="col">Kết nối</th><th scope="col">Nối những gì?</th><th scope="col">Dùng để làm gì?</th><th scope="col">Cần Internet?</th></tr></thead><tbody>
+<tr><td>USB-C / Web Serial</td><td>Máy tính ↔ tay cầm</td><td>Xem màn hình, nạp bài, gửi thao tác điều khiển</td><td>Không, nếu đã có đầy đủ bộ file web cục bộ</td></tr>
+<tr><td>ESP-NOW</td><td>Tay cầm ↔ các bia</td><td>Điều khiển chuyển động và nhận trạng thái</td><td>Không</td></tr>
+<tr><td>WiFi do bia phát</td><td>Máy tính/điện thoại ↔ một bia</td><td>Mở trang cấu hình và hiệu chuẩn của bia</td><td>Không</td></tr>
+<tr><td>Cloud</td><td>Website ↔ tài khoản trên Internet</td><td>Lưu Bài của tôi, quản lý danh sách đồng bộ</td><td>Có</td></tr>
+</tbody></table>
+<p>Việc máy tính đã nối USB với tay cầm không có nghĩa tay cầm đã ghép được bia. Việc điện thoại đã nối WiFi của bia cũng không có nghĩa đã đăng nhập cloud. Kiểm tra từng đường kết nối riêng.</p>
+<h3>1.3. Các tab trên website</h3>
+<table><thead><tr><th scope="col">Tab</th><th scope="col">Công việc chính</th></tr></thead><tbody>
+<tr><td>Tay cầm</td><td>Thao tác trên bản sao màn hình cảm ứng</td></tr>
+<tr><td>Thiết kế bài tập</td><td>Vẽ điểm, sửa tọa độ, đặt tốc độ/dừng, xem mô phỏng và lưu bài</td></tr>
+<tr><td>Đồng bộ</td><td>Quản lý tay cầm trên tài khoản và danh sách bài dự kiến nạp qua cloud</td></tr>
+<tr><td>Cập nhật</td><td>Nạp bản phần mềm đã phát hành cho đúng tay cầm hoặc bia qua USB</td></tr>
+<tr><td>Hướng dẫn sử dụng</td><td>Đọc hướng dẫn nhanh, mở sổ tay và tải tài liệu in</td></tr>
+<tr><td>Console</td><td>Xem trao đổi dữ liệu và chẩn đoán khi cần hỗ trợ kỹ thuật</td></tr>
+</tbody></table>
+<p>Trong tab Tay cầm, các trang bên trong màn hình gồm <strong>Tổng quan</strong>, <strong>Điều khiển</strong>, <strong>Bài chạy</strong>, <strong>Trạng thái</strong>, <strong>Quản lý bia</strong>. Biểu tượng bánh răng mở <strong>Cài đặt</strong>. Đây là menu của tay cầm, khác với các tab bên ngoài của website.</p>
+<h2 class="chapter" id="chapter-2">2. Chuẩn bị và sử dụng lần đầu</h2>
+<h3>2.1. Chuẩn bị thiết bị</h3>
+<ul><li>Máy tính có Chrome hoặc Edge hỗ trợ Web Serial; quy trình USB trong tài liệu dùng trình duyệt trên máy tính.</li><li>Cáp USB-C truyền dữ liệu; cáp chỉ cấp nguồn sẽ không tạo cổng kết nối.</li><li>Tay cầm đã nạp firmware tương thích và có nguồn ổn định.</li><li>Ít nhất một bia đã lắp đúng cơ cấu, có nguồn phù hợp với bộ thiết bị được bàn giao.</li><li>Một thư mục trên máy tính để lưu file bài tập và tài liệu.</li></ul>
+<p>Điện thoại có thể đọc hướng dẫn và truy cập trang WiFi của bia. Khả năng kết nối USB phụ thuộc trình duyệt và thiết bị; không dùng điện thoại làm phương án USB mặc định trong quy trình này.</p>
+<h3>2.2. Kiểm tra trước khi cho cơ cấu chuyển động</h3>
+<p>Đặt bia chắc chắn, kiểm tra dây không vướng vào các khâu và vùng chuyển động không có người hoặc vật cản. Đảm bảo người vận hành thấy được bia và biết vị trí nút dừng. Nếu cơ cấu kẹt, rung bất thường hoặc mất phản hồi, dừng thao tác và kiểm tra thiết bị trước khi chạy lại.</p>
+<p><strong>CHẠY, ĐI TỚI, Về gốc, Nhận diện và gửi Góc servo có thể làm bia thật chuyển động.</strong> Nút DỪNG TẤT CẢ trên web/tay cầm gửi lệnh dừng và kết thúc phiên bài. Nút cứng IO17 chỉ dùng được khi thiết bị thực tế đã lắp và đấu nối nút đó. Khi mất sóng, phải quan sát bia đã dừng; không suy ra trạng thái cơ khí chỉ từ màn hình.</p>
+<h3>2.3. Làm quen bằng Dùng thử</h3>
+<ol><li>Mở Bia XY Studio và bấm <strong>Dùng thử (không cần tay cầm)</strong>.</li><li>Chờ màn hình tay cầm ảo hiện ra. Bấm chuột như chạm vào màn hình.</li><li>Vào <strong>Điều khiển</strong>, chọn một bia ảo và thử một bài có sẵn.</li><li>Thử <strong>DỪNG TẤT CẢ</strong>, rồi mở <strong>Bài chạy</strong> để làm quen việc chọn bia và thời gian bài.</li><li>Mở <strong>Thiết kế bài tập</strong>, tạo bài và bấm <strong>Xem chạy thử</strong>.</li></ol>
+<p>Dùng thử không kết nối bia thật. Dữ liệu lưu vào tay cầm ảo chỉ tồn tại trong phiên mô phỏng và mất khi tải lại trang. Muốn giữ bài, tải file JSON hoặc lưu vào Bài của tôi khi đã đăng nhập và dịch vụ cloud hoạt động.</p>
+<figure><a href="images/01-ket-noi.png" target="_blank" rel="noopener"><img src="images/01-ket-noi.png" alt="Hình 1. Màn hình mở Studio: (1) Kết nối USB cho tay cầm thật; (2) Dùng thử để làm quen khi chưa có thiết bị." width="800" height="480" loading="lazy"></a><figcaption>Hình 1. Màn hình mở Studio: (1) Kết nối USB cho tay cầm thật; (2) Dùng thử để làm quen khi chưa có thiết bị.</figcaption></figure>
+<figure><a href="images/02-tong-quan.png" target="_blank" rel="noopener"><img src="images/02-tong-quan.png" alt="Hình 2. Tổng quan tay cầm trong Dùng thử: (1) menu chuyển trang; (2) DỪNG TẤT CẢ luôn nằm ở góc dưới bên trái." width="800" height="480" loading="lazy"></a><figcaption>Hình 2. Tổng quan tay cầm trong Dùng thử: (1) menu chuyển trang; (2) DỪNG TẤT CẢ luôn nằm ở góc dưới bên trái.</figcaption></figure>
+<h3>2.4. Quy trình ngắn cho lần sử dụng đầu</h3>
+<p><strong>Mở web → nối USB → ghép bia → tạo bài → xem chạy thử → lưu vào tay cầm → chọn bài trên tay cầm → chạy chậm → dừng → sao lưu.</strong></p>
+<p>Nếu chưa có thiết bị, thay bước nối USB bằng Dùng thử. Nếu đã ghép bia từ trước, kiểm tra bia hiện trực tuyến rồi tiếp tục.</p>
+<h2 class="chapter" id="chapter-3">3. Kết nối website với tay cầm qua USB</h2>
+<h3>3.1. Kết nối từng bước</h3>
+<ol><li>Dừng các bia trước khi mở cổng USB. Một số driver CH340 có thể làm tay cầm khởi động lại lúc mở cổng.</li><li>Cắm cáp USB-C từ <strong>tay cầm</strong> vào máy tính. Không chọn nhầm cổng USB của bia.</li><li>Mở website bằng Chrome hoặc Edge. Bấm <strong>Kết nối USB</strong>.</li><li>Trong cửa sổ chọn thiết bị của trình duyệt, chọn cổng tay cầm; thường có tên <strong>USB-SERIAL CH340</strong>. Bấm nút kết nối của cửa sổ đó.</li><li>Chờ trang nhận trạng thái và hiện bản sao màn hình. Kiểm tra chỉ báo kết nối ở đầu trang.</li><li>Trên tay cầm thật, chip <strong>PC</strong> cho biết đang có máy tính kết nối.</li></ol>
+<p>Website tự thiết lập tốc độ cổng 921600 baud. Người dùng không cần nhập tốc độ này trong giao diện Studio.</p>
+<h3>3.2. Kết quả cần thấy</h3>
+<p>Bản sao màn hình hiển thị cùng trạng thái với tay cầm thật. Danh sách <strong>Trên tay cầm</strong> trong Thiết kế bài tập được tải về. Có thể mở một bài có sẵn và xem các điểm. Chỉ thử lệnh chuyển động sau khi đã kiểm tra bia và vùng chạy.</p>
+<p>Nếu màn hình chưa cập nhật, chờ tay cầm khởi động xong. Nếu vẫn không có trạng thái, bấm <strong>Ngắt</strong>, đóng chương trình đang giữ cổng và kết nối lại. Xem bảng lỗi ở Chương 11.</p>
+<h3>3.3. Dùng bộ file cục bộ</h3>
+<p>Có thể mở <code>studio.html</code> từ thư mục máy tính khi thư mục chứa đủ <code>hmi_demo.js</code>, <code>hmi_remote.js</code> và các file hướng dẫn đi kèm. USB và mô phỏng sử dụng bộ file đó; lần tải website từ Internet vẫn cần mạng. Đăng nhập Google/cloud cần bản web trực tuyến được cấu hình đúng, không dùng bản mở từ ổ đĩa để đăng nhập.</p>
+<h3>3.4. Kết thúc kết nối</h3>
+<ol><li>Bấm <strong>DỪNG BÀI</strong> hoặc <strong>DỪNG TẤT CẢ</strong> nếu muốn kết thúc chuyển động.</li><li>Kiểm tra bia đã dừng và lưu các bài đang sửa.</li><li>Bấm <strong>Ngắt</strong>, rồi rút cáp nếu không còn dùng máy tính.</li></ol>
+<p><strong>Ngắt USB hoặc đóng trang không phải lệnh dừng bia.</strong> Tay cầm tiếp tục vận hành độc lập. Muốn dùng tay cầm khi không có máy tính, nạp bài xong, ngắt USB và thao tác trực tiếp trên màn hình tay cầm.</p>
+<h2 class="chapter" id="chapter-4">4. Ghép và quản lý bia</h2>
+<h3>4.1. Ghép một bia mới</h3>
+<ol><li>Bật tay cầm và bia cần ghép. Đặt cùng kênh ESP-NOW; kênh mặc định trong cấu hình hiện tại là 1.</li><li>Trên màn hình tay cầm, mở <strong>Quản lý bia</strong>. Có thể thao tác trên thiết bị thật hoặc bản sao trong tab Tay cầm khi đã nối USB.</li><li>Bấm <strong>TÌM BIA MỚI</strong> và chờ danh sách bia chưa ghép xuất hiện.</li><li>Chọn <strong>Nhận diện</strong> để kiểm tra đúng bia; thao tác này làm đầu mục tiêu chuyển động nhận diện.</li><li>Bấm <strong>GHÉP</strong> ở đúng dòng bia, sau đó <strong>XONG</strong>.</li><li>Chọn bia vừa thêm, kiểm tra tên, MAC, trạng thái và kênh. Đổi tên thành tên dễ nhận biết, ví dụ “Bia trái”.</li></ol>
+<p>Tay cầm hỗ trợ tối đa <strong>8 bia</strong>. Danh sách đã ghép lưu trong tay cầm và được giữ sau khi tắt nguồn.</p>
+<figure><a href="images/03-quan-ly-bia.png" target="_blank" rel="noopener"><img src="images/03-quan-ly-bia.png" alt="Hình 3. Quản lý bia: (1) chọn bia trong danh sách đã ghép; (2) TÌM BIA MỚI mở cửa sổ quét." width="800" height="480" loading="lazy"></a><figcaption>Hình 3. Quản lý bia: (1) chọn bia trong danh sách đã ghép; (2) TÌM BIA MỚI mở cửa sổ quét.</figcaption></figure>
+<figure><a href="images/04-tim-ghep-bia.png" target="_blank" rel="noopener"><img src="images/04-tim-ghep-bia.png" alt="Hình 4. Cửa sổ tìm bia: (1) Nhận diện để kiểm tra đúng bia; (2) GHÉP đúng dòng; (3) XONG để đóng. MAC và tín hiệu trong ảnh là dữ liệu bia ảo." width="800" height="480" loading="lazy"></a><figcaption>Hình 4. Cửa sổ tìm bia: (1) Nhận diện để kiểm tra đúng bia; (2) GHÉP đúng dòng; (3) XONG để đóng. MAC và tín hiệu trong ảnh là dữ liệu bia ảo.</figcaption></figure>
+<h3>4.2. Ghép bằng địa chỉ MAC</h3>
+<p>Nếu đã biết MAC của bia, bấm <strong>NHẬP MAC</strong> trong Quản lý bia và nhập địa chỉ của đúng thiết bị. Bật bia, đặt cùng kênh và chờ hoàn thành ghép. Lấy MAC từ thông tin được bàn giao hoặc log USB của bia; không nhập MAC của tay cầm hay địa chỉ thiết bị khác.</p>
+<h3>4.3. Kiểm tra bia trước khi chạy</h3>
+<p>Chọn bia và kiểm tra <strong>Trạng thái</strong>, tín hiệu sóng, vị trí, phiên bản firmware và vùng chạy được báo về. Vào <strong>Trạng thái</strong> khi cần xem thêm thông tin. Bia mất kết nối hoặc báo lỗi chưa đủ điều kiện để bắt đầu bài.</p>
+<p>Độ mạnh tín hiệu giúp nhận biết chất lượng đường truyền, nhưng không xác nhận cơ cấu đã lắp đúng. Vị trí trên màn hình là dữ liệu bia báo về; hệ thống hiện không dùng cảm biến độc lập để xác nhận vị trí cơ khí.</p>
+<figure><a href="images/05-bia-da-ghep.png" target="_blank" rel="noopener"><img src="images/05-bia-da-ghep.png" alt="Hình 5. Sau khi ghép: (1) bia mới xuất hiện trong danh sách; (2) Đổi tên để dễ nhận biết khi vận hành." width="800" height="480" loading="lazy"></a><figcaption>Hình 5. Sau khi ghép: (1) bia mới xuất hiện trong danh sách; (2) Đổi tên để dễ nhận biết khi vận hành.</figcaption></figure>
+<h3>4.4. Đổi tên, xóa và chuyển tay cầm</h3>
+<p><strong>Đổi tên</strong> sửa tên hiển thị của bia trong danh sách. <strong>Xóa bia</strong> bỏ ghép bia khỏi tay cầm; dừng bia trước khi xóa. Nếu cần chuyển bia sang tay cầm khác, kiểm tra trạng thái ghép ở cả hai thiết bị và dùng chức năng <strong>Bo ghep</strong> trên trang WiFi của bia khi cần gỡ liên kết cũ. Sau đó thực hiện quy trình tìm và ghép mới.</p>
+<p>Không xóa bia chỉ để xử lý một lần mất sóng. Trước hết kiểm tra nguồn, kênh và khoảng cách.</p>
+<h2 class="chapter" id="chapter-5">5. Tạo bài tập trên website</h2>
+<h3>5.1. Bắt đầu một bài mới</h3>
+<ol><li>Mở <strong>Thiết kế bài tập</strong>, bấm <strong>+ Bài mới</strong>.</li><li>Nhập tên ngắn, ví dụ <strong>Ngang 3 diem</strong>. Tên tiếng Việt có dấu được hỗ trợ nhưng phải vừa giới hạn bộ nhớ; nếu trang báo tên quá dài, rút ngắn tên.</li><li>Chọn kiểu <strong>Qua lại</strong> hoặc <strong>Lặp vòng</strong> cho bài có danh sách điểm.</li><li>Thêm điểm bằng khung vẽ hoặc dùng <strong>Tạo nhanh…</strong>.</li></ol>
+<figure><a href="images/06-bai-moi.png" target="_blank" rel="noopener"><img src="images/06-bai-moi.png" alt="Hình 6. Bộ sửa bài mới: (1) nhập tên; (2) chọn kiểu Qua lại cho bài Ngang 3 diem; (3) tạo nhanh danh sách điểm." width="410" height="507" loading="lazy" class="portrait"></a><figcaption>Hình 6. Bộ sửa bài mới: (1) nhập tên; (2) chọn kiểu Qua lại cho bài Ngang 3 diem; (3) tạo nhanh danh sách điểm.</figcaption></figure>
+<h3>5.2. Hiểu các kiểu bài</h3>
+<table><thead><tr><th scope="col">Kiểu</th><th scope="col">Cách di chuyển</th></tr></thead><tbody>
+<tr><td>Qua lại</td><td>Đi lần lượt từ điểm đầu đến điểm cuối, rồi trở ngược qua các điểm</td></tr>
+<tr><td>Lặp vòng</td><td>Đi từ điểm đầu đến điểm cuối, rồi nối về điểm đầu và lặp</td></tr>
+<tr><td>Ngẫu nhiên</td><td>Bia tự chọn điểm trong vùng chạy; không dùng danh sách điểm cố định</td></tr>
+</tbody></table>
+<p>Phân biệt <strong>kiểu Ngẫu nhiên</strong> với <strong>Tạo nhanh → Ngẫu nhiên</strong>: Tạo nhanh tạo một danh sách tọa độ ngẫu nhiên để tiếp tục sửa; kiểu Ngẫu nhiên để bia tự sinh điểm khi vận hành. Bài kiểu Ngẫu nhiên có sẵn trên tay cầm và không lưu lên Bài của tôi qua luồng hiện tại.</p>
+<h3>5.3. Thêm và sửa điểm</h3>
+<table><thead><tr><th scope="col">Thao tác</th><th scope="col">Kết quả</th></tr></thead><tbody>
+<tr><td>Bấm vùng trống trong vùng hợp lệ</td><td>Thêm một điểm cuối bài</td></tr>
+<tr><td>Bấm một điểm</td><td>Chọn điểm đó</td></tr>
+<tr><td>Kéo điểm</td><td>Đổi tọa độ</td></tr>
+<tr><td>Shift + bấm lên đường nối</td><td>Chèn điểm vào đoạn đang chọn</td></tr>
+<tr><td>Delete</td><td>Xóa điểm đang chọn khi không gõ trong ô nhập</td></tr>
+<tr><td>Phím mũi tên</td><td>Dịch điểm đang chọn 1 mm; giữ Shift để dịch 10 mm</td></tr>
+<tr><td>Nút ↑ / ↓ trong bảng điểm</td><td>Đổi thứ tự điểm</td></tr>
+<tr><td>Nút ✕ trong bảng điểm</td><td>Xóa điểm của dòng đó</td></tr>
+</tbody></table>
+<p><strong>Bắt lưới 5 mm</strong> giúp đặt điểm dễ hơn. Bảng bên phải cho phép nhập chính xác X, Y bằng mm. Trục X biểu diễn trái/phải trong hệ tọa độ cơ cấu; Y tăng theo chiều lên trên khung vẽ. Đối chiếu hướng thực tế trong lần chạy chậm đầu tiên.</p>
+<p>Vùng tô màu và viền trên khung vẽ cho biết vùng đặt điểm được bộ thiết kế chấp nhận. Điểm ngoài vùng, vượt góc servo hoặc gần cấu hình cơ cấu không phù hợp bị báo lỗi. Với bài có đoạn dài, quan sát toàn bộ đường nối giữa các điểm; các điểm hợp lệ riêng lẻ không thay thế kiểm tra đường chuyển động trên bia thực tế.</p>
+<h3>5.4. Tốc độ và thời gian dừng</h3>
+<p>Mỗi dòng điểm có <strong>mm/s</strong> và <strong>Dừng ms</strong>:</p>
+<ul><li>Nhập tốc độ riêng trong khoảng 5–400 mm/s, hoặc để trống để dùng tốc độ của lệnh CHẠY.</li><li>Nhập thời gian dừng từ 0 đến 60000 ms. Ví dụ 1000 ms = 1 giây; nhập 0 nghĩa là không dừng tại điểm.</li><li>Để trống thời gian dừng để dùng thời gian dừng của lệnh chạy. “Trống” và “0” có ý nghĩa khác nhau.</li></ul>
+<p>Tốc độ của một điểm áp dụng cho đoạn đi <strong>đến điểm đó</strong>. Trần <strong>Tốc độ tối đa</strong> trong Cài đặt tay cầm giới hạn cả tốc độ chung và tốc độ riêng từng điểm. Nếu soạn 200 mm/s nhưng trần đang là 120 mm/s, lệnh gửi đến bia bị giới hạn ở 120 mm/s.</p>
+<figure><a href="images/07-toa-do-toc-do.png" target="_blank" rel="noopener"><img src="images/07-toa-do-toc-do.png" alt="Hình 7. Bài Ngang 3 diem: (1) tọa độ, tốc độ 60 mm/s và dừng 1000 ms; (2) lưu bài; (3) tải JSON. Trong ảnh, nơi lưu là tay cầm ảo." width="410" height="618" loading="lazy" class="portrait"></a><figcaption>Hình 7. Bài Ngang 3 diem: (1) tọa độ, tốc độ 60 mm/s và dừng 1000 ms; (2) lưu bài; (3) tải JSON. Trong ảnh, nơi lưu là tay cầm ảo.</figcaption></figure>
+<h3>5.5. Tạo nhanh</h3>
+<p>Chọn số điểm ở cạnh ô <strong>Tạo nhanh…</strong>, rồi chọn Đường ngang, Đường dọc, Vòng tròn, Zích zắc, Hình chữ nhật hoặc Ngẫu nhiên. Kiểm tra các điểm vừa tạo và chỉnh tiếp trong bảng.</p>
+<p>Một bài chứa tối đa <strong>24 điểm</strong>. Với hình vòng tròn hoặc hình chữ nhật, chọn <strong>Lặp vòng</strong> nếu muốn đường chuyển động khép kín. Đọc thông báo kiểm tra dưới bảng điểm trước khi lưu.</p>
+<h3>5.6. Xem chạy thử</h3>
+<ol><li>Chọn <strong>Tốc độ lệnh</strong> và <strong>Dừng mỗi điểm</strong> dưới khung vẽ.</li><li>Bấm <strong>▶ Xem chạy thử</strong>. Quan sát điểm chuyển động và hình cơ cấu bên dưới.</li><li>Kiểm tra thứ tự điểm, đoạn nối, chiều đi và nhịp dừng.</li><li>Bấm lại nút chạy thử để dừng mô phỏng, sửa bài rồi xem lại.</li></ol>
+<p>Xem chạy thử là mô phỏng trong trình duyệt, không gửi lệnh làm bia thật chạy. Thời gian chu kỳ hiển thị là ước tính theo tọa độ, tốc độ và dừng; chưa tính đầy đủ tải cơ khí, sai lệch lắp ráp và điều kiện truyền lệnh. Tốc độ/dừng chọn để xem thử không tự thay đổi cài đặt chạy thật trên tay cầm.</p>
+<figure><a href="images/08-xem-chay-thu.png" target="_blank" rel="noopener"><img src="images/08-xem-chay-thu.png" alt="Hình 8. Xem đường chạy: (1) nút chạy/dừng mô phỏng; (2) tốc độ lệnh cho ô để trống; (3) dừng mỗi điểm cho ô để trống. Ba điểm mẫu có thông số riêng nên dùng 60 mm/s và 1000 ms." width="545" height="555" loading="lazy" class="portrait"></a><figcaption>Hình 8. Xem đường chạy: (1) nút chạy/dừng mô phỏng; (2) tốc độ lệnh cho ô để trống; (3) dừng mỗi điểm cho ô để trống. Ba điểm mẫu có thông số riêng nên dùng 60 mm/s và 1000 ms.</figcaption></figure>
+<h3>5.7. Chọn nơi lưu đúng</h3>
+<table><thead><tr><th scope="col">Tình huống</th><th scope="col">Nút và nơi lưu</th></tr></thead><tbody>
+<tr><td>Bài mới, chưa đăng nhập, đã nối USB</td><td>Lưu bài mới vào tay cầm</td></tr>
+<tr><td>Bài mới, đã đăng nhập Google</td><td>Lưu vào Bài của tôi trên cloud</td></tr>
+<tr><td>Đang sửa bài Trên tay cầm</td><td>Lưu vào tay cầm để cập nhật bài đó</td></tr>
+<tr><td>Đang sửa bài Bài của tôi</td><td>Lưu để cập nhật bản cloud</td></tr>
+<tr><td>Bài cloud cần dùng trên thiết bị</td><td>Gửi xuống tay cầm (USB) để thêm một bản vào tay cầm</td></tr>
+<tr><td>Bài tay cầm cần đưa lên tài khoản</td><td>Chép vào Bài của tôi</td></tr>
+</tbody></table>
+<p><strong>Trang không tự lưu mọi thao tác chỉnh sửa.</strong> Bấm nút Lưu phù hợp và chờ thông báo thành công. Nếu đang dùng Dùng thử, “tay cầm” trong các nút lưu là tay cầm ảo.</p>
+<p>Tay cầm có tổng cộng 32 chỗ bài: <strong>6 bài có sẵn + tối đa 26 bài tự tạo</strong>. Bài có sẵn được bảo vệ. Muốn sửa, chọn bài và bấm <strong>Nhân bản để sửa</strong>, đặt lại tên ngắn rồi lưu bản mới. Gửi một bài cloud nhiều lần bằng USB tạo thêm bản mới, nên kiểm tra danh sách trước khi gửi lại.</p>
+<h2 class="chapter" id="chapter-6">6. Ba bài mẫu thực hành</h2>
+<p>Các tọa độ dưới đây dành cho hình học mặc định 80/180/250 mm trong bộ thiết kế hiện tại. Kiểm tra thông báo hợp lệ của website và vùng chạy của bia thực tế trước khi dùng. Lần đầu chạy ở 60 mm/s với một bia và thời gian ngắn.</p>
+<h3>6.1. Bài “Ngang 3 diem”</h3>
+<p>Chọn <strong>Qua lại</strong> và nhập ba điểm:</p>
+<table><thead><tr><th scope="col">Điểm</th><th scope="col">X (mm)</th><th scope="col">Y (mm)</th><th scope="col">Tốc độ (mm/s)</th><th scope="col">Dừng (ms)</th></tr></thead><tbody>
+<tr><td>1</td><td>-40</td><td>320</td><td>60</td><td>1000</td></tr>
+<tr><td>2</td><td>40</td><td>320</td><td>60</td><td>1000</td></tr>
+<tr><td>3</td><td>120</td><td>320</td><td>60</td><td>1000</td></tr>
+</tbody></table>
+<p>Bài đi 1 → 2 → 3 → 2 → 1 và tiếp tục lặp. Dùng bài này để kiểm tra chiều X và sự khác nhau giữa chuyển động với dừng tại điểm. File <code>bai-mau-ngang-3-diem.json</code> được cung cấp cùng sổ tay để nhập trực tiếp.</p>
+<h3>6.2. Bài “Doc 3 diem”</h3>
+<p>Chọn <strong>Qua lại</strong>:</p>
+<table><thead><tr><th scope="col">Điểm</th><th scope="col">X (mm)</th><th scope="col">Y (mm)</th><th scope="col">Tốc độ (mm/s)</th><th scope="col">Dừng (ms)</th></tr></thead><tbody>
+<tr><td>1</td><td>40</td><td>270</td><td>60</td><td>1000</td></tr>
+<tr><td>2</td><td>40</td><td>320</td><td>60</td><td>1000</td></tr>
+<tr><td>3</td><td>40</td><td>370</td><td>60</td><td>1000</td></tr>
+</tbody></table>
+<p>Bài dùng để kiểm tra chiều Y. Không thay đổi hiệu chuẩn chỉ vì hình vẽ chưa khớp hướng nhìn; đối chiếu hệ tọa độ cơ cấu và các thông số được bàn giao trước.</p>
+<h3>6.3. Bài “Chu nhat”</h3>
+<p>Chọn <strong>Lặp vòng</strong>:</p>
+<table><thead><tr><th scope="col">Điểm</th><th scope="col">X (mm)</th><th scope="col">Y (mm)</th><th scope="col">Tốc độ (mm/s)</th><th scope="col">Dừng (ms)</th></tr></thead><tbody>
+<tr><td>1</td><td>-20</td><td>280</td><td>60</td><td>500</td></tr>
+<tr><td>2</td><td>100</td><td>280</td><td>60</td><td>500</td></tr>
+<tr><td>3</td><td>100</td><td>360</td><td>60</td><td>500</td></tr>
+<tr><td>4</td><td>-20</td><td>360</td><td>60</td><td>500</td></tr>
+</tbody></table>
+<p>Kiểm tra cả đoạn 4 → 1 khi xem mô phỏng. Khi bài hoạt động đúng, có thể nhân bản, đổi tên rồi điều chỉnh nhịp dừng hoặc tốc độ trong giới hạn cấu hình thiết bị.</p>
+<h2 class="chapter" id="chapter-7">7. Điều khiển và chạy bài trên bia</h2>
+<h3>7.1. Điều khiển một bia</h3>
+<ol><li>Mở <strong>Tay cầm → Điều khiển</strong> và chọn đúng tên bia.</li><li>Chọn <strong>Kịch bản</strong>, chọn bài đã lưu và tốc độ Chậm 60, Vừa 120 hoặc Nhanh 200 mm/s.</li><li>Kiểm tra bia trực tuyến, không báo lỗi và người vận hành thấy được vùng chạy.</li><li>Bấm <strong>CHẠY</strong>, xác nhận nếu hộp hỏi lại đang bật. Kiểm tra ô lệnh cuối và trạng thái bia.</li><li>Bấm <strong>DỪNG</strong> để dừng bia đang chọn; dùng <strong>DỪNG TẤT CẢ</strong> khi cần kết thúc toàn bộ hoạt động.</li></ol>
+<p>Chế độ <strong>Ngẫu nhiên</strong> để bia tự chọn điểm trong vùng chạy. Chọn thời gian dừng trước khi chạy; chế độ này chạy đến khi bấm dừng.</p>
+<p>Chế độ <strong>Chỉnh tay</strong> dùng các nút hướng với bước 1, 5 hoặc 10 mm. Chạm vị trí hợp lệ trên hình cơ cấu để đặt đích; làm theo nút <strong>ĐI TỚI</strong> khi giao diện hiện đích cần gửi. Bắt đầu với bước nhỏ và kiểm tra vị trí báo về sau mỗi lệnh.</p>
+<p><strong>Về gốc</strong> đưa bia về vị trí gốc cấu hình của cơ cấu, không phải đưa X và Y về 0. Chỉ thực hiện khi vùng chuyển động đã thông thoáng.</p>
+<figure><a href="images/10-dieu-khien.png" target="_blank" rel="noopener"><img src="images/10-dieu-khien.png" alt="Hình 9. Điều khiển một bia: (1) chọn bia; (2) chọn Kịch bản; (3) tốc độ; (4) CHẠY. Ảnh dùng bài có sẵn Con lắc ngang; chọn bài của bạn trong danh sách khi vận hành." width="800" height="480" loading="lazy"></a><figcaption>Hình 9. Điều khiển một bia: (1) chọn bia; (2) chọn Kịch bản; (3) tốc độ; (4) CHẠY. Ảnh dùng bài có sẵn Con lắc ngang; chọn bài của bạn trong danh sách khi vận hành.</figcaption></figure>
+<h3>7.2. Chạy một phiên bài có thời gian</h3>
+<ol><li>Mở <strong>Tay cầm → Bài chạy</strong>.</li><li>Chọn bài trong danh sách.</li><li>Chọn các <strong>Bia tham gia</strong> đang trực tuyến và không báo lỗi.</li><li>Chọn cách phối hợp, tốc độ và thời gian 1 phút, 3 phút, 5 phút hoặc Liên tục.</li><li>Đọc dòng <strong>Sẽ chạy</strong> để kiểm tra cấu hình cuối cùng.</li><li>Bấm <strong>BẮT ĐẦU</strong> và xác nhận nếu được yêu cầu.</li><li>Quan sát từng bia, thời gian đã chạy, điểm hiện tại và trạng thái.</li></ol>
+<figure><a href="images/11-chon-bai-chay.png" target="_blank" rel="noopener"><img src="images/11-chon-bai-chay.png" alt="Hình 10. Thiết lập phiên: (1) chọn bài; (2) chọn bia tham gia; (3) cách phối hợp; (4) tốc độ và thời gian; (5) BẮT ĐẦU." width="800" height="480" loading="lazy"></a><figcaption>Hình 10. Thiết lập phiên: (1) chọn bài; (2) chọn bia tham gia; (3) cách phối hợp; (4) tốc độ và thời gian; (5) BẮT ĐẦU.</figcaption></figure>
+<figure><a href="images/12-dang-chay.png" target="_blank" rel="noopener"><img src="images/12-dang-chay.png" alt="Hình 11. Phiên đang chạy: (1) tên bài và thời gian; (2) TẠM DỪNG; (3) DỪNG BÀI. Mỗi bia có ô trạng thái riêng." width="800" height="480" loading="lazy"></a><figcaption>Hình 11. Phiên đang chạy: (1) tên bài và thời gian; (2) TẠM DỪNG; (3) DỪNG BÀI. Mỗi bia có ô trạng thái riêng.</figcaption></figure>
+<p><strong>TẠM DỪNG</strong> tạm ngưng phiên; nút đổi thành <strong>TIẾP TỤC</strong> để chạy tiếp. <strong>DỪNG BÀI</strong> kết thúc phiên. Khi hết thời gian hoặc đã dừng, bấm <strong>XONG · VỀ CHỌN BÀI</strong> để quay lại màn chọn.</p>
+<figure><a href="images/13-tam-dung.png" target="_blank" rel="noopener"><img src="images/13-tam-dung.png" alt="Hình 12. Phiên tạm dừng: (1) TIẾP TỤC để chạy lại; (2) DỪNG BÀI để kết thúc phiên." width="800" height="480" loading="lazy"></a><figcaption>Hình 12. Phiên tạm dừng: (1) TIẾP TỤC để chạy lại; (2) DỪNG BÀI để kết thúc phiên.</figcaption></figure>
+<figure><a href="images/14-ket-thuc-bai.png" target="_blank" rel="noopener"><img src="images/14-ket-thuc-bai.png" alt="Hình 13. Phiên đã kết thúc: kiểm tra các bia báo Đã dừng rồi bấm XONG · VỀ CHỌN BÀI." width="800" height="480" loading="lazy"></a><figcaption>Hình 13. Phiên đã kết thúc: kiểm tra các bia báo Đã dừng rồi bấm XONG · VỀ CHỌN BÀI.</figcaption></figure>
+<h3>7.3. Phối hợp nhiều bia</h3>
+<table><thead><tr><th scope="col">Chế độ</th><th scope="col">Hành vi được thiết kế</th></tr></thead><tbody>
+<tr><td>Cùng lúc</td><td>Các bia nhận cùng bài và chạy cùng nhịp</td></tr>
+<tr><td>So le</td><td>Bia chẵn lệch nửa chu kỳ theo cấu hình phối hợp</td></tr>
+<tr><td>Luân phiên</td><td>Mỗi lúc một bia chạy, các bia khác chờ; đổi lượt sau 6 giây</td></tr>
+</tbody></table>
+<p>Cùng lúc mô tả cách gửi và chạy bài; không phải cam kết các cơ cấu thực luôn trùng vị trí tuyệt đối theo thời gian. Thử từng bia riêng trước khi chạy nhóm.</p>
+<h3>7.4. Đọc phản hồi và dừng đúng</h3>
+<p><strong>Đã xác nhận</strong> cho biết lệnh được phía bia xác nhận. <strong>Chờ xác nhận…</strong> nghĩa là đang chờ phản hồi. <strong>Không phản hồi</strong>, <strong>MẤT KẾT NỐI</strong> hoặc <strong>LỖI</strong> cần kiểm tra nguồn, sóng và cơ cấu.</p>
+<p>Khi có bất thường, bấm <strong>DỪNG TẤT CẢ</strong>, quan sát chuyển động thực tế và dùng biện pháp dừng nguồn phù hợp với thiết bị nếu đường điều khiển không còn hoạt động. Kiểm tra nguyên nhân trước khi dùng <strong>ĐẶT LẠI</strong> ở Điều khiển. Chỉ bấm chạy lại sau khi bia trực tuyến và lỗi đã được xử lý.</p>
+<h2 class="chapter" id="chapter-8">8. Tài khoản, cloud và đồng bộ</h2>
+<h3>8.1. Lưu Bài của tôi</h3>
+<ol><li>Mở bản website trực tuyến có Internet.</li><li>Bấm <strong>Đăng nhập Google</strong> và chọn tài khoản.</li><li>Mở Thiết kế bài tập, tạo bài có điểm và bấm <strong>Lưu vào Bài của tôi</strong>.</li><li>Kiểm tra bài xuất hiện dưới Bài của tôi. Đợi thông báo lưu thành công trước khi đóng trang.</li><li>Muốn dùng bài trên thiết bị hiện tại, nối USB, mở bài cloud và bấm <strong>Gửi xuống tay cầm (USB)</strong>.</li></ol>
+<p>Không cần tay cầm để soạn và lưu một bài cloud. Cần Internet và dịch vụ đăng nhập/lưu trữ đang hoạt động. Nếu không đăng nhập được, vẫn có thể dùng USB, mô phỏng và JSON.</p>
+<figure><a href="images/18-cloud-dang-nhap.png" target="_blank" rel="noopener"><img src="images/18-cloud-dang-nhap.png" alt="Hình 14. Màn Đồng bộ trước khi đăng nhập: bấm Đăng nhập Google. Đồng bộ xuống thiết bị chỉ dùng được với firmware hỗ trợ cloud như mục 8.2 trong sổ tay; ảnh này chưa có thiết bị ghép cloud." width="820" height="175" loading="lazy"></a><figcaption>Hình 14. Màn Đồng bộ trước khi đăng nhập: bấm Đăng nhập Google. Đồng bộ xuống thiết bị chỉ dùng được với firmware hỗ trợ cloud như mục 8.2 trong sổ tay; ảnh này chưa có thiết bị ghép cloud.</figcaption></figure>
+<h3>8.2. Trạng thái hỗ trợ của đồng bộ WiFi</h3>
+<p><strong>Firmware tay cầm đối chiếu ngày 03/10/2026 chưa có mục cấu hình WiFi Internet, tạo mã 6 số hoặc tải bài cloud.</strong> Vì vậy không có bước trên tay cầm hiện tại để hoàn thành ghép cloud. Dùng USB để chuyển bài; việc chọn danh sách trên website chưa chứng minh thiết bị đã nhận bài.</p>
+<p>Chỉ dùng quy trình sau với bản firmware được bàn giao có đầy đủ hỗ trợ cloud:</p>
+<ol><li>Kết nối tay cầm với WiFi có Internet theo tài liệu của firmware đó.</li><li>Mở chức năng ghép cloud trên tay cầm để lấy mã 6 số.</li><li>Trên web, đăng nhập và mở <strong>Đồng bộ</strong>. Nhập mã, đặt tên tay cầm, bấm <strong>Ghép đôi</strong>. Mã theo thiết kế server dùng được trong 15 phút.</li><li>Chọn tay cầm, tick tối đa 26 bài trong <strong>Bài nạp xuống tay cầm này</strong>.</li><li>Dùng ↑ / ↓ để xếp thứ tự, rồi bấm <strong>Lưu danh sách</strong>.</li><li>Chờ thiết bị đồng bộ; đối chiếu mốc đồng bộ và mở danh sách bài trên chính tay cầm để xác nhận đã nhận đúng bài.</li></ol>
+<p>Theo thiết kế của màn hình Đồng bộ, lần đồng bộ sẽ <strong>thay các bài tự tạo trên tay cầm bằng danh sách được chọn</strong>. Sao lưu bài trên tay cầm trước khi dùng firmware có tính năng này. Nút Lưu danh sách chỉ lưu lựa chọn lên cloud, không phải thao tác chạy bia.</p>
+<h3>8.3. Gỡ tay cầm và đăng xuất</h3>
+<p><strong>Gỡ tay cầm</strong> trong Đồng bộ gỡ liên kết trên tài khoản cloud, khác với Xóa bia ở Quản lý bia. <strong>Đăng xuất</strong> kết thúc phiên tài khoản trên website. Bài đã nạp bằng USB vào tay cầm vẫn là dữ liệu cục bộ của thiết bị.</p>
+<h2 class="chapter" id="chapter-9">9. Sao lưu và chuyển bài bằng file</h2>
+<h3>9.1. Xuất một bài</h3>
+<p>Mở bài và bấm <strong>Tải file .json</strong>. Lưu vào thư mục có ngày hoặc tên phiên bản, ví dụ <code>Bai_tap/2026-10-03/</code>. File chứa tên, kiểu bài, tọa độ, tốc độ và thời gian dừng. Có thể xuất nội dung đang sửa; muốn nội dung đó có trên tay cầm/cloud vẫn phải bấm Lưu riêng.</p>
+<h3>9.2. Xuất nhiều bài</h3>
+<p>Nút <strong>Xuất file</strong> ở cột danh sách xuất Bài của tôi nếu đã đăng nhập và thư viện cloud có bài. Nếu không rơi vào trường hợp đó, trang lấy các bài tự tạo từ tay cầm đang kết nối. Bài có sẵn không nằm trong bản xuất danh sách bài tự tạo.</p>
+<p>Muốn sao lưu tay cầm trong lúc tài khoản cloud cũng có bài, xuất từng bài Trên tay cầm hoặc đăng xuất rồi dùng Xuất file. Mở file để kiểm tra có đúng số lượng và tên bài cần sao lưu.</p>
+<figure><a href="images/09-luu-va-sao-luu.png" target="_blank" rel="noopener"><img src="images/09-luu-va-sao-luu.png" alt="Hình 15. Danh sách bài và sao lưu: (1) bài Ngang 3 diem đã có trên tay cầm ảo; (2) Nhập file; (3) Xuất file danh sách." width="230" height="640" loading="lazy" class="portrait"></a><figcaption>Hình 15. Danh sách bài và sao lưu: (1) bài Ngang 3 diem đã có trên tay cầm ảo; (2) Nhập file; (3) Xuất file danh sách.</figcaption></figure>
+<h3>9.3. Nhập lại</h3>
+<ol><li>Bấm <strong>Nhập file…</strong>, chọn file JSON đã xuất.</li><li>Nếu file chứa một bài, trang mở bài để sửa; kiểm tra điểm rồi bấm <strong>Lưu</strong> để giữ lại.</li><li>Nếu file chứa nhiều bài, đăng nhập hoặc kết nối tay cầm trước. Đọc hộp xác nhận nơi nhập: Bài của tôi khi đã đăng nhập, tay cầm khi chưa đăng nhập.</li><li>Kiểm tra thông báo số bài nhập thành công và danh sách kết quả. Mỗi bài được thêm thành bài mới, phụ thuộc số chỗ còn trống.</li></ol>
+<p>Nhập JSON không tự làm bia chạy. File bài tập không phải bản sao toàn bộ thiết bị: không chứa danh sách ghép bia, cài đặt tay cầm hoặc hiệu chuẩn servo của bia.</p>
+<h3>9.4. Chuyển sang tay cầm khác</h3>
+<p>Xuất bài từ tay cầm nguồn, ngắt USB, nối tay cầm đích rồi nhập và lưu bài. Ghép bia và kiểm tra vùng chạy của tay cầm đích riêng. Chạy thử chậm trước khi dùng bài trên bộ cơ cấu khác.</p>
+<h2 class="chapter" id="chapter-10">10. Cài đặt và hiệu chuẩn</h2>
+<h3>10.1. Cài đặt tay cầm</h3>
+<p>Mở biểu tượng bánh răng trên màn hình tay cầm. Các thay đổi áp dụng ngay và được lưu trong thiết bị.</p>
+<table><thead><tr><th scope="col">Mục</th><th scope="col">Nội dung cần biết</th></tr></thead><tbody>
+<tr><td>Màn hình</td><td>Độ sáng và thời gian tự giảm sáng; lần chạm để sáng lại không bấm nút bên dưới</td></tr>
+<tr><td>Kết nối</td><td>Kênh ESP-NOW, thời gian báo mất kết nối và công suất phát</td></tr>
+<tr><td>An toàn</td><td>Hỏi lại trước khi CHẠY, trần tốc độ gửi đến bia</td></tr>
+<tr><td>Mặc định</td><td>Tốc độ, thời gian bài, bước chỉnh tay và thời gian dừng mặc định</td></tr>
+<tr><td>Thông tin</td><td>Thông tin tay cầm và chức năng khởi động lại</td></tr>
+</tbody></table>
+<p>Thời gian <strong>Báo mất kết nối sau</strong> trên tay cầm là thời gian đổi chỉ báo giao diện. Thời gian tự dừng khi mất liên lạc thuộc cài đặt/giao thức phía bia; không coi hai thông số là một.</p>
+<p>Khi cần đổi kênh, dừng bài trước, ghi kênh cũ, đổi và kiểm tra lại từng bia. Bia bị tắt nguồn trong lúc đổi kênh có thể cần điều chỉnh lại qua trang cấu hình. Dùng <strong>KHÔI PHỤC MẶC ĐỊNH</strong> sau khi đã ghi lại cấu hình cần giữ; đây không phải quy trình sửa lỗi ghép mặc định.</p>
+<figure><a href="images/15-cai-dat-an-toan.png" target="_blank" rel="noopener"><img src="images/15-cai-dat-an-toan.png" alt="Hình 16. Cài đặt → An toàn: bật hỏi lại trước khi CHẠY khi cần; chọn trần Tốc độ tối đa. Giá trị 300 mm/s trong ảnh là cấu hình của tay cầm ảo." width="800" height="480" loading="lazy"></a><figcaption>Hình 16. Cài đặt → An toàn: bật hỏi lại trước khi CHẠY khi cần; chọn trần Tốc độ tối đa. Giá trị 300 mm/s trong ảnh là cấu hình của tay cầm ảo.</figcaption></figure>
+<h3>10.2. Mở trang WiFi riêng của bia</h3>
+<ol><li>Dừng hoạt động và chọn đúng bia cần cấu hình.</li><li>Tìm mạng <strong>BIA_TAP_BAN_xxxx</strong> trên máy tính hoặc điện thoại.</li><li>Nhập mật khẩu riêng của bia được bàn giao. Firmware sinh mật khẩu riêng dài 10 ký tự và giữ trong bộ nhớ; không có mật khẩu chung cho mọi bia.</li><li>Nếu chưa có thông tin, người phụ trách kỹ thuật nối USB vào bia và xem dòng log <code>[AP]</code> để lấy SSID, mật khẩu và IP. Không nhầm với cổng USB tay cầm.</li><li>Giữ kết nối mạng của bia kể cả khi hệ điều hành báo không có Internet. Mở địa chỉ IP của bia bằng HTTP; địa chỉ mặc định thường là <code><a href="http://192.168.4.1">http://192.168.4.1</a></code>, dùng IP in trong log nếu khác.</li></ol>
+<p>Bia cho tối đa <strong>một máy truy cập WiFi cùng lúc</strong> theo cấu hình hiện tại. Mạng này phục vụ trang cục bộ, không cấp Internet và không phải đường đồng bộ Bài của tôi.</p>
+<h3>10.3. Dùng trang cấu hình của bia</h3>
+<p>Trang cục bộ có các nút <strong>STOP</strong>, <strong>VE GIUA</strong>, <strong>CHAY</strong>, phần Kịch bản, phần hiệu chuẩn servo và phần ESP-NOW. Nhãn hiện dùng tiếng Việt không dấu. Nếu bia đang thuộc quyền điều khiển của tay cầm, các thao tác web chuyển động/cấu hình có thể bị khóa với phản hồi <code>busy</code>; STOP vẫn được phép. Kết thúc hoạt động từ tay cầm trước khi chuyển sang cấu hình tại chỗ.</p>
+<p>Để thử một danh sách điểm trên trang này, tạo/sửa Kịch bản, bấm <strong>Nap vao bia</strong>, kiểm tra và bấm <strong>CHAY</strong>. Danh sách này thuộc đường cấu hình của một bia; không tự thêm thành bài trong thư viện tay cầm hoặc Bài của tôi.</p>
+<h3>10.4. Góc servo và thông số hiệu chuẩn</h3>
+<p>Trong <strong>Quản lý bia → Góc servo</strong>, người phụ trách có thể chỉnh góc servo 1/2 bằng bước nhỏ và gửi để căn tay quay. Bia quay chậm đến góc gửi rồi giữ. Thao tác này đặt góc trực tiếp; không phải nút lưu offset hiệu chuẩn lâu dài.</p>
+<figure><a href="images/16-goc-servo.png" target="_blank" rel="noopener"><img src="images/16-goc-servo.png" alt="Hình 17. Góc servo: chỉnh từng bước nhỏ, bấm GỬI GÓC khi đã kiểm tra cơ cấu; VỀ GỐC để trở lại vận hành bình thường. Ảnh chụp hộp điều khiển của bia ảo." width="800" height="480" loading="lazy"></a><figcaption>Hình 17. Góc servo: chỉnh từng bước nhỏ, bấm GỬI GÓC khi đã kiểm tra cơ cấu; VỀ GỐC để trở lại vận hành bình thường. Ảnh chụp hộp điều khiển của bia ảo.</figcaption></figure>
+<p>Trên trang WiFi của bia, các trường <strong>Offset 1</strong>, <strong>Chieu 1</strong>, <strong>Offset 2</strong>, <strong>Chieu 2</strong> xác định quan hệ góc cơ cấu và servo. <strong>Ap dung</strong> áp dụng thông số; <strong>Luu vao may</strong> lưu cấu hình của bia. Ghi lại thông số cũ trước khi sửa, chỉ thay từng thông số theo quy trình lắp ráp của bộ cơ cấu. Sau khi căn, dùng <strong>VỀ GỐC/VE GIUA</strong> và kiểm tra lại bằng bài chậm.</p>
+<p>Không sao chép offset giữa hai bia chỉ vì hình dáng giống nhau. Nếu cơ cấu đã lắp đầy đủ, chỉnh góc từng ít và dừng ngay khi có dấu hiệu kẹt. Ngắt nguồn trước khi can thiệp tay vào khâu hoặc dây dẫn.</p>
+<h3>10.5. Cập nhật firmware tay cầm và bia qua USB</h3>
+<p>Tab <strong>Cập nhật</strong> chỉ nạp được khi bộ web có bản phát hành cho thiết bị. Nếu hiện “Chưa có bản phần mềm trên web”, chưa có gói để nạp; liên hệ người bàn giao để nhận đúng bản. Tab này không tự bổ sung khả năng cloud khi chưa có firmware tương ứng.</p>
+<ol><li>Dùng <strong>Chrome hoặc Edge trên máy tính</strong>, mở Studio từ website HTTPS được bàn giao và giữ kết nối Internet để tải firmware. Nếu đang mở file HTML trực tiếp và thấy “Mở Studio từ link web để cập nhật phần mềm”, chuyển sang website.</li><li>Sao lưu các bài cần giữ ra JSON, ghi lại kênh ESP-NOW và thông số hiệu chuẩn; bấm <strong>DỪNG TẤT CẢ</strong>, quan sát bia dừng và kết thúc phiên điều khiển.</li><li>Mở tab <strong>Cập nhật</strong>, chọn <strong>Tay cầm</strong> hoặc <strong>Bia</strong> theo thiết bị thực tế và đọc <strong>Bản mới nhất</strong>. Cập nhật từng thiết bị; nạp tay cầm không tự cập nhật các bia đã ghép.</li><li>Cắm cáp USB <strong>truyền dữ liệu vào chính thiết bị cần nạp</strong>: cập nhật tay cầm thì cắm vào tay cầm, cập nhật bia thì cắm trực tiếp vào bia. Không cần bấm <strong>Kết nối USB</strong> ở đầu trang. Đóng Serial Monitor, chương trình nạp và tab khác đang giữ cổng.</li><li>Bấm <strong>Nạp phần mềm</strong>, chọn đúng cổng (tay cầm thường là <strong>USB-SERIAL CH340</strong>). Nếu Studio đang giữ cổng tay cầm, bấm <strong>Ngắt và tiếp tục</strong> để dành cổng cho việc nạp. Khi được hỏi “Đây có phải bia không?”, chỉ xác nhận nếu cáp thực sự nối vào bia; nếu chọn nhầm, hủy và chọn lại đúng thiết bị.</li><li>Chờ thanh tiến độ hoàn tất và trạng thái <strong>Xong</strong>, thiết bị tự khởi động lại. Giữ nguồn ổn định, không rút cáp, đóng trang hoặc tắt nguồn khi đang nạp. Chỉ thấy thanh tiến độ 100% chưa đủ nếu trạng thái vẫn báo lỗi.</li><li>Với tay cầm, bấm <strong>Kết nối USB</strong> lại và kiểm tra phiên bản trong <strong>Cài đặt → Thông tin</strong>. Kiểm tra danh sách bia, bài tập, kênh và cài đặt; với bia, kiểm tra lại kết nối và thông số hiệu chuẩn. Thử một bài chậm trước khi vận hành. Lặp lại quy trình cho từng bia cần cập nhật.</li></ol>
+<p>Nếu nạp nhanh bị lỗi, thử <strong>Nạp chậm</strong>. Nếu không vào chế độ nạp, làm theo chỉ dẫn BOOT trên màn hình và tài liệu của board. Không xác nhận tiếp khi thiết bị thực tế khác loại đang chọn. Cơ chế nạp hiện dùng <code>eraseAll: false</code>; vẫn cần sao lưu và kiểm tra dữ liệu sau khi cập nhật, đặc biệt khi đổi cấu trúc bộ nhớ hoặc phiên bản lớn.</p>
+<figure><a href="images/17-cap-nhat.png" target="_blank" rel="noopener"><img src="images/17-cap-nhat.png" alt="Hình 18. Tab Cập nhật trong bộ web chưa có gói firmware: nút nạp bị khóa. Chỉ thực hiện quy trình nạp khi đã có bản phát hành đúng thiết bị." width="1228" height="423" loading="lazy"></a><figcaption>Hình 18. Tab Cập nhật trong bộ web chưa có gói firmware: nút nạp bị khóa. Chỉ thực hiện quy trình nạp khi đã có bản phát hành đúng thiết bị.</figcaption></figure>
+<h2 class="chapter" id="chapter-11">11. Xử lý sự cố</h2>
+<table><thead><tr><th scope="col">Hiện tượng</th><th scope="col">Kiểm tra và cách xử lý</th></tr></thead><tbody>
+<tr><td>Không có nút/cổng USB dùng được</td><td>Dùng Chrome/Edge trên máy tính, mở bản HTTPS hoặc bộ file cục bộ phù hợp; kiểm tra hỗ trợ Web Serial</td></tr>
+<tr><td>Không thấy USB-SERIAL CH340</td><td>Thay cáp truyền dữ liệu, đổi cổng USB; kiểm tra driver của board trong quản lý thiết bị</td></tr>
+<tr><td>Cổng đang bận</td><td>Đóng Serial Monitor, chương trình nạp và tab Studio khác đang giữ cùng cổng</td></tr>
+<tr><td>Tay cầm khởi động lại khi kết nối</td><td>Chờ khởi động xong rồi nhận trạng thái; luôn nối USB lúc bia đã dừng</td></tr>
+<tr><td>Màn hình không hiện, báo thiếu hmi_demo.js hoặc hmi_remote.js</td><td>Dùng bộ file đầy đủ và đặt các file JS cạnh studio.html; bản trực tuyến cần tải được các tài nguyên này</td></tr>
+<tr><td>Mất bài sau khi tải lại trang</td><td>Kiểm tra có đang dùng tay cầm ảo hoặc chưa bấm Lưu; phục hồi từ JSON/cloud nếu đã sao lưu</td></tr>
+<tr><td>Không tìm thấy bia</td><td>Kiểm tra nguồn bia, kênh ESP-NOW và tình trạng đã ghép tay cầm khác; dùng MAC đúng khi cần</td></tr>
+<tr><td>Bia báo MẤT KẾT NỐI / Không phản hồi</td><td>Dừng bài, kiểm tra nguồn, khoảng cách, kênh và vật cản; chỉ chạy lại khi nhận được trạng thái</td></tr>
+<tr><td>Điểm đỏ hoặc không lưu được</td><td>Đọc thông báo dưới bảng; sửa tọa độ vào vùng hợp lệ, tốc độ 5–400, dừng không quá 60000 ms</td></tr>
+<tr><td>Báo tên quá dài</td><td>Rút ngắn tên; tên có dấu chiếm nhiều byte UTF-8 hơn chữ ASCII</td></tr>
+<tr><td>Nút sửa/xóa bài bị khóa</td><td>Có thể là bài có sẵn: dùng Nhân bản để sửa; hoặc chưa kết nối/chưa đăng nhập vào nơi lưu</td></tr>
+<tr><td>Tay cầm hết chỗ bài</td><td>Sao lưu rồi xóa bớt bài tự tạo không dùng; giới hạn 26 bài tự tạo</td></tr>
+<tr><td>Bài lưu rồi nhưng chưa có trên tay cầm</td><td>Kiểm tra nơi lưu; bài Bài của tôi cần Gửi xuống tay cầm (USB) ở firmware hiện tại</td></tr>
+<tr><td>Bia chạy chậm hơn tốc độ đã soạn</td><td>Kiểm tra trần Tốc độ tối đa trên tay cầm và tốc độ riêng từng điểm</td></tr>
+<tr><td>Nhập một bài rồi đóng trang bị mất</td><td>Nhập một bài chỉ mở vào bộ sửa; cần bấm Lưu hoặc tải file trước khi đóng</td></tr>
+<tr><td>Xuất file không ra bài tay cầm</td><td>Đã đăng nhập và có bài cloud: nút xuất danh sách ưu tiên cloud; xuất từng bài tay cầm hoặc đăng xuất</td></tr>
+<tr><td>Đăng nhập Google không mở được</td><td>Dùng bản web trực tuyến, kiểm tra Internet và cấu hình dịch vụ; dùng USB/JSON nếu cloud chưa hoạt động</td></tr>
+<tr><td>Không có mã 6 số trên tay cầm</td><td>Firmware hiện tại chưa hỗ trợ cloud; dùng USB, không tìm mã trên trang WiFi của bia</td></tr>
+<tr><td>Không vào được WiFi bia</td><td>Kiểm tra đúng SSID/mật khẩu, ngắt máy thứ hai, giữ mạng không Internet và mở IP đúng bằng HTTP</td></tr>
+<tr><td>Trang WiFi bia báo busy</td><td>Bia đang được tay cầm điều khiển; dừng/kết thúc hoạt động rồi kiểm tra lại quyền điều khiển</td></tr>
+<tr><td>Bia kẹt, rung hoặc báo lỗi cơ cấu</td><td>Dừng, kiểm tra lắp ráp và hiệu chuẩn; xử lý nguyên nhân rồi mới ĐẶT LẠI và thử chậm</td></tr>
+</tbody></table>
+<p>Khi cần hỗ trợ, ghi lại: thao tác vừa làm, tên bài, tên/MAC bia, phiên bản firmware, kênh, nơi lưu và thông báo lỗi. Tab Console giúp xem lệnh và phản hồi. Người dùng thông thường không cần gửi JSON thủ công; không thử các lệnh chuyển động chưa hiểu.</p>
+<h2 class="chapter" id="chapter-12">12. Phiếu kiểm tra, bàn giao và nhật ký</h2>
+<h3>12.1. Trước mỗi phiên</h3>
+<ul><li>☐ Nguồn tay cầm và bia ổn định.</li><li>☐ Cơ cấu, dây dẫn và vùng chuyển động đã kiểm tra.</li><li>☐ Đúng tên bia, đủ kết nối, không báo lỗi.</li><li>☐ Đúng bài, đúng bia tham gia, đúng thời gian và trần tốc độ.</li><li>☐ Đã xem mô phỏng khi bài vừa thay đổi.</li><li>☐ Đã thử chậm trên thiết bị và xác định nút dừng sử dụng được.</li></ul>
+<h3>12.2. Sau mỗi phiên</h3>
+<ul><li>☐ Đã dừng bài và quan sát bia dừng thực tế.</li><li>☐ Bài chỉnh sửa đã lưu thành công.</li><li>☐ Đã xuất JSON cho bài cần giữ.</li><li>☐ Đã ngắt USB và tắt nguồn theo quy trình bàn giao của bộ thiết bị.</li><li>☐ Ghi lại lỗi, hiệu chỉnh hoặc chi tiết cần bảo dưỡng.</li></ul>
+<h3>12.3. Phiếu bàn giao thiết bị</h3>
+<table><thead><tr><th scope="col">Thông tin</th><th scope="col">Ghi khi bàn giao</th></tr></thead><tbody>
+<tr><td>Người nhận / ngày</td><td>________________________________________</td></tr>
+<tr><td>Tên tay cầm / phiên bản firmware</td><td>________________________________________</td></tr>
+<tr><td>Kênh ESP-NOW</td><td>________________________________________</td></tr>
+<tr><td>Tên và MAC các bia</td><td>________________________________________</td></tr>
+<tr><td>SSID / cách nhận mật khẩu riêng</td><td>________________________________________</td></tr>
+<tr><td>Trần tốc độ được kiểm tra</td><td>________________________________________</td></tr>
+<tr><td>Thông số hiệu chuẩn và nguồn cấp</td><td>________________________________________</td></tr>
+<tr><td>Nút dừng cứng đã lắp / chưa lắp</td><td>________________________________________</td></tr>
+<tr><td>Nơi lưu file bài tập và bản tài liệu</td><td>________________________________________</td></tr>
+</tbody></table>
+<h3>12.4. Nhật ký sử dụng</h3>
+<table><thead><tr><th scope="col">Ngày</th><th scope="col">Bài / bia</th><th scope="col">Tốc độ / thời gian</th><th scope="col">Kết quả / lỗi</th><th scope="col">Người vận hành</th></tr></thead><tbody>
+<tr><td>__________</td><td>__________</td><td>__________</td><td>__________</td><td>__________</td></tr>
+<tr><td>__________</td><td>__________</td><td>__________</td><td>__________</td><td>__________</td></tr>
+<tr><td>__________</td><td>__________</td><td>__________</td><td>__________</td><td>__________</td></tr>
+<tr><td>__________</td><td>__________</td><td>__________</td><td>__________</td><td>__________</td></tr>
+</tbody></table>
+<h2 class="chapter" id="chapter-13">Phụ lục A. Giới hạn và đơn vị</h2>
+<table><thead><tr><th scope="col">Thông số</th><th scope="col">Giá trị trong phiên bản đối chiếu</th></tr></thead><tbody>
+<tr><td>Số bia trên một tay cầm</td><td>Tối đa 8</td></tr>
+<tr><td>Số bài trên tay cầm</td><td>32, gồm 6 có sẵn và tối đa 26 tự tạo</td></tr>
+<tr><td>Số điểm mỗi bài</td><td>Tối đa 24</td></tr>
+<tr><td>Tốc độ riêng một điểm</td><td>5–400 mm/s; còn bị giới hạn bởi trần tay cầm</td></tr>
+<tr><td>Tốc độ chung trên màn chọn</td><td>60 / 120 / 200 mm/s</td></tr>
+<tr><td>Trần tốc độ tay cầm</td><td>120 / 200 / 300 / 400 mm/s</td></tr>
+<tr><td>Dừng một điểm</td><td>0–60000 ms; để trống để theo lệnh</td></tr>
+<tr><td>Tên bài</td><td>Ô nhập tối đa 30 ký tự, dữ liệu tối đa 39 byte UTF-8</td></tr>
+<tr><td>Thời gian phiên</td><td>1 / 3 / 5 phút hoặc Liên tục</td></tr>
+<tr><td>Bước chỉnh tay</td><td>1 / 5 / 10 mm</td></tr>
+<tr><td>USB</td><td>921600 baud, website tự thiết lập</td></tr>
+<tr><td>Kênh ESP-NOW</td><td>1–13, các thiết bị phải cùng kênh</td></tr>
+<tr><td>Số máy vào WiFi của một bia</td><td>1</td></tr>
+<tr><td>Mã ghép cloud theo thiết kế server</td><td>6 số, thời hạn 15 phút; cần firmware hỗ trợ</td></tr>
+</tbody></table>
+<p><strong>mm</strong> là milimét; <strong>mm/s</strong> là milimét mỗi giây; <strong>ms</strong> là mili giây. 1000 ms = 1 giây. Tọa độ dùng hệ cơ cấu, không phải khoảng cách giữa người dùng và bia.</p>
+<h2 class="chapter" id="chapter-14">Phụ lục B. Thuật ngữ và file bài mẫu</h2>
+<p><strong>Bài tập:</strong> tên, kiểu di chuyển và danh sách điểm cùng thông số. <strong>Phiên bài:</strong> lần chạy cụ thể, gồm bài, các bia tham gia, tốc độ, thời gian và cách phối hợp. <strong>Cloud:</strong> dữ liệu gắn với tài khoản trên Internet. <strong>Flash:</strong> bộ nhớ giữ dữ liệu sau khi tắt nguồn. <strong>MAC:</strong> địa chỉ nhận diện thiết bị khi ghép. <strong>Hiệu chuẩn:</strong> chỉnh quan hệ giữa cơ cấu thực và thông số điều khiển.</p>
+<p>Một điểm trong JSON có dạng <code>[X, Y, tốc độ, dừng]</code>. Tốc độ <code>0</code> nghĩa là theo tốc độ lệnh; dừng <code>-1</code> nghĩa là theo thời gian dừng của lệnh. Người dùng có thể để trống hai ô tương ứng trên giao diện thay vì sửa các giá trị này bằng tay.</p>
+<p>File <code>bai-mau-ngang-3-diem.json</code> đi kèm chứa bài Qua lại ba điểm với tốc độ 60 mm/s và dừng 1000 ms. Nhập file rồi kiểm tra trong bộ thiết kế trước khi lưu vào tay cầm.</p>
+<p>Để in tài liệu: mở bản HTML và bấm <strong>In / Lưu PDF</strong>, chọn A4, tỉ lệ 100%; hoặc dùng bản PDF đi kèm. Bản DOCX dùng để thêm ảnh thiết bị thực tế, thông tin bàn giao và chỉnh bố cục trước khi đóng quyển. Kiểm tra lại trang xem trước và cập nhật số trang mục lục nếu tiếp tục biên tập trong Word.</p></main></body></html>

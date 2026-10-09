@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LQR vs Kanayama</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f8fafc;
+    --ink: #0f172a;
+    --ink-2: #334155;
+    --muted: #64748b;
+    --line: #e2e8f0;
+    --line-2: #cbd5e1;
+    --ref: #94a3b8;
+    --kan: #2a78d6;
+    --lqr: #eb6834;
+    --warn-bg: #fffbeb;
+    --warn-ink: #92400e;
+    --btn: #ffffff;
+    --btn-hover: #f1f5f9;
+    color-scheme: light;
+  }
+  :root[data-theme="dark"] {
+    --bg: #111827;
+    --surface: #1a2232;
+    --ink: #f1f5f9;
+    --ink-2: #cbd5e1;
+    --muted: #94a3b8;
+    --line: #2b3546;
+    --line-2: #3b475a;
+    --ref: #64748b;
+    --kan: #3987e5;
+    --lqr: #d95926;
+    --warn-bg: #3a2a12;
+    --warn-ink: #fbbf24;
+    --btn: #1f2937;
+    --btn-hover: #273244;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); }
+  body {
+    font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.45;
+    padding: 12px 14px 16px;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; }
+  h1 { font-size: 1.05rem; margin: 0 0 2px; font-weight: 800; }
+  .lead { margin: 0 0 10px; color: var(--muted); font-size: 0.86rem; }
+  .stage, .chart {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    overflow: hidden;
+  }
+  canvas { display: block; width: 100%; height: auto; touch-action: pan-y; }
+  .btns { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; align-items: center; }
+  .btns .sep { width: 1px; height: 26px; background: var(--line-2); margin: 0 2px; }
+  button {
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.84rem;
+    color: var(--ink);
+    background: var(--btn);
+    border: 1px solid var(--line-2);
+    border-radius: 8px;
+    padding: 7px 12px;
+    min-height: 34px;
+    cursor: pointer;
+  }
+  button:hover { background: var(--btn-hover); }
+  button.on { border-color: var(--lqr); color: var(--warn-ink); background: var(--warn-bg); }
+  .chart-head {
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+    gap: 8px; padding: 8px 12px 0;
+  }
+  .chart-head b { font-size: 0.86rem; }
+  .legend { display: flex; gap: 14px; font-size: 0.8rem; color: var(--ink-2); flex-wrap: wrap; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .sw { width: 22px; height: 3px; border-radius: 2px; display: inline-block; }
+  .sw.dash { background: repeating-linear-gradient(90deg, var(--ref) 0 5px, transparent 5px 9px); }
+  .grid2 { display: grid; grid-template-columns: 1.25fr 1fr; gap: 10px; margin-top: 10px; }
+  @media (max-width: 680px) { .grid2 { grid-template-columns: 1fr; } }
+  .card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: var(--surface);
+  }
+  .card h2 { font-size: 0.9rem; margin: 0 0 8px; display: flex; align-items: center; gap: 8px; }
+  .card h2 .sw { width: 14px; height: 14px; border-radius: 3px; }
+  .row { display: grid; grid-template-columns: 92px 1fr 92px; align-items: center; gap: 8px; margin: 6px 0; }
+  .row label { font-size: 0.82rem; color: var(--ink-2); }
+  .row output { font-variant-numeric: tabular-nums; font-size: 0.82rem; text-align: right; }
+  input[type=range] { width: 100%; accent-color: var(--lqr); }
+  .seg { display: flex; gap: 0; margin: 0 0 6px; }
+  .seg button { font-size: 0.78rem; padding: 5px 10px; min-height: 30px; border-radius: 0; }
+  .seg button:first-child { border-radius: 8px 0 0 8px; }
+  .seg button:last-child { border-radius: 0 8px 8px 0; border-left: none; }
+  .presets { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+  .presets button { font-size: 0.78rem; padding: 5px 9px; min-height: 30px; }
+  .toggles { display: flex; flex-direction: column; gap: 6px; margin: 8px 0 0; }
+  .toggles label { display: flex; gap: 8px; align-items: center; font-size: 0.82rem; color: var(--ink-2); cursor: pointer; }
+  .toggles input { accent-color: var(--lqr); width: 16px; height: 16px; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+  th, td { padding: 4px 6px; text-align: right; border-bottom: 1px solid var(--line); }
+  th:first-child, td:first-child { text-align: left; color: var(--muted); font-weight: 500; }
+  thead th { color: var(--muted); font-weight: 600; }
+  td.x { color: var(--warn-ink); font-weight: 700; }
+  .note { font-size: 0.78rem; color: var(--muted); margin: 8px 0 0; }
+  .qr { font-size: 0.84rem; font-weight: 600; margin: 8px 0 0; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 8px; }
+  .stat { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; background: var(--bg); }
+  .stat b { display: block; font-size: 1rem; font-variant-numeric: tabular-nums; }
+  .stat span { font-size: 0.76rem; color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Hai robot, một quỹ đạo: Kanayama và LQR</h1>
+  <p class="lead">Robot xanh chạy luật Kanayama của Bài 5 (K<sub>x</sub> 1.5, K<sub>y</sub> 5, K<sub>z</sub> 2). Robot cam chạy LQR: kéo các thanh trượt Bryson, K được giải lại ngay trong trình duyệt.</p>
+
+  <div class="stage">
+    <canvas id="cv" width="880" height="380" aria-label="Hai robot vi sai bám cùng một quỹ đạo đặt"></canvas>
+  </div>
+
+  <div class="btns" id="trajBtns">
+    <button data-tr="line" class="on">Thẳng 0.6 m/s</button>
+    <button data-tr="lane">Đổi làn hình sin</button>
+    <button data-tr="eight">Số 8</button>
+    <button data-tr="circle">Tròn R 2 m</button>
+    <button data-tr="spiral">Xoắn ốc</button>
+    <span class="sep" aria-hidden="true"></span>
+    <button id="bKick">Lệch ngang 0.3 m</button>
+    <button id="bReset">↺ Đặt lại</button>
+  </div>
+
+  <div class="chart">
+    <div class="chart-head">
+      <b>Sai số ngang e<sub>y</sub>(t) · 10 giây gần nhất</b>
+      <div class="legend">
+        <span><i class="sw" style="background:var(--kan)"></i>Kanayama</span>
+        <span><i class="sw" style="background:var(--lqr)"></i>LQR</span>
+      </div>
+    </div>
+    <canvas id="ch" width="880" height="200" aria-label="Đồ thị sai số ngang của hai robot theo thời gian"></canvas>
+  </div>
+
+  <div class="grid2">
+    <section class="card">
+      <h2><i class="sw" style="background:var(--lqr)"></i>LQR · chọn Q và R</h2>
+      <div class="seg" role="group" aria-label="Cách nhập trọng số">
+        <button id="mQR" class="on">Q, R trực tiếp</button>
+        <button id="mBry">Theo luật Bryson</button>
+      </div>
+      <div id="pQR">
+      <div class="row">
+        <label for="q0">Q<sub>ex</sub></label>
+        <input id="q0" type="range" min="-2" max="4" step="0.01">
+        <output id="oq0"></output>
+      </div>
+      <div class="row">
+        <label for="q1">Q<sub>ey</sub></label>
+        <input id="q1" type="range" min="-2" max="4" step="0.01">
+        <output id="oq1"></output>
+      </div>
+      <div class="row">
+        <label for="q2">Q<sub>eψ</sub></label>
+        <input id="q2" type="range" min="-2.1" max="3" step="0.01" data-lo="-2">
+        <output id="oq2"></output>
+      </div>
+      <div class="row">
+        <label for="r0">R<sub>δv</sub></label>
+        <input id="r0" type="range" min="-3" max="3" step="0.01">
+        <output id="or0"></output>
+      </div>
+      <div class="row">
+        <label for="r1">R<sub>δω</sub></label>
+        <input id="r1" type="range" min="-3" max="3" step="0.01">
+        <output id="or1"></output>
+      </div>
+      </div>
+      <div id="pBry" hidden>
+      <div class="row">
+        <label for="sx">e<sub>x,max</sub></label>
+        <input id="sx" type="range" min="0.05" max="0.6" step="0.01" value="0.2">
+        <output id="ox"></output>
+      </div>
+      <div class="row">
+        <label for="sy">e<sub>y,max</sub></label>
+        <input id="sy" type="range" min="0.02" max="0.4" step="0.01" value="0.1">
+        <output id="oy"></output>
+      </div>
+      <div class="row">
+        <label for="sp">e<sub>ψ,max</sub></label>
+        <input id="sp" type="range" min="0.05" max="1.05" step="0.01" value="1.05">
+        <output id="op"></output>
+      </div>
+      <div class="row">
+        <label for="sw">δω<sub>max</sub></label>
+        <input id="sw" type="range" min="0.1" max="2" step="0.05" value="0.5">
+        <output id="ow"></output>
+      </div>
+      </div>
+      <div class="presets">
+        <button data-p="25,100,0,11.11,4">Bộ chính</button>
+        <button data-p="25,100,0,11.11,11.11">Cùng gain ngang Kanayama</button>
+        <button data-p="25,100,0,11.11,1">Mạnh (R<sub>δω</sub> = 1)</button>
+        <button data-p="25,100,100,11.11,4">Phạt hướng (Q<sub>eψ</sub> = 100)</button>
+      </div>
+      <div class="toggles">
+        <label><input type="checkbox" id="tSched"> Lập lịch K theo v<sub>r</sub>, ω<sub>r</sub> hiện tại (tắt: K cố định tại 0.6 m/s, chạy thẳng)</label>
+        <label><input type="checkbox" id="tLqi"> Thêm tích phân e<sub>x</sub>, e<sub>y</sub> (LQI, chỉ tích phân khi lệch dưới 5 cm)</label>
+        <label><input type="checkbox" id="tD"> Code của cả hai robot dùng d = 0.5 m (lỗi trong file Bài 5; robot thật 0.405 m)</label>
+      </div>
+      <p class="qr" id="qr"></p>
+      <p class="note">Q là đơn giá cho từng sai số (e<sub>x</sub>, e<sub>y</sub>, e<sub>ψ</sub>), R là đơn giá cho lệnh sửa (δv, δω); thanh trượt chia theo thang log, kéo hết bên trái Q<sub>eψ</sub> thì bằng 0. Chỉ tỉ lệ Q/R có nghĩa: nhân mọi ô với cùng một số thì K không đổi. Chế độ Bryson chỉ là cách điền số khác: Q<sub>ii</sub> = 1/e<sub>max</sub>², R<sub>ii</sub> = 1/δ<sub>max</sub>², với δv<sub>max</sub> cố định 0.3 m/s.</p>
+    </section>
+
+    <section class="card">
+      <h2>Hệ số sửa sai đang dùng (−K)</h2>
+      <table>
+        <thead><tr><th></th><th>e<sub>x</sub></th><th>e<sub>y</sub></th><th>e<sub>ψ</sub></th></tr></thead>
+        <tbody>
+          <tr><td>LQR δv</td><td id="k00"></td><td id="k01"></td><td id="k02"></td></tr>
+          <tr><td>LQR δω</td><td id="k10"></td><td id="k11"></td><td id="k12"></td></tr>
+          <tr><td>Kanayama δv</td><td id="j00"></td><td>—</td><td>—</td></tr>
+          <tr><td>Kanayama δω</td><td>—</td><td id="j11"></td><td id="j12"></td></tr>
+        </tbody>
+      </table>
+      <div class="stats">
+        <div class="stat"><b id="rmsK">—</b><span>Kanayama · RMS e<sub>y</sub> 10 s</span></div>
+        <div class="stat"><b id="rmsL">—</b><span>LQR · RMS e<sub>y</sub> 10 s</span></div>
+      </div>
+      <p class="note">Mô hình động học robot Omron (r 0.09685 m, d 0.405 m), vòng trong là trễ bậc nhất 86 ms như Bài 5, tốc độ bánh kẹp ±17.3 rad/s, điều khiển 1 kHz. Ô tô màu là ô chéo mà Kanayama để trống.</p>
+    </section>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------- Theme: follow the parent site's toggle (same origin) ----------
+  function readTheme() {
+    var setting = 'system';
+    try { setting = localStorage.getItem('theme') || 'system'; } catch (e) { setting = 'system'; }
+    if (setting === 'dark' || setting === 'light') return setting;
+    return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  }
+  var colors = {};
+  function applyTheme() {
+    document.documentElement.setAttribute('data-theme', readTheme());
+    var cs = getComputedStyle(document.documentElement);
+    ['bg', 'surface', 'ink', 'ink-2', 'muted', 'line', 'line-2', 'ref', 'kan', 'lqr'].forEach(function (k) {
+      colors[k] = cs.getPropertyValue('--' + k).trim();
+    });
+  }
+  applyTheme();
+  window.addEventListener('storage', function (e) { if (e.key === 'theme') applyTheme(); });
+  if (window.matchMedia) {
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+    if (mq.addEventListener) mq.addEventListener('change', applyTheme);
+  }
+
+  // ---------- Robot and inner loop (same numbers as the Simscape model of Bài 5) ----------
+  var R_W = 0.09685, D_TRUE = 0.405, W_MAX = 17.3, TAU = 0.086;
+  var TS = 1e-3, DV_MAX = 0.3, ZCLAMP = 0.05;
+  var KX = 1.5, KY = 5.0, KZ = 2.0;
+
+  // ---------- Reference trajectories: pose, v_r, w_r ----------
+  function wrap(a) { return Math.atan2(Math.sin(a), Math.cos(a)); }
+  var TRAJ = {
+    line: { scale: 110, follow: true, f: function (t) { return [0, 0.6 * t]; } },
+    lane: { scale: 70, follow: true, f: function (t) { return [0.6 * t, Math.sin(2 * Math.PI * t / 10)]; } },
+    eight: { scale: 120, follow: false, center: [0, 0], f: function (t) { var w = 2 * Math.PI / 30; return [3 * Math.sin(w * t), 3 * Math.sin(w * t) * Math.cos(w * t)]; } },
+    circle: { scale: 80, follow: false, center: [0, 0], f: function (t) { var w = 2 * Math.PI / 20; return [2 * Math.cos(w * t), 2 * Math.sin(w * t)]; } },
+    spiral: { scale: 150, follow: false, center: [0, 0], f: function (t) {
+      var b = 0.05, v0 = 0.3, th = Math.sqrt(2 * v0 * (t + 0.2) / b + 1) - 1, rr = b * th;
+      return [rr * Math.cos(th), rr * Math.sin(th)];
+    } }
+  };
+  var trName = 'line';
+  function refAt(t) {
+    var f = TRAJ[trName].f, h = 1e-3;
+    var p0 = f(t), p1 = f(t + h), pm = f(t - h);
+    var dx = (p1[0] - pm[0]) / (2 * h), dy = (p1[1] - pm[1]) / (2 * h);
+    var ddx = (p1[0] - 2 * p0[0] + pm[0]) / (h * h), ddy = (p1[1] - 2 * p0[1] + pm[1]) / (h * h);
+    var v = Math.hypot(dx, dy), psi = Math.atan2(dy, dx);
+    var w = v > 1e-6 ? (dx * ddy - dy * ddx) / (v * v) : 0;
+    return { x: p0[0], y: p0[1], psi: psi, v: v, w: w };
+  }
+
+  // ---------- Small dense matrix helpers ----------
+  function zeros(n, m) { var a = []; for (var i = 0; i < n; i++) { a.push([]); for (var j = 0; j < m; j++) a[i].push(0); } return a; }
+  function eye(n) { var a = zeros(n, n); for (var i = 0; i < n; i++) a[i][i] = 1; return a; }
+  function mul(X, Y) {
+    var n = X.length, m = Y[0].length, p = Y.length, Z = zeros(n, m);
+    for (var i = 0; i < n; i++) for (var j = 0; j < m; j++) { var s = 0; for (var k = 0; k < p; k++) s += X[i][k] * Y[k][j]; Z[i][j] = s; }
+    return Z;
+  }
+  function add(X, Y, a) { return X.map(function (r, i) { return r.map(function (v, j) { return v + (a === undefined ? 1 : a) * Y[i][j]; }); }); }
+  function tr(X) { return X[0].map(function (_, j) { return X.map(function (r) { return r[j]; }); }); }
+  function inv(X) {
+    var n = X.length, I = eye(n), a = X.map(function (r, i) { return r.concat(I[i]); });
+    for (var c = 0; c < n; c++) {
+      var piv = c;
+      for (var r = c + 1; r < n; r++) if (Math.abs(a[r][c]) > Math.abs(a[piv][c])) piv = r;
+      var t = a[c]; a[c] = a[piv]; a[piv] = t;
+      var d = a[c][c];
+      for (var j = 0; j < 2 * n; j++) a[c][j] /= d;
+      for (r = 0; r < n; r++) if (r !== c) {
+        var f = a[r][c];
+        for (j = 0; j < 2 * n; j++) a[r][j] -= f * a[c][j];
+      }
+    }
+    return a.map(function (r) { return r.slice(n); });
+  }
+
+  // LQR via structure-preserving doubling on a fine discretisation (TD = 0.1 ms), which matches
+  // the continuous-time lqr() of MATLAB to about 0.02 %. Same method as the Bài 8 simulator.
+  var TD = 1e-4;
+  function dlqr(A, B, qd, rd) {
+    var n = A.length;
+    var Ad = eye(n), Gam = eye(n), term = eye(n), fact = 1;
+    for (var k = 1; k <= 10; k++) {
+      term = mul(term, A); fact *= k;
+      Ad = add(Ad, term, Math.pow(TD, k) / fact);
+      Gam = add(Gam, term, Math.pow(TD, k) / (fact * (k + 1)));
+    }
+    var Bd = mul(Gam, B).map(function (r) { return r.map(function (v) { return v * TD; }); });
+    var Rd = [[rd[0] * TD, 0], [0, rd[1] * TD]];
+    var Ri = inv(Rd);
+    var G = mul(mul(Bd, Ri), tr(Bd));
+    var H = zeros(n, n);
+    for (var i = 0; i < n; i++) H[i][i] = qd[i] * TD;
+    var Ak = Ad;
+    for (var it = 0; it < 120; it++) {
+      var W = inv(add(eye(n), mul(G, H)));
+      var AW = mul(Ak, W);
+      var An = mul(AW, Ak);
+      var Gn = add(G, mul(mul(AW, G), tr(Ak)));
+      var Hn = add(H, mul(mul(mul(tr(Ak), H), W), Ak));
+      var diff = 0, scale = 1;
+      for (i = 0; i < n; i++) for (var j = 0; j < n; j++) {
+        diff = Math.max(diff, Math.abs(Hn[i][j] - H[i][j]));
+        scale = Math.max(scale, Math.abs(Hn[i][j]));
+      }
+      Ak = An; G = Gn; H = Hn;
+      if (diff / scale < 1e-11) break;
+    }
+    var BtP = mul(tr(Bd), H);
+    return mul(inv(add(Rd, mul(BtP, Bd))), mul(BtP, Ad));   // 2 x n
+  }
+
+  function errModel(vr, wr, lqi) {
+    var A = [[0, wr, 0], [-wr, 0, vr], [0, 0, 0]];
+    var B = [[-1, 0], [0, 0], [0, -1]];
+    if (!lqi) return { A: A, B: B };
+    var Aa = zeros(5, 5), Ba = zeros(5, 2);
+    for (var i = 0; i < 3; i++) { for (var j = 0; j < 3; j++) Aa[i][j] = A[i][j]; Ba[i][0] = B[i][0]; Ba[i][1] = B[i][1]; }
+    Aa[3][0] = 1; Aa[4][1] = 1;
+    return { A: Aa, B: Ba };
+  }
+
+  // ---------- LQR design state ----------
+  // Q = diag(e_x, e_y, e_psi), R = diag(dv, dw); both slider panels write here
+  var QD = [25, 100, 0], RD = [1 / (DV_MAX * DV_MAX), 4];
+  var useSched = false, useLqi = false, dCtrl = D_TRUE;
+  var Kcur = [[1.5, 0, 0], [0, 5, 2.449]];
+  var lastDesign = { vr: null, wr: null };
+  function design(vr, wr) {
+    var v = Math.max(Math.abs(vr), 0.1);
+    var m = errModel(v, wr, useLqi);
+    var q = QD.slice();
+    if (useLqi) { q.push(1 / (0.2 * 0.2)); q.push(1 / (0.2 * 0.2)); }
+    return dlqr(m.A, m.B, q, RD);
+  }
+  function redesign(vr, wr) {
+    Kcur = useSched ? design(vr, wr) : design(0.6, 0);
+    lastDesign = { vr: vr, wr: wr };
+    showK();
+  }
+
+  // ---------- Simulation ----------
+  function newBot(kind, ref) {
+    return { kind: kind, x: ref.x, y: ref.y, psi: ref.psi,
+      wR: (ref.v + ref.w * D_TRUE / 2) / R_W, wL: (ref.v - ref.w * D_TRUE / 2) / R_W,
+      zx: 0, zy: 0, ey: 0, trail: [] };
+  }
+  var simT = 0, acc = 0, bots = [], hist = { t: [], k: [], l: [] }, sampleAcc = 0, trailAcc = 0;
+  var HIST = 500, SAMPLE = 0.02;
+  function reset() {
+    simT = 0; acc = 0; sampleAcc = 0; trailAcc = 0;
+    var r0 = refAt(0);
+    bots = [newBot('kan', r0), newBot('lqr', r0)];
+    hist = { t: [], k: [], l: [] };
+    redesign(r0.v, r0.w);
+  }
+
+  function control(b, ref) {
+    var dx = ref.x - b.x, dy = ref.y - b.y;
+    var ex = Math.cos(b.psi) * dx + Math.sin(b.psi) * dy;
+    var ey = -Math.sin(b.psi) * dx + Math.cos(b.psi) * dy;
+    var ep = wrap(ref.psi - b.psi);
+    b.ey = ey;
+    var v, w;
+    if (b.kind === 'kan') {
+      v = ref.v * Math.cos(ep) + KX * ex;
+      w = ref.w + ref.v * (KY * ey + KZ * Math.sin(ep));
+    } else {
+      var e = [ex, ey, ep];
+      if (useLqi) {
+        if (Math.abs(ex) < 0.05 && Math.abs(ey) < 0.05) {
+          b.zx = Math.max(-ZCLAMP, Math.min(ZCLAMP, b.zx + ex * TS));
+          b.zy = Math.max(-ZCLAMP, Math.min(ZCLAMP, b.zy + ey * TS));
+        }
+        e.push(b.zx); e.push(b.zy);
+      }
+      var dv = 0, dw = 0;
+      for (var i = 0; i < e.length; i++) { dv -= Kcur[0][i] * e[i]; dw -= Kcur[1][i] * e[i]; }
+      v = ref.v * Math.cos(ep) + dv;
+      w = ref.w + dw;
+    }
+    var cR = (v + w * dCtrl / 2) / R_W, cL = (v - w * dCtrl / 2) / R_W;
+    return [Math.max(-W_MAX, Math.min(W_MAX, cR)), Math.max(-W_MAX, Math.min(W_MAX, cL))];
+  }
+
+  function step() {
+    var ref = refAt(simT);
+    if (useSched && (Math.abs(ref.v - lastDesign.vr) > 0.02 || Math.abs(ref.w - lastDesign.wr) > 0.02)) redesign(ref.v, ref.w);
+    bots.forEach(function (b) {
+      var c = control(b, ref);
+      b.wR += TS / TAU * (c[0] - b.wR);
+      b.wL += TS / TAU * (c[1] - b.wL);
+      var v = R_W * (b.wR + b.wL) / 2, w = R_W * (b.wR - b.wL) / D_TRUE;
+      var pm = b.psi + 0.5 * w * TS;
+      b.x += v * Math.cos(pm) * TS; b.y += v * Math.sin(pm) * TS; b.psi = wrap(b.psi + w * TS);
+    });
+    simT += TS;
+    sampleAcc += TS; trailAcc += TS;
+    if (sampleAcc >= SAMPLE) {
+      sampleAcc -= SAMPLE;
+      hist.t.push(simT); hist.k.push(bots[0].ey); hist.l.push(bots[1].ey);
+      if (hist.t.length > HIST) { hist.t.shift(); hist.k.shift(); hist.l.shift(); }
+    }
+    if (trailAcc >= 0.05) {
+      trailAcc -= 0.05;
+      bots.forEach(function (b) { b.trail.push([b.x, b.y]); if (b.trail.length > 700) b.trail.shift(); });
+    }
+  }
+
+  // ---------- Drawing: XY view ----------
+  var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  var ch = document.getElementById('ch'), cctx = ch.getContext('2d');
+  function drawStage() {
+    var W = cv.width, H = cv.height, tj = TRAJ[trName], S = tj.scale;
+    var ref = refAt(simT);
+    var cx = tj.follow ? ref.x : tj.center[0], cy = tj.follow ? ref.y : tj.center[1];
+    if (trName === 'line') cx = 0;
+    var X = function (x) { return W / 2 + (x - cx) * S; };
+    var Y = function (y) { return H / 2 - (y - cy) * S; };
+    ctx.fillStyle = colors.surface; ctx.fillRect(0, 0, W, H);
+    // grid every 1 m (0.5 m when zoomed in)
+    var g = S > 100 ? 0.5 : 1;
+    ctx.strokeStyle = colors.line; ctx.lineWidth = 1;
+    var x0 = cx - W / 2 / S, x1 = cx + W / 2 / S, y0 = cy - H / 2 / S, y1 = cy + H / 2 / S;
+    for (var gx = Math.ceil(x0 / g) * g; gx <= x1; gx += g) { ctx.beginPath(); ctx.moveTo(X(gx), 0); ctx.lineTo(X(gx), H); ctx.stroke(); }
+    for (var gy = Math.ceil(y0 / g) * g; gy <= y1; gy += g) { ctx.beginPath(); ctx.moveTo(0, Y(gy)); ctx.lineTo(W, Y(gy)); ctx.stroke(); }
+    // reference path (whole period for closed paths, a window for open ones)
+    ctx.strokeStyle = colors.ref; ctx.lineWidth = 2; ctx.setLineDash([7, 6]);
+    ctx.beginPath();
+    var tA = tj.follow ? Math.max(0, simT - 12) : 0, tB = tj.follow ? simT + 12 : (trName === 'spiral' ? Math.max(simT + 5, 30) : 30);
+    for (var t = tA, first = true; t <= tB; t += 0.05) {
+      var p = TRAJ[trName].f(t);
+      if (first) { ctx.moveTo(X(p[0]), Y(p[1])); first = false; } else ctx.lineTo(X(p[0]), Y(p[1]));
+    }
+    ctx.stroke(); ctx.setLineDash([]);
+    // trails
+    [[bots[0], colors.kan], [bots[1], colors.lqr]].forEach(function (pc) {
+      var b = pc[0];
+      if (b.trail.length < 2) return;
+      ctx.strokeStyle = pc[1]; ctx.lineWidth = 2.5; ctx.lineJoin = 'round';
+      ctx.beginPath();
+      b.trail.forEach(function (q, i) { if (i === 0) ctx.moveTo(X(q[0]), Y(q[1])); else ctx.lineTo(X(q[0]), Y(q[1])); });
+      ctx.lineTo(X(b.x), Y(b.y));
+      ctx.stroke();
+    });
+    // reference point
+    ctx.fillStyle = colors.bg; ctx.strokeStyle = colors.ink; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(X(ref.x), Y(ref.y), 6, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+    // robots
+    [[bots[0], colors.kan], [bots[1], colors.lqr]].forEach(function (pc) {
+      var b = pc[0], px = X(b.x), py = Y(b.y);
+      ctx.save(); ctx.translate(px, py); ctx.rotate(-b.psi);
+      ctx.fillStyle = pc[1]; ctx.strokeStyle = colors.bg; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(13, 0); ctx.lineTo(-9, 9); ctx.lineTo(-5, 0); ctx.lineTo(-9, -9); ctx.closePath();
+      ctx.fill(); ctx.stroke();
+      ctx.restore();
+    });
+    // labels
+    ctx.font = '13px Inter, Segoe UI, Arial, sans-serif'; ctx.textAlign = 'left'; ctx.fillStyle = colors.muted;
+    ctx.fillText('t = ' + simT.toFixed(1) + ' s   v_r = ' + ref.v.toFixed(2) + ' m/s   ω_r = ' + ref.w.toFixed(2) + ' rad/s', 12, 20);
+    ctx.textAlign = 'right';
+    ctx.fillText('lưới ' + (g === 1 ? '1 m' : '0.5 m') + ' · nét đứt: quỹ đạo đặt', W - 12, 20);
+  }
+
+  // ---------- Drawing: e_y strip chart with hover readout ----------
+  var hoverX = null;
+  function niceMax(v) {
+    var steps = [0.5, 1, 2, 5, 10, 20, 30, 50, 100];
+    for (var i = 0; i < steps.length; i++) if (v <= steps[i]) return steps[i];
+    return Math.ceil(v / 50) * 50;
+  }
+  function drawChart() {
+    var W = ch.width, H = ch.height, L0 = 54, R0 = 14, T0 = 14, B0 = 30;
+    cctx.fillStyle = colors.surface; cctx.fillRect(0, 0, W, H);
+    var n = hist.t.length, tEnd = Math.max(10, simT), tStart = tEnd - 10;
+    var vmax = 0.5;
+    for (var i = 0; i < n; i++) vmax = Math.max(vmax, 100 * Math.abs(hist.k[i]), 100 * Math.abs(hist.l[i]));
+    vmax = niceMax(vmax * 1.1);
+    var X = function (t) { return L0 + (t - tStart) / 10 * (W - L0 - R0); };
+    var Y = function (v) { return T0 + (vmax - v) / (2 * vmax) * (H - T0 - B0); };
+    cctx.font = '12px Inter, Segoe UI, Arial, sans-serif'; cctx.textAlign = 'right'; cctx.fillStyle = colors.muted;
+    [-vmax, -vmax / 2, 0, vmax / 2, vmax].forEach(function (v) {
+      cctx.strokeStyle = v === 0 ? colors['line-2'] : colors.line; cctx.lineWidth = 1;
+      cctx.beginPath(); cctx.moveTo(L0, Y(v)); cctx.lineTo(W - R0, Y(v)); cctx.stroke();
+      cctx.fillText((Math.round(v * 100) / 100).toString().replace('-', '−') + ' cm', L0 - 6, Y(v) + 4);
+    });
+    cctx.textAlign = 'center';
+    for (var s = Math.ceil(tStart); s <= tEnd; s++) cctx.fillText(s + ' s', X(s), H - 10);
+    function series(arr, col) {
+      if (n < 2) return;
+      cctx.strokeStyle = col; cctx.lineWidth = 2; cctx.lineJoin = 'round';
+      cctx.beginPath();
+      for (var i = 0; i < n; i++) {
+        var px = X(hist.t[i]), py = Y(100 * arr[i]);
+        if (i === 0) cctx.moveTo(px, py); else cctx.lineTo(px, py);
+      }
+      cctx.stroke();
+    }
+    series(hist.k, colors.kan);
+    series(hist.l, colors.lqr);
+    if (hoverX !== null && n > 1) {
+      var tH = tStart + (hoverX - L0) / (W - L0 - R0) * 10;
+      var best = 0, bd = Infinity;
+      for (i = 0; i < n; i++) { var d = Math.abs(hist.t[i] - tH); if (d < bd) { bd = d; best = i; } }
+      var hx = X(hist.t[best]);
+      if (hx >= L0 && hx <= W - R0) {
+        cctx.strokeStyle = colors.muted; cctx.lineWidth = 1;
+        cctx.beginPath(); cctx.moveTo(hx, T0); cctx.lineTo(hx, H - B0); cctx.stroke();
+        [[hist.k[best], colors.kan], [hist.l[best], colors.lqr]].forEach(function (pp) {
+          cctx.fillStyle = pp[1]; cctx.strokeStyle = colors.surface; cctx.lineWidth = 2;
+          cctx.beginPath(); cctx.arc(hx, Y(100 * pp[0]), 5, 0, 2 * Math.PI); cctx.fill(); cctx.stroke();
+        });
+        var lines = ['t = ' + hist.t[best].toFixed(2) + ' s', 'Kanayama  ' + (100 * hist.k[best]).toFixed(2) + ' cm', 'LQR  ' + (100 * hist.l[best]).toFixed(2) + ' cm'];
+        cctx.font = '12px Inter, Segoe UI, Arial, sans-serif';
+        var bw = 0;
+        lines.forEach(function (s2) { bw = Math.max(bw, cctx.measureText(s2).width); });
+        bw += 16;
+        var bx = hx + 10 + bw > W - R0 ? hx - 10 - bw : hx + 10;
+        cctx.fillStyle = colors.bg; cctx.strokeStyle = colors['line-2'];
+        cctx.beginPath(); cctx.rect(bx, T0 + 4, bw, 58); cctx.fill(); cctx.stroke();
+        cctx.textAlign = 'left'; cctx.fillStyle = colors.ink;
+        lines.forEach(function (s2, k) { cctx.fillText(s2, bx + 8, T0 + 22 + k * 17); });
+      }
+    }
+    // running RMS of the visible window
+    if (n > 10) {
+      var sk = 0, sl = 0;
+      for (i = 0; i < n; i++) { sk += hist.k[i] * hist.k[i]; sl += hist.l[i] * hist.l[i]; }
+      document.getElementById('rmsK').textContent = (100 * Math.sqrt(sk / n)).toFixed(2) + ' cm';
+      document.getElementById('rmsL').textContent = (100 * Math.sqrt(sl / n)).toFixed(2) + ' cm';
+    }
+  }
+  function setHover(clientX) {
+    var rect = ch.getBoundingClientRect();
+    hoverX = (clientX - rect.left) / rect.width * ch.width;
+  }
+  ch.addEventListener('mousemove', function (e) { setHover(e.clientX); });
+  ch.addEventListener('mouseleave', function () { hoverX = null; });
+  ch.addEventListener('touchmove', function (e) { if (e.touches.length) setHover(e.touches[0].clientX); }, { passive: true });
+  ch.addEventListener('touchend', function () { hoverX = null; });
+
+  // ---------- UI ----------
+  var sx = document.getElementById('sx'), sy = document.getElementById('sy'), sp = document.getElementById('sp'), sw = document.getElementById('sw');
+  function fmtN(v) { return String(Number(v.toPrecision(3))); }
+  function showK() {
+    var ids = [['k00', 'k01', 'k02'], ['k10', 'k11', 'k12']];
+    for (var i = 0; i < 2; i++) for (var j = 0; j < 3; j++) {
+      var el = document.getElementById(ids[i][j]), val = -Kcur[i][j];
+      el.textContent = (Math.abs(val) < 5e-3 ? 0 : val).toFixed(2);
+      el.className = (i !== j && !(i === 1 && j === 2) && Math.abs(val) >= 5e-3) ? 'x' : '';
+    }
+    var ref = refAt(simT);
+    document.getElementById('j00').textContent = KX.toFixed(2);
+    document.getElementById('j11').textContent = (ref.v * KY).toFixed(2);
+    document.getElementById('j12').textContent = (ref.v * KZ).toFixed(2);
+    var lv = function (q, unit) { return q > 0 ? fmtN(1 / Math.sqrt(q)) + unit : 'không phạt'; };
+    document.getElementById('qr').textContent = 'Q = diag(' + QD.map(fmtN).join(', ') + ') · R = diag(' + RD.map(fmtN).join(', ') + ')' +
+      (useLqi ? ' · thêm 2 trạng thái tích phân' : '') +
+      ' · tức mức đáng lo: e_x ' + lv(QD[0], ' m') + ', e_y ' + lv(QD[1], ' m') + ', e_ψ ' + lv(QD[2], ' rad') +
+      ', δv ' + lv(RD[0], ' m/s') + ', δω ' + lv(RD[1], ' rad/s');
+  }
+  var sq = [0, 1, 2].map(function (i) { return document.getElementById('q' + i); });
+  var sr = [0, 1].map(function (i) { return document.getElementById('r' + i); });
+  function clamp(v, el) { return Math.min(+el.max, Math.max(+el.min, v)); }
+  // Log-scale slider; a slider with data-lo reads 0 left of data-lo
+  function logRead(el) {
+    var lo = el.getAttribute('data-lo');
+    if (lo !== null && +el.value < +lo) return 0;
+    return Math.pow(10, +el.value);
+  }
+  function logSet(el, v) { el.value = v > 0 ? clamp(Math.log10(v), el) : el.min; }
+  function syncSliders() {
+    for (var i = 0; i < 3; i++) logSet(sq[i], QD[i]);
+    for (i = 0; i < 2; i++) logSet(sr[i], RD[i]);
+    sx.value = clamp(1 / Math.sqrt(QD[0]), sx);
+    sy.value = clamp(1 / Math.sqrt(QD[1]), sy);
+    sp.value = QD[2] > 0 ? clamp(1 / Math.sqrt(QD[2]), sp) : sp.max;
+    sw.value = clamp(1 / Math.sqrt(RD[1]), sw);
+  }
+  function readSliders() {
+    syncSliders();
+    for (var i = 0; i < 3; i++) document.getElementById('oq' + i).textContent = fmtN(QD[i]);
+    for (i = 0; i < 2; i++) document.getElementById('or' + i).textContent = fmtN(RD[i]);
+    var ep = +sp.value > 1.0 ? Infinity : +sp.value;
+    document.getElementById('ox').textContent = (+sx.value).toFixed(2) + ' m';
+    document.getElementById('oy').textContent = (+sy.value).toFixed(2) + ' m';
+    document.getElementById('op').textContent = isFinite(ep) ? ep.toFixed(2) + ' rad' : 'không phạt';
+    document.getElementById('ow').textContent = (+sw.value).toFixed(2) + ' rad/s';
+    var ref = refAt(simT);
+    redesign(ref.v, ref.w);
+  }
+  // Read only the slider that moved, so the other weights keep their exact values
+  sq.forEach(function (el, i) {
+    el.addEventListener('input', function () { QD[i] = logRead(el); readSliders(); });
+  });
+  sr.forEach(function (el, i) {
+    el.addEventListener('input', function () { RD[i] = logRead(el); readSliders(); });
+  });
+  [sx, sy, sp, sw].forEach(function (el) {
+    el.addEventListener('input', function () {
+      var ex = +sx.value, ey = +sy.value, ep = +sp.value, dw = +sw.value;
+      QD = [1 / (ex * ex), 1 / (ey * ey), ep > 1.0 ? 0 : 1 / (ep * ep)];
+      RD = [1 / (DV_MAX * DV_MAX), 1 / (dw * dw)];
+      readSliders();
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-p]'), function (b) {
+    b.addEventListener('click', function () {
+      var v = b.getAttribute('data-p').split(',').map(Number);
+      QD = v.slice(0, 3); RD = v.slice(3, 5);
+      readSliders();
+    });
+  });
+  var mQR = document.getElementById('mQR'), mBry = document.getElementById('mBry');
+  function setMode(bry) {
+    document.getElementById('pQR').hidden = bry;
+    document.getElementById('pBry').hidden = !bry;
+    mQR.classList.toggle('on', !bry); mBry.classList.toggle('on', bry);
+  }
+  mQR.onclick = function () { setMode(false); };
+  mBry.onclick = function () { setMode(true); };
+  Array.prototype.forEach.call(document.querySelectorAll('[data-tr]'), function (b) {
+    b.addEventListener('click', function () {
+      trName = b.getAttribute('data-tr');
+      Array.prototype.forEach.call(document.querySelectorAll('[data-tr]'), function (o) { o.classList.toggle('on', o === b); });
+      reset();
+    });
+  });
+  document.getElementById('bKick').onclick = function () {
+    bots.forEach(function (b) { b.x += Math.sin(b.psi) * 0.3; b.y -= Math.cos(b.psi) * 0.3; });
+  };
+  document.getElementById('bReset').onclick = function () { reset(); };
+  document.getElementById('tSched').onchange = function (e) { useSched = e.target.checked; var r = refAt(simT); redesign(r.v, r.w); };
+  document.getElementById('tLqi').onchange = function (e) {
+    useLqi = e.target.checked;
+    bots.forEach(function (b) { b.zx = 0; b.zy = 0; });
+    var r = refAt(simT); redesign(r.v, r.w);
+  };
+  document.getElementById('tD').onchange = function (e) { dCtrl = e.target.checked ? 0.5 : D_TRUE; };
+
+  readSliders();
+  reset();
+
+  // ---------- Main loop ----------
+  var last = null;
+  function frame(now) {
+    if (last === null) last = now;
+    var dt = Math.min((now - last) / 1000, 0.05);
+    last = now;
+    acc += dt;
+    while (acc >= TS) { step(); acc -= TS; }
+    drawStage();
+    drawChart();
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
