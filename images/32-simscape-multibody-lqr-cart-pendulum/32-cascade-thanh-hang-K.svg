@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="560" viewBox="0 0 1000 560" role="img" aria-labelledby="t1 d1">
+  <title id="t1">Cascade-PID khai triển ra là một bộ phản hồi trạng thái</title>
+  <desc id="d1">Bên trái: hai vòng PID lồng nhau của Bài 3, vòng vị trí sinh góc đặt, vòng cân bằng sinh lực. Bên phải: cùng bộ điều khiển đó viết lại thành bốn hệ số nhân với bốn biến trạng thái x, x chấm, theta, theta chấm rồi cộng lại thành lực F. Hai hệ số đầu là tích của độ lợi vòng trong và vòng ngoài.</desc>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#64748b"/>
+    </marker>
+    <marker id="arA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#b45309"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1 { font-size: 24px; font-weight: 800; fill: #0f172a; }
+      .h2 { font-size: 16px; font-weight: 500; fill: #64748b; }
+      .pl { font-size: 15px; font-weight: 800; fill: #64748b; letter-spacing: .05em; }
+      .bt { font-size: 17px; font-weight: 700; fill: #1e293b; }
+      .bs { font-size: 15px; font-weight: 500; fill: #64748b; }
+      .sig { font-size: 17px; font-weight: 600; fill: #475569; }
+      .k  { font-size: 16px; font-weight: 700; fill: #1e293b; }
+      .kA { font-size: 16px; font-weight: 700; fill: #92400e; }
+      .sub { font-size: 12px; }
+      .note { font-size: 15px; font-weight: 500; fill: #475569; }
+    </style>
+  </defs>
+
+  <rect width="1000" height="560" fill="#ffffff"/>
+  <text x="40" y="46" class="h1">Hai vòng PID, khai triển ra, chỉ là một hàng bốn hệ số</text>
+  <text x="40" y="74" class="h2">Bỏ khâu I và bão hòa đi, Cascade-PID của Bài 3 có đúng dạng F = −K·s của LQR (v: vận tốc xe, ω: vận tốc góc).</text>
+  <line x1="40" y1="94" x2="960" y2="94" stroke="#e2e8f0"/>
+
+  <!-- Left panel: cascade -->
+  <rect x="40" y="116" width="420" height="330" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text x="60" y="142" class="pl">CASCADE-PID · HAI VÒNG</text>
+
+  <text x="62" y="196" class="sig">x, v</text>
+  <path d="M 104 190 H 150" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <rect x="154" y="160" width="190" height="62" rx="8" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+  <text x="249" y="186" text-anchor="middle" class="bt">PID vị trí</text>
+  <text x="249" y="208" text-anchor="middle" class="bs">K<tspan class="sub" dy="3">p,x</tspan><tspan dy="-3"> · K</tspan><tspan class="sub" dy="3">d,x</tspan></text>
+  <path d="M 344 190 H 390 V 270" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+  <text x="400" y="232" class="sig">θ<tspan class="sub" dy="4">ref</tspan></text>
+
+  <circle cx="390" cy="290" r="17" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+  <text x="390" y="296" text-anchor="middle" class="sig">Σ</text>
+  <text x="62" y="296" class="sig">θ</text>
+  <path d="M 84 290 H 370" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <path d="M 390 307 V 336" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+
+  <rect x="290" y="340" width="150" height="62" rx="8" fill="#ffffff" stroke="#1e293b" stroke-width="2.5"/>
+  <text x="365" y="366" text-anchor="middle" class="bt">PID cân bằng</text>
+  <text x="365" y="388" text-anchor="middle" class="bs">K<tspan class="sub" dy="3">p,θ</tspan><tspan dy="-3"> · K</tspan><tspan class="sub" dy="3">d,θ</tspan></text>
+  <text x="62" y="376" class="sig">ω</text>
+  <path d="M 84 371 H 286" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <path d="M 365 402 V 426 H 432" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+  <text x="440" y="432" class="sig">F</text>
+
+  <!-- Arrow between panels -->
+  <path d="M 470 281 H 516" stroke="#b45309" stroke-width="2.5" marker-end="url(#arA)"/>
+  <text x="493" y="268" text-anchor="middle" class="kA">=</text>
+
+  <!-- Right panel: state feedback -->
+  <rect x="520" y="116" width="440" height="330" rx="10" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text x="540" y="142" class="pl">PHẢN HỒI TRẠNG THÁI · MỘT HÀNG K</text>
+
+  <text x="546" y="190" class="sig">x</text>
+  <text x="546" y="250" class="sig">v</text>
+  <text x="546" y="310" class="sig">θ</text>
+  <text x="546" y="370" class="sig">ω</text>
+  <path d="M 566 184 H 592" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <path d="M 566 244 H 592" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <path d="M 566 304 H 592" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <path d="M 566 364 H 592" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+
+  <rect x="596" y="164" width="176" height="40" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="684" y="190" text-anchor="middle" class="kA">K<tspan class="sub" dy="3">p,θ</tspan><tspan dy="-3"> · K</tspan><tspan class="sub" dy="3">p,x</tspan></text>
+  <rect x="596" y="224" width="176" height="40" rx="6" fill="#fffbeb" stroke="#b45309" stroke-width="2"/>
+  <text x="684" y="250" text-anchor="middle" class="kA">K<tspan class="sub" dy="3">p,θ</tspan><tspan dy="-3"> · K</tspan><tspan class="sub" dy="3">d,x</tspan></text>
+  <rect x="596" y="284" width="176" height="40" rx="6" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+  <text x="684" y="310" text-anchor="middle" class="k">K<tspan class="sub" dy="3">p,θ</tspan></text>
+  <rect x="596" y="344" width="176" height="40" rx="6" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+  <text x="684" y="370" text-anchor="middle" class="k">K<tspan class="sub" dy="3">d,θ</tspan></text>
+
+  <path d="M 772 184 C 820 184 830 260 862 268" stroke="#64748b" stroke-width="2" fill="none"/>
+  <path d="M 772 244 C 810 244 830 272 860 276" stroke="#64748b" stroke-width="2" fill="none"/>
+  <path d="M 772 304 C 810 304 830 286 860 284" stroke="#64748b" stroke-width="2" fill="none"/>
+  <path d="M 772 364 C 820 364 830 300 862 292" stroke="#64748b" stroke-width="2" fill="none"/>
+  <circle cx="880" cy="280" r="19" fill="#ffffff" stroke="#64748b" stroke-width="2"/>
+  <text x="880" y="286" text-anchor="middle" class="sig">Σ</text>
+  <path d="M 899 280 H 936" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="914" y="268" class="sig">F</text>
+
+  <text x="540" y="420" class="bs">Ô hổ phách: hai hệ số bị “khóa” thành tích</text>
+  <text x="540" y="438" class="bs">của vòng trong với vòng ngoài.</text>
+
+  <!-- Footnote -->
+  <line x1="40" y1="472" x2="960" y2="472" stroke="#e2e8f0"/>
+  <text x="40" y="500" class="note">Cascade-PID chọn bốn số bằng bốn núm có ràng buộc nhân: đổi K<tspan class="sub" dy="3">p,θ</tspan><tspan dy="-3"> là đổi luôn hai hệ số của vị trí.</tspan></text>
+  <text x="40" y="526" class="note">LQR giữ nguyên hình dạng đó, chỉ thay cách chọn: bốn số được tính thẳng từ mô hình và một hàm chi phí.</text>
+</svg>
