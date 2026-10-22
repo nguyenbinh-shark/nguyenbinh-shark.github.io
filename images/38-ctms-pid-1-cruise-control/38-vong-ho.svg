@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="520" viewBox="0 0 960 520" role="img" aria-labelledby="t1 d1">
+  <title id="t1">Vận tốc vòng hở với lực kéo 500 N</title>
+  <desc id="d1">Dữ liệu MATLAB. Lực kéo bậc 500 N làm vận tốc tiến dần đến 10 m/s. Hằng số thời gian 20 s; thời gian lên 10 đến 90 phần trăm khoảng 43.94 s.</desc>
+  <defs>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1 { font-size: 24px; font-weight: 800; fill: #0f172a; }
+      .h2 { font-size: 16px; font-weight: 500; fill: #64748b; }
+      .pt { font-size: 16px; font-weight: 700; fill: #1e293b; }
+      .ax { font-size: 14px; font-weight: 500; fill: #64748b; font-variant-numeric: tabular-nums; }
+      .axl { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .lg { font-size: 15px; font-weight: 500; fill: #334155; }
+      .an { font-size: 14px; font-weight: 600; fill: #334155; }
+      .anm { font-size: 14px; font-weight: 500; fill: #475569; }
+      .m { font-family: "Times New Roman", "STIX Two Text", Times, serif; font-style: italic; }
+    </style>
+  </defs>
+  <rect width="960" height="520" fill="#ffffff"/>
+<text x="30" y="42" class="h1">Giữ lực 500 N: xe tiến dần tới 10 m/s, nhưng rất chậm</text>
+<text x="30" y="68" class="h2">Vòng hở · m = 1000 kg, b = 50 N·s/m · không có phản hồi</text>
+<line x1="30" y1="86" x2="930" y2="86" stroke="#e2e8f0"/>
+<line x1="40.0" y1="111.0" x2="66.0" y2="111.0" stroke="#2a78d6" stroke-width="3" stroke-linecap="round"/>
+<text x="74.0" y="116.0" class="lg">Vận tốc v</text>
+<line x1="215.0" y1="111.0" x2="241.0" y2="111.0" stroke="#64748b" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 5"/>
+<text x="249.0" y="116.0" class="lg">Giá trị cuối: 10 m/s</text>
+<defs><clipPath id="panel-clip-0"><rect x="80" y="165" width="840" height="280"/></clipPath></defs>
+<line x1="80.0" y1="445.0" x2="920.0" y2="445.0" stroke="#cbd5e1"/>
+<text x="72.0" y="450.0" class="ax" text-anchor="end">0</text>
+<line x1="80.0" y1="393.1" x2="920.0" y2="393.1" stroke="#e2e8f0"/>
+<text x="72.0" y="398.1" class="ax" text-anchor="end">2</text>
+<line x1="80.0" y1="341.3" x2="920.0" y2="341.3" stroke="#e2e8f0"/>
+<text x="72.0" y="346.3" class="ax" text-anchor="end">4</text>
+<line x1="80.0" y1="289.4" x2="920.0" y2="289.4" stroke="#e2e8f0"/>
+<text x="72.0" y="294.4" class="ax" text-anchor="end">6</text>
+<line x1="80.0" y1="237.6" x2="920.0" y2="237.6" stroke="#e2e8f0"/>
+<text x="72.0" y="242.6" class="ax" text-anchor="end">8</text>
+<line x1="80.0" y1="185.7" x2="920.0" y2="185.7" stroke="#e2e8f0"/>
+<text x="72.0" y="190.7" class="ax" text-anchor="end">10</text>
+<line x1="80.0" y1="445.0" x2="80.0" y2="450.0" stroke="#cbd5e1"/>
+<text x="80.0" y="466.0" class="ax" text-anchor="middle">0</text>
+<line x1="220.0" y1="445.0" x2="220.0" y2="450.0" stroke="#cbd5e1"/>
+<text x="220.0" y="466.0" class="ax" text-anchor="middle">20</text>
+<line x1="360.0" y1="445.0" x2="360.0" y2="450.0" stroke="#cbd5e1"/>
+<text x="360.0" y="466.0" class="ax" text-anchor="middle">40</text>
+<line x1="500.0" y1="445.0" x2="500.0" y2="450.0" stroke="#cbd5e1"/>
+<text x="500.0" y="466.0" class="ax" text-anchor="middle">60</text>
+<line x1="640.0" y1="445.0" x2="640.0" y2="450.0" stroke="#cbd5e1"/>
+<text x="640.0" y="466.0" class="ax" text-anchor="middle">80</text>
+<line x1="780.0" y1="445.0" x2="780.0" y2="450.0" stroke="#cbd5e1"/>
+<text x="780.0" y="466.0" class="ax" text-anchor="middle">100</text>
+<line x1="920.0" y1="445.0" x2="920.0" y2="450.0" stroke="#cbd5e1"/>
+<text x="920.0" y="466.0" class="ax" text-anchor="middle">120</text>
+<line x1="80.0" y1="445.0" x2="920.0" y2="445.0" stroke="#cbd5e1"/>
+<text x="80.0" y="151.0" class="pt">Vận tốc (m/s)</text>
+<text x="920.0" y="487.0" class="axl" text-anchor="end">thời gian (s)</text>
+<line x1="80.0" y1="185.7" x2="920.0" y2="185.7" stroke="#64748b" stroke-width="1.5" stroke-dasharray="6 5"/>
+<polyline points="80.0,445.0 91.4,424.6 104.8,402.8 117.4,384.1 129.8,367.3 141.7,352.5 155.9,336.4 171.3,320.7 186.3,307.0 201.9,294.2 216.0,283.8 233.8,272.1 251.0,262.1 270.0,252.4 287.9,244.4 308.4,236.4 330.5,229.0 351.0,223.1 371.5,218.0 396.6,212.7 421.5,208.3 444.3,204.9 477.0,200.9 505.5,198.1 534.2,195.8 600.2,192.0 686.4,189.1 791.5,187.3 920.0,186.4" fill="none" stroke="#2a78d6" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" clip-path="url(#panel-clip-0)"/>
+<line x1="220.0" y1="445.0" x2="220.0" y2="281.1" stroke="#64748b" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="230.0" y="303.1" class="an" text-anchor="start">Sau một τ = 20 s: đạt 63.2 % giá trị cuối</text>
+<text x="668.0" y="388.0" class="anm" text-anchor="middle">Lực kéo cân bằng lực cản: 500 = 50 × 10 N</text>
+</svg>

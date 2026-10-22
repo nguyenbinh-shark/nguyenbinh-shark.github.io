@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="540" viewBox="0 0 1000 540" role="img" aria-labelledby="t1 d1">
+  <title id="t1">LQR thay đúng khối tầng ngoài của Bài 5</title>
+  <desc id="d1">Sơ đồ khối hai tầng của robot Omron. Hàng trên là tầng ngoài: quỹ đạo đặt, khối tính sai số trong hệ thân xe, khối LQR tô màu cam tính phần sửa sai, điểm cộng với phần feedforward, rồi động học nghịch có kẹp tốc độ bánh. Hàng dưới là tầng trong giữ nguyên Bài 5: hai bộ PID vận tốc bánh và robot Omron trong Simscape. Tư thế thật đo bằng Transform Sensor quay về khối tính sai số.</desc>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#64748b"/>
+    </marker>
+    <marker id="arA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#b45309"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1 { font-size: 24px; font-weight: 800; fill: #0f172a; }
+      .h2 { font-size: 16px; font-weight: 500; fill: #64748b; }
+      .pl { font-size: 14px; font-weight: 800; fill: #64748b; letter-spacing: .05em; }
+      .plA { font-size: 14px; font-weight: 800; fill: #b45309; letter-spacing: .05em; }
+      .bt { font-size: 17px; font-weight: 700; fill: #1e293b; }
+      .btA { font-size: 19px; font-weight: 800; fill: #92400e; }
+      .bs { font-size: 15px; font-weight: 500; fill: #64748b; }
+      .sig { font-size: 16px; font-weight: 600; fill: #475569; }
+      .sigA { font-size: 16px; font-weight: 700; fill: #92400e; }
+      .m { font-family: "Times New Roman", "STIX Two Text", Times, serif; font-style: italic; font-size: 18px; }
+      .note { font-size: 15px; font-weight: 500; fill: #475569; }
+    </style>
+  </defs>
+
+  <rect width="1000" height="540" fill="#ffffff"/>
+  <text x="30" y="42" class="h1">LQR thay đúng một khối: bộ não tầng ngoài của Bài 5</text>
+  <text x="30" y="68" class="h2">Feedforward, động học nghịch, hai PID vận tốc bánh và cơ hệ Simscape giữ nguyên; chỉ phần sửa sai đổi cách tính.</text>
+  <line x1="30" y1="86" x2="970" y2="86" stroke="#e2e8f0"/>
+
+  <!-- feedforward path (drawn first, under the group) -->
+  <text x="390" y="117" text-anchor="middle" class="sig">feedforward giữ nguyên:  <tspan class="m">v</tspan><tspan font-size="12" dy="4">r</tspan><tspan dy="-4"> cos </tspan><tspan class="m">e</tspan><tspan class="m" font-size="13" dy="4">ψ</tspan><tspan dy="-4">  và  </tspan><tspan class="m">ω</tspan><tspan font-size="12" dy="4">r</tspan></text>
+  <path d="M 95 195 V 162 Q 95 128 129 128 H 626 Q 660 128 660 162 V 214" stroke="#64748b" stroke-width="2" fill="none" stroke-dasharray="7 5" marker-end="url(#ar)"/>
+
+  <!-- outer group -->
+  <rect x="196" y="146" width="512" height="146" rx="12" fill="#fffbeb" fill-opacity="0.45" stroke="#d6a35c" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text x="210" y="167" class="plA">TẦNG NGOÀI · MỘT KHỐI MATLAB FUNCTION</text>
+
+  <!-- B1 reference -->
+  <rect x="30" y="195" width="130" height="70" rx="8" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+  <text x="95" y="225" text-anchor="middle" class="bt">Quỹ đạo đặt</text>
+  <text x="95" y="247" text-anchor="middle" class="bs">ref_path_*</text>
+
+  <!-- B2 error -->
+  <rect x="210" y="195" width="160" height="70" rx="8" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+  <text x="290" y="225" text-anchor="middle" class="bt">Sai số hệ thân xe</text>
+  <text x="290" y="247" text-anchor="middle" class="bs">xoay về khung robot</text>
+
+  <!-- B3 LQR -->
+  <rect x="414" y="186" width="140" height="88" rx="10" fill="#fffbeb" stroke="#b45309" stroke-width="2.5"/>
+  <text x="484" y="216" text-anchor="middle" class="btA">LQR</text>
+  <text x="484" y="243" text-anchor="middle" class="sigA"><tspan class="m">δu</tspan> = −<tspan class="m">K e</tspan></text>
+  <text x="484" y="264" text-anchor="middle" class="bs">bài này</text>
+
+  <!-- sum -->
+  <circle cx="660" cy="230" r="17" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+  <text x="660" y="236" text-anchor="middle" class="bt">+</text>
+
+  <!-- B4 inverse kinematics -->
+  <rect x="750" y="195" width="220" height="70" rx="8" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+  <text x="860" y="225" text-anchor="middle" class="bt">Động học nghịch</text>
+  <text x="860" y="247" text-anchor="middle" class="bs">kẹp ±17.3 rad/s mỗi bánh</text>
+
+  <!-- arrows row 1 -->
+  <path d="M 160 230 H 206" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <path d="M 370 230 H 410" stroke="#b45309" stroke-width="2.5" marker-end="url(#arA)"/>
+  <text x="390" y="221" text-anchor="middle" class="sigA"><tspan class="m">e</tspan></text>
+  <path d="M 554 230 H 639" stroke="#b45309" stroke-width="2.5" marker-end="url(#arA)"/>
+  <text x="596" y="219" text-anchor="middle" class="sigA"><tspan class="m">δv</tspan>, <tspan class="m">δω</tspan></text>
+  <path d="M 677 230 H 746" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="712" y="219" text-anchor="middle" class="sig"><tspan class="m">v</tspan>*, <tspan class="m">ω</tspan>*</text>
+
+  <!-- inner group -->
+  <rect x="736" y="336" width="248" height="126" rx="12" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <text x="750" y="357" class="pl">TẦNG TRONG · BÀI 5</text>
+
+  <!-- B5 PID -->
+  <rect x="750" y="370" width="220" height="74" rx="8" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+  <text x="860" y="401" text-anchor="middle" class="bt">PID vận tốc bánh × 2</text>
+  <text x="860" y="424" text-anchor="middle" class="bs">5 / 1 / 0 · kẹp ±10 N·m</text>
+
+  <!-- B6 robot -->
+  <rect x="420" y="370" width="230" height="74" rx="8" fill="#f8fafc" stroke="#475569" stroke-width="2"/>
+  <text x="535" y="401" text-anchor="middle" class="bt">Robot Omron · Simscape</text>
+  <text x="535" y="424" text-anchor="middle" class="bs">Transform Sensor đo tư thế</text>
+
+  <!-- arrows row 2 -->
+  <path d="M 860 265 V 366" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="874" y="316" class="sig">tốc độ bánh đặt</text>
+  <path d="M 750 390 H 654" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="694" y="381" text-anchor="middle" class="sig">mô-men</text>
+  <path d="M 650 426 H 746" stroke="#64748b" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="694" y="450" text-anchor="middle" class="sig" font-size="15">tốc độ đo</text>
+
+  <!-- pose feedback -->
+  <path d="M 420 407 H 290 V 269" stroke="#64748b" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+  <text x="280" y="338" text-anchor="end" class="sig">tư thế thật</text>
+  <text x="280" y="362" text-anchor="end" class="sig"><tspan class="m">x</tspan>, <tspan class="m">y</tspan>, <tspan class="m">ψ</tspan></text>
+
+  <text x="30" y="498" class="note">Khối LQR nhận đúng các cổng vào/ra của khối Kanayama cũ (x, y, yaw, xr, yr, yaw_ref, Ts, reset),</text>
+  <text x="30" y="521" class="note">nên hai bộ điều khiển thay nhau được chỉ bằng cách dán code khác vào cùng một ô MATLAB Function.</text>
+</svg>

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 540" width="880" height="540" role="img" aria-labelledby="title desc" lang="en">
+<title id="title">Two PC apps in the RPBot robot system</title>
+<desc id="desc">The PC runs RPBot Studio and DAPLink Flasher. Studio reaches the robot's Raspberry Pi 5 over SSH and ROS 2 DDS. Flasher programs the STM32H723 through a CMSIS-DAP dongle, a wireless link to the DAPLink module and SWD; it can read /motor_status over SSH before halting the chip. The Pi talks to the STM32 over USB CDC micro-ROS.</desc>
+<style>text{font-family:Inter,-apple-system,"Segoe UI",Arial,sans-serif}.mono{font-family:Consolas,"SFMono-Regular",Menlo,monospace}</style>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#475569"/></marker><marker id="arrow-amber" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#b45309"/></marker></defs>
+<rect x="0" y="0" width="880" height="540" rx="16" fill="#ffffff"/>
+<rect x="16" y="16" width="300" height="508" rx="14" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="36" y="46" font-size="17" fill="#0f172a" font-weight="700">Computer (PC)</text>
+<text x="36" y="68" font-size="14" fill="#64748b">Windows 10/11 or Ubuntu 24.04</text>
+<rect x="444" y="16" width="420" height="508" rx="14" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="464" y="46" font-size="17" fill="#0f172a" font-weight="700">RPBot robot</text>
+<text x="464" y="68" font-size="14" fill="#64748b">Same LAN as the PC</text>
+<rect x="36" y="84" width="260" height="150" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+<text x="52" y="114" font-size="17" fill="#1d4ed8" font-weight="700">RPBot Studio</text>
+<text x="52" y="142" font-size="14" fill="#334155">Mapping · Navigation · maps</text>
+<text x="52" y="164" font-size="14" fill="#334155">Sensor, Nav2 and motor status</text>
+<text x="52" y="186" font-size="14" fill="#334155">Opens RViz on the PC</text>
+<text x="52" y="220" font-size="14" fill="#64748b">Windows: ROS 2 runs in WSL 2</text>
+<rect x="36" y="290" width="260" height="150" rx="10" fill="#ffffff" stroke="#2563eb" stroke-width="2"/>
+<text x="52" y="320" font-size="17" fill="#1d4ed8" font-weight="700">DAPLink Flasher</text>
+<text x="52" y="348" font-size="14" fill="#334155">Flashes .elf / .hex / .bin</text>
+<text x="52" y="370" font-size="14" fill="#334155">OpenOCD · CRC per sector</text>
+<text x="52" y="392" font-size="14" fill="#334155">Link lost: resumes mid-image</text>
+<text x="52" y="426" font-size="14" fill="#64748b">No ROS needed on the PC</text>
+<rect x="36" y="462" width="260" height="46" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+<text x="166" y="490" font-size="14" fill="#0f172a" text-anchor="middle">CMSIS-DAP dongle (USB)</text>
+<line x1="166" y1="440" x2="166" y2="462" stroke="#475569" stroke-width="1.5"/>
+<text x="176" y="456" font-size="13" fill="#64748b">USB</text>
+<rect x="464" y="84" width="380" height="150" rx="10" fill="#ffffff" stroke="#475569" stroke-width="1.5"/>
+<text x="480" y="114" font-size="17" fill="#0f172a" font-weight="700">Raspberry Pi 5</text>
+<text x="480" y="142" font-size="14" fill="#334155">Ubuntu 24.04 · ROS 2 Jazzy</text>
+<text x="480" y="164" font-size="14" fill="#334155">SLAM Toolbox · Nav2 · RPLidar</text>
+<text x="480" y="194" font-size="14" fill="#64748b" class="mono">~/pi5-stm32-slam</text>
+<rect x="464" y="290" width="380" height="150" rx="10" fill="#ffffff" stroke="#475569" stroke-width="1.5"/>
+<text x="480" y="320" font-size="17" fill="#0f172a" font-weight="700">STM32H723</text>
+<text x="480" y="348" font-size="14" fill="#334155">micro-ROS firmware</text>
+<text x="480" y="370" font-size="14" fill="#334155">IMU · RobStride motors (FDCAN)</text>
+<text x="480" y="392" font-size="14" fill="#334155">Publishes /motor_status</text>
+<text x="480" y="422" font-size="14" fill="#64748b" class="mono">Microros_H723_USB</text>
+<rect x="464" y="462" width="380" height="46" rx="8" fill="#ffffff" stroke="#94a3b8"/>
+<text x="654" y="490" font-size="14" fill="#0f172a" text-anchor="middle">Robot-side DAPLink module</text>
+<line x1="654" y1="236" x2="654" y2="288" stroke="#475569" stroke-width="1.5" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<text x="666" y="267" font-size="14" fill="#64748b">USB CDC · micro-ROS</text>
+<line x1="654" y1="462" x2="654" y2="442" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="666" y="456" font-size="13" fill="#64748b">SWD</text>
+<line x1="296" y1="128" x2="462" y2="128" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text x="380" y="119" font-size="14" fill="#0f172a" text-anchor="middle">SSH · commands, maps</text>
+<line x1="298" y1="186" x2="462" y2="186" stroke="#475569" stroke-width="1.5" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<text x="380" y="177" font-size="14" fill="#0f172a" text-anchor="middle">DDS · data, RViz</text>
+<path d="M296 330H404V214H462" fill="none" stroke="#b45309" stroke-width="1.6" stroke-dasharray="6 5" marker-end="url(#arrow-amber)"/>
+<text x="350" y="352" font-size="14" fill="#b45309" text-anchor="middle">SSH reads</text>
+<text x="350" y="371" font-size="14" fill="#b45309" text-anchor="middle" class="mono">/motor_status</text>
+<line x1="296" y1="485" x2="462" y2="485" stroke="#475569" stroke-width="1.5" stroke-dasharray="3 5" marker-end="url(#arrow)"/>
+<text x="380" y="476" font-size="14" fill="#0f172a" text-anchor="middle">wireless</text>
+</svg>
