@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 936 1152" role="img">
+  <title>Hai nghiệm IK của mỗi chuỗi — giao của hai đường tròn</title>
+  <desc>Với B=(4,10): khớp A phải nằm trên giao của đường tròn tâm O bán kính l1=7 và đường tròn tâm B bán kính l2=11, cho 2 điểm A′ (gối hướng ngoài) và A (gối hướng trong). Tương tự phía phải với C. Robot dùng tư thế hai gối hướng ngoài (nét đậm).</desc>
+  <style>
+    text{font-family:Helvetica,Arial,sans-serif;fill:#24292f;font-size:17px;paint-order:stroke;stroke:#ffffff;stroke-width:4px;stroke-linejoin:round}
+    .circ{fill:none;stroke-width:2;stroke-dasharray:10 8}
+    .joint{fill:#ffffff;stroke:#24292f;stroke-width:2}
+    .lab{font-size:16px;font-style:italic}
+    .leg{font-size:17px;font-style:italic}
+  </style>
+  <rect width="936" height="1152" fill="#ffffff"/>
+
+  <!-- Trục tọa độ -->
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b0b0b0"/>
+    </marker>
+  </defs>
+  <line x1="36" y1="828" x2="900" y2="828" stroke="#b0b0b0" stroke-width="1.5" marker-end="url(#arr)"/>
+  <line x1="324" y1="1116" x2="324" y2="56" stroke="#b0b0b0" stroke-width="1.5" marker-end="url(#arr)"/>
+  <text x="914" y="834">x</text>
+  <text x="336" y="52">y</text>
+
+  <!-- Ba đường tròn ràng buộc -->
+  <circle class="circ" cx="324" cy="828" r="252" stroke="#0969da"/>
+  <circle class="circ" cx="612" cy="828" r="252" stroke="#1a7f37"/>
+  <circle class="circ" cx="468" cy="468" r="396" stroke="#cf222e"/>
+  <text class="lab" x="56" y="742" fill="#0969da">(O, l₁ = 7)</text>
+  <text class="lab" x="688" y="576" fill="#1a7f37">(D, l₄ = 7)</text>
+  <text class="lab" x="486" y="98" fill="#cf222e">(B, l₂ = l₃ = 11)</text>
+
+  <!-- Chuỗi thay thế (gối hướng trong) — nét mảnh đứt -->
+  <polyline points="324,828 575.1,849.2 468,468" fill="none" stroke="#9aa0a6" stroke-width="2.5" stroke-dasharray="6 6"/>
+  <polyline points="612,828 360.9,849.2 468,468" fill="none" stroke="#9aa0a6" stroke-width="2.5" stroke-dasharray="6 6"/>
+
+  <!-- Chuỗi tư thế robot (hai gối hướng ngoài) — nét đậm -->
+  <polyline points="324,828 127.5,670.2 468,468 808.5,670.2 612,828" fill="none" stroke="#24292f" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+
+  <!-- Cung góc -->
+  <path d="M 414.0 828.0 A 90 90 0 0 0 253.9 771.6" fill="none" stroke="#d97706" stroke-width="2.5"/>
+  <path d="M 722.0 828.0 A 110 110 0 0 0 697.8 759.1" fill="none" stroke="#d97706" stroke-width="2.5"/>
+  <text x="288" y="716" fill="#d97706">θ₁ (t₁)</text>
+  <text x="752" y="782" fill="#d97706">θ₂ (t₂)</text>
+
+  <!-- Khớp -->
+  <circle class="joint" cx="324" cy="828" r="7"/>
+  <circle class="joint" cx="612" cy="828" r="7"/>
+  <circle class="joint" cx="127.5" cy="670.2" r="7"/>
+  <circle class="joint" cx="575.1" cy="849.2" r="7"/>
+  <circle class="joint" cx="808.5" cy="670.2" r="7"/>
+  <circle class="joint" cx="360.9" cy="849.2" r="7"/>
+  <circle cx="468" cy="468" r="8" fill="#cf222e" stroke="#24292f" stroke-width="2"/>
+
+  <!-- Nhãn -->
+  <text x="312" y="864" text-anchor="end">O (0, 0)</text>
+  <text x="640" y="818">D (8, 0)</text>
+  <text x="468" y="440" text-anchor="middle" font-weight="bold">B (4, 10)</text>
+  <text x="468" y="812" text-anchor="middle">l₀ = 8</text>
+  <text x="140" y="650">A′ (t₁) — gối hướng ngoài</text>
+  <text x="575" y="886" text-anchor="middle">A (t₂) — gối hướng trong</text>
+  <text x="800" y="626" text-anchor="end">C (t₂) — gối hướng ngoài</text>
+  <text x="360" y="886" text-anchor="middle">C′ (t₁) — gối hướng trong</text>
+  <text class="leg" x="178" y="760">l₁</text>
+  <text class="leg" x="272" y="566">l₂</text>
+  <text class="leg" x="652" y="566">l₃</text>
+  <text class="leg" x="730" y="748">l₄</text>
+
+  <!-- Chú giải -->
+  <g>
+    <rect x="36" y="36" width="352" height="150" rx="6" fill="#ffffff" fill-opacity="0.9" stroke="#d0d7de"/>
+    <text x="52" y="66" font-weight="bold">Mỗi chuỗi 2 nghiệm = 2 giao điểm đường tròn</text>
+    <text x="52" y="92" font-weight="bold">→ 2 × 2 = 4 cấu hình lắp ráp</text>
+    <line x1="52" y1="122" x2="92" y2="122" stroke="#24292f" stroke-width="5"/>
+    <text x="100" y="128">Tư thế robot: hai gối hướng ngoài</text>
+    <line x1="52" y1="152" x2="92" y2="152" stroke="#9aa0a6" stroke-width="2.5" stroke-dasharray="6 6"/>
+    <text x="100" y="158">Nghiệm thay thế (gối hướng trong)</text>
+  </g>
+</svg>

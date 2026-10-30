@@ -1,0 +1,704 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LQR góc pitch</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f8fafc;
+    --ink: #0f172a;
+    --ink-2: #334155;
+    --muted: #64748b;
+    --line: #e2e8f0;
+    --line-2: #cbd5e1;
+    --rail: #94a3b8;
+    --body: #ffffff;
+    --theta: #eb6834;
+    --gamma: #2a78d6;
+    --alpha: #1baf7a;
+    --delta: #b45309;
+    --band: rgba(148, 163, 184, 0.22);
+    --ok: #15803d;
+    --bad: #b91c1c;
+    --warn-bg: #fffbeb;
+    --warn-ink: #92400e;
+    --btn: #ffffff;
+    --btn-hover: #f1f5f9;
+    color-scheme: light;
+  }
+  :root[data-theme="dark"] {
+    --bg: #111827;
+    --surface: #1a2232;
+    --ink: #f1f5f9;
+    --ink-2: #cbd5e1;
+    --muted: #94a3b8;
+    --line: #2b3546;
+    --line-2: #3b475a;
+    --rail: #64748b;
+    --body: #1f2937;
+    --theta: #f07a4a;
+    --gamma: #4b93e8;
+    --alpha: #2fc48d;
+    --delta: #f59e0b;
+    --band: rgba(100, 116, 139, 0.25);
+    --ok: #4ade80;
+    --bad: #f87171;
+    --warn-bg: #3a2a12;
+    --warn-ink: #fbbf24;
+    --btn: #1f2937;
+    --btn-hover: #273244;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); }
+  body {
+    font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.45;
+    padding: 12px 14px 16px;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; }
+  h1 { font-size: 1.05rem; margin: 0 0 2px; font-weight: 800; }
+  .lead { margin: 0 0 10px; color: var(--muted); font-size: 0.86rem; }
+  .stage, .chart {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    overflow: hidden;
+  }
+  .chart { margin-top: 10px; }
+  canvas { display: block; width: 100%; }
+  .btns { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0; }
+  button, select {
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.84rem;
+    color: var(--ink);
+    background: var(--btn);
+    border: 1px solid var(--line-2);
+    border-radius: 8px;
+    padding: 7px 12px;
+    min-height: 34px;
+    cursor: pointer;
+  }
+  button:hover { background: var(--btn-hover); }
+  button.on { border-color: var(--theta); color: var(--warn-ink); background: var(--warn-bg); }
+  .chart-head {
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+    gap: 8px; padding: 8px 12px 0;
+  }
+  .chart-head b { font-size: 0.86rem; }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 0.8rem; color: var(--ink-2); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .sw { width: 22px; height: 3px; border-radius: 2px; display: inline-block; }
+  .sw.dash { background: repeating-linear-gradient(90deg, var(--rail) 0 5px, transparent 5px 9px); }
+  .sw.box { height: 10px; background: var(--band); border: 1px solid var(--line-2); }
+  .grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; margin-top: 10px; }
+  @media (max-width: 680px) { .grid2 { grid-template-columns: minmax(0, 1fr); } .row { grid-template-columns: 96px minmax(0, 1fr); } }
+  .card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: var(--surface);
+  }
+  .card h2 { font-size: 0.9rem; margin: 0 0 8px; }
+  .row { display: grid; grid-template-columns: 110px minmax(0, 1fr); align-items: center; gap: 8px; margin: 8px 0; }
+  .row label { font-size: 0.82rem; color: var(--ink-2); }
+  .row output { font-variant-numeric: tabular-nums; font-size: 0.82rem; }
+  .slider { display: grid; grid-template-columns: minmax(0, 1fr) 64px; gap: 8px; align-items: center; }
+  .slider output { text-align: right; font-weight: 700; }
+  input[type=range] { width: 100%; accent-color: var(--theta); }
+  select { width: 100%; min-width: 0; max-width: 100%; font-weight: 500; padding: 5px 8px; min-height: 32px; text-overflow: ellipsis; }
+  .presets { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 2px; }
+  .presets button { font-size: 0.78rem; padding: 5px 9px; min-height: 30px; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+  th, td { padding: 4px 6px; text-align: right; border-bottom: 1px solid var(--line); }
+  th:first-child, td:first-child { text-align: left; color: var(--muted); font-weight: 500; }
+  thead th { color: var(--muted); font-weight: 600; }
+  td.ok { color: var(--ok); font-weight: 700; }
+  td.bad { color: var(--bad); font-weight: 700; }
+  .note { font-size: 0.78rem; color: var(--muted); margin: 8px 0 0; }
+  .kline { font-size: 0.84rem; font-weight: 600; margin: 8px 0 0; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>LQR giữ góc pitch — mô hình máy bay của CTMS</h1>
+  <p class="lead">Lệnh θ = 0.2 rad (11.5°) tại t = 0. Đổi p, bật tắt N̄, kẹp cánh lái, thêm lệch cánh lái hay khâu tích phân: K được giải lại từ phương trình Riccati ngay trong trình duyệt rồi mô phỏng lại từ đầu.</p>
+
+  <div class="stage">
+    <canvas id="cv" data-h="250" data-hm="200" aria-label="Máy bay nhìn ngang, nghiêng theo góc pitch mô phỏng"></canvas>
+  </div>
+
+  <div class="btns">
+    <button id="bPlay">▶ Phát lại</button>
+    <button data-p="2">CTMS p = 2</button>
+    <button data-p="50">CTMS p = 50</button>
+    <button data-p="4.7596">Bryson p = 4.76</button>
+  </div>
+
+  <div class="chart">
+    <div class="chart-head">
+      <b>Ba góc (độ)</b>
+      <div class="legend">
+        <span><i class="sw" style="background:var(--theta)"></i>θ pitch</span>
+        <span><i class="sw" style="background:var(--gamma)"></i>γ quỹ đạo</span>
+        <span><i class="sw" style="background:var(--alpha)"></i>α góc tấn</span>
+        <span><i class="sw dash"></i>θ đặt</span>
+        <span><i class="sw box"></i>±2 %</span>
+      </div>
+    </div>
+    <canvas id="ch1" data-h="220" data-hm="200" aria-label="Đồ thị ba góc theo thời gian"></canvas>
+  </div>
+  <div class="chart">
+    <div class="chart-head">
+      <b>Lệnh cánh lái δ (độ)</b>
+      <div class="legend">
+        <span><i class="sw" style="background:var(--delta)"></i>δ</span>
+        <span><i class="sw box"></i>giới hạn cánh lái</span>
+      </div>
+    </div>
+    <canvas id="ch2" data-h="170" data-hm="150" aria-label="Đồ thị góc cánh lái theo thời gian"></canvas>
+  </div>
+
+  <div class="grid2">
+    <section class="card">
+      <h2>Thiết kế</h2>
+      <div class="row">
+        <label for="sp">Trọng số p</label>
+        <div class="slider"><input id="sp" type="range" min="-1" max="3" step="0.005" value="1.69897"><output id="op"></output></div>
+      </div>
+      <div class="row">
+        <label for="sN">Reference precompensation</label>
+        <select id="sN">
+          <option value="1">Có N̄ (δ = N̄·r − Kx)</option>
+          <option value="0">Không có N̄ (δ = r − Kx), như hình đầu của CTMS</option>
+        </select>
+      </div>
+      <div class="row">
+        <label for="sL">Giới hạn cánh lái</label>
+        <select id="sL">
+          <option value="0">Không giới hạn (như CTMS)</option>
+          <option value="25">±25°</option>
+          <option value="15">±15°</option>
+        </select>
+      </div>
+      <div class="row">
+        <label for="sB">Lệch cánh lái</label>
+        <select id="sB">
+          <option value="0">Không</option>
+          <option value="1">Lệch thêm 1° từ t = 20 s</option>
+        </select>
+      </div>
+      <div class="row">
+        <label for="sI">Khâu tích phân</label>
+        <select id="sI">
+          <option value="0">Không (LQR)</option>
+          <option value="1">LQI, tích phân liên tục</option>
+          <option value="2">LQI, chỉ tích phân khi |θ − r| &lt; 1°</option>
+        </select>
+      </div>
+      <p class="kline" id="kline"></p>
+      <p class="note" id="knote"></p>
+    </section>
+
+    <section class="card">
+      <h2>Kết quả · bốn yêu cầu của CTMS</h2>
+      <table>
+        <thead><tr><th></th><th>Đo được</th><th>Yêu cầu</th></tr></thead>
+        <tbody>
+          <tr><td>Vọt lố</td><td id="mOS"></td><td>&lt; 10 %</td></tr>
+          <tr><td>Thời gian lên (10–90 %)</td><td id="mTr"></td><td>&lt; 2 s</td></tr>
+          <tr><td>Thời gian lắng (±2 %)</td><td id="mTs"></td><td>&lt; 10 s</td></tr>
+          <tr><td>Sai số tại t = 20 s</td><td id="mE"></td><td>&lt; 2 %</td></tr>
+          <tr><td>|δ| lớn nhất</td><td id="mD"></td><td>—</td></tr>
+          <tr><td>α lớn nhất</td><td id="mA"></td><td>—</td></tr>
+        </tbody>
+      </table>
+      <p class="note" id="poles"></p>
+      <p class="note">Mô hình tuyến tính của CTMS: tốc độ bay không đổi, q là pitch rate đã chuẩn hóa (θ̇ = 56.7·q). Các chỉ tiêu đo trên 20 s đầu, trước khi cánh lái bị lệch.</p>
+    </section>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------- Theme: follow the parent site's toggle (same origin) ----------
+  function readTheme() {
+    var setting = 'system';
+    try { setting = localStorage.getItem('theme') || 'system'; } catch (e) { setting = 'system'; }
+    if (setting === 'dark' || setting === 'light') return setting;
+    return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  }
+  var colors = {};
+  function applyTheme() {
+    document.documentElement.setAttribute('data-theme', readTheme());
+    var cs = getComputedStyle(document.documentElement);
+    ['surface', 'ink', 'ink-2', 'muted', 'line', 'line-2', 'rail', 'body', 'theta', 'gamma', 'alpha', 'delta', 'band'].forEach(function (k) {
+      colors[k] = cs.getPropertyValue('--' + k).trim();
+    });
+  }
+  applyTheme();
+  window.addEventListener('storage', function (e) { if (e.key === 'theme') { applyTheme(); drawAll(); } });
+  if (window.matchMedia) {
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+    if (mq.addEventListener) mq.addEventListener('change', function () { applyTheme(); drawAll(); });
+  }
+
+  // ---------- Plant: CTMS aircraft pitch, x = [alpha, q, theta] ----------
+  var A3 = [[-0.313, 56.7, 0], [-0.0139, -0.426, 0], [0, 56.7, 0]];
+  var B3 = [0.232, 0.0203, 0];
+  var R_REF = 0.2, D2R = Math.PI / 180, T_BIAS = 20, DT = 0.005, REC = 2;
+
+  // ---------- Small dense linear algebra ----------
+  function zeros(r, c) { var Z = []; for (var i = 0; i < r; i++) Z.push(new Array(c).fill(0)); return Z; }
+  function eye(n) { var Z = zeros(n, n); for (var i = 0; i < n; i++) Z[i][i] = 1; return Z; }
+  function mul(X, Y) {
+    var n = X.length, m = Y[0].length, k = Y.length, Z = zeros(n, m);
+    for (var i = 0; i < n; i++) for (var j = 0; j < m; j++) {
+      var a = 0;
+      for (var l = 0; l < k; l++) a += X[i][l] * Y[l][j];
+      Z[i][j] = a;
+    }
+    return Z;
+  }
+  function tr(X) { return X[0].map(function (_, j) { return X.map(function (r) { return r[j]; }); }); }
+  function lin(X, a, Y, b) { return X.map(function (r, i) { return r.map(function (v, j) { return a * v + b * Y[i][j]; }); }); }
+  function invdet(X) {
+    var n = X.length, I = eye(n), det = 1;
+    var a = X.map(function (r, i) { return r.concat(I[i]); });
+    for (var c = 0; c < n; c++) {
+      var p = c;
+      for (var r = c + 1; r < n; r++) if (Math.abs(a[r][c]) > Math.abs(a[p][c])) p = r;
+      if (p !== c) { var t = a[c]; a[c] = a[p]; a[p] = t; det = -det; }
+      var d = a[c][c];
+      det *= d;
+      for (var j = 0; j < 2 * n; j++) a[c][j] /= d;
+      for (r = 0; r < n; r++) if (r !== c) {
+        var f = a[r][c];
+        if (f) for (j = 0; j < 2 * n; j++) a[r][j] -= f * a[c][j];
+      }
+    }
+    return { inv: a.map(function (r) { return r.slice(n); }), det: det };
+  }
+
+  // Continuous-time algebraic Riccati equation by the matrix sign function of the Hamiltonian
+  function lqr(A, B, Qd, R) {
+    var n = A.length, m = 2 * n, i, j;
+    var H = zeros(m, m);
+    for (i = 0; i < n; i++) for (j = 0; j < n; j++) {
+      H[i][j] = A[i][j];
+      H[i][j + n] = -B[i] * B[j] / R;
+      H[i + n][j] = i === j ? -Qd[i] : 0;
+      H[i + n][j + n] = -A[j][i];
+    }
+    var Z = H;
+    for (var it = 0; it < 100; it++) {
+      var id = invdet(Z), c = Math.pow(Math.abs(id.det), 1 / m);
+      var Zn = lin(Z, 0.5 / c, id.inv, 0.5 * c), diff = 0, sc = 0;
+      for (i = 0; i < m; i++) for (j = 0; j < m; j++) {
+        diff = Math.max(diff, Math.abs(Zn[i][j] - Z[i][j]));
+        sc = Math.max(sc, Math.abs(Zn[i][j]));
+      }
+      Z = Zn;
+      if (diff < 1e-13 * sc) break;
+    }
+    var Mm = zeros(m, n), Nn = zeros(m, n);
+    for (i = 0; i < n; i++) for (j = 0; j < n; j++) {
+      Mm[i][j] = Z[i][j + n];
+      Mm[i + n][j] = Z[i + n][j + n] + (i === j ? 1 : 0);
+      Nn[i][j] = Z[i][j] + (i === j ? 1 : 0);
+      Nn[i + n][j] = Z[i + n][j];
+    }
+    var Mt = tr(Mm);
+    var P = mul(invdet(mul(Mt, Mm)).inv, mul(Mt, Nn));
+    var K = [];
+    for (j = 0; j < n; j++) {
+      var a = 0;
+      for (i = 0; i < n; i++) a -= B[i] * (P[i][j] + P[j][i]) / 2;
+      K.push(a / R);
+    }
+    return K;
+  }
+
+  // Eigenvalues of a small matrix: Faddeev-LeVerrier coefficients, then Durand-Kerner roots
+  function eigs(M) {
+    var n = M.length, c = [1], Mk = zeros(n, n), I = eye(n);
+    for (var k = 1; k <= n; k++) {
+      Mk = mul(M, lin(Mk, 1, I, c[k - 1]));
+      var t = 0;
+      for (var i = 0; i < n; i++) t += Mk[i][i];
+      c.push(-t / k);
+    }
+    var roots = [];
+    for (i = 0; i < n; i++) roots.push([0.4 * Math.cos(2.4 * i + 0.4), 0.9 * Math.sin(2.4 * i + 0.4)]);
+    function cmul(a, b) { return [a[0] * b[0] - a[1] * b[1], a[0] * b[1] + a[1] * b[0]]; }
+    function cdiv(a, b) { var d = b[0] * b[0] + b[1] * b[1]; return [(a[0] * b[0] + a[1] * b[1]) / d, (a[1] * b[0] - a[0] * b[1]) / d]; }
+    for (var it = 0; it < 500; it++) {
+      var moved = 0;
+      for (i = 0; i < n; i++) {
+        var z = roots[i], pv = [1, 0];
+        for (k = 1; k <= n; k++) pv = [pv[0] * z[0] - pv[1] * z[1] + c[k], pv[0] * z[1] + pv[1] * z[0]];
+        var den = [1, 0];
+        for (var j = 0; j < n; j++) if (j !== i) den = cmul(den, [z[0] - roots[j][0], z[1] - roots[j][1]]);
+        var dz = cdiv(pv, den);
+        roots[i] = [z[0] - dz[0], z[1] - dz[1]];
+        moved = Math.max(moved, Math.abs(dz[0]) + Math.abs(dz[1]));
+      }
+      if (moved < 1e-13) break;
+    }
+    return roots;
+  }
+
+  // ---------- Design + simulation ----------
+  var res = null;
+
+  function design(p, integ) {
+    if (!integ) return { K: lqr(A3, B3, [0, 0, p], 1), Ki: 0, pPrime: p };
+    var Aa = [[-0.313, 56.7, 0, 0], [-0.0139, -0.426, 0, 0], [0, 56.7, 0, 0], [0, 0, 1, 0]];
+    var Ba = [0.232, 0.0203, 0, 0];
+    var target = Math.sqrt(p);
+    function k3(pp) { return lqr(Aa, Ba, [0, 0, pp, 0.5], 1); }
+    // choose the theta weight so the elevator kick at t = 0 stays sqrt(p)*r, as in the article
+    var lo = 0, hi = p, Klo = k3(0), Kbest = Klo, pBest = 0;
+    if (Klo[2] < target) {
+      for (var it = 0; it < 40; it++) {
+        var mid = 0.5 * (lo + hi), Km = k3(mid);
+        if (Km[2] < target) lo = mid; else hi = mid;
+        Kbest = Km; pBest = mid;
+      }
+    }
+    return { K: Kbest.slice(0, 3), Ki: Kbest[3], pPrime: pBest, Kaug: Kbest };
+  }
+
+  function simulate(cfg) {
+    var d = design(cfg.p, cfg.integ);
+    var K = d.K, Ki = d.Ki;
+    var N = cfg.nbar ? K[2] : 1;
+    var lim = cfg.lim > 0 ? cfg.lim * D2R : Infinity;
+    var T = cfg.bias ? 2 * T_BIAS : T_BIAS;
+    var x = [0, 0, 0], z = 0, t = 0;
+    var out = { t: [], th: [], al: [], ga: [], de: [] };
+    function f(s, zz, tt, de) {
+      var u = de + (cfg.bias && tt >= T_BIAS ? D2R : 0);
+      var e = s[2] - R_REF, dz = 0;
+      if (cfg.integ === 1) dz = e;
+      else if (cfg.integ === 2 && Math.abs(e) < D2R) dz = e;
+      return [A3[0][0] * s[0] + A3[0][1] * s[1] + B3[0] * u,
+              A3[1][0] * s[0] + A3[1][1] * s[1] + B3[1] * u,
+              A3[2][1] * s[1], dz];
+    }
+    function ctrl(s, zz) {
+      var u = N * R_REF - (K[0] * s[0] + K[1] * s[1] + K[2] * s[2]) - Ki * zz;
+      return Math.max(-lim, Math.min(lim, u));
+    }
+    var n = Math.round(T / DT);
+    for (var k = 0; k <= n; k++) {
+      var de = ctrl(x, z);
+      if (k % REC === 0) {
+        out.t.push(t); out.th.push(x[2] / D2R); out.al.push(x[0] / D2R);
+        out.ga.push((x[2] - x[0]) / D2R); out.de.push(de / D2R);
+      }
+      // RK4 with the control held over the step (sampled at 200 Hz)
+      var k1 = f(x, z, t, de);
+      var s2 = [x[0] + 0.5 * DT * k1[0], x[1] + 0.5 * DT * k1[1], x[2] + 0.5 * DT * k1[2]];
+      var k2 = f(s2, z + 0.5 * DT * k1[3], t + 0.5 * DT, de);
+      var s3 = [x[0] + 0.5 * DT * k2[0], x[1] + 0.5 * DT * k2[1], x[2] + 0.5 * DT * k2[2]];
+      var k3 = f(s3, z + 0.5 * DT * k2[3], t + 0.5 * DT, de);
+      var s4 = [x[0] + DT * k3[0], x[1] + DT * k3[1], x[2] + DT * k3[2]];
+      var k4 = f(s4, z + DT * k3[3], t + DT, de);
+      for (var i = 0; i < 3; i++) x[i] += DT / 6 * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]);
+      z += DT / 6 * (k1[3] + 2 * k2[3] + 2 * k3[3] + k4[3]);
+      t += DT;
+    }
+    // metrics on [0, T_BIAS)
+    var r = R_REF / D2R, tr10 = null, tr90 = null, peak = -Infinity, ts = 0, dmax = 0, amax = -Infinity, last = 0;
+    for (k = 0; k < out.t.length && out.t[k] < T_BIAS; k++) {
+      var y = out.th[k];
+      if (tr10 === null && y >= 0.1 * r) tr10 = out.t[k];
+      if (tr90 === null && y >= 0.9 * r) tr90 = out.t[k];
+      peak = Math.max(peak, y);
+      if (Math.abs(y - r) > 0.02 * r) ts = out.t[Math.min(k + 1, out.t.length - 1)];
+      dmax = Math.max(dmax, Math.abs(out.de[k]));
+      amax = Math.max(amax, out.al[k]);
+      last = y;
+    }
+    var Acl = cfg.integ
+      ? [[A3[0][0] - B3[0] * K[0], A3[0][1] - B3[0] * K[1], -B3[0] * K[2], -B3[0] * Ki],
+         [A3[1][0] - B3[1] * K[0], A3[1][1] - B3[1] * K[1], -B3[1] * K[2], -B3[1] * Ki],
+         [0, 56.7, 0, 0], [0, 0, 1, 0]]
+      : [[A3[0][0] - B3[0] * K[0], A3[0][1] - B3[0] * K[1], -B3[0] * K[2]],
+         [A3[1][0] - B3[1] * K[0], A3[1][1] - B3[1] * K[1], -B3[1] * K[2]],
+         [0, 56.7, 0]];
+    out.m = {
+      tr: (tr10 !== null && tr90 !== null) ? tr90 - tr10 : null,
+      ts: ts >= T_BIAS - 0.05 ? null : ts,
+      os: Math.max(0, (peak - r) / r * 100),
+      ess: Math.abs(last - r) / r * 100,
+      dmax: dmax, amax: amax
+    };
+    out.K = K; out.Ki = Ki; out.N = N; out.T = T; out.design = d; out.poles = eigs(Acl);
+    return out;
+  }
+
+  // ---------- Drawing: aircraft ----------
+  var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  var ch1 = document.getElementById('ch1'), c1 = ch1.getContext('2d');
+  var ch2 = document.getElementById('ch2'), c2 = ch2.getContext('2d');
+  // size every canvas to its CSS width so text stays readable on phones
+  function fit() {
+    var dpr = window.devicePixelRatio || 1;
+    [[cv, ctx], [ch1, c1], [ch2, c2]].forEach(function (pc) {
+      var el = pc[0], w = el.clientWidth || 880;
+      var h = +(w < 560 ? el.getAttribute('data-hm') : el.getAttribute('data-h'));
+      el._w = w; el._h = h;
+      el.width = Math.round(w * dpr); el.height = Math.round(h * dpr);
+      el.style.height = h + 'px';
+      pc[1].setTransform(dpr, 0, 0, dpr, 0, 0);
+    });
+  }
+  fit();
+  window.addEventListener('resize', function () { fit(); drawAll(); });
+  var FONT = 'Inter, Segoe UI, Arial, sans-serif';
+
+  var FUS = [[250, 0], [240, 10], [215, 19], [150, 24], [-150, 24], [-215, 20], [-262, 8], [-268, 0], [-262, -6],
+             [-215, -14], [-150, -19], [150, -19], [215, -15], [240, -8]];
+  var FIN = [[-200, 18], [-250, 92], [-272, 92], [-262, 10]];
+
+  function drawAircraft(k) {
+    var W = cv._w, H = cv._h;
+    ctx.fillStyle = colors.surface; ctx.fillRect(0, 0, W, H);
+    if (!res) return;
+    var th = res.th[k] * D2R, ga = res.ga[k] * D2R, al = res.al[k], de = res.de[k] * D2R;
+    var s = Math.min(0.62, W / 880 * 0.75), cx = W * 0.46, cy = H * 0.6;
+    function P(x, y, ang) {
+      return [cx + s * (x * Math.cos(ang) - y * Math.sin(ang)), cy - s * (x * Math.sin(ang) + y * Math.cos(ang))];
+    }
+    ctx.strokeStyle = colors.rail; ctx.lineWidth = 1.5; ctx.setLineDash([7, 6]);
+    ctx.beginPath(); ctx.moveTo(40, cy); ctx.lineTo(W - 40, cy); ctx.stroke(); ctx.setLineDash([]);
+    // reference attitude
+    var re = P(Math.min(380, (W - cx) / s - 60), 0, R_REF);
+    ctx.strokeStyle = colors.rail; ctx.lineWidth = 1; ctx.setLineDash([3, 5]);
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(re[0], re[1]); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = colors.muted; ctx.font = '12px ' + FONT; ctx.textAlign = 'left';
+    ctx.fillText('θ đặt', re[0] + 6, re[1] + 4);
+    function poly(pts, ang, fill, stroke) {
+      ctx.beginPath();
+      pts.forEach(function (q, i) { var p = P(q[0], q[1], ang); if (i) ctx.lineTo(p[0], p[1]); else ctx.moveTo(p[0], p[1]); });
+      ctx.closePath(); ctx.fillStyle = fill; ctx.fill(); ctx.strokeStyle = stroke; ctx.lineWidth = 2; ctx.stroke();
+    }
+    poly(FIN, th, colors.body, colors['ink-2']);
+    poly(FUS, th, colors.body, colors['ink-2']);
+    // elevator: hinge at x = -252, trailing edge up for positive delta
+    var h0 = P(-212, 4, th), h1 = P(-252, 4, th);
+    ctx.strokeStyle = colors['ink-2']; ctx.lineWidth = 5; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(h0[0], h0[1]); ctx.lineTo(h1[0], h1[1]); ctx.stroke();
+    var dd = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, de));
+    var e1 = P(-252 - 34 * Math.cos(dd), 4 + 34 * Math.sin(dd), th);
+    ctx.strokeStyle = colors.delta; ctx.lineWidth = 5;
+    ctx.beginPath(); ctx.moveTo(h1[0], h1[1]); ctx.lineTo(e1[0], e1[1]); ctx.stroke(); ctx.lineCap = 'butt';
+    // body axis and velocity
+    var b = P(330, 0, th);
+    ctx.strokeStyle = colors.theta; ctx.lineWidth = 2; ctx.setLineDash([4, 4]);
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(b[0], b[1]); ctx.stroke(); ctx.setLineDash([]);
+    var v = P(300, 0, ga);
+    ctx.strokeStyle = colors.gamma; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(v[0], v[1]); ctx.stroke();
+    var ah = Math.atan2(v[1] - cy, v[0] - cx);
+    ctx.fillStyle = colors.gamma; ctx.beginPath();
+    ctx.moveTo(v[0], v[1]);
+    ctx.lineTo(v[0] - 12 * Math.cos(ah - 0.4), v[1] - 12 * Math.sin(ah - 0.4));
+    ctx.lineTo(v[0] - 12 * Math.cos(ah + 0.4), v[1] - 12 * Math.sin(ah + 0.4));
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = colors.ink; ctx.beginPath(); ctx.arc(cx, cy, 4, 0, 2 * Math.PI); ctx.fill();
+    // readout
+    ctx.textAlign = 'left'; ctx.font = '700 13px ' + FONT;
+    var items = [['t', res.t[k].toFixed(1) + ' s', colors.ink], ['θ', res.th[k].toFixed(1) + '°', colors.theta],
+                 ['γ', res.ga[k].toFixed(1) + '°', colors.gamma], ['α', al.toFixed(1) + '°', colors.alpha],
+                 ['δ', res.de[k].toFixed(1) + '°', colors.delta]];
+    var x0 = 16;
+    items.forEach(function (it) {
+      ctx.fillStyle = it[2]; ctx.fillText(it[0] + ' ' + it[1], x0, 24);
+      x0 += ctx.measureText(it[0] + ' ' + it[1]).width + 18;
+    });
+    ctx.font = '12px ' + FONT; ctx.fillStyle = colors.muted; ctx.textAlign = 'right';
+    if (W > 560) ctx.fillText('nét đứt cam: trục thân · mũi tên xanh: vận tốc · đoạn nâu: cánh lái', W - 14, H - 12);
+  }
+
+  // ---------- Drawing: charts ----------
+  var hover = { c1: null, c2: null };
+  function niceStep(span) {
+    var raw = span / 5, p10 = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / p10;
+    return (m < 1.5 ? 1 : m < 3 ? 2 : m < 7 ? 5 : 10) * p10;
+  }
+  function chart(cv2, c, series, ymin, ymax, band, cursorK, hx) {
+    var W = cv2._w, H = cv2._h, L0 = 44, R0 = 12, T0 = 12, B0 = 28, T = res.T;
+    c.fillStyle = colors.surface; c.fillRect(0, 0, W, H);
+    var X = function (t) { return L0 + t / T * (W - L0 - R0); };
+    var Y = function (v) { return T0 + (ymax - v) / (ymax - ymin) * (H - T0 - B0); };
+    if (band) { c.fillStyle = colors.band; c.fillRect(L0, Y(band[1]), W - L0 - R0, Y(band[0]) - Y(band[1])); }
+    var st = niceStep(ymax - ymin);
+    c.font = '12px ' + FONT; c.textAlign = 'right'; c.fillStyle = colors.muted;
+    for (var v = Math.ceil(ymin / st) * st; v <= ymax + 1e-9; v += st) {
+      c.strokeStyle = Math.abs(v) < 1e-9 ? colors['line-2'] : colors.line; c.lineWidth = 1;
+      c.beginPath(); c.moveTo(L0, Y(v)); c.lineTo(W - R0, Y(v)); c.stroke();
+      c.fillText(String(Math.round(v * 100) / 100).replace('-', '−'), L0 - 6, Y(v) + 4);
+    }
+    c.textAlign = 'center';
+    var tst = T > 25 ? (W < 560 ? 10 : 5) : (W < 560 ? 5 : 2);
+    for (var s = 0; s <= T + 1e-9; s += tst) c.fillText(s + ' s', X(s), H - 8);
+    c.save(); c.beginPath(); c.rect(L0, T0 - 2, W - L0 - R0, H - T0 - B0 + 4); c.clip();
+    series.forEach(function (sr) {
+      c.strokeStyle = sr.col; c.lineWidth = sr.w || 2; c.setLineDash(sr.dash || []);
+      c.beginPath();
+      for (var i = 0; i < res.t.length; i++) {
+        var px = X(res.t[i]), py = Y(sr.y[i]);
+        if (i) c.lineTo(px, py); else c.moveTo(px, py);
+      }
+      c.stroke(); c.setLineDash([]);
+    });
+    c.restore();
+    if (cfg.bias) {
+      c.strokeStyle = colors.rail; c.setLineDash([4, 4]); c.lineWidth = 1;
+      c.beginPath(); c.moveTo(X(T_BIAS), T0); c.lineTo(X(T_BIAS), H - B0); c.stroke(); c.setLineDash([]);
+    }
+    var k = cursorK;
+    if (hx !== null) {
+      var tH = (hx - L0) / (W - L0 - R0) * T;
+      k = Math.max(0, Math.min(res.t.length - 1, Math.round(tH / (REC * DT))));
+    }
+    if (k !== null && k !== undefined) {
+      var cx0 = X(res.t[k]);
+      c.strokeStyle = colors.muted; c.lineWidth = 1;
+      c.beginPath(); c.moveTo(cx0, T0); c.lineTo(cx0, H - B0); c.stroke();
+      var lines = ['t = ' + res.t[k].toFixed(2) + ' s'];
+      series.forEach(function (sr) {
+        if (!sr.name) return;
+        var yv = sr.y[k];
+        if (yv >= ymin && yv <= ymax) {
+          c.fillStyle = sr.col; c.beginPath(); c.arc(cx0, Y(yv), 4, 0, 2 * Math.PI); c.fill();
+        }
+        lines.push(sr.name + '  ' + yv.toFixed(2) + '°');
+      });
+      if (hx !== null) {
+        c.font = '12px ' + FONT;
+        var bw = 0;
+        lines.forEach(function (l) { bw = Math.max(bw, c.measureText(l).width); });
+        bw += 16;
+        var bx = cx0 + 10 + bw > W - R0 ? cx0 - 10 - bw : cx0 + 10;
+        c.fillStyle = colors.body; c.strokeStyle = colors['line-2'];
+        c.beginPath(); c.rect(bx, T0 + 4, bw, 8 + 17 * lines.length); c.fill(); c.stroke();
+        c.textAlign = 'left'; c.fillStyle = colors.ink;
+        lines.forEach(function (l, i) { c.fillText(l, bx + 8, T0 + 20 + i * 17); });
+      }
+    }
+  }
+
+  var playK = 0, playing = false, lastNow = null, cfg = null;
+  function drawAll() {
+    if (!res) return;
+    var r = R_REF / D2R;
+    var ymax1 = Math.max(16, Math.ceil(Math.max.apply(null, res.th.concat(res.al)) / 2) * 2 + 2);
+    var ymin1 = Math.min(-4, Math.floor(Math.min.apply(null, res.ga.concat(res.al)) / 2) * 2);
+    chart(ch1, c1, [
+      { y: res.th.map(function () { return r; }), col: colors.rail, dash: [6, 5], w: 1.5 },
+      { y: res.ga, col: colors.gamma, name: 'γ' },
+      { y: res.al, col: colors.alpha, name: 'α' },
+      { y: res.th, col: colors.theta, w: 2.6, name: 'θ' }
+    ], ymin1, ymax1, [0.98 * r, 1.02 * r], playing ? playK : null, hover.c1);
+    var dmx = Math.max.apply(null, res.de.map(Math.abs));
+    var lim = cfg.lim > 0 ? cfg.lim : null;
+    var top = Math.max(30, Math.ceil(Math.max(dmx, lim || 0) / 10) * 10 + 5);
+    var bot = Math.min(-10, Math.floor(Math.min.apply(null, res.de) / 10) * 10 - 5);
+    chart(ch2, c2, [{ y: res.de, col: colors.delta, w: 2.4, name: 'δ' }], bot, top,
+      lim ? [-lim, lim] : null, playing ? playK : null, hover.c2);
+    drawAircraft(playing ? playK : (hover.c1 !== null || hover.c2 !== null) ? hoverIndex() : res.t.length - 1);
+  }
+  function hoverIndex() {
+    var hx = hover.c1 !== null ? hover.c1 : hover.c2, W = ch1._w, L0 = 44, R0 = 12;
+    var tH = (hx - L0) / (W - L0 - R0) * res.T;
+    return Math.max(0, Math.min(res.t.length - 1, Math.round(tH / (REC * DT))));
+  }
+  function bindHover(el, key) {
+    function set(clientX) { var rc = el.getBoundingClientRect(); hover[key] = (clientX - rc.left) / rc.width * el._w; drawAll(); }
+    el.addEventListener('mousemove', function (e) { set(e.clientX); });
+    el.addEventListener('mouseleave', function () { hover[key] = null; drawAll(); });
+    el.addEventListener('touchmove', function (e) { if (e.touches.length) set(e.touches[0].clientX); }, { passive: true });
+    el.addEventListener('touchend', function () { hover[key] = null; drawAll(); });
+  }
+  bindHover(ch1, 'c1');
+  bindHover(ch2, 'c2');
+
+  // ---------- UI ----------
+  var sp = document.getElementById('sp'), sN = document.getElementById('sN'), sL = document.getElementById('sL');
+  var sB = document.getElementById('sB'), sI = document.getElementById('sI');
+  function fmt(v, d) { return v.toFixed(d).replace('-', '−'); }
+  function setCell(id, text, ok) {
+    var el = document.getElementById(id);
+    el.textContent = text;
+    el.className = ok === undefined ? '' : (ok ? 'ok' : 'bad');
+  }
+  var pExact = 50;
+  function update() {
+    var p = pExact;
+    document.getElementById('op').textContent = p < 10 ? p.toFixed(2) : String(Math.round(p * 10) / 10);
+    cfg = { p: p, nbar: sN.value === '1', lim: +sL.value, bias: sB.value === '1', integ: +sI.value };
+    res = simulate(cfg);
+    var K = res.K, m = res.m;
+    var kl = 'K = [' + fmt(K[0], 4) + '   ' + fmt(K[1], 2) + '   ' + fmt(K[2], 4) + ']';
+    if (cfg.integ) kl += '   K_i = ' + fmt(res.Ki, 4);
+    kl += '   ·   N̄ = ' + fmt(res.N, 4);
+    document.getElementById('kline').textContent = kl;
+    var note = 'Q = diag(0, 0, p), R = 1. Cú giật cánh lái tại t = 0 bằng N̄·r = ' + fmt(res.N * R_REF / D2R, 1) + '°.';
+    if (cfg.integ) {
+      note = 'LQI: Q = diag(0, 0, ' + fmt(res.design.pPrime, 3) + ', 0.5), R = 1 — trọng số θ được chọn lại để K_θ vẫn bằng √p (cú giật không đổi)' +
+        (res.design.pPrime === 0 && Math.sqrt(p) < res.K[2] ? '; với p nhỏ thế này không giữ được, cú giật lớn hơn √p·r' : '') + '.';
+    }
+    document.getElementById('knote').textContent = note;
+    setCell('mOS', fmt(m.os, 2) + ' %', m.os < 10);
+    setCell('mTr', m.tr === null ? 'chưa tới 90 %' : fmt(m.tr, 2) + ' s', m.tr !== null && m.tr < 2);
+    setCell('mTs', m.ts === null ? '> 20 s' : fmt(m.ts, 2) + ' s', m.ts !== null && m.ts < 10);
+    setCell('mE', fmt(m.ess, 2) + ' %', m.ess < 2);
+    setCell('mD', fmt(m.dmax, 1) + '°');
+    setCell('mA', fmt(m.amax, 1) + '°');
+    var pl = res.poles.slice().sort(function (a, b) { return b[0] - a[0]; }).map(function (z) {
+      return Math.abs(z[1]) < 1e-6 ? fmt(z[0], 4) : fmt(z[0], 3) + (z[1] < 0 ? ' − ' : ' + ') + Math.abs(z[1]).toFixed(3) + 'j';
+    });
+    document.getElementById('poles').textContent = 'Cực vòng kín: ' + pl.join(',  ') + '   ·   zero của máy bay: −0.1541';
+    Array.prototype.forEach.call(document.querySelectorAll('[data-p]'), function (b) {
+      b.classList.toggle('on', Math.abs(+b.getAttribute('data-p') - p) / p < 0.004);
+    });
+    play();
+  }
+  function play() { playK = 0; playing = true; lastNow = null; }
+  sp.addEventListener('input', function () { pExact = Math.pow(10, +sp.value); update(); });
+  [sN, sL, sB, sI].forEach(function (el) { el.addEventListener('change', update); });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-p]'), function (b) {
+    b.addEventListener('click', function () { pExact = +b.getAttribute('data-p'); sp.value = Math.log10(pExact); update(); });
+  });
+  document.getElementById('bPlay').onclick = play;
+
+  update();
+
+  // ---------- Playback loop: 3x real time ----------
+  function frame(now) {
+    if (playing && res) {
+      if (lastNow === null) lastNow = now;
+      var dt = Math.min((now - lastNow) / 1000, 0.05) * 3;
+      lastNow = now;
+      playK = Math.min(res.t.length - 1, playK + Math.max(1, Math.round(dt / (REC * DT))));
+      if (playK >= res.t.length - 1) playing = false;
+      drawAll();
+    }
+    requestAnimationFrame(frame);
+  }
+  drawAll();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

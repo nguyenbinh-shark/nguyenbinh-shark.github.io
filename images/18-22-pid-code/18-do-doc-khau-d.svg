@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="400" viewBox="0 0 860 400" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="d-slope-title d-slope-desc">
+  <title id="d-slope-title">Minh họa độ dốc sai số của Khâu Vi phân D</title>
+  <desc id="d-slope-desc">Đồ thị đơn sắc biểu diễn sai số theo thời gian và tam giác tính độ dốc de/dt đóng vai trò phanh hãm.</desc>
+  <defs>
+    <!-- Slate Arrow Marker -->
+    <marker id="m-slate" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#475569"/>
+    </marker>
+    <!-- Accent Rose Marker (Chỉ dùng cho độ dốc) -->
+    <marker id="m-rose" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#e11d48"/>
+    </marker>
+
+    <style>
+      text { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+      .code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+      .axis-lbl { font-size: 13px; font-weight: 700; fill: #475569; }
+      .point-title { font-size: 12px; font-weight: 700; fill: #0f172a; }
+      .point-sub { font-size: 11.5px; font-weight: 600; fill: #475569; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="860" height="400" rx="12" fill="#ffffff"/>
+  <rect x="1" y="1" width="858" height="398" rx="11" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Coordinate Axes & Content -->
+  <g transform="translate(80, 35)">
+    <!-- Y-axis (Sai số error) -->
+    <line x1="0" y1="310" x2="0" y2="10" stroke="#475569" stroke-width="2" marker-end="url(#m-slate)"/>
+    <text x="-15" y="10" text-anchor="end" class="axis-lbl">Sai số e(t)</text>
+    <text x="-15" y="26" text-anchor="end" font-size="11" fill="#64748b">(khoảng cách)</text>
+
+    <!-- X-axis (Thời gian t) -->
+    <line x1="0" y1="310" x2="720" y2="310" stroke="#475569" stroke-width="2" marker-end="url(#m-slate)"/>
+    <text x="720" y="332" text-anchor="end" class="axis-lbl">Thời gian t (giây)</text>
+
+    <!-- Target Base Line (e = 0) -->
+    <line x1="0" y1="310" x2="700" y2="310" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <text x="705" y="306" font-size="11" font-weight="700" fill="#475569">Mục tiêu (e = 0)</text>
+
+    <!-- Error Curve e(t) -->
+    <path d="M 10 50 C 120 70, 220 120, 310 180 C 400 240, 520 290, 680 305" fill="none" stroke="#0f172a" stroke-width="3"/>
+    <text x="130" y="66" fill="#0f172a" font-size="12" font-weight="700">Đường cong sai số e(t)</text>
+
+    <!-- Projections -->
+    <line x1="220" y1="130" x2="220" y2="310" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="3 3"/>
+    <line x1="0" y1="130" x2="220" y2="130" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="3 3"/>
+    
+    <line x1="440" y1="245" x2="440" y2="310" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="3 3"/>
+    <line x1="0" y1="245" x2="440" y2="245" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="3 3"/>
+
+    <!-- Slope Triangle (Độ dốc D - Nhấn mạnh màu) -->
+    <polygon points="220,130 440,130 440,245" fill="#ffe4e6" fill-opacity="0.5" stroke="#fda4af" stroke-width="1.5" stroke-dasharray="3 2"/>
+
+    <!-- Slope Secant Line (Độ dốc) -->
+    <line x1="150" y1="95" x2="510" y2="280" stroke="#e11d48" stroke-width="2.5"/>
+    
+    <!-- Delta t dimension -->
+    <line x1="220" y1="116" x2="440" y2="116" stroke="#475569" stroke-width="1.5"/>
+    <path d="M 220 112 V 120 M 440 112 V 120" stroke="#475569" stroke-width="1.5"/>
+    <text x="330" y="108" text-anchor="middle" class="code" font-size="12" font-weight="700" fill="#0f172a">dt = current_time - previous_time</text>
+
+    <!-- Delta error dimension -->
+    <line x1="455" y1="130" x2="455" y2="245" stroke="#e11d48" stroke-width="1.5" marker-end="url(#m-rose)"/>
+    <text x="470" y="185" fill="#be123c" font-size="12" font-weight="700">Δe = error − previous_error</text>
+    <text x="470" y="202" fill="#e11d48" class="code" font-size="11" font-weight="600">(âm: đang áp sát vạch đích)</text>
+
+    <!-- Point A -->
+    <circle cx="220" cy="130" r="5" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>
+    <!-- Point A Card -->
+    <g transform="translate(100, 140)">
+      <rect x="0" y="0" width="165" height="40" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+      <text x="8" y="17" class="point-title">Vòng trước (k-1):</text>
+      <text x="8" y="32" class="code point-sub">previous_error</text>
+    </g>
+
+    <!-- Point B -->
+    <circle cx="440" cy="245" r="5" fill="#ffffff" stroke="#e11d48" stroke-width="2.5"/>
+    <!-- Point B Card -->
+    <g transform="translate(460, 245)">
+      <rect x="0" y="0" width="150" height="40" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+      <text x="8" y="17" class="point-title">Vòng này (k):</text>
+      <text x="8" y="32" class="code point-sub" fill="#e11d48">error</text>
+    </g>
+
+    <!-- Axis ticks -->
+    <text x="220" y="330" text-anchor="middle" font-size="11" fill="#64748b" class="code">previous_time</text>
+    <text x="440" y="330" text-anchor="middle" font-size="11" fill="#64748b" class="code">current_time</text>
+    <text x="-8" y="134" text-anchor="end" font-size="11" fill="#64748b" class="code">prev_error</text>
+    <text x="-8" y="249" text-anchor="end" font-size="11" fill="#64748b" class="code">error</text>
+
+    <!-- Callout badge -->
+    <g transform="translate(480, 15)">
+      <rect x="0" y="0" width="250" height="72" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+      <text x="12" y="20" fill="#0f172a" font-size="11.5" font-weight="800">ĐỘ DỐC = TỐC ĐỘ SAI SỐ</text>
+      <text x="12" y="40" class="code" font-size="12" font-weight="700" fill="#be123c">de/dt = (error - prev_error)/dt</text>
+      <text x="12" y="58" fill="#475569" font-size="11" font-weight="500">Sai số giảm nhanh → de/dt &lt; 0 (Phanh hãm)</text>
+    </g>
+  </g>
+</svg>

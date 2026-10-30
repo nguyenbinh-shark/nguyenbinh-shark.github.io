@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="500" viewBox="0 0 900 500" role="img" aria-labelledby="title desc">
+  <title id="title">Delay time Tu và recovery time Tg theo tiếp tuyến tại điểm uốn</title>
+  <desc id="desc">Tiếp tuyến tại điểm uốn cắt mức đầu ra ban đầu và mức xác lập. Tu tính từ lúc đổi đầu vào tới giao điểm thứ nhất; Tg là khoảng giữa hai giao điểm.</desc>
+  <defs><marker id="arrow" markerWidth="7" markerHeight="7" refX="3.5" refY="3.5" orient="auto-start-reverse"><path d="M0 0L7 3.5L0 7Z" fill="#334155"/></marker></defs>
+  <rect width="900" height="500" rx="12" fill="#f8fafc"/>
+  <g font-family="Arial, sans-serif" fill="#172f47">
+    <text x="35" y="40" font-size="26" font-weight="700">Đáp ứng chữ S và tiếp tuyến tại điểm uốn</text>
+    <text x="35" y="68" font-size="17">Tu: delay time · Tg: recovery time</text>
+    <path d="M100 95V385H825" stroke="#64748b" stroke-width="2" fill="none"/>
+    <path d="M100 180H825M100 365H825" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 5"/>
+    <text x="575" y="167" font-size="17">Mức xác lập mới</text>
+    <text x="575" y="354" font-size="17">Mức ban đầu</text>
+    <path d="M100 365C240 365 380 180 520 180H825" stroke="#1767a4" stroke-width="5" fill="none"/>
+    <path d="M145 381.518L480 160.179" stroke="#d97706" stroke-width="3" fill="none"/>
+    <circle cx="310" cy="272.5" r="6" fill="#d97706"/>
+    <text x="355" y="265" font-size="17" fill="#9a4b00">Điểm uốn</text>
+    <path d="M170 365V441M450 180V441M100 385V418" stroke="#64748b" stroke-dasharray="5 5" fill="none"/>
+    <circle cx="170" cy="365" r="5" fill="#ad3434"/>
+    <circle cx="450" cy="180" r="5" fill="#ad3434"/>
+    <path d="M103.5 410H166.5M173.5 435H446.5" stroke="#334155" stroke-width="2" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+    <text x="135" y="404" text-anchor="middle" font-size="19" font-weight="700">Tu</text>
+    <text x="310" y="429" text-anchor="middle" font-size="19" font-weight="700">Tg</text>
+    <text x="100" y="467" font-size="15">Đổi đầu vào</text>
+    <text x="575" y="428" font-size="16">Đường xanh: đáp ứng</text>
+    <text x="575" y="454" font-size="16" fill="#9a4b00">Đường cam: tiếp tuyến</text>
+    <text x="820" y="407" text-anchor="end" font-size="15">Thời gian →</text>
+  </g>
+</svg>

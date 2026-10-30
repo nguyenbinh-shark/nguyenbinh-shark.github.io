@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sổ tay vận hành Bia XY</title>
+<meta name="description" content="Sổ tay vận hành – khai thác hệ thống bia di động XY: tính năng, cấu tạo, triển khai thao trường, vận hành tay cầm và trang web bia, bài tập huấn luyện, bảo quản bảo dưỡng, khắc phục hỏng hóc.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Saira+Stencil+One&family=Saira+Condensed:wght@600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ===== Mau va kieu chu ===== */
+:root{
+  --od:#3f4a24;      /* xanh o-liu */
+  --od2:#5b6b34;
+  --kh:#c8b98a;      /* kaki */
+  --kh2:#ece5cf;
+  --ink:#1b1f16;
+  --mute:#5c6253;
+  --line:#b9b6a4;
+  --red:#a4161a;
+  --org:#c4560c;
+  --yel:#c99a06;
+  --blu:#1f4e79;
+  --paper:#fffdf7;
+  --mono:'JetBrains Mono',Consolas,monospace;
+  --cond:'Saira Condensed','Arial Narrow',sans-serif;
+  --sten:'Saira Stencil One','Saira Condensed',Impact,sans-serif;
+}
+*{box-sizing:border-box}
+html{background:#d9d6c8}
+body{margin:0;color:var(--ink);font:10.4pt/1.55 'Be Vietnam Pro',system-ui,sans-serif;
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+.sheet{background:var(--paper);max-width:210mm;margin:12px auto;padding:16mm 16mm 18mm;
+  box-shadow:0 2px 14px rgba(0,0,0,.18)}
+@media print{html{background:none}.sheet{margin:0;max-width:none;padding:0;box-shadow:none;background:none}}
+
+/* ===== Trang in ===== */
+@page{size:A4;margin:19mm 16mm 18mm 18mm;
+  @top-left{content:"SỔ TAY VẬN HÀNH · HỆ THỐNG BIA DI ĐỘNG XY";font:700 7.5pt 'Saira Condensed',sans-serif;
+    color:#3f4a24;letter-spacing:.6pt;vertical-align:bottom;padding-bottom:3mm}
+  @top-right{content:"TL-BXY-01 · Lần 1 · 10/2026";font:600 7.5pt 'Saira Condensed',sans-serif;color:#5c6253;
+    vertical-align:bottom;padding-bottom:3mm}
+  @bottom-left{content:"LƯU HÀNH NỘI BỘ";font:800 7.5pt 'Saira Condensed',sans-serif;color:#a4161a;letter-spacing:1pt;
+    vertical-align:top;padding-top:3mm}
+  @bottom-right{content:"Trang " counter(page);font:700 8pt 'Saira Condensed',sans-serif;color:#3f4a24;
+    vertical-align:top;padding-top:3mm}}
+@page cover{margin:0;@top-left{content:none}@top-right{content:none}@bottom-left{content:none}@bottom-right{content:none}}
+.cover{page:cover}
+.pb{break-before:page}
+h1,h2,h3,h4{break-after:avoid}
+figure,.box,.card,.drill,tr{break-inside:avoid}
+thead,tr:first-child{break-after:avoid}
+
+/* ===== Bia ===== */
+.cover{position:relative;height:297mm;width:210mm;margin:-16mm -16mm 0;overflow:hidden;
+  background:var(--od);color:var(--kh2);display:flex;flex-direction:column}
+@media screen{.cover{margin:-16mm -16mm 16mm}}
+@media print{.cover{margin:0}}
+.cv-top{display:flex;justify-content:space-between;align-items:center;padding:11mm 14mm 0;
+  font:800 9pt var(--cond);letter-spacing:2pt}
+.cv-top .cls{border:1.5pt solid #e8c36a;color:#e8c36a;padding:1.2mm 4mm}
+.cv-stripe{height:7mm;margin-top:8mm;background:repeating-linear-gradient(-45deg,#1b1f16 0 7mm,#e0b23e 7mm 14mm)}
+.cv-body{flex:1;padding:12mm 14mm 0;position:relative}
+.cv-code{font:700 11pt var(--mono);color:#e8c36a;letter-spacing:1pt}
+.cv-t1{font:44pt/1 var(--sten);margin:6mm 0 0;letter-spacing:1pt;color:#fff}
+.cv-t2{font:24pt/1.05 var(--sten);color:#e8c36a;margin:3mm 0 0}
+.cv-t3{font:800 17pt/1.2 var(--cond);margin:9mm 0 0;letter-spacing:1.5pt;color:#fff}
+.cv-t4{font:11pt/1.5 'Be Vietnam Pro';margin:2mm 0 0;color:var(--kh);max-width:98mm}
+.cv-art{position:absolute;right:12mm;top:30mm;width:84mm;opacity:.95}
+.cv-info{margin:10mm 14mm 0;border-top:1pt solid #8a9461;padding-top:4mm;display:grid;
+  grid-template-columns:1fr 1fr;gap:2mm 10mm;font:9.5pt/1.45 'Be Vietnam Pro';color:var(--kh2)}
+.cv-info b{display:block;font:700 8pt var(--cond);letter-spacing:1pt;color:#e8c36a;text-transform:uppercase}
+.cv-foot{background:#1b1f16;padding:6mm 14mm 9mm;margin-top:10mm;display:flex;justify-content:space-between;
+  align-items:flex-end;font:9pt 'Be Vietnam Pro';color:var(--kh)}
+.cv-foot .fill{font:9pt 'Be Vietnam Pro';color:#cfc7a6}
+.cv-foot .fill span{display:inline-block;border-bottom:.8pt solid #8a9461;min-width:55mm;margin-left:2mm}
+
+/* ===== Tieu de ===== */
+.chap{margin:0 0 6mm;padding:3mm 0 3mm;border-bottom:2.2pt solid var(--od);display:flex;align-items:flex-end;gap:5mm}
+.chap .no{font:26pt/1 var(--sten);color:#fff;background:var(--od);padding:2.5mm 4mm 1.5mm;min-width:22mm;text-align:center}
+.chap .no small{display:block;font:700 7pt var(--cond);letter-spacing:2pt;color:var(--kh)}
+.chap h1{font:800 19pt/1.3 var(--cond);margin:0;letter-spacing:.8pt;text-transform:uppercase;color:var(--od)}
+h2{font:800 13pt/1.45 var(--cond);color:var(--od);margin:4.5mm 0 2.5mm;padding-top:2.5mm;letter-spacing:.4pt;
+  text-transform:uppercase;border-left:4pt solid var(--yel);padding-left:2.5mm}
+h3{font:700 11pt/1.4 var(--cond);margin:3.5mm 0 1.5mm;padding-top:1.5mm;color:var(--ink);letter-spacing:.3pt}
+p{margin:1.6mm 0 2.4mm;text-align:justify;hyphens:auto}
+ul,ol{margin:1.5mm 0 2.5mm;padding-left:6mm}
+li{margin:.8mm 0}
+code,.mono{font:9pt var(--mono);background:#efeadb;padding:0 1mm;border-radius:1mm}
+b.k{font:700 9.5pt var(--cond);letter-spacing:.4pt;background:#232a17;color:#f2e3b0;padding:.2mm 1.6mm;border-radius:.8mm;white-space:nowrap}
+.lead{font-size:10.8pt;color:#2b3022}
+
+/* ===== Bang ===== */
+table{width:100%;border-collapse:collapse;margin:2.5mm 0 4mm;font-size:9.3pt;line-height:1.42}
+th{background:var(--od);color:#fff;font:700 8.6pt var(--cond);letter-spacing:.5pt;text-transform:uppercase;
+  text-align:left;padding:1.8mm 2.2mm;border:.6pt solid var(--od)}
+td{padding:1.6mm 2.2mm;border:.6pt solid var(--line);vertical-align:top}
+tr:nth-child(even) td{background:#f6f2e4}
+td.c,th.c{text-align:center}
+td.n{font-family:var(--mono);font-size:8.6pt;white-space:nowrap}
+.cap{font:700 8.4pt var(--cond);letter-spacing:.4pt;color:var(--mute);margin:-2mm 0 3mm;text-transform:uppercase}
+.form td{height:8.5mm}
+.form td.lab{width:42%;background:#f6f2e4;font-weight:600}
+
+/* ===== Hop canh bao (chuan 4 muc) ===== */
+.box{display:grid;grid-template-columns:19mm 1fr;margin:3mm 0 3.5mm;border:1.2pt solid;page-break-inside:avoid}
+.box .tag{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1mm;color:#fff;
+  font:800 8.4pt var(--cond);letter-spacing:.8pt;text-align:center;padding:2mm 1mm}
+.box .tag svg{width:9mm;height:9mm}
+.box .tx{padding:2mm 3mm;font-size:9.6pt}
+.box .tx p{margin:.6mm 0}
+.box.dg{border-color:var(--red)}.box.dg .tag{background:var(--red)}.box.dg .tx{background:#fbecec}
+.box.wn{border-color:var(--org)}.box.wn .tag{background:var(--org)}.box.wn .tx{background:#fdf1e6}
+.box.ct{border-color:var(--yel)}.box.ct .tag{background:var(--yel);color:#1b1f16}.box.ct .tx{background:#fdf7e1}
+.box.nt{border-color:var(--blu)}.box.nt .tag{background:var(--blu)}.box.nt .tx{background:#eaf1f8}
+
+/* ===== Hinh ===== */
+figure{margin:3mm 0 4mm;text-align:center}
+figure img{max-width:100%;border:.8pt solid var(--line)}
+figure svg{max-width:100%;height:auto}
+figcaption{font:600 8.6pt/1.35 'Be Vietnam Pro';color:var(--mute);margin-top:1.6mm;text-align:center}
+figcaption b{color:var(--od);font-family:var(--cond);font-size:9pt;letter-spacing:.3pt}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:4mm;align-items:start}
+.two figure{margin:1mm 0}
+
+/* ===== Buoc thao tac ===== */
+ol.st{list-style:none;padding:0;counter-reset:s;margin:2mm 0 3mm}
+ol.st>li{counter-increment:s;position:relative;padding:1.4mm 0 1.4mm 10mm;margin:0;border-bottom:.5pt dashed var(--line)}
+ol.st>li:before{content:counter(s);position:absolute;left:0;top:1.3mm;width:7mm;height:6mm;background:var(--od);
+  color:#fff;font:800 9pt/6mm var(--cond);text-align:center;clip-path:polygon(0 0,82% 0,100% 50%,82% 100%,0 100%)}
+.chk{list-style:none;padding-left:0}
+.chk li{padding-left:7mm;position:relative}
+.chk li:before{content:"";position:absolute;left:0;top:1.2mm;width:3.6mm;height:3.6mm;border:1pt solid var(--ink)}
+
+/* ===== The bai tap ===== */
+.drill{border:1.2pt solid var(--od);margin:4mm 0 5mm}
+.drill .hd{background:var(--od);color:#fff;display:flex;align-items:center;gap:3mm;padding:1.8mm 3mm}
+.drill .hd .id{font:15pt/1 var(--sten);color:#e8c36a}
+.drill .hd .nm{font:800 11.5pt var(--cond);letter-spacing:.5pt;text-transform:uppercase;flex:1}
+.drill .hd .lv{font:700 8pt var(--cond);letter-spacing:1pt;border:1pt solid #e8c36a;color:#e8c36a;padding:.4mm 2mm}
+.drill .bd{display:grid;grid-template-columns:27mm 1fr;font-size:9.3pt}
+.drill .bd>div{padding:1.4mm 2.5mm;border-top:.5pt solid var(--line)}
+.drill .bd>div:nth-child(odd){background:#f1ecdb;font:700 8.6pt var(--cond);letter-spacing:.4pt;text-transform:uppercase;color:var(--od)}
+.drill table{margin:1mm 0}
+
+/* ===== Muc luc ===== */
+.toc{columns:1}
+.toc a{display:flex;align-items:baseline;gap:2mm;color:inherit;text-decoration:none;padding:.9mm 0}
+.toc a .t{white-space:nowrap}
+.toc a .d{flex:1;border-bottom:1pt dotted #9a9784;transform:translateY(-1mm)}
+.toc a .pg{font:700 9.5pt var(--cond);min-width:7mm;text-align:right}
+.toc a.l1{font:800 10.5pt var(--cond);letter-spacing:.5pt;text-transform:uppercase;color:var(--od);margin-top:2mm}
+.toc a.l2{padding-left:8mm;font-size:9.4pt}
+
+/* ===== The tra cuu nhanh ===== */
+.qrc{border:2pt dashed var(--ink);padding:4mm;position:relative}
+.qrc:before{content:"✂ CẮT THEO ĐƯỜNG NÉT ĐỨT";position:absolute;top:-3.2mm;left:6mm;background:var(--paper);
+  font:700 7.5pt var(--cond);letter-spacing:1pt;padding:0 2mm}
+.qrc h3{margin:2mm 0 1mm;background:var(--od);color:#fff;padding:.8mm 2mm;font-size:9.5pt;text-transform:uppercase}
+.qrc .g{display:grid;grid-template-columns:1fr 1fr;gap:3mm}
+.qrc table{font-size:8.4pt;margin:1mm 0}
+.qrc td,.qrc th{padding:1mm 1.5mm}
+.qrc p,.qrc li{font-size:8.6pt;margin:.5mm 0}
+.sig{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6mm;margin-top:8mm;text-align:center;font:700 9pt var(--cond);text-transform:uppercase}
+.sig div span{display:block;font:italic 8.4pt 'Be Vietnam Pro';text-transform:none;color:var(--mute);margin-bottom:18mm}
+.small{font-size:8.6pt;color:var(--mute)}
+</style>
+</head>
+<body>
+<div class="sheet">
+
+<!-- ======================= BIA ======================= -->
+<section class="cover">
+  <div class="cv-top"><span>TÀI LIỆU KỸ THUẬT – HUẤN LUYỆN</span><span class="cls">LƯU HÀNH NỘI BỘ</span></div>
+  <div class="cv-stripe"></div>
+  <div class="cv-body">
+    <div class="cv-code">TL-BXY-01</div>
+    <div class="cv-t1">SỔ TAY</div>
+    <div class="cv-t2">VẬN HÀNH<br>KHAI THÁC</div>
+    <div class="cv-t3">HỆ THỐNG BIA DI ĐỘNG XY</div>
+    <div class="cv-t4">Bia tập bắn mục tiêu di động cơ cấu 5 khâu song song · tay cầm điều khiển đa bia · trang web cấu hình tại chỗ</div>
+    <svg class="cv-art" viewBox="0 0 200 200" aria-hidden="true">
+      <circle cx="100" cy="100" r="92" fill="none" stroke="#e8c36a" stroke-width="2.5"/>
+      <circle cx="100" cy="100" r="70" fill="none" stroke="#c8b98a" stroke-width="1.5" stroke-dasharray="4 4"/>
+      <circle cx="100" cy="100" r="46" fill="none" stroke="#c8b98a" stroke-width="1.5"/>
+      <path d="M100 4v40M100 156v40M4 100h40M156 100h40" stroke="#e8c36a" stroke-width="2.5"/>
+      <g fill="#1b1f16" stroke="#e8c36a" stroke-width="1.5">
+        <path d="M100 52c9 0 15 7 15 16s-6 15-15 15-15-6-15-15 6-16 15-16zM72 148c0-30 10-52 28-58 18 6 28 28 28 58z"/>
+      </g>
+      <circle cx="100" cy="100" r="3.5" fill="#a4161a"/>
+      <g stroke="#e8c36a" stroke-width="1" opacity=".7">
+        <path d="M100 100l-48 72M100 100l48 72" stroke-dasharray="3 3"/>
+      </g>
+    </svg>
+  </div>
+  <div class="cv-info">
+    <div><b>Dùng cho</b>Chỉ huy buổi tập, người điều khiển bia, an toàn viên, xạ thủ, kỹ thuật viên bảo đảm</div>
+    <div><b>Phiên bản phần mềm đối chiếu</b>Bia XY 2.5-xy · Tay cầm 1.2.0 · Bia XY Studio (web)</div>
+    <div><b>Lần xuất bản</b>Lần thứ nhất · Tháng 10/2026</div>
+    <div><b>Biên soạn</b>Trần Nguyên Bình</div>
+  </div>
+  <div class="cv-foot">
+    <div class="fill">Đơn vị sử dụng:<span>&nbsp;</span><br><br>Số đăng ký tài liệu:<span>&nbsp;</span></div>
+    <div style="text-align:right;font:800 10pt var(--cond);letter-spacing:2pt;color:#e8c36a">KHÔNG MANG TÀI LIỆU<br>RA KHỎI ĐƠN VỊ</div>
+  </div>
+</section>
+
+<!-- ======================= TRANG DAU ======================= -->
+<section class="pb">
+  <h2 style="margin-top:0">Quy định sử dụng tài liệu</h2>
+  <ol>
+    <li>Sổ tay dùng để huấn luyện, vận hành, bảo quản và bảo dưỡng hệ thống bia di động XY. Người vận hành phải đọc Phần <b>Tóm tắt an toàn</b> và Chương 3 trước khi tham gia buổi tập.</li>
+    <li>Tài liệu lưu hành nội bộ đơn vị. Việc sao chụp, chuyển giao do người phụ trách trang bị quyết định; ghi vào Bảng ghi sửa đổi khi bổ sung.</li>
+    <li>Các quy định của sổ tay <b>không thay thế</b> quy tắc an toàn trường bắn, điều lệnh và chỉ thị huấn luyện hiện hành của đơn vị. Khi có khác biệt, áp dụng quy định chặt chẽ hơn.</li>
+    <li>Nội dung đối chiếu với firmware bia 2.5-xy, tay cầm 1.2.0. Phiên bản khác có thể khác tên nút hoặc giới hạn; kiểm tra phiên bản trước khi huấn luyện (Chương 9).</li>
+    <li>Hệ thống <b>không có cảm biến ghi nhận phát trúng</b>. Kết quả bắn được đánh giá bằng kiểm tra tấm bia sau khẩu lệnh KHÁM BIA.</li>
+  </ol>
+
+  <h2>Bảng ghi sửa đổi</h2>
+  <table class="form">
+    <tr><th style="width:12%">Lần</th><th style="width:18%">Ngày</th><th>Nội dung sửa đổi, bổ sung</th><th style="width:22%">Người sửa / ký</th></tr>
+    <tr><td class="c">1</td><td class="c">26/10/2026</td><td>Xuất bản lần thứ nhất (bia 2.5-xy, tay cầm 1.2.0)</td><td>Trần Nguyên Bình</td></tr>
+    <tr><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td></tr>
+  </table>
+
+  <h2>Ký hiệu cảnh báo trong tài liệu</h2>
+  <p>Sổ tay dùng bốn mức cảnh báo theo thứ tự nghiêm trọng giảm dần. Nội dung trong khung phải đọc và tuân thủ trước khi làm bước liền sau.</p>
+  <div class="box dg"><div class="tag"><svg viewBox="0 0 24 24"><path d="M12 2 1 21h22z" fill="#fff"/><path d="M12 9v5M12 17v.5" stroke="#a4161a" stroke-width="2.4" stroke-linecap="round"/></svg>NGUY HIỂM</div>
+    <div class="tx"><p>Tình huống <b>chắc chắn</b> gây chết người hoặc thương tích nặng nếu không tránh.</p></div></div>
+  <div class="box wn"><div class="tag"><svg viewBox="0 0 24 24"><path d="M12 2 1 21h22z" fill="#fff"/><path d="M12 9v5M12 17v.5" stroke="#c4560c" stroke-width="2.4" stroke-linecap="round"/></svg>CẢNH BÁO</div>
+    <div class="tx"><p>Tình huống <b>có thể</b> gây thương tích cho người.</p></div></div>
+  <div class="box ct"><div class="tag"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#1b1f16"/><path d="M12 6v8M12 17v.5" stroke="#c99a06" stroke-width="2.4" stroke-linecap="round"/></svg>CHÚ Ý</div>
+    <div class="tx"><p>Tình huống có thể làm <b>hỏng trang bị</b>, mất dữ liệu hoặc làm hỏng buổi tập.</p></div></div>
+  <div class="box nt"><div class="tag"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#fff"/><path d="M12 11v6M12 7v.5" stroke="#1f4e79" stroke-width="2.4" stroke-linecap="round"/></svg>GHI CHÚ</div>
+    <div class="tx"><p>Thông tin bổ sung giúp thao tác đúng và nhanh hơn.</p></div></div>
+  <p>Tên nút in kiểu <b class="k">DỪNG TẤT CẢ</b>; nhãn web bia ghi không dấu như trên màn hình (<b class="k">STOP</b>). Khẩu lệnh in hoa đậm: <b>“NGỪNG BẮN!”</b>. Đơn vị: mm, mm/s, ms (1000 ms = 1 giây).</p>
+</section>
+
+<!-- ======================= TOM TAT AN TOAN ======================= -->
+<section class="pb">
+  <div class="chap"><div class="no"><small>PHẦN</small>!</div><h1>Tóm tắt an toàn</h1></div>
+  <div class="box dg"><div class="tag"><svg viewBox="0 0 24 24"><path d="M12 2 1 21h22z" fill="#fff"/><path d="M12 9v5M12 17v.5" stroke="#a4161a" stroke-width="2.4" stroke-linecap="round"/></svg>NGUY HIỂM</div>
+    <div class="tx"><p><b>Không bao giờ vào khu vực bia khi chưa có khẩu lệnh “NGỪNG BẮN!” và chưa được chỉ huy cho phép KHÁM BIA.</b> Bia đứng yên không có nghĩa là trường bắn an toàn.</p></div></div>
+
+  <h2>Mười điều an toàn khi khai thác bia XY</h2>
+  <table>
+    <tr><th class="c" style="width:8%">TT</th><th>Quy định</th></tr>
+    <tr><td class="c">1</td><td>Chỉ bắn vào <b>tấm bia</b>. Cơ cấu, servo, mạch điều khiển và pin phải nằm sau vật che chắn đạt yêu cầu của trường bắn. Loại đạn, cự ly, góc bắn theo quy định bài bắn và trường bắn của đơn vị.</td></tr>
+    <tr><td class="c">2</td><td>Mỗi buổi tập có <b>một người điều khiển bia</b> (NĐK) duy nhất, đứng ngoài hướng bắn, nhìn thấy toàn bộ dãy bia và nghe được khẩu lệnh của chỉ huy.</td></tr>
+    <tr><td class="c">3</td><td>NĐK luôn đặt tay ở nút <b class="k">DỪNG TẤT CẢ</b> (tay cầm) hoặc <b class="k">STOP</b> (web bia) khi bia đang chạy. Khẩu lệnh <b>“NGỪNG BẮN!”</b> đồng nghĩa với dừng toàn bộ bia.</td></tr>
+    <tr><td class="c">4</td><td>Bất kỳ người nào phát hiện nguy hiểm đều được hô <b>“NGỪNG BẮN!”</b>. Mọi người lập tức ngừng bắn, khóa an toàn, NĐK dừng bia.</td></tr>
+    <tr><td class="c">5</td><td>Trước khi khám bia, thay tấm bia hoặc chạm vào cơ cấu: dừng bia, bấm <b class="k">Servo OFF</b> (web bia, mục Hieu chuan servo) hoặc tắt nguồn bia. Servo đang GIỮ có thể quay mạnh khi có lệnh.</td></tr>
+    <tr><td class="c">6</td><td>Bia chạy tới khoảng 850 mm/s và đổi hướng bất ngờ ở chế độ Ngẫu nhiên. Không để tay, dây, cành cây trong vùng quét của khâu.</td></tr>
+    <tr><td class="c">7</td><td>Mất liên lạc tay cầm quá 3 giây khi đang chạy theo tay cầm, bia tự dừng. Mất kết nối web <b>không</b> tự dừng bia. Luôn quan sát bia thật, không chỉ nhìn màn hình.</td></tr>
+    <tr><td class="c">8</td><td>Pin Li-ion/LiPo: không sạc pin phồng, móp, trúng mảnh. Sạc bằng bộ sạc cân bằng, có người trông. Pin trúng đạn: cách ly ngay trên nền không cháy.</td></tr>
+    <tr><td class="c">9</td><td>Bài mới hoặc bài vừa sửa phải chạy thử ở tốc độ thấp (60–120 mm/s), không có xạ thủ trên tuyến bắn, trước khi đưa vào huấn luyện.</td></tr>
+    <tr><td class="c">10</td><td>Kết thúc buổi tập: dừng bia, thả servo, tắt nguồn, kiểm đếm trang bị, ghi Sổ nhật ký vận hành (Phụ lục C).</td></tr>
+  </table>
+
+  <div class="box wn"><div class="tag"><svg viewBox="0 0 24 24"><path d="M12 2 1 21h22z" fill="#fff"/><path d="M12 9v5M12 17v.5" stroke="#c4560c" stroke-width="2.4" stroke-linecap="round"/></svg>CẢNH BÁO</div>
+    <div class="tx"><p>Các lệnh <b class="k">CHẠY</b>, <b class="k">BẮT ĐẦU</b>, <b class="k">ĐI TỚI</b>, <b class="k">Về gốc</b>, <b class="k">Nhận diện</b>, <b class="k">GỬI GÓC</b> (tay cầm) và <b class="k">CHAY</b>, <b class="k">VE GIUA</b>, chạm bản đồ ở chế độ <b class="k">Re bia (jog)</b> (web bia) đều làm bia thật chuyển động ngay. Chỉ thao tác khi vùng bia trống người.</p></div></div>
+  <div class="box ct"><div class="tag"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#1b1f16"/><path d="M12 6v8M12 17v.5" stroke="#c99a06" stroke-width="2.4" stroke-linecap="round"/></svg>CHÚ Ý</div>
+    <div class="tx"><p>Hiệu chuẩn sai làm khâu đập vào cữ cơ khí, gãy tay quay servo. Chỉ kỹ thuật viên được sửa thông số hiệu chuẩn (Chương 9). Không chép thông số từ bia khác.</p></div></div>
+</section>
+
+<!-- ======================= HUONG DAN NHANH ======================= -->
+<section class="pb">
+  <div class="chap"><div class="no"><small>PHẦN</small>»</div><h1 id="hdn">Hướng dẫn nhanh</h1></div>
+  <p class="lead">Hai trang này đủ để triển khai và chạy một buổi tập. Mỗi bước có mục hướng dẫn chi tiết tương ứng (Chương 1–9) khi cần làm rõ.</p>
+
+  <h2 id="hdn-a">A. Buổi tập bằng tay cầm (nhiều bia)</h2>
+  <ol class="st">
+    <li><b>Kiểm tra, lắp đặt</b>: khâu, vít, dây, pin ≥ 7,4 V; lắp tấm bia, tấm che; chỉ thấy tấm bia từ tuyến bắn. <span class="small">(3.3, 3.4)</span></li>
+    <li><b>Bật nguồn</b> bia, chờ 5 giây; bật tay cầm. Tổng quan: các bia trực tuyến, pin đủ, không báo lỗi. <span class="small">(4.1)</span></li>
+    <li><b>Xác định bia</b>: Quản lý bia → chọn bia → <b class="k">Nhận diện</b>; bia lắc ngang. Bia mới: <b class="k">TÌM BIA MỚI</b> → <b class="k">GHÉP</b>. <span class="small">(4.1)</span></li>
+    <li><b>Chạy thử</b> không có xạ thủ: Điều khiển → Kịch bản → bài “Con lắc ngang”, tốc độ 200 → <b class="k">CHẠY</b> 30 giây → <b class="k">DỪNG</b>. <span class="small">(4.2)</span></li>
+    <li><b>“CHUẨN BỊ BIA!”</b>: Bài chạy → chọn bài, bia tham gia, phối hợp, tốc độ, thời gian; đọc dòng <b>Sẽ chạy</b>. Báo “Bia sẵn sàng!”. <span class="small">(4.3, Ch. 6)</span></li>
+    <li><b>“BIA CHẠY!”</b> → <b class="k">BẮT ĐẦU</b>. Trong khi bắn: tay đặt ở <b class="k">DỪNG TẤT CẢ</b>, mắt nhìn bia. <span class="small">(3.5)</span></li>
+    <li><b>“NGỪNG BẮN!”</b> → <b class="k">DỪNG TẤT CẢ</b>, kiểm tra mọi bia đứng yên, báo “Bia đã dừng!”. <span class="small">(4.4)</span></li>
+    <li><b>“KHÁM BIA!”</b> (sau khi súng đã khám): tắt nguồn hoặc Servo OFF bia cần tiếp cận. <span class="small">(3.5, 7.3)</span></li>
+    <li><b>“THU DỌN!”</b>: tắt nguồn bia và tay cầm, tháo pin, kiểm đếm, ghi Sổ nhật ký. <span class="small">(7.1, Phụ lục C)</span></li>
+  </ol>
+
+  <h2 id="hdn-b">B. Một bia bằng trang web của bia</h2>
+  <ol class="st">
+    <li>Bật bia, chờ 5–10 giây. Nối Wi-Fi <b>BIA_TAP_BAN_xxxx</b>, mật khẩu trên nhãn bia, giữ kết nối dù máy báo “không có Internet”.</li>
+    <li>Mở <code>http://192.168.4.1</code>. Kiểm tra thanh trên: <b>PIN</b> xanh (&gt; 20 %), trạng thái <b>DUNG</b>.</li>
+    <li>Chọn <b class="k">Re bia (jog)</b>, chạm một điểm trong vùng xanh gần giữa – bia thật phải đi tới đúng hướng.</li>
+    <li>Cột phải: <b class="k">Danh sach diem</b> → <b class="k">Mau: chay ngang</b> hoặc <b class="k">Mau: zigzag</b> (hoặc chọn <b class="k">Them diem</b> rồi chạm bản đồ). Sửa mm/s, Dung(ms) trong bảng.</li>
+    <li>Bấm <b class="k">Nap vao bia</b> – chờ báo “Da nap … diem”.</li>
+    <li>Theo khẩu lệnh “BIA CHẠY!” bấm <b class="k">CHAY</b>. Thanh trên chuyển “DANG CHAY k/n”.</li>
+    <li>Kết thúc: <b class="k">STOP</b> → <b class="k">VE GIUA</b> → (khám bia, cất máy) <b class="k">Servo OFF</b> → tắt nguồn.</li>
+  </ol>
+
+  <h2 id="hdn-c">C. Xử lý nhanh</h2>
+  <table>
+    <tr><th style="width:34%">Tình huống</th><th>Làm ngay</th></tr>
+    <tr><td>Bất kỳ nguy hiểm nào</td><td>Hô <b>“NGỪNG BẮN!”</b> → <b class="k">DỪNG TẤT CẢ</b> / <b class="k">STOP</b>; không điều khiển được thì tắt nguồn bia.</td></tr>
+    <tr><td>Bia “MẤT KẾT NỐI”, tự dừng</td><td>DỪNG; lại gần, kiểm tra kênh, pin hai bên → <b class="k">ĐẶT LẠI</b> → chạy chậm. <span class="small">(8.2)</span></td></tr>
+    <tr><td>Bia giật, kêu, kẹt</td><td>DỪNG; Servo OFF / tắt nguồn; báo KTV. <span class="small">(8.1)</span></td></tr>
+    <tr><td>Pin ≤ 20 % (7,1 V)</td><td>Kết thúc loạt, thay pin dự phòng. <span class="small">(7.2)</span></td></tr>
+    <tr><td>Bia đi ngược hướng</td><td>Không dùng bia đó; KTV hiệu chuẩn. <span class="small">(9.1)</span></td></tr>
+  </table>
+</section>
+
+<!-- ======================= MUC LUC ======================= -->
+<section class="pb">
+  <div class="chap"><div class="no"><small>MỤC</small>☰</div><h1>Mục lục</h1></div>
+  <p class="small" style="margin-top:-2mm">Phần Hướng dẫn nhanh ở trang trước. Chương 1–9 và các phụ lục là hướng dẫn chi tiết.</p>
+  <nav class="toc" id="toc"></nav>
+</section>
+
+<!-- ======================= CHUONG 1 ======================= -->
+<section class="pb">
+  <div class="chap"><div class="no"><small>CHƯƠNG</small>1</div><h1 id="c1">Giới thiệu chung</h1></div>
+
+  <h2 id="c1-1">1.1. Mục đích, phạm vi</h2>
+  <p class="lead">Hệ thống bia di động XY tạo <b>mục tiêu chuyển động có điều khiển</b> trong mặt phẳng đứng để huấn luyện bắn mục tiêu vận động, mục tiêu xuất hiện bất ngờ và bắn đa mục tiêu. Bài tập lặp lại được chính xác, giúp so sánh công bằng giữa các xạ thủ và nâng dần độ khó.</p>
+  <p>Sổ tay áp dụng cho: bia XY (một hoặc nhiều bộ), tay cầm điều khiển, trang web cấu hình riêng của từng bia và website Bia XY Studio dùng để soạn bài. Nội dung chi tiết về soạn bài trên Studio, tài khoản cloud và đồng bộ xem thêm <i>Hướng dẫn sử dụng Bia XY Studio</i> (tài liệu đi kèm).</p>
+
+  <h2 id="c1-2">1.2. Tính năng kỹ chiến thuật</h2>
+  <table>
+    <tr><th style="width:38%">Chỉ tiêu</th><th>Giá trị</th></tr>
+    <tr><td>Kiểu cơ cấu chuyển động</td><td>5 khâu song song phẳng, 2 servo 180°, chuyển động thẳng nội suy theo tọa độ X–Y</td></tr>
+    <tr><td>Kích thước khâu</td><td>L0 = 80 mm (khoảng cách 2 trục servo) · L1 = L4 = 180 mm · L2 = L3 = 250 mm</td></tr>
+    <tr><td>Khung chạy an toàn mặc định</td><td>X −70…150 mm, Y 245…395 mm (220 × 150 mm, 100% điểm giải được)</td></tr>
+    <tr><td>Vùng làm việc tối đa</td><td>Hình vành khuyên bo góc, bán kính 200–410 mm quanh trung điểm hai servo, ±180 mm ngang</td></tr>
+    <tr><td>Tốc độ mục tiêu</td><td>Đặt 5–1000 mm/s; thực tế tối đa ≈ 300–850 mm/s tùy vị trí (giới hạn servo 300°/s)</td></tr>
+    <tr><td>Chế độ chuyển động</td><td>Danh sách điểm (tới 64 điểm/bia, lặp hoặc 1 lượt) · Ngẫu nhiên · Rê tay · Đi tới tọa độ</td></tr>
+    <tr><td>Thời gian dừng tại điểm</td><td>0–60 000 ms mỗi điểm, hoặc ngẫu nhiên trong khoảng đặt</td></tr>
+    <tr><td>Số bia trên một tay cầm</td><td>Tối đa 8 bia; phối hợp Cùng lúc / So le / Luân phiên</td></tr>
+    <tr><td>Phiên bài trên tay cầm</td><td>1 / 3 / 5 phút hoặc Liên tục; 32 bài (6 có sẵn + 26 tự tạo), tối đa 24 điểm/bài</td></tr>
+    <tr><td>Liên lạc tay cầm – bia</td><td>ESP-NOW 2,4 GHz, kênh 1–13, mã hóa khóa chung; không cần mạng ngoài</td></tr>
+    <tr><td>Tự bảo vệ</td><td>Tự dừng khi mất tay cầm 3 s · khóa lệnh web khi tay cầm điều khiển · giới hạn tốc độ góc servo · kiểm tra cả đường đi trước khi chạy</td></tr>
+    <tr><td>Cấu hình tại chỗ</td><td>Wi-Fi riêng mỗi bia <code>BIA_TAP_BAN_xxxx</code>, trang web <code>http://192.168.4.1</code>, 1 máy cùng lúc</td></tr>
+    <tr><td>Nguồn bia</td><td>Pin Li-ion/LiPo 2S (7,4 V danh định, 8,4 V đầy); đo và báo % pin</td></tr>
+    <tr><td>Cập nhật phần mềm</td><td>Bia: qua Wi-Fi (từ 2.4-xy) hoặc USB · Tay cầm: USB từ Studio</td></tr>
+  </table>
+
+  <h2 id="c1-3">1.3. Thành phần đồng bộ</h2>
+  <p>Số lượng thực tế theo phiếu cấp phát của đơn vị. Kiểm đếm theo bảng khi nhận, giao và sau mỗi buổi tập.</p>
+  <table>
+    <tr><th class="c" style="width:7%">TT</th><th>Tên trang bị</th><th class="c" style="width:9%">ĐVT</th><th class="c" style="width:12%">Số lượng</th><th>Ghi chú</th></tr>
+    <tr><td class="c">1</td><td>Bia XY (khung, cơ cấu 5 khâu, 2 servo, mạch ESP32-S3)</td><td class="c">bộ</td><td class="c">1–8</td><td>Mỗi bia có tên Wi-Fi, mật khẩu, MAC riêng – ghi trên nhãn</td></tr>
+    <tr><td class="c">2</td><td>Tay cầm điều khiển màn hình cảm ứng 7"</td><td class="c">chiếc</td><td class="c">1</td><td>Nút cứng DỪNG (IO17), A (IO11), B (IO12) nếu đã lắp</td></tr>
+    <tr><td class="c">3</td><td>Pin 2S Li-ion/LiPo cho bia</td><td class="c">khối</td><td class="c">≥ 2/bia</td><td>1 khối dùng, 1 khối dự phòng</td></tr>
+    <tr><td class="c">4</td><td>Bộ sạc cân bằng 2S</td><td class="c">bộ</td><td class="c">1</td><td></td></tr>
+    <tr><td class="c">5</td><td>Tấm bia (mặt bia) thay thế</td><td class="c">tấm</td><td class="c">theo cấp</td><td>Gắn tại khớp E</td></tr>
+    <tr><td class="c">6</td><td>Tấm che chắn bảo vệ cơ cấu</td><td class="c">bộ</td><td class="c">1/bia</td><td>Theo quy định trường bắn</td></tr>
+    <tr><td class="c">7</td><td>Cáp USB-C truyền dữ liệu</td><td class="c">sợi</td><td class="c">2</td><td>Nối máy tính – tay cầm / bia</td></tr>
+    <tr><td class="c">8</td><td>Hòm đựng, vật tư (vít, tay quay servo dự phòng)</td><td class="c">bộ</td><td class="c">1</td><td></td></tr>
+    <tr><td class="c">9</td><td>Sổ tay vận hành, phiếu kiểm tra, sổ nhật ký</td><td class="c">bộ</td><td class="c">1</td><td>Tài liệu này</td></tr>
+  </table>
+
+  <h2 id="c1-4">1.4. Thuật ngữ, chữ viết tắt</h2>
+  <table>
+    <tr><th style="width:26%">Thuật ngữ</th><th>Giải thích</th></tr>
+    <tr><td>NĐK</td><td>Người điều khiển bia – người duy nhất ra lệnh cho bia trong buổi tập</td></tr>
+    <tr><td>KTV</td><td>Kỹ thuật viên – người được giao hiệu chuẩn, cập nhật phần mềm, sửa chữa</td></tr>
+    <tr><td>Bài / kịch bản</td><td>Danh sách điểm X–Y cùng tốc độ, thời gian dừng mà bia đi qua lần lượt</td></tr>
+    <tr><td>Phiên bài</td><td>Một lần chạy bài trên tay cầm: bài, các bia tham gia, tốc độ, thời gian, cách phối hợp</td></tr>
+    <tr><td>Khung vùng (khung vàng)</td><td>Hình chữ nhật an toàn trong vùng làm việc; dùng cho mẫu “chay ngang”, “zigzag” trên web và báo về tay cầm</td></tr>
+    <tr><td>Vùng làm việc</td><td>Toàn bộ vùng điểm bia tới được (vùng xanh trên bản đồ web)</td></tr>
+    <tr><td>ESP-NOW</td><td>Liên lạc vô tuyến trực tiếp tay cầm – bia, không qua bộ phát Wi-Fi</td></tr>
+    <tr><td>Servo ON / OFF</td><td>ON: servo có lực giữ vị trí. OFF: cắt xung điều khiển, khâu mềm (web bia)</td></tr>
+    <tr><td>Góc servo</td><td>Chức năng kỹ thuật trên tay cầm: đặt trực tiếp góc hai servo để kiểm tra, hiệu chuẩn</td></tr>
+  </table>
+</section>
+
+<!-- ======================= CHUONG 2 ======================= -->
+<section class="pb">
+  <div class="chap"><div class="no"><small>CHƯƠNG</small>2</div><h1 id="c2">Cấu tạo và nguyên lý hoạt động</h1></div>
+
+  <h2 id="c2-1">2.1. Sơ đồ tổng thể</h2>
+  <figure>
+    <svg viewBox="0 0 720 300" font-family="Be Vietnam Pro, sans-serif" font-size="12">
+      <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#3f4a24"/></marker></defs>
+      <rect x="0" y="0" width="720" height="300" fill="#f6f2e4"/>
+      <!-- cloud -->
+      <g><rect x="20" y="22" width="150" height="58" rx="8" fill="#fff" stroke="#5c6253" stroke-dasharray="4 3"/>
+        <text x="95" y="46" text-anchor="middle" font-weight="700">CLOUD (Internet)</text>
+        <text x="95" y="64" text-anchor="middle" font-size="10.5" fill="#5c6253">Bài của tôi · đồng bộ</text></g>
+      <!-- studio -->
+      <g><rect x="20" y="130" width="150" height="70" rx="6" fill="#fff" stroke="#3f4a24" stroke-width="1.5"/>
+        <text x="95" y="155" text-anchor="middle" font-weight="700">MÁY TÍNH</text>
+        <text x="95" y="172" text-anchor="middle" font-size="10.5">Bia XY Studio</text>
+        <text x="95" y="187" text-anchor="middle" font-size="10.5" fill="#5c6253">soạn bài · nạp FW</text></g>
+      <!-- tay cam -->
+      <g><rect x="255" y="110" width="160" height="110" rx="10" fill="#3f4a24"/>
+        <rect x="268" y="122" width="134" height="62" rx="3" fill="#1b1f16"/>
+        <text x="335" y="150" text-anchor="middle" fill="#e8c36a" font-weight="700" font-size="13">TAY CẦM</text>
+        <text x="335" y="168" text-anchor="middle" fill="#c8b98a" font-size="10">màn hình 7" cảm ứng</text>
+        <circle cx="290" cy="203" r="8" fill="#a4161a"/><text x="304" y="207" fill="#fff" font-size="10">DỪNG</text>
+        <circle cx="365" cy="203" r="6" fill="#c8b98a"/><circle cx="385" cy="203" r="6" fill="#c8b98a"/></g>
+      <!-- bia -->
+      <g font-size="11">
+        <rect x="540" y="40" width="160" height="40" rx="5" fill="#fff" stroke="#3f4a24" stroke-width="1.5"/><text x="620" y="65" text-anchor="middle" font-weight="700">BIA 1</text>
+        <rect x="540" y="90" width="160" height="40" rx="5" fill="#fff" stroke="#3f4a24" stroke-width="1.5"/><text x="620" y="115" text-anchor="middle" font-weight="700">BIA 2</text>
+        <rect x="540" y="140" width="160" height="40" rx="5" fill="#fff" stroke="#3f4a24" stroke-width="1.5" stroke-dasharray="5 3"/><text x="620" y="165" text-anchor="middle">… tới BIA 8</text></g>
+      <!-- dien thoai -->
+      <g><rect x="560" y="222" width="120" height="62" rx="8" fill="#fff" stroke="#1f4e79" stroke-width="1.5"/>
+        <text x="620" y="246" text-anchor="middle" font-weight="700" fill="#1f4e79">ĐIỆN THOẠI</text>
+        <text x="620" y="263" text-anchor="middle" font-size="10" fill="#1f4e79">trang web bia</text>
+        <text x="620" y="277" text-anchor="middle" font-size="10" fill="#1f4e79">192.168.4.1</text></g>
+      <!-- duong noi -->
+      <g stroke="#3f4a24" stroke-width="2" fill="none">
+        <path d="M95 80v48" marker-end="url(#ar)" marker-start="url(#ar)" stroke-dasharray="5 4"/>
+        <path d="M172 165h80" marker-end="url(#ar)" marker-start="url(#ar)"/>
+        <path d="M417 150 C470 150 480 60 537 60" marker-end="url(#ar)"/>
+        <path d="M417 160 C480 160 490 110 537 110" marker-end="url(#ar)"/>
+        <path d="M417 170 C480 170 495 160 537 160" marker-end="url(#ar)"/>
+      </g>
+      <path d="M620 220v-38" stroke="#1f4e79" stroke-width="2" marker-end="url(#ar)" marker-start="url(#ar)" fill="none" stroke-dasharray="2 3"/>
+      <g font-size="10.5" font-weight="700" fill="#3f4a24">
+        <text x="104" y="108">Wi-Fi / Internet</text>
+        <text x="180" y="157">USB-C</text><text x="180" y="185" font-weight="400" fill="#5c6253">Web Serial</text>
+        <text x="440" y="96">ESP-NOW</text><text x="440" y="110" font-weight="400" fill="#5c6253">kênh 1–13</text>
+        <text x="628" y="205" fill="#1f4e79">Wi-Fi AP riêng</text></g>
+      <text x="255" y="250" font-size="10.5" fill="#5c6253">Tay cầm vận hành độc lập sau khi nạp bài;</text>
+      <text x="255" y="265" font-size="10.5" fill="#5c6253">không cần máy tính, không cần Internet.</text>
+    </svg>
+    <figcaption><b>Hình 2-1.</b> Bốn đường liên lạc của hệ thống. Mỗi đường độc lập: nối USB với tay cầm không có nghĩa đã ghép bia; nối Wi-Fi của bia không có nghĩa đã đăng nhập cloud.</figcaption>
+  </figure>
+  <table>
+    <tr><th style="width:20%">Đường</th><th style="width:24%">Nối</th><th>Dùng để</th><th class="c" style="width:12%">Internet</th></tr>
+    <tr><td>ESP-NOW</td><td>Tay cầm ↔ các bia</td><td>Ra lệnh chuyển động, nhận trạng thái, pin, vị trí</td><td class="c">Không</td></tr>
+    <tr><td>Wi-Fi của bia</td><td>Điện thoại/máy tính ↔ 1 bia</td><td>Kiểm tra, hiệu chuẩn, soạn và chạy bài trên một bia, cập nhật firmware bia</td><td class="c">Không</td></tr>
+    <tr><td>USB-C</td><td>Máy tính ↔ tay cầm (hoặc bia)</td><td>Nạp bài từ Studio, xem màn hình tay cầm, nạp firmware</td><td class="c">Không*</td></tr>
+    <tr><td>Cloud</td><td>Studio ↔ tài khoản</td><td>Lưu bài, đồng bộ bài xuống tay cầm qua Wi-Fi</td><td class="c">Có</td></tr>
+  </table>
+  <p class="small">* Cần Internet khi tải Studio lần đầu hoặc tải firmware mới.</p>
+
+  <h2 id="c2-2">2.2. Bia XY – cơ cấu 5 khâu song song</h2>
+  <div class="two">
+    <figure>
+      <svg viewBox="-215 -30 470 470" font-family="Saira Condensed, sans-serif" font-size="15">
+        <rect x="-215" y="-30" width="470" height="470" fill="#f6f2e4"/>
+        <g transform="scale(1,-1) translate(0,-410)">
+          <rect x="-70" y="245" width="220" height="150" fill="#e0b23e" fill-opacity=".18" stroke="#c99a06" stroke-dasharray="6 4" stroke-width="1.5"/>
+          <rect x="-30" y="-14" width="140" height="18" fill="#5c6253"/>
+          <g stroke="#3f4a24" stroke-width="9" stroke-linecap="round" fill="none">
+            <path d="M0 0L-123.5 130.9L40 320"/><path d="M80 0L203.5 130.9L40 320"/></g>
+          <g fill="#1b1f16"><circle r="8"/><circle cx="80" r="8"/><circle cx="-123.5" cy="130.9" r="7"/><circle cx="203.5" cy="130.9" r="7"/></g>
+          <rect x="10" y="292" width="60" height="70" fill="#fff" stroke="#a4161a" stroke-width="3"/>
+          <circle cx="40" cy="320" r="9" fill="#a4161a"/>
+        </g>
+        <g fill="#1b1f16" font-weight="700">
+          <text x="-82" y="416">A (0,0)</text><text x="98" y="416">C (80,0)</text>
+          <text x="-205" y="275">B</text><text x="215" y="275">D</text>
+          <text x="80" y="88" fill="#a4161a">E – tấm bia</text>
+          <text x="-160" y="368">L1 = 180</text><text x="150" y="368">L4 = 180</text>
+          <text x="-150" y="190">L2 = 250</text><text x="150" y="190">L3 = 250</text>
+          <text x="-64" y="34" fill="#8a6a00" font-weight="600">khung an toàn</text>
+          <text x="14" y="438" font-weight="600" fill="#5c6253">L0 = 80</text>
+          <text x="-205" y="-12" font-weight="600" fill="#5c6253">Y ↑  X →  (mm)</text>
+        </g>
+      </svg>
+      <figcaption><b>Hình 2-2.</b> Cơ cấu ở tâm vùng (X 40, Y 320). Servo 1 tại A, servo 2 tại C quay khâu gần; hai khâu xa gặp nhau tại E mang tấm bia.</figcaption>
+    </figure>
+    <div>
+      <p>Hai servo đặt cách nhau 80 mm quay hai khâu gần L1, L4. Hai khâu xa L2, L3 nối khớp tại điểm E. Bộ điều khiển giải <b>động học ngược</b> để tính góc hai servo cho mỗi tọa độ X–Y, nội suy đường thẳng 100 lần/giây nên tấm bia đi đúng đường thẳng với tốc độ đặt.</p>
+      <table>
+        <tr><th>Bộ phận</th><th>Chức năng</th></tr>
+        <tr><td>Servo 1 (chân 38)</td><td>Khâu trái, khớp A</td></tr>
+        <tr><td>Servo 2 (chân 39)</td><td>Khâu phải, khớp C</td></tr>
+        <tr><td>Mạch ESP32-S3</td><td>Tính toán, Wi-Fi, ESP-NOW</td></tr>
+        <tr><td>Mạch đo pin</td><td>Chân 7, cầu chia 33k/10k</td></tr>
+        <tr><td>Nút ghép (chân 40)</td><td>Giữ ≥ 3 s: quên tay cầm cũ</td></tr>
+        <tr><td>Khớp E, tấm bia</td><td>Mục tiêu cho xạ thủ</td></tr>
+      </table>
+      <p>Hệ tọa độ: gốc tại trục servo 1, <b>X</b> sang phải, <b>Y</b> lên trên (nhìn từ phía xạ thủ). Tâm vùng X 40, Y 320.</p>
+    </div>
+  </div>
+
+  <h2 id="c2-3">2.3. Vùng làm việc</h2>
+  <div class="two">
+    <figure><img src="images/web-01-trang-bia.png" alt="Bản đồ vùng làm việc trên trang web bia" style="width:100%;object-fit:cover;object-position:0 0;height:78mm">
+      <figcaption><b>Hình 2-3.</b> Bản đồ vùng làm việc trên trang web bia: vùng xanh – bia tới được; khung vàng nét đứt – khung an toàn mặc định; chấm đỏ – vị trí bia.</figcaption></figure>
+    <div>
+      <p>Cơ cấu 5 khâu chỉ tới được một vùng hình vành khuyên. Vùng này <b>không lồi</b>: hai điểm hợp lệ nối thẳng với nhau có thể đi qua chỗ không tới được. Vì vậy trang web, Studio và bia đều kiểm tra <b>cả đường đi</b>, không chỉ hai đầu.</p>
+      <ul>
+        <li><b>Khung an toàn</b> X −70…150, Y 245…395: mọi điểm và mọi đoạn trong khung đều hợp lệ – dùng cho bài huấn luyện thông thường.</li>
+        <li><b>Chế độ Ngẫu nhiên</b> (từ bia 2.3-xy) rải điểm trên toàn vùng làm việc, tránh chỗ sát điểm kỳ dị cơ khí – không chỉ trong khung vàng.</li>
+        <li><b>Sát biên vùng xanh</b>: tới được nhưng một mm dịch chuyển cần quay servo nhiều, bia chậm lại – tránh đặt điểm lâu dài.</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2 id="c2-4">2.4. Tay cầm điều khiển</h2>
+  <div class="two">
+    <figure><img src="images/02-tong-quan.png" alt="Màn hình Tổng quan tay cầm"><figcaption><b>Hình 2-4.</b> Màn hình Tổng quan; <b class="k">DỪNG TẤT CẢ</b> luôn ở góc dưới trái.</figcaption></figure>
+    <div>
+      <table>
+        <tr><th>Trang</th><th>Công việc</th></tr>
+        <tr><td>Tổng quan</td><td>Toàn bộ bia, pin, trạng thái</td></tr>
+        <tr><td>Điều khiển</td><td>Ra lệnh cho một bia: Kịch bản, Ngẫu nhiên, Chỉnh tay</td></tr>
+        <tr><td>Bài chạy</td><td>Phiên bài có thời gian, nhiều bia</td></tr>
+        <tr><td>Trạng thái</td><td>Chi tiết từng bia</td></tr>
+        <tr><td>Quản lý bia</td><td>Tìm, ghép, đổi tên, xóa bia, góc servo</td></tr>
+        <tr><td>⚙ Cài đặt</td><td>Màn hình, kết nối, đồng bộ, an toàn, mặc định</td></tr>
+      </table>
+      <p>Nút cứng <b>DỪNG (IO17)</b> dừng tất cả. Nút <b>A (IO11)</b>, <b>B (IO12)</b> gán chức năng trong Cài đặt → An toàn (mặc định A: tạm dừng/tiếp tục phiên, B: xóa lỗi tất cả bia).</p>
+    </div>
+  </div>
+
+  <h2 id="c2-5">2.5. Liên lạc và cơ chế tự bảo vệ</h2>
+  <table>
+    <tr><th style="width:30%">Cơ chế</th><th>Hoạt động</th></tr>
+    <tr><td>Một người ra lệnh</td><td>Khi tay cầm đang điều khiển, trang web bia từ chối lệnh (báo “Tay cam dang dieu khien bia – web chi duoc DUNG”), chỉ còn nút STOP.</td></tr>
+    <tr><td>DỪNG luôn ưu tiên</td><td>Lệnh dừng từ web hoặc tay cầm luôn được nhận, kể cả khi đang khóa; hàng đợi lệnh không bỏ lệnh DỪNG.</td></tr>
+    <tr><td>Mất tay cầm</td><td>Đang chạy theo tay cầm mà không nghe thấy tay cầm 3 giây: bia tự dừng, báo lỗi; NĐK bấm ĐẶT LẠI trên tay cầm sau khi xử lý.</td></tr>
+    <tr><td>Giới hạn servo</td><td>Tốc độ góc giới hạn 300°/s (dự trữ 10%). Lệnh nhanh hơn được kéo dài thời gian, không trượt bước.</td></tr>
+    <tr><td>Kiểm tra đường đi</td><td>Đoạn nào có điểm ngoài tầm với bị bỏ qua; cả danh sách hỏng thì bia dừng hẳn.</td></tr>
+    <tr><td>Cập nhật an toàn</td><td>Nạp firmware qua Wi-Fi: bia dừng, thả servo; file hỏng hoặc mất điện giữa chừng – bia giữ bản cũ.</td></tr>
+  </table>
+</section>
+
+<!-- ======================= CHUONG 3 ======================= -->
+<section class="pb">
+  <div class="chap"><div class="no"><small>CHƯƠNG</small>3</div><h1 id="c3">Chuẩn bị và triển khai trên thao trường</h1></div>
+
+  <h2 id="c3-1">3.1. Tổ chức lực lượng vận hành</h2>
+  <table>
+    <tr><th style="width:24%">Vị trí</th><th>Nhiệm vụ</th></tr>
+    <tr><td><b>Chỉ huy buổi tập</b></td><td>Chịu trách nhiệm chung; phát khẩu lệnh; quyết định bài tập, cấp độ, cho phép khám bia.</td></tr>
+    <tr><td><b>Người điều khiển bia (NĐK)</b></td><td>Giữ tay cầm (hoặc máy vào web bia); chọn bài, chạy, dừng bia theo khẩu lệnh; báo cáo trạng thái bia. Không làm nhiệm vụ khác khi bia đang chạy.</td></tr>
+    <tr><td><b>An toàn viên</b></td><td>Quan sát hướng bắn, khu vực bia; hô “NGỪNG BẮN!” khi có nguy hiểm; kiểm tra súng khám trước khi khám bia.</td></tr>
+    <tr><td><b>Kỹ thuật viên (KTV)</b></td><td>Kiểm tra trang bị trước/sau buổi tập; hiệu chuẩn; thay pin, tấm bia; xử lý hỏng hóc.</td></tr>
+    <tr><td><b>Xạ thủ</b></td><td>Thực hiện bài bắn theo khẩu lệnh; báo cáo khi xong hoặc khi có sự cố vũ khí.</td></tr>
+  </table>
+  <div class="box nt"><div class="tag"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#fff"/><path d="M12 11v6M12 7v.5" stroke="#1f4e79" stroke-width="2.4" stroke-linecap="round"/></svg>GHI CHÚ</div>
+    <div class="tx"><p>Buổi tập nhỏ có thể kiêm nhiệm: chỉ huy kiêm an toàn viên, KTV kiêm NĐK. Không được để xạ thủ đang bắn kiêm NĐK.</p></div></div>
+
+  <h2 id="c3-2">3.2. Chọn vị trí, bố trí bia</h2>
+  <figure>
+    <svg viewBox="0 0 720 330" font-family="Be Vietnam Pro, sans-serif" font-size="11.5">
+      <defs><marker id="a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10z" fill="#a4161a"/></marker></defs>
+      <rect width="720" height="330" fill="#f6f2e4"/>
+      <!-- u dat sau bia -->
+      <rect x="120" y="14" width="480" height="22" fill="#a08c5b"/><text x="360" y="29" text-anchor="middle" fill="#fff" font-weight="700">Ụ ĐẤT / TƯỜNG CHẮN ĐẠN PHÍA SAU</text>
+      <!-- bia -->
+      <g font-weight="700">
+        <g transform="translate(200 64)"><rect x="-38" y="16" width="76" height="16" fill="#5b6b34"/><rect x="-14" y="0" width="28" height="16" fill="#fff" stroke="#a4161a" stroke-width="2"/><text y="50" text-anchor="middle">BIA 1</text></g>
+        <g transform="translate(360 64)"><rect x="-38" y="16" width="76" height="16" fill="#5b6b34"/><rect x="-14" y="0" width="28" height="16" fill="#fff" stroke="#a4161a" stroke-width="2"/><text y="50" text-anchor="middle">BIA 2</text></g>
+        <g transform="translate(520 64)"><rect x="-38" y="16" width="76" height="16" fill="#5b6b34"/><rect x="-14" y="0" width="28" height="16" fill="#fff" stroke="#a4161a" stroke-width="2"/><text y="50" text-anchor="middle">BIA 3</text></g>
+      </g>
+      <text x="610" y="92" fill="#3f4a24" font-size="10.5">tấm che chắn</text><text x="610" y="105" fill="#3f4a24" font-size="10.5">cơ cấu (xanh)</text>
+      <path d="M240 140h80" stroke="#5c6253" marker-start="url(#a2)" marker-end="url(#a2)" stroke-width="1"/><text x="280" y="134" text-anchor="middle" fill="#5c6253" font-size="10">≥ 1,5 m</text>
+      <!-- huong ban -->
+      <g stroke="#a4161a" stroke-width="2" fill="none">
+        <path d="M200 270L200 118" marker-end="url(#a2)"/><path d="M360 270L360 118" marker-end="url(#a2)"/><path d="M520 270L520 118" marker-end="url(#a2)"/></g>
+      <g stroke="#a4161a" stroke-width="1.2" stroke-dasharray="6 5"><path d="M150 280L110 40"/><path d="M570 280L610 40"/></g>
+      <text x="80" y="180" fill="#a4161a" font-size="10.5" transform="rotate(-80 80 180)">giới hạn hướng bắn</text>
+      <text x="380" y="200" fill="#a4161a" font-weight="700">HƯỚNG BẮN</text>
+      <path d="M150 196h40M150 196" stroke="none"/>
+      <text x="640" y="200" fill="#5c6253" font-size="10.5" text-anchor="middle">cự ly theo</text><text x="640" y="214" fill="#5c6253" font-size="10.5" text-anchor="middle">bài bắn</text>
+      <!-- tuyen ban -->
+      <rect x="130" y="276" width="460" height="10" fill="#1b1f16"/><text x="360" y="304" text-anchor="middle" font-weight="700">TUYẾN BẮN – vị trí xạ thủ</text>
+      <g fill="#3f4a24"><circle cx="200" cy="270" r="7"/><circle cx="360" cy="270" r="7"/><circle cx="520" cy="270" r="7"/></g>
+      <!-- NDK, an toan -->
+      <g transform="translate(66 300)"><rect x="-30" y="-16" width="60" height="26" fill="#1f4e79"/><text y="2" text-anchor="middle" fill="#fff" font-weight="700">NĐK</text></g>
+      <g transform="translate(654 300)"><rect x="-36" y="-16" width="72" height="26" fill="#c4560c"/><text y="2" text-anchor="middle" fill="#fff" font-weight="700">AN TOÀN</text></g>
+      <g transform="translate(360 320)"><text text-anchor="middle" fill="#3f4a24" font-weight="700" font-size="10.5">CHỈ HUY (sau tuyến bắn)</text></g>
+      <text x="40" y="268" font-size="10" fill="#1f4e79">sau, ngoài tuyến bắn,</text><text x="40" y="281" font-size="10" fill="#1f4e79">thấy cả dãy bia</text>
+    </svg>
+    <figcaption><b>Hình 3-1.</b> Sơ đồ bố trí mẫu (nhìn từ trên). Cự ly, giới hạn hướng bắn, vật chắn đạn phía sau theo quy định trường bắn của đơn vị.</figcaption>
+  </figure>
+  <ul>
+    <li>Nền đặt bia phẳng, chắc; bia không nghiêng ngang (kiểm tra bằng mắt theo phương thẳng đứng của khung).</li>
+    <li>Phía sau bia có ụ đất / tường chắn đạn theo quy định; không có người, đường đi lại trong vùng nguy hiểm.</li>
+    <li>Tấm che chắn đặt <b>trước</b> cơ cấu sao cho từ mọi vị trí xạ thủ chỉ nhìn thấy tấm bia; mép trên tấm che ngang mức Y thấp nhất của bài để tạo hiệu ứng ẩn – hiện khi cần (BT-03).</li>
+    <li>Bia cách nhau ≥ 1,5 m để một phát lệch không trúng cơ cấu bia bên cạnh.</li>
+    <li>NĐK ở sau và ngoài tuyến bắn. Thử liên lạc tay cầm – bia <b>tại đúng vị trí triển khai</b> trước buổi tập; có vật cản kim loại, ụ đất thì rút ngắn khoảng cách hoặc đổi vị trí.</li>
+    <li>Không đặt bia ngửa nắng gắt kéo dài (màn hình tay cầm khó đọc, pin nóng); che mưa cho mạch điều khiển.</li>
+  </ul>
+
+  <h2 id="c3-3">3.3. Lắp đặt bia</h2>
+  <ol class="st">
+    <li>Mở hòm, kiểm đếm theo Bảng 1.3. Kiểm tra khâu, khớp, vít, tay quay servo không nứt, lỏng.</li>
+    <li>Đặt khung bia tại vị trí đã chọn, cố định chân đế. Lắp tấm bia vào khớp E.</li>
+    <li>Lắp tấm che chắn cơ cấu. Đứng tại tuyến bắn kiểm tra chỉ thấy tấm bia.</li>
+    <li>Kiểm tra pin ≥ 7,4 V (≈ 40 %). Cắm pin vào bia. Bia khởi động khoảng 5 giây, đứng ở tâm vùng.</li>
+    <li>Bật tay cầm. Trên Tổng quan kiểm tra bia hiện trực tuyến, pin, không báo lỗi (Chương 4).</li>
+    <li>Cho bia <b class="k">Nhận diện</b> (lắc ngang) để chắc chắn đúng số bia với vị trí trên thao trường; ghi số bia lên khung nếu chưa có.</li>
+    <li>Chạy thử bài “Con lắc ngang” hoặc mẫu ngang ở 120 mm/s khoảng 30 giây, không có xạ thủ trên tuyến bắn.</li>
+    <li>Báo cáo chỉ huy: <b>“Bia số … sẵn sàng!”</b></li>
+  </ol>
+
+  <h2 id="c3-4">3.4. Kiểm tra trước buổi tập</h2>
+  <table>
+    <tr><th class="c" style="width:6%">TT</th><th style="width:22%">Hạng mục</th><th>Nội dung kiểm tra</th><th style="width:26%">Không đạt thì</th></tr>
+    <tr><td class="c">1</td><td>Cơ cấu</td><td>Khâu thẳng, khớp không rơ, vít chặt, quay tay nhẹ (Servo OFF hoặc tắt nguồn) không kẹt</td><td>Không sử dụng, báo KTV</td></tr>
+    <tr><td class="c">2</td><td>Dây dẫn</td><td>Không vướng vùng quét, không trầy, giắc chắc</td><td>Bó gọn, thay dây</td></tr>
+    <tr><td class="c">3</td><td>Pin bia</td><td>≥ 7,4 V; không phồng, nóng, móp</td><td>Thay pin dự phòng</td></tr>
+    <tr><td class="c">4</td><td>Tay cầm</td><td>Pin đủ, màn hình rõ, nút DỪNG hoạt động</td><td>Sạc / thay tay cầm</td></tr>
+    <tr><td class="c">5</td><td>Liên lạc</td><td>Bia trực tuyến tại vị trí NĐK, không “Mất kết nối”</td><td>Kiểm tra kênh, khoảng cách</td></tr>
+    <tr><td class="c">6</td><td>Hướng chuyển động</td><td>Chỉnh tay sang phải – bia sang phải, lên – lên</td><td>KTV hiệu chuẩn (Ch. 9)</td></tr>
+    <tr><td class="c">7</td><td>Bài tập</td><td>Đúng bài, đúng bia tham gia, tốc độ, thời gian theo kế hoạch</td><td>Chọn lại</td></tr>
+    <tr><td class="c">8</td><td>Che chắn</td><td>Chỉ thấy tấm bia từ tuyến bắn</td><td>Chỉnh tấm che</td></tr>
+    <tr><td class="c">9</td><td>Dừng khẩn</td><td>Bấm DỪNG TẤT CẢ khi bia chạy – mọi bia dừng</td><td>Không sử dụng</td></tr>
+  </table>
+
+  <h2 id="c3-5">3.5. Khẩu lệnh và trình tự phối hợp</h2>
+  <table>
+    <tr><th style="width:22%">Khẩu lệnh</th><th style="width:15%">Người phát</th><th>Động tác của NĐK</th><th style="width:22%">Báo cáo</th></tr>
+    <tr><td><b>“CHUẨN BỊ BIA!”</b></td><td>Chỉ huy</td><td>Chọn bài, bia tham gia, tốc độ, thời gian; kiểm tra bia trực tuyến, pin</td><td>“Bia số … sẵn sàng!”</td></tr>
+    <tr><td><b>“BIA CHẠY!”</b></td><td>Chỉ huy</td><td>Bấm <b class="k">BẮT ĐẦU</b> (Bài chạy) hoặc <b class="k">CHẠY</b>; quan sát bia chuyển động đúng</td><td>“Bia đã chạy!”</td></tr>
+    <tr><td><b>“BẮN!”</b></td><td>Chỉ huy</td><td>Tay đặt ở nút DỪNG TẤT CẢ, quan sát liên tục</td><td>—</td></tr>
+    <tr><td><b>“NGỪNG BẮN!”</b></td><td>Chỉ huy / bất kỳ ai</td><td>Bấm <b class="k">DỪNG TẤT CẢ</b> ngay; kiểm tra mọi bia đứng yên</td><td>“Bia đã dừng!”</td></tr>
+    <tr><td><b>“KHÁM BIA!”</b></td><td>Chỉ huy</td><td>Chỉ sau khi súng đã khám, an toàn viên xác nhận. Web bia: <b class="k">Servo OFF</b>, hoặc tắt nguồn bia cần tiếp cận</td><td>“Bia đã an toàn, cho khám!”</td></tr>
+    <tr><td><b>“THU DỌN!”</b></td><td>Chỉ huy</td><td>Dừng, thả servo, tắt nguồn bia và tay cầm, kiểm đếm, ghi nhật ký</td><td>“Trang bị đủ, đã ghi sổ!”</td></tr>
+  </table>
+  <div class="box dg"><div class="tag"><svg viewBox="0 0 24 24"><path d="M12 2 1 21h22z" fill="#fff"/><path d="M12 9v5M12 17v.5" stroke="#a4161a" stroke-width="2.4" stroke-linecap="round"/></svg>NGUY HIỂM</div>
+    <div class="tx"><p>“Bia đã dừng” trên màn hình chưa đủ để vào khu vực bia. Phải có khẩu lệnh NGỪNG BẮN, súng đã khám và chỉ huy cho phép KHÁM BIA.</p></div></div>
+</section>
+
+<!-- ======================= CHUONG 4 ======================= -->
+<section class="pb">
+  <div class="chap"><div class="no"><small>CHƯƠNG</small>4</div><h1 id="c4">Vận hành bằng tay cầm</h1></div>
+  <p class="lead">Tay cầm là phương tiện điều khiển chính trong huấn luyện: điều khiển tới 8 bia, chạy phiên bài có thời gian, không cần máy tính hay Internet.</p>
+
+  <h2 id="c4-1">4.1. Ghép bia với tay cầm</h2>
+  <div class="two">
+    <figure><img src="images/03-quan-ly-bia.png" alt="Quản lý bia"><figcaption><b>Hình 4-1.</b> Quản lý bia: (1) danh sách đã ghép; (2) TÌM BIA MỚI.</figcaption></figure>
+    <figure><img src="images/04-tim-ghep-bia.png" alt="Tìm và ghép bia"><figcaption><b>Hình 4-2.</b> Cửa sổ tìm bia: Nhận diện – GHÉP – XONG.</figcaption></figure>
+  </div>
+  <ol class="st">
+    <li>Bật tay cầm và bia cần ghép; hai thiết bị cùng kênh ESP-NOW (mặc định kênh 1).</li>
+    <li>Tay cầm: <b class="k">Quản lý bia</b> → <b class="k">TÌM BIA MỚI</b>, chờ danh sách bia chưa ghép.</li>
+    <li>Bấm <b class="k">Nhận diện</b> ở từng dòng – bia tương ứng lắc ngang – để xác định đúng bia.</li>
+    <li>Bấm <b class="k">GHÉP</b> đúng dòng, rồi <b class="k">XONG</b>. Đổi tên theo vị trí: “Bia 1 – trái”…</li>
+    <li>Biết địa chỉ MAC (nhãn bia): dùng <b class="k">NHẬP MAC</b> thay cho tìm.</li>
+  </ol>
+  <p>Bia đã ghép tay cầm khác không hiện trong danh sách tìm. Muốn chuyển: trên web bia bấm <b class="k">Bo ghep</b>, hoặc giữ nút ghép trên bia ≥ 3 giây (bia lắc đầu báo đã nhận).</p>
+
+  <h2 id="c4-2">4.2. Điều khiển một bia</h2>
+  <div class="two">
+    <figure><img src="images/10-dieu-khien.png" alt="Điều khiển một bia"><figcaption><b>Hình 4-3.</b> Điều khiển: (1) chọn bia; (2) Kịch bản; (3) tốc độ; (4) CHẠY.</figcaption></figure>
+    <div>
+      <ol class="st">
+        <li>Mở <b class="k">Điều khiển</b>, chọn đúng bia.</li>
+        <li>Chọn chế độ:
+          <ul><li><b>Kịch bản</b> – chạy bài đã lưu; tốc độ 200 / 400 / Max.</li>
+          <li><b>Ngẫu nhiên</b> – bia tự chọn điểm; chọn thời gian dừng.</li>
+          <li><b>Chỉnh tay</b> – nút hướng bước 1/5/10 mm, chạm vùng cam để ĐI TỚI.</li></ul></li>
+        <li>Bấm <b class="k">CHẠY</b>; xác nhận nếu hộp hỏi lại đang bật.</li>
+        <li>Theo dõi ô lệnh cuối: <i>Đã xác nhận</i> / <i>Chờ xác nhận…</i> / <i>Không phản hồi</i>.</li>
+        <li><b class="k">DỪNG</b> dừng bia đang chọn; <b class="k">DỪNG TẤT CẢ</b> dừng mọi bia.</li>
+      </ol>
+      <p><b>Max</b>: bia chạy nhanh nhất servo cho phép (≈ 300–850 mm/s). Cần bia 2.3-xy trở lên.</p>
+    </div>
+  </div>
+
+  <h2 id="c4-3">4.3. Chạy phiên bài có thời gian</h2>
+  <div class="two">
+    <figure><img src="images/11-chon-bai-chay.png" alt="Thiết lập phiên"><figcaption><b>Hình 4-4.</b> Thiết lập phiên: bài, bia tham gia, phối hợp, tốc độ, thời gian, BẮT ĐẦU.</figcaption></figure>
+    <figure><img src="images/12-dang-chay.png" alt="Phiên đang chạy"><figcaption><b>Hình 4-5.</b> Phiên đang chạy: thời gian, TẠM DỪNG, DỪNG BÀI, ô trạng thái từng bia.</figcaption></figure>
+  </div>
+  <ol class="st">
+    <li><b class="k">Bài chạy</b> → chọn bài.</li>
+    <li>Chọn <b>Bia tham gia</b> (chỉ bia trực tuyến, không lỗi).</li>
+    <li>Chọn cách phối hợp, tốc độ, thời gian 1 / 3 / 5 phút / Liên tục.</li>
+    <li>Đọc dòng <b>Sẽ chạy</b> – đối chiếu kế hoạch bài tập.</li>
+    <li>Chờ khẩu lệnh “BIA CHẠY!” → <b class="k">BẮT ĐẦU</b>.</li>
+    <li>Hết giờ hoặc <b class="k">DỪNG BÀI</b> → kiểm tra mọi bia “Đã dừng” → <b class="k">XONG · VỀ CHỌN BÀI</b>.</li>
+  </ol>
+  <table>
+    <tr><th style="width:20%">Phối hợp</th><th>Hành vi</th><th style="width:34%">Dùng cho</th></tr>
+    <tr><td>Cùng lúc</td><td>Các bia nhận cùng bài, chạy cùng nhịp</td><td>Bắn đồng loạt, so sánh xạ thủ</td></tr>
+    <tr><td>So le</td><td>Bia chẵn lệch nửa chu kỳ</td><td>Mục tiêu đan chéo, chọn mục tiêu</td></tr>
+    <tr><td>Luân phiên</td><td>Mỗi lúc một bia chạy, đổi lượt sau 6 s</td><td>Chuyển điểm ngắm giữa các mục tiêu</td></tr>
+  </table>
+
+  <h2 id="c4-4">4.4. Dừng, tạm dừng và mất liên lạc</h2>
+  <table>
+    <tr><th style="width:28%">Thao tác</th><th>Tác dụng</th></tr>
+    <tr><td><b class="k">TẠM DỪNG</b> / <b class="k">TIẾP TỤC</b></td><td>Tạm ngưng phiên, bấm lại để chạy tiếp từ điểm dở.</td></tr>
+    <tr><td><b class="k">DỪNG BÀI</b></td><td>Kết thúc phiên.</td></tr>
+    <tr><td><b class="k">DỪNG TẤT CẢ</b> / nút cứng IO17</td><td>Dừng ngay mọi bia, kết thúc phiên. Dùng khi có khẩu lệnh NGỪNG BẮN.</td></tr>
+    <tr><td><b class="k">ĐẶT LẠI</b> (Điều khiển)</td><td>Xóa lỗi bia (vd đã tự dừng vì mất tay cầm). Chỉ bấm sau khi đã xử lý nguyên nhân.</td></tr>
+  </table>
+  <div class="box wn"><div class="tag"><svg viewBox="0 0 24 24"><path d="M12 2 1 21h22z" fill="#fff"/><path d="M12 9v5M12 17v.5" stroke="#c4560c" stroke-width="2.4" stroke-linecap="round"/></svg>CẢNH BÁO</div>
+    <div class="tx"><p>Đường điều khiển không còn hoạt động (màn hình đơ, không phản hồi): hô “NGỪNG BẮN!”, tắt nguồn bia bằng công tắc/rút pin. Không suy ra trạng thái bia chỉ từ màn hình.</p></div></div>
+
+  <h2 id="c4-5">4.5. Cài đặt an toàn của tay cầm</h2>
+  <div class="two">
+    <figure><img src="images/15-cai-dat-an-toan.png" alt="Cài đặt an toàn"><figcaption><b>Hình 4-6.</b> Cài đặt → An toàn.</figcaption></figure>
+    <div>
+      <ul>
+        <li><b>Hỏi lại trước khi CHẠY</b>: bật trong huấn luyện để tránh chạm nhầm.</li>
+        <li><b>Tốc độ tối đa</b> 120 / 200 / 300 / 400 / Max: trần áp cho mọi lệnh. Học viên mới: đặt 200.</li>
+        <li><b>Nút A / B</b>: Dừng tất cả, Tạm dừng/tiếp tục, Kết thúc phiên, Về gốc tất cả bia, Xóa lỗi, Đổi độ sáng. Gán <i>Về gốc tất cả bia</i> chỉ khi người bấm quan sát được vùng bia.</li>
+        <li><b>Kết nối</b>: kênh ESP-NOW, thời gian báo mất kết nối, công suất phát.</li>
+      </ul>
+      <p>Soạn bài mới, lưu bài vào tay cầm: dùng Bia XY Studio qua USB hoặc đồng bộ cloud (xem <i>Hướng dẫn sử dụng Bia XY Studio</i>).</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= CHUONG 5 ======================= -->
+<section class="pb">
+  <div class="chap"><div class="no"><small>CHƯƠNG</small>5</div><h1 id="c5">Vận hành bằng trang web của bia</h1></div>
+  <p class="lead">Mỗi bia phát Wi-Fi riêng và có một trang web điều khiển: dùng khi chỉ có một bia, khi kiểm tra – hiệu chuẩn, hoặc khi không có tay cầm. Nhãn trên trang viết tiếng Việt không dấu; sổ tay ghi nhãn đúng như trên màn hình.</p>
+
+  <h2 id="c5-1">5.1. Kết nối</h2>
+  <ol class="st">
+    <li>Bật bia, chờ 5–10 giây cho bia khởi động và phát Wi-Fi.</li>
+    <li>Trên điện thoại/máy tính chọn Wi-Fi <b>BIA_TAP_BAN_xxxx</b> (xxxx: 4 ký tự cuối MAC, khác nhau từng bia – đối chiếu nhãn để chọn đúng bia).</li>
+    <li>Nhập mật khẩu 10 ký tự trên nhãn bia. Máy báo “Không có Internet” – chọn <b>giữ kết nối</b>; tắt dữ liệu di động nếu trình duyệt không vào được.</li>
+    <li>Mở trình duyệt: <code>http://192.168.4.1</code> (gõ http, không phải https).</li>
+  </ol>
+  <div class="box nt"><div class="tag"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#fff"/><path d="M12 11v6M12 7v.5" stroke="#1f4e79" stroke-width="2.4" stroke-linecap="round"/></svg>GHI CHÚ</div>
+    <div class="tx"><p>Mỗi bia chỉ cho <b>một máy</b> nối cùng lúc. Khi tay cầm đang điều khiển bia, mọi lệnh trên web bị từ chối (báo “Tay cam dang dieu khien bia – web chi duoc DUNG”), chỉ còn <b class="k">STOP</b> dùng được.</p></div></div>
+
+  <h2 id="c5-2">5.2. Bố cục giao diện</h2>
+  <figure><img src="images/web-01-trang-bia.png" alt="Trang web của bia" style="width:100%;aspect-ratio:1280/716;object-fit:cover;object-position:top"><figcaption><b>Hình 5-1.</b> Trang web bia: thanh trạng thái và nút STOP (trên), bản đồ vùng làm việc (trái), Kịch bản và các mục cài đặt (phải).</figcaption></figure>
+  <table>
+    <tr><th style="width:30%">Thành phần</th><th>Ý nghĩa, thao tác</th></tr>
+    <tr><td>PIN xx% (V)</td><td>Xanh &gt; 20 %; đỏ ≤ 20 % – thay pin. “PIN -”: chưa đo được (chưa cắm pin vào mạch đo).</td></tr>
+    <tr><td>X … Y …</td><td>Tọa độ điểm bia (mm).</td></tr>
+    <tr><td>S1 … S2 …</td><td>Góc hai servo (độ).</td></tr>
+    <tr><td>DUNG / DANG CHAY k/n / NGAU NHIEN</td><td>Trạng thái kịch bản; k/n: đang tới điểm k trên n. <b>MAT KET NOI</b>: trang không hỏi được bia.</td></tr>
+    <tr><td><b class="k">STOP</b></td><td>Dừng ngay mọi chuyển động và kịch bản. Luôn dùng được, kể cả khi tay cầm đang điều khiển.</td></tr>
+    <tr><td>Bản đồ vùng làm việc</td><td>Vùng xanh: bia tới được. Khung vàng nét đứt: khung vùng. Đường xám: hai cặp khâu. Chấm đỏ: vị trí bia. Chấm xanh có số: điểm kịch bản (đỏ = ngoài tầm với).</td></tr>
+    <tr><td><b class="k">Re bia (jog)</b> / <b class="k">Them diem</b></td><td>Chạm bản đồ để bia đi tới chỗ chạm / để thêm điểm cuối danh sách. Kéo một chấm có số để đổi vị trí điểm.</td></tr>
+    <tr><td>Toc do jog (mm/s)</td><td>Tốc độ khi rê bia (5–400); cũng là tốc độ gán cho điểm mới thêm.</td></tr>
+    <tr><td><b class="k">VE GIUA</b></td><td>Hủy kịch bản, đưa bia về tâm X 40, Y 320.</td></tr>
+    <tr><td>Dòng chữ đỏ dưới bản đồ</td><td>Thông báo lỗi: “Diem ngoai tam voi cua bia”, “Mat ket noi”, “Tay cam dang dieu khien bia…”.</td></tr>
+  </table>
+
+  <h2 id="c5-3">5.3. Kịch bản danh sách điểm</h2>
+  <ol class="st">
+    <li>Bấm <b class="k">Danh sach diem</b> (đổi chế độ sẽ dừng bia).</li>
+    <li>Tạo điểm bằng một trong các cách:
+      <ul><li><b class="k">Mau: chay ngang</b> – 2 điểm ngang giữa khung vàng, 120 mm/s, dừng 800 ms.</li>
+      <li><b class="k">Mau: zigzag</b> – 6 điểm zích zắc trong khung vàng, 150 mm/s, dừng 400 ms.</li>
+      <li>Chọn <b class="k">Them diem</b> rồi chạm bản đồ – mỗi lần chạm thêm một điểm.</li>
+      <li><b class="k">+ Them diem</b> – thêm vị trí bia đang đứng (rê bia tới chỗ muốn trước).</li></ul></li>
+    <li>Sửa trong bảng: <b>X</b>, <b>Y</b> (mm), <b>mm/s</b> (tốc độ đi <b>tới</b> điểm đó), <b>Dung(ms)</b> (đứng tại điểm, 1000 ms = 1 giây). Nút <b class="k">x</b> xóa dòng; <b class="k">Xoa het</b> xóa cả bảng.</li>
+    <li><b class="k">Lap vo han</b>: hết điểm cuối quay về điểm 1. Bỏ chọn: chạy một lượt rồi dừng.</li>
+    <li>Không được có chấm đỏ. Bấm <b class="k">Nap vao bia</b> – chờ báo “Da nap n diem”. Có điểm ngoài tầm với, trang báo số điểm và không nạp.</li>
+    <li>Bấm <b class="k">CHAY</b>. Dòng đang tới được tô nền xanh trong bảng.</li>
+  </ol>
+  <div class="box ct"><div class="tag"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#1b1f16"/><path d="M12 6v8M12 17v.5" stroke="#c99a06" stroke-width="2.4" stroke-linecap="round"/></svg>CHÚ Ý</div>
+    <div class="tx"><p>Bảng điểm chỉ nằm trên trang web cho đến khi bấm <b class="k">Nap vao bia</b>. Danh sách điểm trong bia <b>mất khi tắt nguồn</b> – bia khởi động lại với bài chạy ngang mặc định. Bài dùng thường xuyên nên soạn trên Bia XY Studio và lưu vào tay cầm. Tối đa 64 điểm.</p></div></div>
+  <p>Hai điểm hợp lệ nối thẳng có thể đi qua chỗ bia không tới được (vùng làm việc cong). Bia tự kiểm tra từng đoạn và bỏ qua đoạn hỏng; chạy thử chậm để thấy bia đi đủ các điểm.</p>
+
+  <h2 id="c5-4">5.4. Chế độ Ngẫu nhiên</h2>
+  <div class="two">
+    <figure><img src="images/web-03-ngau-nhien.png" alt="Chế độ Ngẫu nhiên"><figcaption><b>Hình 5-2.</b> Kịch bản → Ngau nhien: tốc độ, thời gian dừng và khung vùng.</figcaption></figure>
+    <div>
+      <ol class="st">
+        <li>Bấm <b class="k">Ngau nhien</b> (bia dừng).</li>
+        <li>Nhập <b>Toc do min / max</b> (mm/s), <b>Dung min / max (ms)</b>.</li>
+        <li><b>Vung X tu … den, Vung Y tu … den</b>: khung vùng (khung vàng) – thường để mặc định −70…150, 245…395.</li>
+        <li>Bấm <b class="k">Ap dung</b>, rồi <b class="k">CHAY</b>. Chạy đến khi bấm STOP.</li>
+      </ol>
+      <p>Mỗi chặng bia chọn điểm bất kỳ trên vùng làm việc (cách điểm cũ ≥ 20 mm), tốc độ và thời gian dừng ngẫu nhiên trong khoảng đặt. Từ bia 2.3-xy điểm được rải trên toàn vùng làm việc, không giới hạn trong khung vàng (dòng gợi ý “Khung vang = vung chay ngau nhien” trên trang là mô tả của bản cũ).</p>
+      <p>Muốn giữ thông số sau khi tắt nguồn: mở <b>Hieu chuan servo</b> → <b class="k">Luu vao may</b>.</p>
+    </div>
+  </div>
+
+  <h2 id="c5-5">5.5. Các mục cài đặt</h2>
+  <table>
+    <tr><th style="width:24%">Mục (bấm để mở)</th><th>Nội dung</th><th style="width:15%">Người dùng</th></tr>
+    <tr><td><b>HIEU CHUAN SERVO</b></td><td>Offset 1/2 (độ), Chieu 1/2 (+1/−1); <b class="k">Ap dung</b> (hiệu lực ngay, mất khi tắt nguồn); <b class="k">Luu vao may</b> (ghi hiệu chuẩn, khung vùng, thông số Ngẫu nhiên); <b class="k">Servo ON</b> / <b class="k">Servo OFF</b>. Quy trình: mục 9.1.</td><td>KTV; NĐK chỉ dùng Servo ON/OFF</td></tr>
+    <tr><td><b>KET NOI TAY CAM</b></td><td>Tình trạng ghép (MAC tay cầm, nghe thấy hay không), kênh, tên Wi-Fi; <b class="k">Doi kenh</b>, <b class="k">Bo ghep</b>. Mục 9.2.</td><td>KTV</td></tr>
+    <tr><td><b>CAP NHAT FIRMWARE</b></td><td>Phiên bản đang chạy; chọn file .bin → <b class="k">Nap firmware</b>. Mục 9.3.</td><td>KTV</td></tr>
+  </table>
+  <div class="box wn"><div class="tag"><svg viewBox="0 0 24 24"><path d="M12 2 1 21h22z" fill="#fff"/><path d="M12 9v5M12 17v.5" stroke="#c4560c" stroke-width="2.4" stroke-linecap="round"/></svg>CẢNH BÁO</div>
+    <div class="tx"><p><b class="k">Servo OFF</b> làm khâu mềm, tấm bia có thể rơi xuống theo trọng lực. Chỉ bấm khi vùng bia trống. Bấm <b class="k">Servo ON</b> trước khi chạy lại.</p></div></div>
+</section>
+
+<!-- ======================= CHUONG 6 ======================= -->
+<section class="pb">
+  <div class="chap"><div class="no"><small>CHƯƠNG</small>6</div><h1 id="c6">Các bài tập huấn luyện mẫu</h1></div>
+  <p class="lead">Tám bài tập mẫu xếp từ cơ bản đến đặc nhiệm. Tọa độ dùng khung an toàn mặc định. Cự ly, tư thế, số phát, loại đạn và tiêu chuẩn chấm theo kế hoạch huấn luyện của đơn vị; bảng dưới đây chỉ quy định <b>cài đặt bia</b>.</p>
+
+  <h2 id="c6-1">6.1. Quy đổi tốc độ mục tiêu</h2>
+  <p>Bia nhỏ đặt gần cho cùng tốc độ góc (độ khó bám mục tiêu) như người thật ở xa. Cự ly người thật tương đương: <b>D<sub>tđ</sub> = D<sub>bia</sub> × V<sub>người</sub> / V<sub>bia</sub></b>.</p>
+  <table>
+    <tr><th>Tốc độ bia</th><th class="c">Tốc độ góc ở 10 m</th><th class="c">≡ người đi bộ 1,4 m/s ở</th><th class="c">≡ người chạy 4 m/s ở</th></tr>
+    <tr><td>60 mm/s</td><td class="c">6 mrad/s</td><td class="c">233 m</td><td class="c">667 m</td></tr>
+    <tr><td>120 mm/s</td><td class="c">12 mrad/s</td><td class="c">117 m</td><td class="c">333 m</td></tr>
+    <tr><td>250 mm/s</td><td class="c">25 mrad/s</td><td class="c">56 m</td><td class="c">160 m</td></tr>
+    <tr><td>400 mm/s</td><td class="c">40 mrad/s</td><td class="c">35 m</td><td class="c">100 m</td></tr>
+    <tr><td>Max (≈ 600 mm/s)</td><td class="c">60 mrad/s</td><td class="c">23 m</td><td class="c">67 m</td></tr>
+  </table>
+  <p class="cap">Bảng 6-1. Quy đổi khi bia đặt cách xạ thủ 10 m. Bia ở 5 m: nhân cự ly tương đương với 0,5.</p>
+
+  <h2 id="c6-2">6.2. Cấp độ huấn luyện</h2>
+  <table>
+    <tr><th style="width:18%">Cấp</th><th>Tốc độ</th><th>Dừng tại điểm</th><th>Phối hợp</th><th style="width:28%">Yêu cầu chuyển cấp</th></tr>
+    <tr><td><b>I – Cơ bản</b></td><td>60–120 mm/s</td><td>1500–3000 ms</td><td>1 bia</td><td>Đạt BT-01, BT-02 cấp I</td></tr>
+    <tr><td><b>II – Nâng cao</b></td><td>200–400 mm/s</td><td>500–1500 ms</td><td>1–2 bia, So le</td><td>Đạt BT-03 đến BT-05</td></tr>
+    <tr><td><b>III – Đặc nhiệm</b></td><td>400 – Max</td><td>200–800 ms, ngẫu nhiên</td><td>2–4 bia, Luân phiên/Cùng lúc</td><td>Đạt BT-06 đến BT-08</td></tr>
+  </table>
+
+  <h2 id="c6-3">6.3. Phiếu bài tập</h2>
+
+  <div class="drill"><div class="hd"><span class="id">BT-01</span><span class="nm">Mục tiêu cố định – kiểm tra</span><span class="lv">CẤP I</span></div>
+    <div class="bd">
+      <div>Mục đích</div><div>Kiểm tra súng, tư thế, đường ngắm trước khi bắn mục tiêu di động; kiểm tra bia đứng vững.</div>
+      <div>Cài đặt bia</div><div>Web bia: <b class="k">VE GIUA</b> (X 40, Y 320). Tay cầm: Điều khiển → Chỉnh tay, không chạy kịch bản.</div>
+      <div>Thực hiện</div><div>Bắn theo khẩu lệnh; NGỪNG BẮN → KHÁM BIA → ghi kết quả. Có thể đưa bia tới 3 vị trí (X −40 / 40 / 120, Y 320) bằng Chỉnh tay → ĐI TỚI (tay cầm) hoặc chạm bản đồ web cho 3 loạt.</div>
+      <div>Đánh giá</div><div>Chùm điểm chạm trên tấm bia theo tiêu chuẩn đơn vị.</div>
+    </div></div>
+
+  <div class="drill"><div class="hd"><span class="id">BT-02</span><span class="nm">Mục tiêu chạy ngang đều</span><span class="lv">CẤP I – II</span></div>
+    <div class="bd">
+      <div>Mục đích</div><div>Bám mục tiêu, lấy lượng đón, nhịp bóp cò khi mục tiêu chạy ngang.</div>
+      <div>Cài đặt bia</div><div>Web bia: <b class="k">Mau: chay ngang</b> (2 điểm (−60, 320) ↔ (140, 320)), sửa Dung(ms) = 0. Tốc độ: cấp I 120 → cấp II 250 → 400 mm/s. Tay cầm: bài “Con lắc ngang”.</div>
+      <div>Thực hiện</div><div>Mỗi tốc độ 1 loạt; bắn khi mục tiêu ở giữa hành trình. Nâng tốc độ khi đạt.</div>
+      <div>Đánh giá</div><div>Tỉ lệ trúng theo từng tốc độ; ghi tốc độ cao nhất đạt.</div>
+    </div></div>
+
+  <div class="drill"><div class="hd"><span class="id">BT-03</span><span class="nm">Mục tiêu xuất hiện – ẩn nấp</span><span class="lv">CẤP II</span></div>
+    <div class="bd">
+      <div>Mục đích</div><div>Phát hiện nhanh, ngắm bắn trong thời gian mục tiêu lộ diện ngắn.</div>
+      <div>Bố trí</div><div>Mép trên tấm che ngang Y ≈ 300 mm: bia ở Y 260 bị che, ở Y 390 lộ diện.</div>
+      <div>Cài đặt bia</div><div>
+        <table><tr><th>#</th><th>X</th><th>Y</th><th>mm/s</th><th>Dừng ms</th></tr>
+          <tr><td>1</td><td>−30</td><td>260</td><td>400</td><td>−1 (ngẫu nhiên)</td></tr>
+          <tr><td>2</td><td>−30</td><td>390</td><td>400</td><td>1500</td></tr>
+          <tr><td>3</td><td>110</td><td>260</td><td>300</td><td>−1</td></tr>
+          <tr><td>4</td><td>110</td><td>390</td><td>400</td><td>1500</td></tr></table>
+        Lặp vô hạn. Ngẫu nhiên: dừng min 1000, max 4000 ms. Cấp III: giảm dừng lộ diện xuống 800 ms. Nhập 4 dòng này trên web bia (<b class="k">+ Them diem</b> rồi sửa ô) hoặc soạn trên Studio.</div>
+      <div>Đánh giá</div><div>Số lần trúng / số lần xuất hiện; thời gian phản ứng do chỉ huy bấm giờ.</div>
+    </div></div>
+
+  <div class="drill"><div class="hd"><span class="id">BT-04</span><span class="nm">Mục tiêu đổi hướng</span><span class="lv">CẤP II</span></div>
+    <div class="bd">
+      <div>Mục đích</div><div>Bám mục tiêu đổi hướng đột ngột; không bắn theo quán tính.</div>
+      <div>Cài đặt bia</div><div>Web bia: <b class="k">Mau: zigzag</b> (6 điểm), sửa mm/s 200–300, Dung(ms) 200. Cấp III: 400 mm/s, dừng 0.</div>
+      <div>Thực hiện</div><div>Bắn phát đơn tại các điểm đổi hướng theo khẩu lệnh.</div>
+      <div>Đánh giá</div><div>Tỉ lệ trúng; số phát bắn trượt do bắn trễ sau đổi hướng.</div>
+    </div></div>
+
+  <div class="drill"><div class="hd"><span class="id">BT-05</span><span class="nm">Phản xạ mục tiêu bất ngờ</span><span class="lv">CẤP II – III</span></div>
+    <div class="bd">
+      <div>Mục đích</div><div>Phản xạ với mục tiêu không đoán trước được vị trí, tốc độ, thời điểm dừng.</div>
+      <div>Cài đặt bia</div><div>Chế độ <b>Ngẫu nhiên</b>. Cấp II: 120–250 mm/s, dừng 800–1500 ms. Cấp III: 250–600 mm/s, dừng 200–800 ms.</div>
+      <div>Thực hiện</div><div>Chỉ bắn khi mục tiêu dừng (cấp II) hoặc cả khi đang chạy (cấp III). Phiên 1 phút.</div>
+      <div>Đánh giá</div><div>Số phát trúng / số phát; số lần bắn khi không đủ điều kiện (phạt).</div>
+    </div></div>
+
+  <div class="drill"><div class="hd"><span class="id">BT-06</span><span class="nm">Hai phát nhanh khi mục tiêu dừng</span><span class="lv">CẤP III</span></div>
+    <div class="bd">
+      <div>Mục đích</div><div>Bắn hai phát nhanh chính xác trong cửa sổ thời gian ngắn.</div>
+      <div>Cài đặt bia</div><div>Bài 4 điểm góc chữ nhật (−50, 260) · (130, 260) · (130, 380) · (−50, 380), 400 mm/s, dừng 800 ms mỗi góc (rút dần 600 → 400 ms).</div>
+      <div>Thực hiện</div><div>Mỗi lần bia dừng: 2 phát. Lặp 3 vòng.</div>
+      <div>Đánh giá</div><div>Cặp phát trúng cùng vùng; tính số cặp hợp lệ.</div>
+    </div></div>
+
+  <div class="drill"><div class="hd"><span class="id">BT-07</span><span class="nm">Đa mục tiêu – chọn mục tiêu ưu tiên</span><span class="lv">CẤP III</span></div>
+    <div class="bd">
+      <div>Mục đích</div><div>Chuyển điểm ngắm, chọn đúng mục tiêu theo chỉ định giữa nhiều mục tiêu.</div>
+      <div>Cài đặt bia</div><div>2–4 bia, tay cầm <b>Bài chạy</b>, phối hợp <b>Luân phiên</b> (đổi lượt 6 s) hoặc <b>So le</b>; bài ngang hoặc zích zắc 250 mm/s; thời gian 3 phút.</div>
+      <div>Thực hiện</div><div>Chỉ huy gọi số bia (“Bia 2!”); xạ thủ chỉ bắn bia được gọi. Bia không được gọi là mục tiêu cấm bắn.</div>
+      <div>Đánh giá</div><div>Trúng đúng bia; trúng bia cấm bị trừ điểm nặng.</div>
+    </div></div>
+
+  <div class="drill"><div class="hd"><span class="id">BT-08</span><span class="nm">Tổng hợp dưới áp lực thời gian</span><span class="lv">CẤP III</span></div>
+    <div class="bd">
+      <div>Mục đích</div><div>Tổng hợp kỹ năng: di chuyển, thay băng đạn, bắn đa mục tiêu tốc độ cao.</div>
+      <div>Cài đặt bia</div><div>Tất cả bia, <b>Cùng lúc</b> hoặc <b>So le</b>, tốc độ <b>Max</b>, phiên <b>1 phút</b>; bài vòng tròn soạn trên Studio (Tạo nhanh → Vòng tròn) hoặc Ngẫu nhiên.</div>
+      <div>Thực hiện</div><div>Theo kịch bản chiến thuật của chỉ huy (vào vị trí, xử lý mục tiêu, rút).</div>
+      <div>Đánh giá</div><div>Tổng phát trúng, thời gian hoàn thành, lỗi an toàn (loại bài nếu vi phạm).</div>
+    </div></div>
+
+  <div class="box wn"><div class="tag"><svg viewBox="0 0 24 24"><path d="M12 2 1 21h22z" fill="#fff"/><path d="M12 9v5M12 17v.5" stroke="#c4560c" stroke-width="2.4" stroke-linecap="round"/></svg>CẢNH BÁO</div>
+    <div class="tx"><p>Bài cấp III có tốc độ cao, bia đổi hướng bất ngờ: mật độ phát lệch trúng cơ cấu tăng. KTV kiểm tra tấm che và khâu sau mỗi loạt.</p></div></div>
+</section>
+
+<!-- ======================= CHUONG 7 ======================= -->
+<section class="pb">
+  <div class="chap"><div class="no"><small>CHƯƠNG</small>7</div><h1 id="c7">Bảo quản, bảo dưỡng</h1></div>
+
+  <h2 id="c7-1">7.1. Chế độ bảo dưỡng định kỳ</h2>
+  <table>
+    <tr><th class="c" style="width:6%">TT</th><th style="width:14%">Thời điểm</th><th style="width:20%">Hạng mục</th><th>Nội dung</th><th style="width:20%">Người làm</th></tr>
+    <tr><td class="c">1</td><td>Trước buổi tập</td><td>Toàn bộ</td><td>Theo Bảng 3.4 và Phiếu kiểm tra (Phụ lục B)</td><td>KTV, NĐK</td></tr>
+    <tr><td class="c">2</td><td>Trong buổi tập</td><td>Pin, cơ cấu</td><td>Theo dõi % pin; nghe tiếng lạ; xem tấm che sau mỗi loạt</td><td>NĐK, KTV</td></tr>
+    <tr><td class="c">3</td><td>Sau buổi tập</td><td>Làm sạch</td><td>Lau bụi, bùn, nước; kiểm tra vết đạn trên khâu, tấm che; tháo pin</td><td>KTV</td></tr>
+    <tr><td class="c">4</td><td>Sau buổi tập</td><td>Pin</td><td>Sạc lại hoặc đưa về mức cất giữ; ghi số chu kỳ</td><td>KTV</td></tr>
+    <tr><td class="c">5</td><td>Hằng tuần</td><td>Khớp, vít</td><td>Siết vít khớp, tay quay servo; kiểm tra độ rơ bằng tay khi Servo OFF</td><td>KTV</td></tr>
+    <tr><td class="c">6</td><td>Hằng tuần</td><td>Hướng, vị trí</td><td>Tay cầm Góc servo 90°/90°, so khâu với hình trên web (mục 9.1)</td><td>KTV</td></tr>
+    <tr><td class="c">7</td><td>Hằng tháng</td><td>Dây, giắc</td><td>Kiểm tra cách điện, giắc servo, giắc pin; vệ sinh tiếp điểm</td><td>KTV</td></tr>
+    <tr><td class="c">8</td><td>Hằng tháng</td><td>Phần mềm</td><td>Kiểm tra bản firmware mới trên Studio; cập nhật cặp phiên bản tương thích</td><td>KTV</td></tr>
+    <tr><td class="c">9</td><td>Hằng tháng</td><td>Sao lưu</td><td>Xuất bài trên tay cầm ra file .json, lưu kèm ngày</td><td>KTV</td></tr>
+  </table>
+
+  <h2 id="c7-2">7.2. Pin Li-ion / LiPo 2S</h2>
+  <table>
+    <tr><th>Điện áp</th><th class="c">≈ %</th><th>Đánh giá / xử lý</th></tr>
+    <tr><td class="n">8,3 – 8,4 V</td><td class="c">100</td><td>Đầy</td></tr>
+    <tr><td class="n">7,7 V</td><td class="c">65</td><td>Bình thường</td></tr>
+    <tr><td class="n">7,6 V</td><td class="c">≈ 55</td><td><b>Mức cất giữ</b> (3,8 V/cell) – cất quá 1 tuần thì đưa về mức này</td></tr>
+    <tr><td class="n">7,4 V</td><td class="c">40</td><td>Chuẩn bị pin thay</td></tr>
+    <tr><td class="n">7,1 V</td><td class="c">15</td><td>Kết thúc loạt, thay pin</td></tr>
+    <tr><td class="n">≤ 6,8 V</td><td class="c">≤ 5</td><td>Dừng ngay – servo yếu, pin dễ hỏng</td></tr>
+  </table>
+  <div class="box dg"><div class="tag"><svg viewBox="0 0 24 24"><path d="M12 2 1 21h22z" fill="#fff"/><path d="M12 9v5M12 17v.5" stroke="#a4161a" stroke-width="2.4" stroke-linecap="round"/></svg>NGUY HIỂM</div>
+    <div class="tx"><p>Pin bị trúng đạn, mảnh, phồng hoặc bốc khói có thể cháy dữ dội. Không chạm tay trần; dùng dụng cụ đưa ra nền đất/cát cách xa người và vật dễ cháy, dập bằng cát. Không sạc lại pin đã hư hại.</p></div></div>
+  <ul>
+    <li>Sạc bằng bộ sạc cân bằng 2S, dòng ≤ 1C, trên nền không cháy, có người trông. Không sạc khi pin còn nóng sau buổi tập.</li>
+    <li>Cất pin nơi khô mát (15–25 °C), trong túi chống cháy; không để trong xe nắng.</li>
+    <li>Ghi ngày, số chu kỳ trên nhãn pin. Pin giảm dung lượng rõ (chạy dưới 60 % thời gian ban đầu): thay.</li>
+  </ul>
+
+  <h2 id="c7-3">7.3. Thay tấm bia, xử lý cơ cấu trúng đạn</h2>
+  <ol class="st">
+    <li>Có khẩu lệnh NGỪNG BẮN và cho phép KHÁM BIA. Web bia: <b class="k">Servo OFF</b>, hoặc tắt nguồn bia.</li>
+    <li>Thay tấm bia tại khớp E; không bẻ khâu L2, L3 khi tháo.</li>
+    <li>Khâu, tay quay servo trúng đạn: không chạy lại. KTV thay khâu, kiểm tra servo quay êm, hiệu chuẩn lại (mục 9.1).</li>
+    <li>Bật lại nguồn, bấm <b class="k">VE GIUA</b> (web) hoặc Về gốc (tay cầm), chạy thử 120 mm/s trước khi tiếp tục.</li>
+  </ol>
+
+  <h2 id="c7-4">7.4. Vận chuyển, cất giữ</h2>
+  <ul>
+    <li>Tháo pin khỏi bia và tay cầm khi vận chuyển. Pin để riêng trong túi chống cháy.</li>
+    <li>Đưa cơ cấu về tư thế gập gọn (Servo OFF hoặc tắt nguồn, gập khâu theo đúng chiều), chèn xốp, khóa hòm.</li>
+    <li>Tay cầm: bọc màn hình, không đè vật nặng.</li>
+    <li>Kho: khô ráo, không hóa chất ăn mòn; kiểm tra pin hằng tháng, đưa về mức cất giữ.</li>
+  </ul>
+</section>
+
+<!-- ======================= CHUONG 8 ======================= -->
+<section class="pb">
+  <div class="chap"><div class="no"><small>CHƯƠNG</small>8</div><h1 id="c8">Hỏng hóc thường gặp và cách khắc phục</h1></div>
+  <p>Cột <b>Cấp</b>: NĐK – người điều khiển bia tự xử lý; KTV – kỹ thuật viên xử lý. Không tự tháo mạch điều khiển khi chưa được giao.</p>
+
+  <h2 id="c8-1">8.1. Nguồn và chuyển động</h2>
+  <table>
+    <tr><th style="width:24%">Hiện tượng</th><th style="width:28%">Nguyên nhân có thể</th><th>Cách khắc phục</th><th class="c" style="width:9%">Cấp</th></tr>
+    <tr><td>Bia không khởi động</td><td>Pin cạn, giắc lỏng</td><td>Đo pin, thay pin, cắm chặt giắc</td><td class="c">NĐK</td></tr>
+    <tr><td>Bia giật, rung khi chạy</td><td>Pin yếu; vít khớp lỏng; tốc độ cao sát biên</td><td>Thay pin; siết vít; giảm tốc độ hoặc đưa điểm vào khung an toàn</td><td class="c">NĐK/KTV</td></tr>
+    <tr><td>Bia đi ngược hướng</td><td>Sai Chiều hiệu chuẩn; đấu nhầm servo trái/phải</td><td>Mục 9.1; kiểm tra servo 1 ở A (chân 38), servo 2 ở C (chân 39)</td><td class="c">KTV</td></tr>
+    <tr><td>Hình trên web lệch khâu thật</td><td>Offset sai; tay quay servo trượt răng</td><td>Hiệu chuẩn (9.1); lắp lại tay quay</td><td class="c">KTV</td></tr>
+    <tr><td>Bấm CHẠY không chạy</td><td>Chưa bấm Nap vao bia; mọi điểm hỏng (chấm đỏ); servo đang OFF</td><td>Bấm Nap vao bia; sửa điểm đỏ; bấm Servo ON</td><td class="c">NĐK</td></tr>
+    <tr><td>Khâu kêu, va cữ</td><td>Hiệu chuẩn sai; khâu cong</td><td>STOP, Servo OFF; KTV kiểm tra, thay khâu, hiệu chuẩn</td><td class="c">KTV</td></tr>
+    <tr><td>Servo nóng</td><td>Kẹt cơ khí; giữ lực lâu ở biên</td><td>Servo OFF khi nghỉ; kiểm tra kẹt</td><td class="c">KTV</td></tr>
+    <tr><td>“PIN -” trên web</td><td>Chưa cắm pin vào mạch đo; cấp nguồn USB</td><td>Cắm pin đúng giắc</td><td class="c">NĐK</td></tr>
+  </table>
+
+  <h2 id="c8-2">8.2. Liên lạc tay cầm – bia</h2>
+  <table>
+    <tr><th style="width:24%">Hiện tượng</th><th style="width:28%">Nguyên nhân có thể</th><th>Cách khắc phục</th><th class="c" style="width:9%">Cấp</th></tr>
+    <tr><td>Không tìm thấy bia</td><td>Khác kênh; bia đã ghép tay cầm khác; bia tắt</td><td>Đưa cùng kênh; Bỏ ghép trên web bia hoặc giữ nút ghép 3 s</td><td class="c">NĐK</td></tr>
+    <tr><td>MẤT KẾT NỐI / Không phản hồi</td><td>Xa, vật cản; pin yếu; nhiễu</td><td>DỪNG; lại gần; đổi vị trí NĐK; kiểm tra pin hai bên</td><td class="c">NĐK</td></tr>
+    <tr><td>Bia tự dừng giữa bài</td><td>Mất tay cầm 3 s</td><td>Xử lý liên lạc, ĐẶT LẠI rồi chạy lại</td><td class="c">NĐK</td></tr>
+    <tr><td>Đồng bộ Wi-Fi tay cầm làm mất bia</td><td>Radio theo kênh Wi-Fi khi đồng bộ</td><td>Chỉ đồng bộ khi bia đứng yên; đặt kênh ESP-NOW trùng kênh Wi-Fi</td><td class="c">KTV</td></tr>
+  </table>
+
+  <h2 id="c8-3">8.3. Trang web bia</h2>
+  <table>
+    <tr><th style="width:24%">Hiện tượng</th><th style="width:28%">Nguyên nhân có thể</th><th>Cách khắc phục</th><th class="c" style="width:9%">Cấp</th></tr>
+    <tr><td>Không thấy Wi-Fi BIA_TAP_BAN</td><td>Bia tắt, mới bật, ở xa</td><td>Chờ 10 s, lại gần, kiểm tra pin</td><td class="c">NĐK</td></tr>
+    <tr><td>Không vào được Wi-Fi</td><td>Sai mật khẩu; đã có máy khác nối</td><td>Kiểm tra nhãn; ngắt máy kia (1 máy/bia)</td><td class="c">NĐK</td></tr>
+    <tr><td>Vào Wi-Fi nhưng không mở trang</td><td>Gõ https; máy dùng dữ liệu di động</td><td>Gõ <code>http://192.168.4.1</code>; tắt dữ liệu di động; giữ kết nối</td><td class="c">NĐK</td></tr>
+    <tr><td>Báo “Tay cam dang dieu khien bia”</td><td>Tay cầm có quyền</td><td>Dừng bài trên tay cầm, chờ vài giây</td><td class="c">NĐK</td></tr>
+    <tr><td>“Diem ngoai tam voi cua bia”</td><td>Điểm ngoài vùng xanh</td><td>Chọn trong vùng xanh / khung vàng</td><td class="c">NĐK</td></tr>
+    <tr><td>Mất bài sau khi tắt bia</td><td>Danh sách điểm không lưu trong bia</td><td>Nhập lại điểm; bài dùng thường xuyên nên lưu trên tay cầm (Studio)</td><td class="c">NĐK</td></tr>
+    <tr><td>Quên mật khẩu Wi-Fi</td><td>Mất nhãn</td><td>Mục 9.4</td><td class="c">KTV</td></tr>
+    <tr><td>Nạp firmware báo lỗi</td><td>Sai file; rớt Wi-Fi</td><td>Chọn đúng file firmware bia; đứng gần; nạp lại (bia vẫn chạy bản cũ)</td><td class="c">KTV</td></tr>
+  </table>
+  <p>Báo cáo hỏng hóc ghi: thời điểm, bài, số/MAC bia, phiên bản firmware, kênh, thông báo trên màn hình, thao tác vừa làm. Ghi vào Sổ nhật ký (Phụ lục C).</p>
+</section>
+
+<!-- ======================= CHUONG 9 ======================= -->
+<section class="pb">
+  <div class="chap"><div class="no"><small>CHƯƠNG</small>9</div><h1 id="c9">Công tác kỹ thuật</h1></div>
+  <div class="box ct"><div class="tag"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#1b1f16"/><path d="M12 6v8M12 17v.5" stroke="#c99a06" stroke-width="2.4" stroke-linecap="round"/></svg>CHÚ Ý</div>
+    <div class="tx"><p>Chương này dành cho kỹ thuật viên. Ghi lại thông số cũ trước khi sửa. Thực hiện khi bia không ở trên tuyến bắn đang hoạt động.</p></div></div>
+
+  <h2 id="c9-1">9.1. Hiệu chuẩn servo</h2>
+  <div class="two">
+    <figure><img src="images/web-02-cai-dat.png" alt="Các mục cài đặt trên web bia"><figcaption><b>Hình 9-1.</b> Web bia, cột phải mở hết các mục: Hieu chuan servo, Ket noi tay cam, Cap nhat firmware.</figcaption></figure>
+    <div>
+      <p>Quan hệ: <code>góc servo = chiều × góc khâu + offset</code>. Góc khâu đo từ trục +X, ngược chiều kim đồng hồ. Mặc định: Offset 1 = −37,7°, Chieu 1 = +1, Offset 2 = +37,7°, Chieu 2 = +1.</p>
+      <p>Ở góc servo 90°/90° với mặc định: khâu trái nghiêng 37,7° sang trái, khâu phải 37,7° sang phải so với phương thẳng đứng.</p>
+      <figure><img src="images/16-goc-servo.png" alt="Góc servo trên tay cầm"><figcaption><b>Hình 9-2.</b> Tay cầm: Quản lý bia → Góc servo – đặt góc từng servo, GỬI GÓC, VỀ GỐC.</figcaption></figure>
+    </div>
+  </div>
+  <ol class="st">
+    <li>Nối web bia, mở mục <b>Hieu chuan servo</b>. Ghi lại Offset/Chieu đang dùng.</li>
+    <li>Trên tay cầm: <b class="k">Quản lý bia</b> → chọn bia → <b class="k">Góc servo</b>, đặt 90° / 90° → <b class="k">GỬI GÓC</b>. Bia quay chậm rồi giữ góc.</li>
+    <li>So hai khâu gần (A–B, C–D) của bia thật với hình trên bản đồ web (hình vẽ hai khâu gần theo hiệu chuẩn đang dùng).</li>
+    <li>Khâu thật lệch <b>ngược chiều kim đồng hồ</b> thêm Δ° so với hình: giảm offset servo đó Δ°. Lệch thuận chiều: tăng Δ° (với Chieu +1). Bấm <b class="k">Ap dung</b>.</li>
+    <li>Tay cầm bấm <b class="k">VỀ GỐC</b> để trở lại chạy theo tọa độ. Trên web chọn <b class="k">Re bia (jog)</b>, chạm 4 góc khung vàng: bia phải tới đúng chỗ chạm; chạm bên phải – bia sang phải, chạm phía trên – bia lên.</li>
+    <li>Bia đi ngược cả X lẫn Y: đổi <b>Chieu</b> hoặc kiểm tra đấu nhầm servo (servo 1 tại A – chân 38, servo 2 tại C – chân 39).</li>
+    <li>Đạt: bấm <b class="k">Luu vao may</b> (ghi hiệu chuẩn, khung vùng, thông số Ngẫu nhiên). Ghi thông số mới vào Biên bản bàn giao.</li>
+  </ol>
+  <p><b>Lắp lại tay quay servo:</b> gửi góc 90°/90° từ tay cầm, giữ nguyên, lắp tay quay sát góc đúng nhất theo khía răng, sau đó tinh chỉnh offset theo các bước trên.</p>
+
+  <h2 id="c9-2">9.2. Kênh liên lạc, bỏ ghép</h2>
+  <ul>
+    <li>Đổi kênh bia: web bia → mục <b>Ket noi tay cam</b> → chọn Kenh ESP-NOW → <b class="k">Doi kenh</b>. Wi-Fi web rớt một nhịp – nối lại. Đổi kênh tay cầm tương ứng (Cài đặt → Kết nối).</li>
+    <li>Nhiều đơn vị tập gần nhau: mỗi bộ dùng một kênh khác (ví dụ 1, 6, 11).</li>
+    <li><b class="k">Bo ghep</b> (web bia) hoặc giữ nút ghép trên bia ≥ 3 s: bia quên tay cầm, phát tín hiệu chờ ghép.</li>
+  </ul>
+
+  <h2 id="c9-3">9.3. Cập nhật firmware</h2>
+  <table>
+    <tr><th style="width:22%">Thiết bị</th><th>Cách nạp</th></tr>
+    <tr><td>Bia (từ 2.4-xy)</td><td>Studio → Cập nhật → Bia → tải file .bin. Nối Wi-Fi bia → mục <b>Cap nhat firmware</b> → chọn file → <b class="k">Nap firmware</b>. Trang kiểm tra đúng firmware bia, hiện phiên bản; bia dừng, thả servo, khởi động lại ~30 s.</td></tr>
+    <tr><td>Bia (cũ hơn 2.4-xy)</td><td>Studio → Cập nhật → Bia, cắm USB trực tiếp vào bia → Nạp phần mềm.</td></tr>
+    <tr><td>Tay cầm</td><td>Studio → Cập nhật → Tay cầm, USB-C vào tay cầm (cổng USB-SERIAL CH340) → Nạp phần mềm. Sao lưu bài .json trước.</td></tr>
+  </table>
+  <p>Dùng cặp phiên bản ghi trong Nhật ký phiên bản của Studio (ví dụ tay cầm 1.2.0 cần bia ≥ 2.3-xy để chạy Max). Bản mới lỗi: chọn bản cũ trong Nhật ký phiên bản và nạp lại.</p>
+
+  <h2 id="c9-4">9.4. Lấy thông tin bia qua cổng USB</h2>
+  <ol class="st">
+    <li>Cắm USB vào <b>bia</b> (không phải tay cầm). Mở Serial Monitor 115200 baud.</li>
+    <li>Nhấn reset hoặc cắm lại nguồn. Đọc dòng <code>[AP] SSID=… PASS=… IP=… kênh …</code> và <code>[AP] MAC bia …</code>.</li>
+    <li>Ghi vào nhãn bia và Biên bản bàn giao. Mật khẩu chỉ đổi khi xóa toàn bộ bộ nhớ và nạp lại.</li>
+  </ol>
+
+  <h2 id="c9-5">9.5. Giao diện lập trình của bia (tham khảo)</h2>
+  <table>
+    <tr><th style="width:34%">Địa chỉ</th><th>Chức năng</th></tr>
+    <tr><td class="n">GET /api/state</td><td>Trạng thái JSON: x, y, s1, s2, running, mode, idx, n, cal, zone, rnd, link, batt, vbat, fw</td></tr>
+    <tr><td class="n">POST /api/script</td><td>Nạp kịch bản dạng <code>lặp;x,y,mm/s,ms;…</code> (tối đa 64 điểm)</td></tr>
+    <tr><td class="n">POST /api/run · /stop · /home</td><td>Chạy · dừng (luôn được phép) · về giữa</td></tr>
+    <tr><td class="n">POST /api/jog?x&amp;y&amp;sp</td><td>Đi tới tọa độ với tốc độ sp</td></tr>
+    <tr><td class="n">POST /api/attach?on</td><td>Servo ON (1) / OFF (0)</td></tr>
+    <tr><td class="n">POST /api/mode?m · /random · /zone · /cal</td><td>Chế độ 0/1 · thông số ngẫu nhiên · khung · hiệu chuẩn</td></tr>
+    <tr><td class="n">POST /api/save</td><td>Ghi hiệu chuẩn, khung, ngẫu nhiên vào bộ nhớ</td></tr>
+    <tr><td class="n">POST /api/channel?ch · /unpair · /ota</td><td>Đổi kênh · bỏ ghép · nạp firmware</td></tr>
+  </table>
+  <p class="small">Khi tay cầm đang điều khiển, mọi lệnh trừ /api/stop trả mã 409 (busy).</p>
+</section>
+
+<!-- ======================= PHU LUC ======================= -->
+<section class="pb">
+  <div class="chap"><div class="no"><small>PHỤ LỤC</small>A</div><h1 id="pa">Thông số kỹ thuật chi tiết</h1></div>
+  <table>
+    <tr><th style="width:40%">Thông số</th><th>Giá trị</th></tr>
+    <tr><td>Bộ điều khiển bia</td><td>ESP32-S3 (N16R8), 2 nhân: nhân 0 chuyển động, nhân 1 Wi-Fi/web/ESP-NOW</td></tr>
+    <tr><td>Xung servo</td><td>50 Hz, 500–2500 µs, PWM 14 bit (0,11°/nấc), cập nhật 10 ms</td></tr>
+    <tr><td>Tốc độ góc servo giới hạn</td><td>300°/s (dự trữ 10%); đặt góc trực tiếp 60°/s</td></tr>
+    <tr><td>Tốc độ đặt</td><td>5–1000 mm/s (mặc định 80 mm/s)</td></tr>
+    <tr><td>Kịch bản trên bia</td><td>64 điểm; dừng 0–60 000 ms hoặc −1 = ngẫu nhiên; lặp hoặc 1 lượt</td></tr>
+    <tr><td>Ngẫu nhiên mặc định</td><td>60–200 mm/s, dừng 300–1500 ms, cách điểm cũ ≥ 20 mm</td></tr>
+    <tr><td>Tâm / khung mặc định</td><td>X 40, Y 320 / X −70…150, Y 245…395</td></tr>
+    <tr><td>Vùng làm việc</td><td>Bán kính 200–410 mm quanh (40, 0), |X − 40| ≤ 180 mm, góc giữa 2 khâu xa 30–150°</td></tr>
+    <tr><td>Nhận diện</td><td>Lắc ±8 mm, 150 mm/s, 6 nhịp</td></tr>
+    <tr><td>Liên lạc</td><td>ESP-NOW kênh 1–13 (mặc định 1); tự dừng sau 3 s mất tay cầm</td></tr>
+    <tr><td>Wi-Fi web</td><td>AP <code>BIA_TAP_BAN_xxxx</code>, mật khẩu ngẫu nhiên 10 ký tự riêng từng bia, 1 máy, 192.168.4.1</td></tr>
+    <tr><td>Đo pin</td><td>ADC chân 7, cầu chia 33 kΩ / 10 kΩ, trung bình 16 mẫu, lọc chậm khi servo chạy</td></tr>
+    <tr><td>Nút ghép</td><td>Chân 40 nối GND, giữ ≥ 3 s</td></tr>
+    <tr><td>Tay cầm</td><td>8 bia, 32 bài (6 có sẵn + 26 tự tạo), 24 điểm/bài, tên bài ≤ 30 ký tự</td></tr>
+    <tr><td>Phiên bản đối chiếu</td><td>Bia 2.5-xy · Tay cầm 1.2.0</td></tr>
+  </table>
+</section>
+
+<section class="pb">
+  <div class="chap"><div class="no"><small>PHỤ LỤC</small>B</div><h1 id="pb">Phiếu kiểm tra trước buổi tập</h1></div>
+  <table class="form">
+    <tr><td class="lab">Ngày / ca</td><td></td><td class="lab" style="width:20%">Địa điểm</td><td></td></tr>
+    <tr><td class="lab">Chỉ huy buổi tập</td><td></td><td class="lab">NĐK</td><td></td></tr>
+    <tr><td class="lab">Bài tập / cấp độ</td><td></td><td class="lab">Số bia</td><td></td></tr>
+  </table>
+  <table>
+    <tr><th class="c" style="width:6%">TT</th><th>Nội dung kiểm tra</th><th class="c" style="width:9%">Bia 1</th><th class="c" style="width:9%">Bia 2</th><th class="c" style="width:9%">Bia 3</th><th class="c" style="width:9%">Bia 4</th></tr>
+    <tr><td class="c">1</td><td>Cơ cấu, khớp, vít, tay quay servo</td><td></td><td></td><td></td><td></td></tr>
+    <tr><td class="c">2</td><td>Dây dẫn không vướng, không trầy</td><td></td><td></td><td></td><td></td></tr>
+    <tr><td class="c">3</td><td>Pin ≥ 7,4 V, không phồng (ghi V)</td><td></td><td></td><td></td><td></td></tr>
+    <tr><td class="c">4</td><td>Tấm che: chỉ thấy tấm bia từ tuyến bắn</td><td></td><td></td><td></td><td></td></tr>
+    <tr><td class="c">5</td><td>Trực tuyến trên tay cầm, đúng số bia (Nhận diện)</td><td></td><td></td><td></td><td></td></tr>
+    <tr><td class="c">6</td><td>Hướng chuyển động đúng (Chỉnh tay)</td><td></td><td></td><td></td><td></td></tr>
+    <tr><td class="c">7</td><td>Chạy thử 120 mm/s không giật, không kêu</td><td></td><td></td><td></td><td></td></tr>
+    <tr><td class="c">8</td><td>DỪNG TẤT CẢ dừng được bia</td><td></td><td></td><td></td><td></td></tr>
+    <tr><td class="c">9</td><td>Bài, tốc độ, thời gian đúng kế hoạch</td><td></td><td></td><td></td><td></td></tr>
+    <tr><td class="c">10</td><td>Pin dự phòng, tấm bia thay thế sẵn</td><td></td><td></td><td></td><td></td></tr>
+  </table>
+  <p class="small">Ghi Đ (đạt) / K (không đạt). Có mục K: không đưa bia đó vào buổi tập, ghi lý do vào nhật ký.</p>
+  <h3>Tay cầm</h3>
+  <ul class="chk">
+    <li>Pin tay cầm đủ cho buổi tập; màn hình đọc rõ ngoài trời.</li>
+    <li>Kênh ESP-NOW: ______ ; Trần tốc độ: ______ ; Hỏi lại trước khi CHẠY: bật / tắt.</li>
+    <li>Nút cứng DỪNG (nếu lắp) hoạt động.</li>
+  </ul>
+  <div class="sig"><div><span>Kỹ thuật viên</span>(ký, ghi rõ họ tên)</div><div><span>Người điều khiển bia</span>(ký, ghi rõ họ tên)</div><div><span>Chỉ huy buổi tập</span>(ký, ghi rõ họ tên)</div></div>
+</section>
+
+<section class="pb">
+  <div class="chap"><div class="no"><small>PHỤ LỤC</small>C</div><h1 id="pc">Sổ nhật ký vận hành</h1></div>
+  <table class="form">
+    <tr><th style="width:11%">Ngày</th><th style="width:16%">Bài / cấp</th><th style="width:10%">Số bia</th><th style="width:12%">Thời gian chạy</th><th style="width:11%">Pin đầu/cuối</th><th>Sự cố, hỏng hóc, xử lý</th><th style="width:13%">NĐK ký</th></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+  </table>
+  <h3>Bảng ghi kết quả bài tập</h3>
+  <table class="form">
+    <tr><th style="width:6%">TT</th><th>Họ tên xạ thủ</th><th style="width:12%">Bài</th><th style="width:12%">Tốc độ</th><th style="width:12%">Số phát</th><th style="width:12%">Trúng</th><th style="width:14%">Đánh giá</th></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+  </table>
+</section>
+
+<section class="pb">
+  <div class="chap"><div class="no"><small>PHỤ LỤC</small>D</div><h1 id="pd">Biên bản bàn giao thiết bị</h1></div>
+  <p>Hôm nay, ngày ..... tháng ..... năm ........, tại ...........................................................</p>
+  <p>Bên giao: ........................................................ Bên nhận: ........................................................</p>
+  <table class="form">
+    <tr><td class="lab">Tay cầm – phiên bản firmware</td><td></td></tr>
+    <tr><td class="lab">Kênh ESP-NOW</td><td></td></tr>
+    <tr><td class="lab">Tên, MAC các bia</td><td style="height:22mm"></td></tr>
+    <tr><td class="lab">SSID, cách nhận mật khẩu Wi-Fi từng bia</td><td style="height:16mm"></td></tr>
+    <tr><td class="lab">Phiên bản firmware bia</td><td></td></tr>
+    <tr><td class="lab">Thông số hiệu chuẩn từng bia (Offset 1/Chiều 1/Offset 2/Chiều 2)</td><td style="height:22mm"></td></tr>
+    <tr><td class="lab">Trần tốc độ đã kiểm tra</td><td></td></tr>
+    <tr><td class="lab">Số pin, tình trạng, số chu kỳ</td><td></td></tr>
+    <tr><td class="lab">Nút dừng cứng: đã lắp / chưa lắp</td><td></td></tr>
+    <tr><td class="lab">Nơi lưu file bài tập, tài liệu</td><td></td></tr>
+    <tr><td class="lab">Hư hỏng, thiếu hụt khi bàn giao</td><td style="height:22mm"></td></tr>
+  </table>
+  <div class="sig" style="grid-template-columns:1fr 1fr"><div><span>Bên giao</span>(ký, ghi rõ họ tên)</div><div><span>Bên nhận</span>(ký, ghi rõ họ tên)</div></div>
+</section>
+
+<section class="pb">
+  <div class="chap"><div class="no"><small>PHỤ LỤC</small>E</div><h1 id="pe">Thẻ tra cứu nhanh</h1></div>
+  <div class="qrc">
+    <div class="g">
+      <div>
+        <h3>Khẩu lệnh – động tác NĐK</h3>
+        <table>
+          <tr><td><b>CHUẨN BỊ BIA!</b></td><td>Chọn bài, bia, tốc độ → báo “sẵn sàng”</td></tr>
+          <tr><td><b>BIA CHẠY!</b></td><td>BẮT ĐẦU / CHẠY</td></tr>
+          <tr><td><b>NGỪNG BẮN!</b></td><td><b>DỪNG TẤT CẢ</b> → “Bia đã dừng!”</td></tr>
+          <tr><td><b>KHÁM BIA!</b></td><td>Servo OFF / tắt nguồn → báo “an toàn”</td></tr>
+          <tr><td><b>THU DỌN!</b></td><td>Tắt nguồn, kiểm đếm, ghi sổ</td></tr>
+        </table>
+        <h3>Trang web bia</h3>
+        <p>Wi-Fi <b>BIA_TAP_BAN_xxxx</b> · mật khẩu trên nhãn · <b>http://192.168.4.1</b> · 1 máy</p>
+        <table>
+          <tr><td><b>STOP</b></td><td>Dừng mọi chuyển động</td></tr>
+          <tr><td><b>CHAY</b></td><td>Chạy bài đã nạp / Ngẫu nhiên</td></tr>
+          <tr><td><b>VE GIUA</b></td><td>X 40, Y 320</td></tr>
+          <tr><td><b>Nap vao bia</b></td><td>Gửi danh sách điểm (bắt buộc)</td></tr>
+          <tr><td><b>Re bia (jog)</b></td><td>Chạm bản đồ – bia đi tới</td></tr>
+          <tr><td><b>Servo OFF</b></td><td>Khâu mềm – khám bia</td></tr>
+        </table>
+      </div>
+      <div>
+        <h3>Tay cầm</h3>
+        <table>
+          <tr><td><b>Tổng quan</b></td><td>Bia, pin, lỗi</td></tr>
+          <tr><td><b>Điều khiển</b></td><td>1 bia: Kịch bản / Ngẫu nhiên / Chỉnh tay</td></tr>
+          <tr><td><b>Bài chạy</b></td><td>Phiên có giờ, nhiều bia</td></tr>
+          <tr><td><b>Quản lý bia</b></td><td>Tìm, ghép, Nhận diện</td></tr>
+          <tr><td><b>DỪNG TẤT CẢ</b></td><td>Góc dưới trái / IO17</td></tr>
+        </table>
+        <h3>Cài đặt bài tập</h3>
+        <table>
+          <tr><th>Cấp</th><th>mm/s</th><th>Dừng ms</th></tr>
+          <tr><td>I</td><td>60–120</td><td>1500–3000</td></tr>
+          <tr><td>II</td><td>200–400</td><td>500–1500</td></tr>
+          <tr><td>III</td><td>400–Max</td><td>200–800</td></tr>
+        </table>
+        <h3>Pin 2S</h3>
+        <p>8,4 V đầy · 7,6 V cất giữ · <b>7,1 V thay pin</b> · ≤ 6,8 V dừng ngay</p>
+        <h3>Mất liên lạc</h3>
+        <p>DỪNG → lại gần / kiểm tra kênh, pin → ĐẶT LẠI → chạy chậm. Không điều khiển được: <b>tắt nguồn bia</b>.</p>
+      </div>
+    </div>
+    <p style="margin-top:3mm;text-align:center;font:800 9pt var(--cond);letter-spacing:1pt;color:var(--red)">KHÔNG VÀO KHU VỰC BIA KHI CHƯA CÓ LỆNH “NGỪNG BẮN!” VÀ “KHÁM BIA!”</p>
+  </div>
+  <p class="small" style="margin-top:8mm;text-align:center">— HẾT —<br>TL-BXY-01 · Sổ tay vận hành – khai thác hệ thống bia di động XY · Lần xuất bản thứ nhất · 10/2026</p>
+</section>
+
+</div>
+<script>
+/* Muc luc tu dong tu cac tieu de co id. So trang do tools/build_so_tay.py dien
+ * vao window.TOC_PAGES truoc khi in PDF (doc dich lien ket trong ban in lan 1). */
+(function(){
+  var toc=document.getElementById('toc'), hs=document.querySelectorAll('h1[id],h2[id]'), pages=window.TOC_PAGES||{};
+  for(var i=0;i<hs.length;i++){var h=hs[i],a=document.createElement('a'),
+    l1=h.tagName==='H1', no=l1?h.parentNode.querySelector('.no'):null,
+    mark=l1?no.lastChild.textContent.trim():'',
+    pre=/^[0-9A-Z]$/.test(mark)?no.querySelector('small').textContent+' '+mark+'. ':'';
+    a.href='#'+h.id;a.className=l1?'l1':'l2';
+    a.innerHTML='<span class="t"></span><span class="d"></span><span class="pg"></span>';
+    a.firstChild.textContent=pre+h.textContent;
+    a.lastChild.textContent=pages[h.id]||'';
+    toc.appendChild(a);}
+})();
+</script>
+</body>
+</html>

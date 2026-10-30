@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="title desc">
+  <title id="title">Phòng sưởi là một quá trình tự ổn định</title>
+  <desc id="desc">Khi tắt lò sưởi, nhiệt độ phòng giảm từ 26 độ C và tự tiến dần về nhiệt độ ngoài trời 18 độ C. Đồ thị minh họa trạng thái cân bằng tự nhiên.</desc>
+  <defs>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#0284c7"/>
+    </marker>
+    <marker id="arrow-amber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 Z" fill="#d97706"/>
+    </marker>
+    <style>
+      text { font-family: Inter, "Segoe UI", Arial, sans-serif; }
+      .ink { fill: #0f172a; }
+      .muted { fill: #475569; }
+      .small { font-size: 18px; }
+      .label { font-size: 17px; font-weight: 700; letter-spacing: 1px; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="720" fill="#f8fafc"/>
+
+  <text x="60" y="58" class="ink" font-size="32" font-weight="800">Phòng cũng là một chiếc lò xo nhiệt</text>
+  <text x="60" y="91" class="muted" font-size="19">Tắt lò sưởi, căn phòng tự trôi về mức cân bằng với ngoài trời.</text>
+
+  <!-- Room cutaway -->
+  <rect x="60" y="126" width="470" height="424" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+  <rect x="61" y="127" width="112" height="422" rx="7" fill="#e0f2fe"/>
+  <path d="M 173 127 V 550" stroke="#94a3b8" stroke-width="3"/>
+  <path d="M 82 175 H 151 M 91 198 H 142 M 80 222 H 152" stroke="#7dd3fc" stroke-width="5" stroke-linecap="round"/>
+  <text x="116" y="270" text-anchor="middle" fill="#0369a1" font-size="18" font-weight="700">NGOÀI TRỜI</text>
+  <text x="116" y="309" text-anchor="middle" fill="#0369a1" font-size="31" font-weight="800">18°C</text>
+  <text x="116" y="335" text-anchor="middle" fill="#0c4a6e" font-size="16">mức cân bằng</text>
+
+  <text x="202" y="164" class="muted label">TRONG PHÒNG</text>
+  <rect x="207" y="192" width="150" height="92" rx="8" fill="#fff7ed" stroke="#fdba74" stroke-width="2"/>
+  <text x="282" y="224" text-anchor="middle" fill="#9a3412" font-size="16" font-weight="700">NHIỆT KẾ</text>
+  <text x="282" y="261" text-anchor="middle" fill="#c2410c" font-size="31" font-weight="800">26 → 18°C</text>
+
+  <!-- Heater switched off -->
+  <g transform="translate(358 344)">
+    <rect x="0" y="0" width="126" height="114" rx="8" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+    <path d="M 22 22 V 78 M 48 22 V 78 M 74 22 V 78 M 100 22 V 78" stroke="#64748b" stroke-width="8" stroke-linecap="round"/>
+    <path d="M 18 92 H 108" stroke="#64748b" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="104" cy="95" r="8" fill="#e11d48"/>
+    <path d="M 20 13 L 108 101" stroke="#e11d48" stroke-width="7" stroke-linecap="round"/>
+    <rect x="24" y="124" width="78" height="30" rx="6" fill="#fff1f2" stroke="#fda4af"/>
+    <text x="63" y="145" text-anchor="middle" fill="#be123c" font-size="17" font-weight="800">ĐÃ TẮT</text>
+  </g>
+
+  <!-- Heat leaving the room -->
+  <path d="M 339 323 C 294 293, 269 329, 226 302 C 205 289, 192 288, 157 288" fill="none" stroke="#d97706" stroke-width="6" stroke-linecap="round" marker-end="url(#arrow-amber)"/>
+  <path d="M 335 371 C 284 344, 258 381, 217 355 C 192 339, 178 346, 150 346" fill="none" stroke="#f59e0b" stroke-width="5" stroke-linecap="round" marker-end="url(#arrow-amber)"/>
+  <text x="255" y="423" text-anchor="middle" fill="#92400e" font-size="17" font-weight="700">Nhiệt thoát ra tự nhiên</text>
+  <text x="255" y="448" text-anchor="middle" class="muted" font-size="16">không cần bộ điều khiển kéo về</text>
+  <path d="M 205 499 H 488" stroke="#cbd5e1" stroke-width="3"/>
+  <path d="M 229 499 v-25 M 274 499 v-25 M 319 499 v-25" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Temperature chart -->
+  <rect x="558" y="126" width="582" height="424" rx="8" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="594" y="164" class="ink" font-size="21" font-weight="800">Nhiệt độ sau khi tắt lò</text>
+  <text x="594" y="190" class="muted" font-size="16">Đường cong tiến dần tới cân bằng, không rơi mãi.</text>
+
+  <path d="M 630 224 V 482 H 1093" fill="none" stroke="#64748b" stroke-width="2.5"/>
+  <path d="M 630 255 H 1093 M 630 325 H 1093 M 630 395 H 1093" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="5 7"/>
+  <text x="614" y="261" text-anchor="end" class="muted" font-size="16">26°</text>
+  <text x="614" y="331" text-anchor="end" class="muted" font-size="16">22°</text>
+  <text x="614" y="401" text-anchor="end" fill="#0369a1" font-size="16" font-weight="700">18°</text>
+  <text x="637" y="215" class="muted" font-size="15">°C</text>
+  <text x="1093" y="512" text-anchor="end" class="muted" font-size="16">thời gian</text>
+
+  <path d="M 630 395 H 1093" stroke="#0284c7" stroke-width="3" stroke-dasharray="9 7"/>
+  <rect x="888" y="363" width="181" height="28" rx="5" fill="#e0f2fe"/>
+  <text x="978" y="383" text-anchor="middle" fill="#0369a1" font-size="15" font-weight="700">Ngoài trời: 18°C</text>
+
+  <path d="M 670 255 C 735 258, 751 309, 808 342 C 866 375, 933 390, 1064 395" fill="none" stroke="#d97706" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="670" cy="255" r="9" fill="#ffffff" stroke="#d97706" stroke-width="5"/>
+  <circle cx="808" cy="342" r="8" fill="#ffffff" stroke="#d97706" stroke-width="4"/>
+  <circle cx="931" cy="389" r="8" fill="#ffffff" stroke="#d97706" stroke-width="4"/>
+  <circle cx="1064" cy="395" r="8" fill="#ffffff" stroke="#059669" stroke-width="4"/>
+
+  <path d="M 670 235 V 210" stroke="#e11d48" stroke-width="3" marker-end="url(#arrow-blue)"/>
+  <rect x="638" y="190" width="96" height="28" rx="5" fill="#fff1f2" stroke="#fecdd3"/>
+  <text x="686" y="210" text-anchor="middle" fill="#be123c" font-size="15" font-weight="800">TẮT LÒ</text>
+  <text x="808" y="373" text-anchor="middle" fill="#92400e" font-size="15" font-weight="700">đang nguội</text>
+  <text x="1062" y="430" text-anchor="end" fill="#047857" font-size="15" font-weight="800">cân bằng tự nhiên</text>
+
+  <g transform="translate(594 455)">
+    <path d="M 0 0 C 24 -14, 38 15, 61 0 C 84 -15, 99 14, 122 0" fill="none" stroke="#059669" stroke-width="4" stroke-linecap="round"/>
+    <text x="140" y="6" fill="#047857" font-size="16" font-weight="700">Tự ổn định: có một trạng thái để tự quay về.</text>
+  </g>
+
+  <!-- Takeaway -->
+  <rect x="60" y="588" width="1080" height="88" rx="8" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="2"/>
+  <circle cx="105" cy="632" r="25" fill="#059669"/>
+  <path d="M 93 632 l8 8 17 -19" fill="none" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="148" y="621" fill="#065f46" font-size="18" font-weight="800" letter-spacing="1">ĐIỂM MẤU CHỐT</text>
+  <text x="148" y="651" class="ink" font-size="21"><tspan font-weight="800">Tự ổn định không có nghĩa tự về đúng 26°C.</tspan><tspan> Nó chỉ tự tìm lại một cân bằng tự nhiên.</tspan></text>
+</svg>

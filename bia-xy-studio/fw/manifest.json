@@ -1,0 +1,379 @@
+{
+  "generated": "2026-10-30T10:21:43.155Z",
+  "devices": {
+    "tay_cam": {
+      "name": "Tay cầm",
+      "chip": "ESP32-S3",
+      "flash_mb": 16,
+      "version": "1.3.0",
+      "date": "2026-10-27",
+      "notes": [
+        "Cài đặt → Màn hình: thêm xoay ngược 180°, cảm ứng xoay cùng màn hình.",
+        "Thêm giao diện tối, đổi ngay và lưu sau tắt nguồn; đồng bộ tùy chọn với Studio qua USB.",
+        "Giữ cài đặt cũ khi nâng cấp. Màn LCD tiết kiệm pin chủ yếu bằng giảm độ sáng đèn nền."
+      ],
+      "parts": [
+        {
+          "path": "tay_cam/bootloader.bin",
+          "offset": 0,
+          "size": 15104
+        },
+        {
+          "path": "tay_cam/partitions.bin",
+          "offset": 32768,
+          "size": 3072
+        },
+        {
+          "path": "tay_cam/boot_app0.bin",
+          "offset": 57344,
+          "size": 8192
+        },
+        {
+          "path": "tay_cam/firmware.bin",
+          "offset": 65536,
+          "size": 1491808
+        }
+      ],
+      "history": [
+        {
+          "version": "1.3.0",
+          "date": "2026-10-27",
+          "notes": [
+            "Cài đặt → Màn hình: thêm xoay ngược 180°, cảm ứng xoay cùng màn hình.",
+            "Thêm giao diện tối, đổi ngay và lưu sau tắt nguồn; đồng bộ tùy chọn với Studio qua USB.",
+            "Giữ cài đặt cũ khi nâng cấp. Màn LCD tiết kiệm pin chủ yếu bằng giảm độ sáng đèn nền."
+          ],
+          "parts": [
+            {
+              "path": "archive/tay_cam/1.3.0/bootloader.bin",
+              "offset": 0,
+              "size": 15104
+            },
+            {
+              "path": "archive/tay_cam/1.3.0/partitions.bin",
+              "offset": 32768,
+              "size": 3072
+            },
+            {
+              "path": "archive/tay_cam/1.3.0/boot_app0.bin",
+              "offset": 57344,
+              "size": 8192
+            },
+            {
+              "path": "archive/tay_cam/1.3.0/firmware.bin",
+              "offset": 65536,
+              "size": 1491808
+            }
+          ]
+        },
+        {
+          "version": "1.2.0",
+          "date": "2026-10-14",
+          "notes": [
+            "Mốc tốc độ đổi thành 200 / 400 / Max (mặc định 200). Max: bia chạy nhanh nhất servo cho phép (khoảng 300–850 mm/s tùy vị trí).",
+            "Cài đặt → An toàn → Tốc độ tối đa có thêm mức Max và lấy Max làm mặc định. Tay cầm đã lưu cài đặt cũ giữ mức cũ cho tới khi chọn lại.",
+            "Màn Điều khiển → Kịch bản: chọn bài thì ô Mặt bia hiện hình bài trên toàn vùng làm việc, đánh số điểm, điểm 1 là điểm đầu.",
+            "Chỉnh tay: ô Mặt bia phóng to toàn vùng làm việc mới (không còn bị giới hạn ở vùng chữ nhật cũ), dấu ngắm là vị trí bia; chạm ngoài vùng thì báo lý do và không gửi lệnh.",
+            "Cần bia 2.3-xy trở lên để chạy nhanh hơn 400 mm/s và để chế độ Ngẫu nhiên dùng toàn vùng làm việc."
+          ],
+          "parts": [
+            {
+              "path": "archive/tay_cam/1.2.0/bootloader.bin",
+              "offset": 0,
+              "size": 15104
+            },
+            {
+              "path": "archive/tay_cam/1.2.0/partitions.bin",
+              "offset": 32768,
+              "size": 3072
+            },
+            {
+              "path": "archive/tay_cam/1.2.0/boot_app0.bin",
+              "offset": 57344,
+              "size": 8192
+            },
+            {
+              "path": "archive/tay_cam/1.2.0/firmware.bin",
+              "offset": 65536,
+              "size": 1488096
+            }
+          ]
+        },
+        {
+          "version": "1.1.0",
+          "date": "2026-10-14",
+          "notes": [
+            "Đồng bộ bài qua WiFi: Cài đặt → Đồng bộ → Đặt WiFi, Ghép tài khoản bằng mã 6 số, Đồng bộ ngay.",
+            "Bài trong “Bài của tôi” trên web tải thẳng xuống tay cầm, không cần cáp USB."
+          ],
+          "parts": [
+            {
+              "path": "archive/tay_cam/1.1.0/bootloader.bin",
+              "offset": 0,
+              "size": 15104
+            },
+            {
+              "path": "archive/tay_cam/1.1.0/partitions.bin",
+              "offset": 32768,
+              "size": 3072
+            },
+            {
+              "path": "archive/tay_cam/1.1.0/boot_app0.bin",
+              "offset": 57344,
+              "size": 8192
+            },
+            {
+              "path": "archive/tay_cam/1.1.0/firmware.bin",
+              "offset": 65536,
+              "size": 1482848
+            }
+          ]
+        },
+        {
+          "version": "1.0.1",
+          "date": "2026-10-03",
+          "notes": [
+            "Hình vùng chạy và đầu bia trên tay cầm vẽ giống Studio."
+          ],
+          "parts": [
+            {
+              "path": "archive/tay_cam/1.0.1/bootloader.bin",
+              "offset": 0,
+              "size": 15104
+            },
+            {
+              "path": "archive/tay_cam/1.0.1/partitions.bin",
+              "offset": 32768,
+              "size": 3072
+            },
+            {
+              "path": "archive/tay_cam/1.0.1/boot_app0.bin",
+              "offset": 57344,
+              "size": 8192
+            },
+            {
+              "path": "archive/tay_cam/1.0.1/firmware.bin",
+              "offset": 65536,
+              "size": 1268560
+            }
+          ]
+        },
+        {
+          "version": "1.0.0",
+          "date": "2026-10-03",
+          "notes": [
+            "Bản phát hành đầu tiên: điều khiển nhiều bia XY qua ESP-NOW, chạy Kịch bản / Ngẫu nhiên / Chỉnh tay, phiên Bài chạy, kết nối Studio qua USB."
+          ],
+          "parts": [
+            {
+              "path": "archive/tay_cam/1.0.0/bootloader.bin",
+              "offset": 0,
+              "size": 15104
+            },
+            {
+              "path": "archive/tay_cam/1.0.0/partitions.bin",
+              "offset": 32768,
+              "size": 3072
+            },
+            {
+              "path": "archive/tay_cam/1.0.0/boot_app0.bin",
+              "offset": 57344,
+              "size": 8192
+            },
+            {
+              "path": "archive/tay_cam/1.0.0/firmware.bin",
+              "offset": 65536,
+              "size": 1266256
+            }
+          ]
+        }
+      ]
+    },
+    "bia": {
+      "name": "Bia",
+      "chip": "ESP32-S3",
+      "flash_mb": 8,
+      "version": "2.6-xy",
+      "date": "2026-10-30",
+      "notes": [
+        "Nút bỏ ghép tay cầm chuyển sang GPIO40, thay nút BOOT/GPIO0.",
+        "Nối nút giữa GPIO40 và GND; giữ 3 giây để bỏ ghép và cho tay cầm khác tìm bia."
+      ],
+      "parts": [
+        {
+          "path": "bia/bootloader.bin",
+          "offset": 0,
+          "size": 15104
+        },
+        {
+          "path": "bia/partitions.bin",
+          "offset": 32768,
+          "size": 3072
+        },
+        {
+          "path": "bia/boot_app0.bin",
+          "offset": 57344,
+          "size": 8192
+        },
+        {
+          "path": "bia/firmware.bin",
+          "offset": 65536,
+          "size": 828336
+        }
+      ],
+      "history": [
+        {
+          "version": "2.6-xy",
+          "date": "2026-10-30",
+          "notes": [
+            "Nút bỏ ghép tay cầm chuyển sang GPIO40, thay nút BOOT/GPIO0.",
+            "Nối nút giữa GPIO40 và GND; giữ 3 giây để bỏ ghép và cho tay cầm khác tìm bia."
+          ],
+          "parts": [
+            {
+              "path": "archive/bia/2.6-xy/bootloader.bin",
+              "offset": 0,
+              "size": 15104
+            },
+            {
+              "path": "archive/bia/2.6-xy/partitions.bin",
+              "offset": 32768,
+              "size": 3072
+            },
+            {
+              "path": "archive/bia/2.6-xy/boot_app0.bin",
+              "offset": 57344,
+              "size": 8192
+            },
+            {
+              "path": "archive/bia/2.6-xy/firmware.bin",
+              "offset": 65536,
+              "size": 828336
+            }
+          ]
+        },
+        {
+          "version": "2.5-xy",
+          "date": "2026-10-22",
+          "notes": [
+            "Bia chạy mượt hơn, hết giật cục ở tốc độ 100 mm/s trở lên: góc servo điều khiển mịn 0.11° (trước đây 1.76° mỗi nấc), cập nhật vị trí 100 lần/giây.",
+            "Từ 2.4-xy trở lên nạp được qua WiFi (192.168.4.1 → Cập nhật firmware)."
+          ],
+          "parts": [
+            {
+              "path": "archive/bia/2.5-xy/bootloader.bin",
+              "offset": 0,
+              "size": 15104
+            },
+            {
+              "path": "archive/bia/2.5-xy/partitions.bin",
+              "offset": 32768,
+              "size": 3072
+            },
+            {
+              "path": "archive/bia/2.5-xy/boot_app0.bin",
+              "offset": 57344,
+              "size": 8192
+            },
+            {
+              "path": "archive/bia/2.5-xy/firmware.bin",
+              "offset": 65536,
+              "size": 817168
+            }
+          ]
+        },
+        {
+          "version": "2.4-xy",
+          "date": "2026-10-16",
+          "notes": [
+            "Cập nhật firmware qua WiFi, không cần cáp USB: tải file .bin của bia ở tab Cập nhật trong Studio, nối WiFi BIA_TAP_BAN_xxxx, mở 192.168.4.1 → Cập nhật firmware, chọn file rồi bấm Nạp firmware.",
+            "Bia dừng bài và nhả servo trước khi ghi, nạp xong tự khởi động lại. Mất điện hoặc rớt WiFi giữa chừng thì bia vẫn chạy bản cũ.",
+            "Chặn nạp nhầm: bia chỉ nhận file firmware bia (từ chối firmware tay cầm) và từ chối khi tay cầm đang điều khiển.",
+            "Lần đầu lên 2.4-xy vẫn phải nạp qua USB. Bản cũ hơn 2.4-xy không nạp được qua WiFi."
+          ],
+          "parts": [
+            {
+              "path": "archive/bia/2.4-xy/bootloader.bin",
+              "offset": 0,
+              "size": 15104
+            },
+            {
+              "path": "archive/bia/2.4-xy/partitions.bin",
+              "offset": 32768,
+              "size": 3072
+            },
+            {
+              "path": "archive/bia/2.4-xy/boot_app0.bin",
+              "offset": 57344,
+              "size": 8192
+            },
+            {
+              "path": "archive/bia/2.4-xy/firmware.bin",
+              "offset": 65536,
+              "size": 822864
+            }
+          ]
+        },
+        {
+          "version": "2.3-xy",
+          "date": "2026-10-14",
+          "notes": [
+            "Bỏ trần 400 mm/s: tốc độ chỉ còn bị giới hạn bởi tốc độ quay của servo, để lệnh Max từ tay cầm 1.2.0 chạy nhanh nhất có thể.",
+            "Chế độ Ngẫu nhiên rải điểm đều trên toàn vùng làm việc (vành cách tâm 2 servo 200–410 mm, rộng gấp khoảng 2 lần), không còn dồn trong vùng chữ nhật cũ."
+          ],
+          "parts": [
+            {
+              "path": "archive/bia/2.3-xy/bootloader.bin",
+              "offset": 0,
+              "size": 15104
+            },
+            {
+              "path": "archive/bia/2.3-xy/partitions.bin",
+              "offset": 32768,
+              "size": 3072
+            },
+            {
+              "path": "archive/bia/2.3-xy/boot_app0.bin",
+              "offset": 57344,
+              "size": 8192
+            },
+            {
+              "path": "archive/bia/2.3-xy/firmware.bin",
+              "offset": 65536,
+              "size": 814752
+            }
+          ]
+        },
+        {
+          "version": "2.2-xy",
+          "date": "2026-10-03",
+          "notes": [
+            "Bản phát hành đầu tiên trên web: cơ cấu 5 khâu điều khiển XY, nhận lệnh tay cầm qua ESP-NOW, trang hiệu chuẩn qua WiFi BIA_TAP_BAN."
+          ],
+          "parts": [
+            {
+              "path": "archive/bia/2.2-xy/bootloader.bin",
+              "offset": 0,
+              "size": 15104
+            },
+            {
+              "path": "archive/bia/2.2-xy/partitions.bin",
+              "offset": 32768,
+              "size": 3072
+            },
+            {
+              "path": "archive/bia/2.2-xy/boot_app0.bin",
+              "offset": 57344,
+              "size": 8192
+            },
+            {
+              "path": "archive/bia/2.2-xy/firmware.bin",
+              "offset": 65536,
+              "size": 805200
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

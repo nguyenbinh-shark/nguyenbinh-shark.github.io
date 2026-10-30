@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="560" viewBox="0 0 960 560" role="img" aria-labelledby="t1 d1">
+  <title id="t1">Bốn góc của chuyển động pitch</title>
+  <desc id="d1">Máy bay nhìn ngang, mũi bên phải. Đường nằm ngang nét đứt. Trục thân nghiêng lên một góc theta so với phương ngang. Vector vận tốc nghiêng lên góc gamma. Góc tấn alpha là góc giữa trục thân và vận tốc, bằng theta trừ gamma. Cánh lái độ cao ở đuôi lệch góc delta. Mũi tên cong quanh trọng tâm là pitch rate đã chuẩn hóa q.</desc>
+  <defs>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1 { font-size: 24px; font-weight: 800; fill: #0f172a; }
+      .h2 { font-size: 16px; font-weight: 500; fill: #64748b; }
+      .pt { font-size: 16px; font-weight: 700; fill: #1e293b; }
+      .ax { font-size: 14px; font-weight: 500; fill: #64748b; font-variant-numeric: tabular-nums; }
+      .axl { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .lg { font-size: 15px; font-weight: 500; fill: #334155; }
+      .an { font-size: 14px; font-weight: 600; fill: #334155; }
+      .anm { font-size: 14px; font-weight: 500; fill: #475569; }
+      .m { font-family: "Times New Roman", "STIX Two Text", Times, serif; font-style: italic; }
+    </style>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker>
+  </defs>
+  <rect width="960" height="560" fill="#ffffff"/>
+
+<text x="30" y="42" class="h1">Bốn góc của chuyển động pitch</text>
+<text x="30" y="68" class="h2">Góc vẽ phóng đại cho dễ nhìn · mũi máy bay bên phải · chiều dương là nâng mũi lên</text>
+<line x1="30" y1="86" x2="930" y2="86" stroke="#e2e8f0"/>
+<line x1="60" y1="300" x2="900" y2="300" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="7 6"/>
+<text x="900" y="324" class="anm" text-anchor="end">phương nằm ngang</text>
+<polygon points="660.3,231.1 647.9,224.2 621.4,222.5 557.6,235.6 269.2,318.3 207.8,340.0 165.9,364.5 162.4,373.9 169.8,378.0 217.2,372.7 281.0,359.6 569.4,276.9 630.8,255.2 652.9,241.5" fill="#f8fafc" stroke="#475569" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="222.8,337.8 154.3,280.5 133.2,286.5 165.4,362.6" fill="#f1f5f9" stroke="#475569" stroke-width="2" stroke-linejoin="round"/>
+<polygon points="460.1,294.7 384.3,320.6 366.2,330.0 452.1,303.3" fill="#e2e8f0" stroke="#475569" stroke-width="1.5" stroke-linejoin="round"/>
+<polygon points="621.6,233.9 604.5,232.5 589.2,236.9 597.1,243.0" fill="#cbd5e1"/>
+<line x1="215.1" y1="354.6" x2="176.7" y2="365.6" stroke="#475569" stroke-width="6" stroke-linecap="round"/>
+<line x1="176.7" y1="365.6" x2="147.8" y2="373.9" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4 4"/>
+<line x1="176.7" y1="365.6" x2="147.3" y2="359.4" stroke="#b45309" stroke-width="6" stroke-linecap="round"/>
+<text x="117.3" y="349.4" class="an" text-anchor="end" fill="#b45309"><tspan class="m" font-size="22" fill="#b45309">δ</tspan><tspan dx="6" fill="#b45309">cánh lái độ cao</tspan></text>
+<line x1="420" y1="300" x2="871.8" y2="170.5" stroke="#0f172a" stroke-width="1.8" stroke-dasharray="3 4"/>
+<text x="879.8" y="175.5" class="an">trục thân</text>
+<line x1="420" y1="300" x2="837.7" y2="256.1" stroke="#2a78d6" stroke-width="3" marker-end="url(#ar)"/>
+<text x="845.7" y="262.1" class="an" fill="#2a78d6">vận tốc <tspan class="m" font-size="19" fill="#2a78d6">V</tspan></text>
+<path d="M800.0,300.0 A380,380 0 0,0 785.3,195.3" fill="none" stroke="#eb6834" stroke-width="3"/>
+<text x="810.0" y="231.9" class="an"><tspan class="m" font-size="24" fill="#eb6834">θ</tspan></text>
+<path d="M720.0,300.0 A300,300 0 0,0 718.4,268.6" fill="none" stroke="#2a78d6" stroke-width="3"/>
+<text x="729.6" y="292.0" class="an"><tspan class="m" font-size="24" fill="#2a78d6">γ</tspan></text>
+<path d="M756.1,264.7 A338,338 0 0,0 744.9,206.8" fill="none" stroke="#1baf7a" stroke-width="3"/>
+<text x="762.4" y="232.1" class="an"><tspan class="m" font-size="24" fill="#1baf7a">α</tspan></text>
+<circle cx="420" cy="300" r="5" fill="#0f172a"/>
+<path d="M369.2,323.7 A56,56 0 0,0 468.5,328.0" fill="none" stroke="#8b5cf6" stroke-width="2.5" marker-end="url(#ar)"/>
+<text x="390.1" y="383.8" class="an" text-anchor="end"><tspan class="m" font-size="22" fill="#8b5cf6">q</tspan><tspan dx="6" fill="#8b5cf6">pitch rate</tspan></text>
+<text x="432" y="392" class="anm">trọng tâm</text>
+<text x="60" y="430" class="lg"><tspan class="m" font-size="20" fill="#eb6834">θ</tspan></text>
+<text x="190" y="430" class="lg" font-weight="700">góc pitch</text>
+<text x="380" y="430" class="anm">trục thân so với phương ngang — thứ cần điều khiển</text>
+<text x="60" y="460" class="lg"><tspan class="m" font-size="20" fill="#2a78d6">γ</tspan></text>
+<text x="190" y="460" class="lg" font-weight="700">góc quỹ đạo bay</text>
+<text x="380" y="460" class="anm">vận tốc so với phương ngang — máy bay đang thật sự đi về đâu</text>
+<text x="60" y="490" class="lg"><tspan class="m" font-size="20" fill="#1baf7a">α</tspan> = <tspan class="m" font-size="20" fill="#eb6834">θ</tspan> − <tspan class="m" font-size="20" fill="#2a78d6">γ</tspan></text>
+<text x="190" y="490" class="lg" font-weight="700">góc tấn</text>
+<text x="380" y="490" class="anm">trục thân so với vận tốc — sinh ra lực nâng</text>
+<text x="60" y="520" class="lg"><tspan class="m" font-size="20" fill="#b45309">δ</tspan></text>
+<text x="190" y="520" class="lg" font-weight="700">góc cánh lái độ cao</text>
+<text x="380" y="520" class="anm">đầu vào duy nhất của bài toán</text>
+</svg>
