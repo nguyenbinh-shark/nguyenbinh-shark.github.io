@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="760" viewBox="0 0 1000 760" role="img" aria-labelledby="t1 d1">
+  <title id="t1">Bốn góc nhìn tham khảo khi tìm hiểu một hệ mới</title>
+  <desc id="d1">Bốn nhóm câu hỏi về mục tiêu, đặc tính hệ, thông tin sẵn có và giới hạn thực tế. Cùng một hệ có thể có nhiều phương án điều khiển.</desc>
+  <style>
+    text {font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; fill: #475569; font-size: 19px;}
+    .title {font-size: 26px; font-weight: 800; fill: #0f172a;}
+    .label {font-size: 16px; font-weight: 700; fill: #64748b;}
+    .question {font-size: 22px; font-weight: 700; fill: #1e293b;}
+  </style>
+  <rect width="1000" height="760" fill="#fff"/>
+  <text x="40" y="45" class="title">Tìm hiểu hệ: bốn góc nhìn tham khảo</text>
+  <text x="40" y="77">Cùng một hệ có thể có nhiều phương án điều khiển.</text>
+  <rect x="40" y="104" width="920" height="127" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="62" y="130" class="label">01 · MỤC TIÊU</text>
+  <text x="62" y="159" class="question">Ta muốn hệ làm được gì?</text>
+  <text x="62" y="187">Giữ cân bằng, giữ vị trí hay bám quỹ đạo?</text>
+  <text x="62" y="214">Sai số, thời gian đáp ứng, lực sử dụng?</text>
+  <rect x="40" y="247" width="920" height="127" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="62" y="273" class="label">02 · ĐẶC TÍNH HỆ</text>
+  <text x="62" y="302" class="question">Đầu vào tác động ra sao?</text>
+  <text x="62" y="330">Cơ cấu chấp hành và sự ghép giữa các chuyển động?</text>
+  <text x="62" y="357">Độ ổn định, phi tuyến, phạm vi làm việc?</text>
+  <rect x="40" y="390" width="920" height="127" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="62" y="416" class="label">03 · THÔNG TIN SẴN CÓ</text>
+  <text x="62" y="445" class="question">Ta biết và đo được những gì?</text>
+  <text x="62" y="473">Mô hình vật lý, dữ liệu thực nghiệm, cảm biến?</text>
+  <text x="62" y="500">Đại lượng cần ước lượng, độ tin cậy của mô hình?</text>
+  <rect x="40" y="533" width="920" height="127" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text x="62" y="559" class="label">04 · GIỚI HẠN VÀ KIỂM CHỨNG</text>
+  <text x="62" y="588" class="question">Triển khai và đánh giá thế nào?</text>
+  <text x="62" y="616">Giới hạn lực, hành trình, nhiễu đo và độ trễ?</text>
+  <text x="62" y="643">So sánh các phương án trong cùng điều kiện?</text>
+  <rect x="40" y="686" width="920" height="50" rx="10" fill="#fffbeb" stroke="#d97706"/>
+  <text x="62" y="717">Bài này: thử thiết kế LQR và so sánh với Cascade-PID trên cùng con lắc.</text>
+</svg>

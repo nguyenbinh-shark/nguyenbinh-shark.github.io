@@ -1,0 +1,958 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Code Lab 5 — Thuật toán SimpleFOC PID Controller Thực Tế</title>
+<style>
+  /* ═══════════ PICO-8 LAB EDITION · DESIGN SYSTEM ═══════════ */
+  :root {
+    --bg: #0b0e1a;
+    --panel: #0f1322;
+    --ink: #FFF1E8;
+    --muted: #83769C;
+    --line: #5F574F;
+    --acc: #FFEC27;
+    --blue: #29ADFF;
+    --amber: #FFA300;
+    --rose: #FF77A8;
+    --green: #00E436;
+    --green-dark: #008751;
+    --red: #FF004D;
+    --navy: #1D2B53;
+    --purple: #7E2553;
+    --bright-purple: #b17aff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 14px;
+    color: var(--ink);
+    font-family: "Courier New", ui-monospace, Consolas, monospace;
+    background-color: var(--bg);
+    background-image:
+      linear-gradient(45deg, #0d1122 25%, transparent 25%, transparent 75%, #0d1122 75%),
+      linear-gradient(45deg, #0d1122 25%, transparent 25%, transparent 75%, #0d1122 75%);
+    background-size: 26px 26px;
+    background-position: 0 0, 13px 13px;
+  }
+  .wrap { width: 100%; max-width: 1020px; margin: auto; }
+
+  /* ── Header ── */
+  .header-box {
+    margin-bottom: 12px;
+    padding: 12px 16px;
+    background: var(--navy);
+    border: 2px solid var(--line);
+    box-shadow: 4px 4px 0 #000;
+  }
+  .header-box h1 {
+    margin: 0 0 4px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+    color: var(--acc);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .lab-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background: var(--purple);
+    border: 1px solid rgba(255,255,255,.15);
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    color: var(--ink);
+    box-shadow: 2px 2px 0 #000;
+    vertical-align: middle;
+  }
+  .header-box p {
+    margin: 0;
+    font-size: 0.84rem;
+    color: #C2C3C7;
+    line-height: 1.5;
+  }
+  .header-box p b { color: var(--acc); }
+
+  /* ── Preset Tabs ── */
+  .preset-bar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .preset-tab {
+    flex: 1 1 140px;
+    padding: 9px 12px;
+    background: var(--panel);
+    border: 2px solid var(--line);
+    box-shadow: 3px 3px 0 #000;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    color: var(--ink);
+    font-size: 0.76rem;
+    font-weight: 700;
+  }
+  .preset-tab:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 #000; }
+  .preset-tab.active {
+    border-color: var(--acc);
+    background: #1a2340;
+    box-shadow: 3px 3px 0 #000, inset 0 0 0 1px rgba(255,236,39,.25);
+  }
+  .preset-tab .ptitle { color: var(--acc); text-transform: uppercase; letter-spacing: .03em; }
+  .preset-tab .pdesc { display: block; margin-top: 3px; font-size: 0.68rem; color: var(--muted); font-weight: 600; }
+
+  /* ── Coach Box ── */
+  .coach-box {
+    padding: 12px 14px;
+    background: #141a30;
+    border: 2px solid var(--line);
+    box-shadow: 4px 4px 0 #000;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .coach-avatar {
+    width: 40px; height: 40px;
+    border: 2px solid var(--acc);
+    background: var(--navy);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  .coach-content { flex: 1; min-width: 0; }
+  .coach-title {
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+    color: var(--acc);
+    margin-bottom: 3px;
+  }
+  .coach-msg {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #C2C3C7;
+    line-height: 1.5;
+  }
+  .coach-msg b { color: var(--acc); }
+
+  /* ── HUD Stats ── */
+  .hud {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .stat-card {
+    padding: 9px 10px;
+    background: var(--panel);
+    border: 2px solid var(--line);
+    box-shadow: 3px 3px 0 #000;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .stat-card b {
+    display: block;
+    font-size: 1.02rem;
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--acc);
+  }
+  .stat-card span {
+    display: block;
+    margin-top: 3px;
+    font-size: 0.62rem;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .stat-card.warn b { color: var(--red); }
+  .stat-card.purple b { color: var(--bright-purple); }
+
+  /* HUD Ramp Status Colors */
+  .stat-card.status-normal { border-color: var(--green); }
+  .stat-card.status-normal b { color: var(--green); }
+  .stat-card.status-ramping { border-color: var(--bright-purple); }
+  .stat-card.status-ramping b { color: var(--bright-purple); }
+  .stat-card.status-limit { border-color: var(--red); }
+  .stat-card.status-limit b { color: var(--red); }
+
+  /* ── Sliders ── */
+  .controls-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .slider-card {
+    padding: 8px 10px;
+    background: var(--panel);
+    border: 2px solid var(--line);
+    box-shadow: 3px 3px 0 #000;
+  }
+  .slider-card.sp-card { border-color: var(--green-dark); }
+  .slider-card.p-card  { border-color: #1e5f96; }
+  .slider-card.i-card  { border-color: #9c6a1e; }
+  .slider-card.d-card  { border-color: var(--purple); }
+  .slider-card.ramp-card { border-color: #5b21b6; }
+  .slider-card.limit-card { border-color: #881337; }
+
+  .slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    gap: 6px;
+  }
+  .slider-header label {
+    font-size: 0.68rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+  }
+  .slider-header .val {
+    font-size: 0.8rem;
+    font-weight: 900;
+    white-space: nowrap;
+  }
+  .sp-card .slider-header label, .sp-card .slider-header .val { color: var(--green); }
+  .p-card  .slider-header label, .p-card  .slider-header .val { color: var(--blue); }
+  .i-card  .slider-header label, .i-card  .slider-header .val { color: var(--amber); }
+  .d-card  .slider-header label, .d-card  .slider-header .val { color: var(--rose); }
+  .ramp-card .slider-header label, .ramp-card .slider-header .val { color: var(--bright-purple); }
+  .limit-card .slider-header label, .limit-card .slider-header .val { color: var(--red); }
+
+  input[type=range] { width: 100%; margin: 6px 0 2px; cursor: pointer; }
+  .sp-card input[type=range] { accent-color: var(--green); }
+  .p-card  input[type=range] { accent-color: var(--blue); }
+  .i-card  input[type=range] { accent-color: var(--amber); }
+  .d-card  input[type=range] { accent-color: var(--rose); }
+  .ramp-card input[type=range] { accent-color: var(--bright-purple); }
+  .limit-card input[type=range] { accent-color: var(--red); }
+
+  /* ── Toggles ── */
+  .toggles {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 12px;
+    padding: 8px 12px;
+    background: var(--panel);
+    border: 2px solid var(--line);
+    box-shadow: 3px 3px 0 #000;
+    flex-wrap: wrap;
+  }
+  .toggles-title {
+    font-weight: 800;
+    font-size: 0.74rem;
+    color: var(--blue);
+    text-transform: uppercase;
+  }
+  .toggle-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    cursor: pointer;
+    color: var(--ink);
+  }
+  .toggle-label input { accent-color: var(--acc); width: 14px; height: 14px; cursor: pointer; }
+
+  /* ── Buttons ── */
+  .action-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  button {
+    min-height: 40px;
+    padding: 8px 14px;
+    border: 2px solid #C2C3C7;
+    background: var(--navy);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    user-select: none;
+    box-shadow: 3px 3px 0 #000;
+  }
+  button:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 #000; }
+  button.primary { background: var(--green-dark); border-color: var(--green); }
+  button.warn { background: #2a0f1e; border-color: var(--red); color: var(--red); }
+
+  /* ── Main Grid (Chart + Table) ── */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1.8fr 1.2fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .panel {
+    position: relative;
+    border: 2px solid var(--line);
+    background: var(--panel);
+    overflow: hidden;
+    box-shadow: 4px 4px 0 #000;
+  }
+  .panel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,.13) 0 1px, transparent 1px 3px);
+  }
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--navy);
+    border-bottom: 2px solid var(--line);
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--acc);
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 2;
+  }
+  .panel canvas { display: block; width: 100%; height: auto; position: relative; z-index: 1; }
+
+  /* ── Data Table (Lab-specific) ── */
+  .table-panel { position: relative; }
+  .table-wrap {
+    height: 380px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) var(--panel);
+    position: relative;
+    z-index: 2;
+  }
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.68rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .data-table th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: 7px 4px;
+    background: var(--navy);
+    color: var(--acc);
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    text-align: right;
+    border-bottom: 2px solid var(--line);
+    font-size: 0.6rem;
+  }
+  .data-table td {
+    padding: 5px 4px;
+    text-align: right;
+    color: #C2C3C7;
+    border-bottom: 1px solid #1a2040;
+  }
+  .data-table tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+  .data-table tr:first-child td {
+    background: rgba(255,236,39,.06);
+    color: var(--ink);
+  }
+  .data-table .col-p { color: var(--blue); }
+  .data-table .col-i { color: var(--amber); }
+  .data-table .col-d { color: var(--rose); }
+  .data-table .col-ramp { color: var(--bright-purple); font-weight: 700; }
+
+  @media (max-width: 900px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .hud { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .controls-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .preset-bar { flex-direction: column; }
+  }
+  @media (max-width: 600px) {
+    .hud { grid-template-columns: 1fr 1fr; }
+    .controls-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <!-- Header -->
+  <div class="header-box">
+    <h1>
+      💻 CODE LAB 5 · THUẬT TOÁN SIMPLEFOC PID THỰC TẾ
+      <span class="lab-badge">CODE LAB</span>
+    </h1>
+    <p>Mô phỏng bộ điều khiển PID hoàn chỉnh với tính năng kẹp <b>Anti-windup</b> và <b>Output Ramp (Slew Rate Limiter)</b> giống thư viện SimpleFOC. <b>Output Ramp</b> giúp ngăn cản những bước nhảy dòng/điện áp đột ngột gây giật motor.</p>
+  </div>
+
+  <!-- Coach Box -->
+  <div class="coach-box">
+    <div class="coach-avatar">🤖</div>
+    <div class="coach-content">
+      <div class="coach-title">LỜI KHUYÊN TỪ LAB COACH</div>
+      <p class="coach-msg" id="coachMsg">
+        Hãy bắt đầu với <b>"Chuẩn SimpleFOC"</b>. Thử nhấn <b>Tải cản đột ngột</b> để xem u_ramped đuổi theo u_raw. Sau đó thử <b>"Không có Ramp"</b> để thấy điều khiển phản ứng sốc lập tức.
+      </p>
+    </div>
+  </div>
+
+  <!-- Preset Tabs -->
+  <div class="preset-bar">
+    <button class="preset-tab active" data-preset="default">
+      <span class="ptitle">① Chuẩn SimpleFOC</span>
+      <span class="pdesc">Ramp 300%/s — Cân bằng tốc độ và mượt mà</span>
+    </button>
+    <button class="preset-tab" data-preset="noramp">
+      <span class="ptitle">② Không có Ramp</span>
+      <span class="pdesc">Ramp 0 — Phản ứng lập tức, nguy cơ giật</span>
+    </button>
+    <button class="preset-tab" data-preset="slowramp">
+      <span class="ptitle">③ Ramp Chậm</span>
+      <span class="pdesc">Ramp 120%/s — Động cơ khởi động mềm mại</span>
+    </button>
+    <button class="preset-tab" data-preset="fast">
+      <span class="ptitle">④ Ramp Nhanh</span>
+      <span class="pdesc">Ramp 800%/s — Đáp ứng tốc độ cao</span>
+    </button>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-row">
+    <button class="primary" id="btnStep">⏩ Từng bước</button>
+    <button id="btnAuto">▶ Tự chạy</button>
+    <button id="btnReset">🔄 Đặt lại</button>
+    <button id="btnDisturb" class="warn">💥 Tải cản đột ngột</button>
+  </div>
+
+  <!-- Toggles -->
+  <div class="toggles">
+    <span class="toggles-title">Cơ chế bảo vệ:</span>
+    <label class="toggle-label">
+      <input type="checkbox" id="flagTustin" checked>
+      <span>Tustin Trapezoid (Hình thang)</span>
+    </label>
+    <label class="toggle-label">
+      <input type="checkbox" id="flagAntiwindup" checked>
+      <span>Anti-windup Clamping</span>
+    </label>
+  </div>
+
+  <!-- Sliders -->
+  <div class="controls-grid">
+    <div class="slider-card sp-card">
+      <div class="slider-header">
+        <label>Vị trí (SP)</label>
+        <span class="val" id="spVal">90°</span>
+      </div>
+      <input id="spRange" type="range" min="0" max="180" value="90">
+    </div>
+    <div class="slider-card p-card">
+      <div class="slider-header">
+        <label>P (Kp)</label>
+        <span class="val" id="kpVal">2.50</span>
+      </div>
+      <input id="kpRange" type="range" min="0" max="6" step="0.1" value="2.5">
+    </div>
+    <div class="slider-card i-card">
+      <div class="slider-header">
+        <label>I (Ki)</label>
+        <span class="val" id="kiVal">0.80</span>
+      </div>
+      <input id="kiRange" type="range" min="0" max="3" step="0.05" value="0.8">
+    </div>
+    <div class="slider-card d-card">
+      <div class="slider-header">
+        <label>D (Kd)</label>
+        <span class="val" id="kdVal">0.15</span>
+      </div>
+      <input id="kdRange" type="range" min="0" max="0.5" step="0.01" value="0.15">
+    </div>
+    <div class="slider-card ramp-card">
+      <div class="slider-header">
+        <label>Ramp Limit</label>
+        <span class="val" id="rampVal">300</span>
+      </div>
+      <input id="rampRange" type="range" min="0" max="1000" step="20" value="300">
+    </div>
+    <div class="slider-card limit-card">
+      <div class="slider-header">
+        <label>Output Limit</label>
+        <span class="val" id="limitVal">100%</span>
+      </div>
+      <input id="limitRange" type="range" min="20" max="100" step="5" value="100">
+    </div>
+  </div>
+
+  <!-- HUD Stats -->
+  <div class="hud">
+    <div class="stat-card"><b id="hudAngle">0.0°</b><span>Góc hiện tại</span></div>
+    <div class="stat-card"><b id="hudErr">90.0°</b><span>Sai số (e)</span></div>
+    <div class="stat-card"><b id="hudUraw">0.0%</b><span>Lệnh u_raw</span></div>
+    <div class="stat-card purple"><b id="hudUramped">0.0%</b><span>Lệnh u_ramped</span></div>
+    <div class="stat-card status-normal" id="hudStatus"><b id="hudStatusText">NORMAL</b><span>Trạng thái</span></div>
+  </div>
+
+  <!-- Main Grid: Chart + Table -->
+  <div class="main-grid">
+    <!-- Chart Panel -->
+    <section class="panel">
+      <div class="panel-header">
+        <span>ĐỒ THỊ KÉP · VỊ TRÍ & LỆNH ĐIỀU KHIỂN</span>
+        <span id="chartStatus" style="color:var(--muted)">t = 0.00 s</span>
+      </div>
+      <canvas id="cv" width="600" height="380"></canvas>
+    </section>
+
+    <!-- Data Table Panel -->
+    <section class="panel table-panel">
+      <div class="panel-header">
+        <span>📋 NHẬT KÝ PID</span>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>t(s)</th>
+              <th>Góc</th>
+              <th>e</th>
+              <th class="col-p">u_P</th>
+              <th class="col-i">u_I</th>
+              <th class="col-d">u_D</th>
+              <th>u_raw</th>
+              <th class="col-ramp">u_out</th>
+            </tr>
+          </thead>
+          <tbody id="tb"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+</main>
+
+<script>
+"use strict";
+
+class SimpleFOC_PID {
+  constructor(P, I, D, ramp, limit) {
+    this.P = P;
+    this.I = I;
+    this.D = D;
+    this.output_ramp = ramp;
+    this.limit = limit;
+    this.use_tustin = true;
+    this.use_antiwindup = true;
+    this.reset();
+  }
+
+  reset() {
+    this.error_prev = 0.0;
+    this.output_prev = 0.0;
+    this.integral_prev = 0.0;
+    this.timestamp_prev = 0;
+    this.first_run = true;
+  }
+
+  compute(error, timestamp_sec) {
+    let Ts = 0.01;
+    if (this.first_run) {
+      this.timestamp_prev = timestamp_sec;
+      this.first_run = false;
+      this.error_prev = error;
+    } else {
+      Ts = timestamp_sec - this.timestamp_prev;
+      if (Ts <= 0 || Ts > 0.5) Ts = 0.01;
+    }
+
+    const proportional = this.P * error;
+
+    let integral_step = 0;
+    if (this.use_tustin) {
+      integral_step = this.I * Ts * 0.5 * (error + this.error_prev);
+    } else {
+      integral_step = this.I * Ts * error;
+    }
+    let integral = this.integral_prev + integral_step;
+    if (this.use_antiwindup) {
+      integral = Math.max(-this.limit, Math.min(this.limit, integral));
+    }
+
+    const derivative = this.D * (error - this.error_prev) / Ts;
+
+    let raw_output = proportional + integral + derivative;
+    raw_output = Math.max(-this.limit, Math.min(this.limit, raw_output));
+
+    let output = raw_output;
+    let is_ramping = false;
+    if (this.output_ramp > 0) {
+      const output_rate = (raw_output - this.output_prev) / Ts;
+      if (output_rate > this.output_ramp) {
+        output = this.output_prev + this.output_ramp * Ts;
+        is_ramping = true;
+      } else if (output_rate < -this.output_ramp) {
+        output = this.output_prev - this.output_ramp * Ts;
+        is_ramping = true;
+      }
+    }
+
+    this.integral_prev = integral;
+    this.output_prev = output;
+    this.error_prev = error;
+    this.timestamp_prev = timestamp_sec;
+
+    return {
+      output: output,
+      raw_output: raw_output,
+      proportional: proportional,
+      integral: integral,
+      derivative: derivative,
+      Ts: Ts,
+      is_ramping: is_ramping
+    };
+  }
+}
+
+// Plant model
+let motor = {
+  angle: 0.0,
+  velocity: 0.0,
+  J: 0.006,
+  b: 0.08,
+  Kt: 1.5,
+  disturbance: 0.0
+};
+
+let pid = new SimpleFOC_PID(2.5, 0.8, 0.15, 300.0, 100.0);
+let simTime = 0.0;
+const DT = 0.01;
+let history = [];
+let isRunning = false;
+let animTimer = null;
+
+// UI Elements
+const spRange = document.getElementById('spRange');
+const kpRange = document.getElementById('kpRange');
+const kiRange = document.getElementById('kiRange');
+const kdRange = document.getElementById('kdRange');
+const rampRange = document.getElementById('rampRange');
+const limitRange = document.getElementById('limitRange');
+
+const spVal = document.getElementById('spVal');
+const kpVal = document.getElementById('kpVal');
+const kiVal = document.getElementById('kiVal');
+const kdVal = document.getElementById('kdVal');
+const rampVal = document.getElementById('rampVal');
+const limitVal = document.getElementById('limitVal');
+
+const flagTustin = document.getElementById('flagTustin');
+const flagAntiwindup = document.getElementById('flagAntiwindup');
+
+const hudAngle = document.getElementById('hudAngle');
+const hudErr = document.getElementById('hudErr');
+const hudUraw = document.getElementById('hudUraw');
+const hudUramped = document.getElementById('hudUramped');
+const hudStatus = document.getElementById('hudStatus');
+const hudStatusText = document.getElementById('hudStatusText');
+const tb = document.getElementById('tb');
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+const chartStatus = document.getElementById("chartStatus");
+const coachMsg = document.getElementById("coachMsg");
+
+const presetTabs = document.querySelectorAll('.preset-tab');
+
+// ═══════════ App Logic ═══════════
+function updateParams() {
+  pid.P = parseFloat(kpRange.value);
+  pid.I = parseFloat(kiRange.value);
+  pid.D = parseFloat(kdRange.value);
+  pid.output_ramp = parseFloat(rampRange.value);
+  pid.limit = parseFloat(limitRange.value);
+  pid.use_tustin = flagTustin.checked;
+  pid.use_antiwindup = flagAntiwindup.checked;
+
+  spVal.textContent = spRange.value + '°';
+  kpVal.textContent = pid.P.toFixed(2);
+  kiVal.textContent = pid.I.toFixed(2);
+  kdVal.textContent = pid.D.toFixed(2);
+  rampVal.textContent = pid.output_ramp === 0 ? 'Tắt' : pid.output_ramp + ' %/s';
+  limitVal.textContent = pid.limit + '%';
+}
+
+function resetSim() {
+  simTime = 0.0;
+  motor.angle = 0.0;
+  motor.velocity = 0.0;
+  motor.disturbance = 0.0;
+  pid.reset();
+  history = [];
+  tb.innerHTML = '';
+  updateParams();
+  draw();
+  updateHUD(0, 0, 0, 0, false);
+  chartStatus.textContent = `t = 0.00 s`;
+}
+
+function updateHUD(angle, error, uRaw, uRamped, isRamping) {
+  hudAngle.textContent = angle.toFixed(1) + '°';
+  hudErr.textContent = error.toFixed(1) + '°';
+  hudUraw.textContent = uRaw.toFixed(1) + '%';
+  hudUramped.textContent = uRamped.toFixed(1) + '%';
+
+  hudStatus.className = 'stat-card';
+  if (isRamping) {
+    hudStatus.classList.add('status-ramping');
+    hudStatusText.textContent = 'RAMPING';
+  } else if (Math.abs(uRamped) >= pid.limit) {
+    hudStatus.classList.add('status-limit');
+    hudStatusText.textContent = 'SATURATED';
+  } else {
+    hudStatus.classList.add('status-normal');
+    hudStatusText.textContent = 'NORMAL';
+  }
+}
+
+function stepSim() {
+  updateParams();
+  const setpoint = parseFloat(spRange.value);
+  const error = setpoint - motor.angle;
+
+  const res = pid.compute(error, simTime);
+  
+  // Vật lý động cơ
+  const torque = motor.Kt * (res.output / 100.0) * 10.0 + motor.disturbance;
+  const accel = (torque - motor.b * motor.velocity) / motor.J;
+  motor.velocity += accel * DT;
+  motor.angle += motor.velocity * DT;
+
+  // Giảm dần tải cản tức thời
+  motor.disturbance *= 0.95;
+
+  history.push({
+    t: simTime,
+    sp: setpoint,
+    angle: motor.angle,
+    error: error,
+    p: res.proportional,
+    i: res.integral,
+    d: res.derivative,
+    u_raw: res.raw_output,
+    u_out: res.output,
+    ramping: res.is_ramping
+  });
+  if (history.length > 300) history.shift();
+
+  // Update table
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td>${simTime.toFixed(2)}</td>
+    <td>${motor.angle.toFixed(1)}</td>
+    <td>${error.toFixed(1)}</td>
+    <td class="col-p">${res.proportional.toFixed(1)}</td>
+    <td class="col-i">${res.integral.toFixed(1)}</td>
+    <td class="col-d">${res.derivative.toFixed(1)}</td>
+    <td>${res.raw_output.toFixed(1)}</td>
+    <td class="col-ramp">${res.output.toFixed(1)}</td>
+  `;
+  tb.insertBefore(tr, tb.firstChild);
+  if (tb.children.length > 50) tb.removeChild(tb.lastChild);
+
+  updateHUD(motor.angle, error, res.raw_output, res.output, res.is_ramping);
+  simTime += DT;
+  chartStatus.textContent = `t = ${simTime.toFixed(2)} s`;
+  draw();
+}
+
+function draw() {
+  const W = cv.width;
+  const H = cv.height;
+  ctx.clearRect(0, 0, W, H);
+
+  // Nền canvas
+  ctx.fillStyle = '#0f1322';
+  ctx.fillRect(0, 0, W, H);
+
+  const padL = 45;
+  const w = W - padL - 20;
+
+  const topH = 160;
+  const topY = 20;
+  const botH = 140;
+  const botY = 210;
+  
+  // Vẽ khung lưới
+  ctx.strokeStyle = '#232c4e';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(padL, topY, w, topH);
+  ctx.strokeRect(padL, botY, w, botH);
+
+  // Lưới ngang
+  ctx.fillStyle = '#83769C';
+  ctx.font = '10px "Courier New", monospace';
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'middle';
+  
+  // Trục đồ thị trên (0..180)
+  ctx.fillText('180°', padL - 5, topY);
+  ctx.fillText('90°', padL - 5, topY + topH/2);
+  ctx.fillText('0°', padL - 5, topY + topH);
+  
+  ctx.beginPath();
+  ctx.setLineDash([2, 4]);
+  ctx.moveTo(padL, topY + topH/2);
+  ctx.lineTo(padL + w, topY + topH/2);
+  ctx.stroke();
+
+  // Trục đồ thị dưới (-100%..+100%)
+  ctx.fillText('+100', padL - 5, botY);
+  ctx.fillText('0', padL - 5, botY + botH/2);
+  ctx.fillText('-100', padL - 5, botY + botH);
+
+  ctx.beginPath();
+  ctx.moveTo(padL, botY + botH/2);
+  ctx.lineTo(padL + w, botY + botH/2);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Tiêu đề đồ thị
+  ctx.fillStyle = '#C2C3C7';
+  ctx.font = 'bold 11px "Courier New", monospace';
+  ctx.textAlign = 'left';
+  ctx.fillText('VỊ TRÍ ĐẶT (XANH LỤC) VS GÓC THỰC TẾ (XANH DƯƠNG)', padL + 10, topY + 15);
+  ctx.fillText('LỆNH U_RAW (HỒNG) VS U_RAMPED (TÍM)', padL + 10, botY + 15);
+
+  if (history.length < 2) return;
+
+  const len = history.length;
+  const dx = w / Math.max(100, len);
+
+  // Hàm vẽ line
+  const drawLine = (dataFn, color, width, isDashed = false, glow = false, globalAlpha = 1.0) => {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.globalAlpha = globalAlpha;
+    if (isDashed) ctx.setLineDash([6, 4]);
+    else ctx.setLineDash([]);
+    if (glow) {
+      ctx.shadowColor = color;
+      ctx.shadowBlur = 6;
+    } else {
+      ctx.shadowBlur = 0;
+    }
+    ctx.beginPath();
+    for (let i = 0; i < len; i++) {
+      const x = padL + i * dx;
+      const y = dataFn(history[i]);
+      if (i === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1.0;
+    ctx.shadowBlur = 0;
+  };
+
+  // Đồ thị trên (Y từ topY + topH đến topY)
+  const mapYTop = val => topY + topH - (Math.max(0, Math.min(180, val)) / 180.0) * topH;
+  
+  // Vẽ SP (Xanh lục nét đứt)
+  drawLine(d => mapYTop(d.sp), '#00E436', 2, true);
+  
+  // Vẽ Góc (Xanh dương, glow)
+  drawLine(d => mapYTop(d.angle), '#29ADFF', 2.5, false, true);
+
+  // Đồ thị dưới (Y từ botY + botH đến botY, 0 nằm giữa)
+  const mapYBot = val => botY + botH/2 - (Math.max(-100, Math.min(100, val)) / 100.0) * (botH/2);
+
+  // Vẽ u_raw (Hồng mờ)
+  drawLine(d => mapYBot(d.u_raw), '#FF77A8', 2, false, false, 0.4);
+
+  // Vẽ u_out (Tím sáng, u_ramped)
+  drawLine(d => mapYBot(d.u_out), '#b17aff', 2.5, false, true);
+}
+
+// ═══════════ Event Listeners ═══════════
+document.getElementById('btnStep').addEventListener('click', () => {
+  if (isRunning) toggleAuto();
+  stepSim();
+});
+
+function toggleAuto() {
+  isRunning = !isRunning;
+  const btn = document.getElementById('btnAuto');
+  if (isRunning) {
+    btn.innerHTML = '⏸ Tạm dừng';
+    btn.classList.add('primary');
+    animTimer = setInterval(stepSim, 20);
+  } else {
+    btn.innerHTML = '▶ Tự chạy';
+    btn.classList.remove('primary');
+    clearInterval(animTimer);
+  }
+}
+
+document.getElementById('btnAuto').addEventListener('click', toggleAuto);
+document.getElementById('btnReset').addEventListener('click', resetSim);
+
+document.getElementById('btnDisturb').addEventListener('click', () => {
+  motor.disturbance = -25.0; // Tải cản đột ngột
+});
+
+[spRange, kpRange, kiRange, kdRange, rampRange, limitRange].forEach(inp => {
+  inp.addEventListener('input', updateParams);
+});
+
+[flagTustin, flagAntiwindup].forEach(chk => {
+  chk.addEventListener('change', updateParams);
+});
+
+presetTabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    presetTabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    
+    const v = tab.dataset.preset;
+    if (v === 'default') {
+      kpRange.value = 2.5; kiRange.value = 0.8; kdRange.value = 0.15; rampRange.value = 300;
+      coachMsg.innerHTML = 'Chuẩn SimpleFOC với Ramp = 300%/s. Phù hợp cho đa số ứng dụng, cân bằng giữa thời gian đáp ứng và độ an toàn điện áp/dòng điện.';
+    } else if (v === 'noramp') {
+      kpRange.value = 2.5; kiRange.value = 0.8; kdRange.value = 0.15; rampRange.value = 0;
+      coachMsg.innerHTML = 'Tắt Ramp. Lệnh điều khiển sẽ nhảy bật tức thời, có thể gây quá dòng hoặc giật sốc cơ khí trên phần cứng thật.';
+    } else if (v === 'slowramp') {
+      kpRange.value = 2.5; kiRange.value = 0.8; kdRange.value = 0.15; rampRange.value = 120;
+      coachMsg.innerHTML = 'Ramp chậm (120%/s). Động cơ sẽ phản ứng một cách chậm rãi, êm ái, rất an toàn nhưng thời gian bám vị trí sẽ lâu hơn.';
+    } else if (v === 'fast') {
+      kpRange.value = 3.0; kiRange.value = 1.0; kdRange.value = 0.18; rampRange.value = 800;
+      coachMsg.innerHTML = 'Ramp nhanh (800%/s) với bộ thông số mạnh hơn. Chú ý hiện tượng vọt lố hoặc rung nhẹ khi bám điểm đến do dốc quá cao.';
+    }
+    updateParams();
+    resetSim();
+  });
+});
+
+// Khởi chạy
+resetSim();
+draw();
+</script>
+</body>
+</html>

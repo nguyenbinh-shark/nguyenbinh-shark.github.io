@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5-Bar Robot HMI</title>
+<style>
+  :root{
+    --bg:#0b0f14; --panel:#141b24; --panel2:#1b242f; --edge:#2a3744;
+    --txt:#cdd9e5; --dim:#7b8a9a; --acc:#23a6ff; --grn:#2ee06a; --red:#ff4d4d;
+    --amb:#ffb020; --lcd:#5ef0ff; --mono:'Consolas','SFMono-Regular',monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);
+    font-family:'Segoe UI',system-ui,sans-serif;font-size:14px}
+  body.offline .ctl{opacity:.45;pointer-events:none}
+  /* ---------- header ---------- */
+  header{display:flex;align-items:center;gap:14px;padding:10px 16px;
+    background:linear-gradient(180deg,#18222e,#10161e);border-bottom:1px solid var(--edge)}
+  header h1{font-size:17px;margin:0;letter-spacing:1px;font-weight:700;white-space:nowrap}
+  header h1 small{color:var(--dim);font-weight:400;font-size:12px}
+  .spacer{flex:1}
+  .fwver{font-family:var(--mono);color:var(--acc);font-size:12px}
+  .connbox{display:flex;align-items:center;gap:8px}
+  .estop{margin-left:8px;width:84px;height:84px;border-radius:50%;border:5px solid #7a1414;
+    background:radial-gradient(circle at 38% 32%,#ff6b6b,#c40000 70%);color:#fff;font-weight:800;
+    font-size:15px;letter-spacing:1px;cursor:pointer;box-shadow:0 4px 12px #0008,inset 0 -3px 6px #0006}
+  .estop:active{transform:translateY(2px)}
+  /* ---------- layout ---------- */
+  main{display:grid;grid-template-columns:330px 1fr 360px;gap:12px;padding:12px;
+    align-items:start}
+  .panel{background:var(--panel);border:1px solid var(--edge);border-radius:8px;overflow:hidden}
+  .panel>.ph{background:var(--panel2);padding:7px 12px;font-weight:700;font-size:12px;
+    letter-spacing:1px;color:#aebdcc;border-bottom:1px solid var(--edge);text-transform:uppercase}
+  .panel>.pb{padding:12px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  /* ---------- readouts ---------- */
+  .rd{background:#070b10;border:1px solid #243240;border-radius:6px;padding:8px 10px}
+  .rd .lab{font-size:10px;color:var(--dim);letter-spacing:1px}
+  .rd .val{font-family:var(--mono);font-size:26px;color:var(--lcd);line-height:1.05;
+    text-shadow:0 0 8px #1bd6e955}
+  .rd .val small{font-size:12px;color:#3a8b94}
+  .statebar{margin-top:10px;background:#070b10;border:1px solid #243240;border-radius:6px;
+    padding:8px 10px;text-align:center}
+  .statebar .val{font-family:var(--mono);font-size:20px;color:var(--amb);letter-spacing:1px}
+  .statebar.run .val{color:var(--grn)}
+  /* ---------- lamps ---------- */
+  .lamps{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+  .lamp{display:flex;align-items:center;gap:8px;background:#070b10;border:1px solid #243240;
+    border-radius:6px;padding:6px 9px;font-size:12px}
+  .dot{width:13px;height:13px;border-radius:50%;background:#26303a;border:1px solid #000;flex:none}
+  .dot.g{background:var(--grn);box-shadow:0 0 9px var(--grn)}
+  .dot.a{background:var(--amb);box-shadow:0 0 9px var(--amb)}
+  .dot.r{background:var(--red);box-shadow:0 0 9px var(--red)}
+  /* ---------- buttons ---------- */
+  .btn{background:linear-gradient(180deg,#28323d,#1c252f);color:var(--txt);border:1px solid #36465480;
+    border-radius:6px;padding:9px 6px;font-size:13px;font-weight:600;cursor:pointer;width:100%}
+  .btn:hover{border-color:var(--acc)}
+  .btn:active{transform:translateY(1px);background:#161d25}
+  .btn.acc{background:linear-gradient(180deg,#1c6fb0,#155a90);border-color:#2a8fd0}
+  .btn.grn{background:linear-gradient(180deg,#1f8f48,#15723a);border-color:#2ee06a55}
+  .btn.warn{background:linear-gradient(180deg,#9a6212,#7a4d0e);border-color:#ffb02055}
+  .btn.sm{padding:6px 4px;font-size:12px}
+  .seg{display:flex;gap:4px}
+  .seg .btn{padding:5px 0;font-size:12px}
+  .seg .btn.on{background:#1c6fb0;border-color:#2a8fd0;color:#fff}
+  /* jog pad */
+  .pad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+  .pad .btn{height:42px}
+  .pad .empty{visibility:hidden}
+  label.f{display:block;font-size:11px;color:var(--dim);margin:6px 0 2px}
+  input{width:100%;background:#070b10;border:1px solid #2a3744;color:var(--lcd);
+    font-family:var(--mono);border-radius:5px;padding:6px 8px;font-size:13px}
+  .row{display:flex;gap:6px;align-items:flex-end}
+  .row>div{flex:1}
+  fieldset{border:1px solid var(--edge);border-radius:6px;margin:0 0 10px;padding:8px 10px}
+  legend{font-size:11px;color:var(--dim);letter-spacing:1px;padding:0 6px}
+  /* canvas */
+  canvas{display:block;width:100%;background:#060a0e;border:1px solid #243240;border-radius:6px;margin-top:10px}
+  /* console */
+  .console{grid-column:1 / -1;background:#070b10;border:1px solid var(--edge);border-radius:8px;
+    height:200px;overflow:auto;font-family:var(--mono);font-size:12px;padding:8px 10px}
+  .console .ln{white-space:pre-wrap;word-break:break-all;line-height:1.45}
+  .ln.tx{color:#67d0ff}.ln.ack{color:#56e08a}.ln.err{color:#ff6b6b}
+  .ln.tlm{color:#536273}.ln.evt{color:#ffc24d}.ln.fw{color:#43586b}.ln.warn{color:#ffb020}
+  .conbar{display:flex;align-items:center;gap:12px;grid-column:1/-1;margin-top:-2px}
+  .conbar label{font-size:12px;color:var(--dim);display:flex;gap:6px;align-items:center}
+  .nohw{grid-column:1/-1;background:#3a1414;border:1px solid #7a2020;color:#ffb3b3;
+    padding:10px 14px;border-radius:8px;display:none}
+  select{background:#070b10;border:1px solid #2a3744;color:var(--txt);border-radius:5px;padding:7px}
+</style>
+</head>
+<body class="offline">
+
+<header>
+  <h1>5-BAR ROBOT &nbsp;<small>HMI &middot; Pick &amp; Place</small></h1>
+  <span class="fwver" id="fwver">FW —</span>
+  <div class="spacer"></div>
+  <div class="connbox">
+    <span class="dot" id="lampConn"></span>
+    <span id="connTxt" style="font-size:12px;color:var(--dim)">Chua ket noi</span>
+    <span class="dot" id="lampRx" title="Xanh = dang nhan telemetry; Do = mo COM nhung khong co du lieu"></span>
+    <span style="font-size:11px;color:var(--dim)">DATA</span>
+    <button class="btn acc" id="btnConn" style="width:auto;padding:9px 16px">KET NOI COM</button>
+  </div>
+  <button class="estop" id="btnEstop" title="Dung khan cap (ABORT)">E&#8209;STOP</button>
+</header>
+
+<div id="nohw" class="nohw" style="margin:12px">
+  ⚠ Trinh duyet nay khong ho tro <b>Web Serial API</b>. Hay mo file bang
+  <b>Microsoft Edge</b> hoac <b>Google Chrome</b> (khong dung Firefox).
+</div>
+
+<main>
+  <!-- ================= COT 1: TRANG THAI ================= -->
+  <section class="panel">
+    <div class="ph">Trang thai</div>
+    <div class="pb">
+      <div class="grid2">
+        <div class="rd"><div class="lab">X (mm)</div><div class="val" id="rX">--.-</div></div>
+        <div class="rd"><div class="lab">Y (mm)</div><div class="val" id="rY">--.-</div></div>
+        <div class="rd"><div class="lab">Z (mm)</div><div class="val" id="rZ">--.--</div></div>
+        <div class="rd"><div class="lab">VL53L0X (mm)</div><div class="val" id="rD">---</div></div>
+        <div class="rd"><div class="lab">Động cơ 1 (°)</div><div class="val" id="rS1">---</div></div>
+        <div class="rd"><div class="lab">Động cơ 2 (°)</div><div class="val" id="rS2">---</div></div>
+        <div class="rd"><div class="lab">X từ servo (mm)</div><div class="val" id="rFKx">--.-</div></div>
+        <div class="rd"><div class="lab">Y từ servo (mm)</div><div class="val" id="rFKy">--.-</div></div>
+      </div>
+      <div class="statebar" id="stateBar"><div class="lab" style="font-size:10px;color:var(--dim)">PICK &amp; PLACE STATE</div><div class="val" id="rState">IDLE</div></div>
+      <div class="lamps">
+        <div class="lamp"><span class="dot" id="lGrip"></span> Giác hút / Bơm</div>
+        <div class="lamp"><span class="dot" id="lLim"></span> Gioi han tren</div>
+        <div class="lamp"><span class="dot" id="lXY"></span> XY dang chay</div>
+        <div class="lamp"><span class="dot" id="lZ"></span> Z dang chay</div>
+      </div>
+      <canvas id="cv" width="600" height="460"></canvas>
+    </div>
+  </section>
+
+  <!-- ================= COT 2: DIEU KHIEN ================= -->
+  <section class="panel ctl">
+    <div class="ph">Jog &amp; Dieu khien</div>
+    <div class="pb">
+      <fieldset>
+        <legend>XY — buoc nhay (mm)</legend>
+        <div class="seg" id="segXY">
+          <button class="btn" data-s="0.5">0.5</button>
+          <button class="btn" data-s="1">1</button>
+          <button class="btn on" data-s="5">5</button>
+          <button class="btn" data-s="10">10</button>
+        </div>
+        <div class="pad">
+          <span class="empty"></span>
+          <button class="btn" id="jYp">Y +</button>
+          <span class="empty"></span>
+          <button class="btn" id="jXm">X −</button>
+          <button class="btn acc" id="jHome">HOME</button>
+          <button class="btn" id="jXp">X +</button>
+          <span class="empty"></span>
+          <button class="btn" id="jYm">Y −</button>
+          <span class="empty"></span>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <div><label class="f">X</label><input id="goX" value="27.5"></div>
+          <div><label class="f">Y</label><input id="goY" value="80"></div>
+          <button class="btn acc" id="goXY" style="width:auto;padding:9px 14px">GO</button>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Test nhanh — 4 diem A B C D</legend>
+        <div class="grid2">
+          <button class="btn sm" id="tpC">C (−20, 140)</button>
+          <button class="btn sm" id="tpB">B (110, 140)</button>
+          <button class="btn sm" id="tpD">D (−15, 90)</button>
+          <button class="btn sm" id="tpA">A (100, 90)</button>
+        </div>
+        <div class="row" style="margin-top:8px;align-items:center">
+          <div><label class="f">Dung moi diem (ms)</label><input id="tSettle" value="500"></div>
+          <label style="flex:none;font-size:12px;color:var(--dim);display:flex;align-items:center;gap:5px;padding-bottom:2px">
+            <input type="checkbox" id="ckTestLoop" style="width:auto"> Lap lai
+          </label>
+        </div>
+        <button class="btn acc" id="tpRun" style="margin-top:8px">▶ CHAY A → B → C → D</button>
+      </fieldset>
+
+      <fieldset>
+        <legend>Truc Z</legend>
+        <div class="seg" id="segZ" style="margin-bottom:8px">
+          <button class="btn" data-s="0.5">0.5</button>
+          <button class="btn on" data-s="2">2</button>
+          <button class="btn" data-s="5">5</button>
+        </div>
+        <div class="grid2">
+          <button class="btn" id="zUp">Z ▲ (len)</button>
+          <button class="btn" id="zDn">Z ▼ (xuong)</button>
+        </div>
+        <div class="row" style="margin-top:8px">
+          <div><label class="f">Z tuyet doi (mm)</label><input id="goZv" value="20"></div>
+          <button class="btn acc" id="goZ" style="width:auto;padding:9px 12px">GO</button>
+        </div>
+        <div class="grid2" style="margin-top:8px">
+          <button class="btn warn sm" id="zStop">Z STOP</button>
+          <button class="btn sm" id="zZero">Z = 0</button>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Giác hút / Bơm</legend>
+        <div class="grid2">
+          <button class="btn grn" id="gSuck">HÚT</button>
+          <button class="btn" id="gDrop">NHẢ</button>
+          <button class="btn sm grn" id="pOn">BẬT BƠM</button>
+          <button class="btn sm warn" id="pOff">TẮT BƠM</button>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Homing</legend>
+        <div class="grid3">
+          <button class="btn sm" id="hTop">HOME ĐỈNH</button>
+        </div>
+      </fieldset>
+    </div>
+  </section>
+
+  <!-- ================= COT 3: PICK & PLACE ================= -->
+  <section class="panel ctl">
+    <div class="ph">Pick &amp; Place</div>
+    <div class="pb">
+      <fieldset>
+        <legend>Vi tri LAY (pick) — diem dau</legend>
+        <div class="grid3">
+          <div><label class="f">X</label><input id="pkX" value="27.5"></div>
+          <div><label class="f">Y</label><input id="pkY" value="80"></div>
+          <div><label class="f">Z</label><input id="pkZ" value="5"></div>
+        </div>
+        <label class="f">Nhap nhanh X,Y</label>
+        <div class="seg">
+          <button class="btn" data-pk="A">A</button>
+          <button class="btn" data-pk="B">B</button>
+          <button class="btn" data-pk="C">C</button>
+          <button class="btn" data-pk="D">D</button>
+        </div>
+        <button class="btn sm acc" id="setPick" style="margin-top:8px">SET PICK</button>
+      </fieldset>
+      <fieldset>
+        <legend>Vi tri DAT (place) — diem cuoi</legend>
+        <div class="grid3">
+          <div><label class="f">X</label><input id="plX" value="42.5"></div>
+          <div><label class="f">Y</label><input id="plY" value="80"></div>
+          <div><label class="f">Z</label><input id="plZ" value="5"></div>
+        </div>
+        <label class="f">Nhap nhanh X,Y</label>
+        <div class="seg">
+          <button class="btn" data-pl="A">A</button>
+          <button class="btn" data-pl="B">B</button>
+          <button class="btn" data-pl="C">C</button>
+          <button class="btn" data-pl="D">D</button>
+        </div>
+        <button class="btn sm acc" id="setPlace" style="margin-top:8px">SET PLACE</button>
+      </fieldset>
+      <fieldset>
+        <legend>Tham so</legend>
+        <div class="grid2">
+          <div><label class="f">SafeZ (mm)</label><input id="pSafe" value="20"></div>
+          <div><label class="f">Settle (ms)</label><input id="pSettle" value="500"></div>
+          <div><label class="f">Grip (ms)</label><input id="pGrip" value="400"></div>
+          <div><label class="f">Drop (ms)</label><input id="pDrop" value="300"></div>
+        </div>
+        <button class="btn sm" id="setParams" style="margin-top:8px">ÁP DỤNG THAM SỐ</button>
+      </fieldset>
+      <div class="grid2" style="margin-top:4px">
+        <button class="btn grn" id="btnRun" style="font-size:16px;padding:14px">▶ RUN</button>
+        <button class="btn warn" id="btnAbort" style="font-size:16px;padding:14px">■ ABORT</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CONSOLE ================= -->
+  <div class="conbar">
+    <strong style="font-size:12px;color:#aebdcc;letter-spacing:1px">CONSOLE</strong>
+    <label><input type="checkbox" id="ckTlm" checked> Hien telemetry (@)</label>
+    <span id="lastReply" style="font-family:var(--mono);font-size:12px;color:var(--dim)">— chua co phan hoi —</span>
+    <div class="spacer"></div>
+    <button class="btn sm" id="btnClear" style="width:auto;padding:5px 12px">XOA LOG</button>
+  </div>
+  <div class="console" id="console"></div>
+</main>
+
+<script>
+'use strict';
+/* ===================================================================
+   HMI Web Serial cho Robot 5 khau – giao thuc $<seq>,CMD,..*<CC>
+   Mo bang Edge/Chrome. Khong can cai dat.
+   =================================================================== */
+const BAUD = 115200;
+const L0=55, L1=70, L2=130, L3=130, L4=70;   /* khop voi ik_5bar.h (MATLAB l*10) */
+/* Offset servo – PHAI khop main.cpp (SERVO1_OFFSET / SERVO2_OFFSET / SERVO2_INVERT) */
+const SV1_OFF=-45, SV2_OFF=45, SV2_INV=false;
+const D2R=Math.PI/180;
+/* Dao nguoc anh xa servo -> goc hinh hoc (rad). map: a = 180-(theta+off) [+invert] */
+function servoToTheta(a,off,inv){const rv=inv?(180-a):a;return (180-off-rv)*D2R;}
+/* Giao 2 duong tron: tra ve 2 diem hoac null */
+function circInt(p0,r0,p1,r1){
+  const dx=p1.x-p0.x,dy=p1.y-p0.y,d=Math.hypot(dx,dy);
+  if(d===0||d>r0+r1||d<Math.abs(r0-r1))return null;
+  const a=(r0*r0-r1*r1+d*d)/(2*d),h2=r0*r0-a*a;if(h2<0)return null;
+  const h=Math.sqrt(h2),xm=p0.x+a*dx/d,ym=p0.y+a*dy/d;
+  return [{x:xm-dy*h/d,y:ym+dx*h/d},{x:xm+dy*h/d,y:ym-dx*h/d}];
+}
+
+let port=null, reader=null, writer=null, keepReading=false, connected=false;
+let readLoopDone=null;
+let seq=0;
+let gotRx=false, lastRxMs=0;
+let lastAck=null;
+const enc=new TextEncoder();
+const $=id=>document.getElementById(id);
+
+const st={name:'IDLE',x:19,y:45,z:0,grip:0,dist:-1,xymv:0,zmv:0,lim:0,s1:null,s2:null};
+const pickMk={x:null,y:null}, placeMk={x:null,y:null};
+let jogXY=5, jogZ=2;
+/* 4 diem test nhanh – bam de di chuyen vat qua tung diem */
+const TESTPTS=[{name:'A',x:100,y:90},{name:'B',x:110,y:140},{name:'C',x:-20,y:140},{name:'D',x:-15,y:90}];
+let testRunning=false;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+/* ---------- checksum XOR (NMEA) ---------- */
+function cc(body){let x=0;for(let i=0;i<body.length;i++)x^=body.charCodeAt(i);
+  return x.toString(16).toUpperCase().padStart(2,'0');}
+
+/* ---------- console log ---------- */
+function log(msg,cls){const c=$('console');const d=document.createElement('div');
+  d.className='ln '+(cls||'');d.textContent=msg;c.appendChild(d);
+  while(c.childElementCount>600)c.removeChild(c.firstChild);c.scrollTop=c.scrollHeight;}
+
+/* ---------- gui lenh ---------- */
+async function send(cmd,...args){
+  if(!connected){log('! Chua ket noi COM','warn');return null;}
+  seq=(seq+1)%10000; const mySeq=seq;
+  let body=mySeq+','+cmd; if(args.length) body+=','+args.join(',');
+  const line='$'+body+'*'+cc(body)+'\r\n';
+  try{await writer.write(enc.encode(line));log('» '+line.trim(),'tx');}
+  catch(e){log('TX error: '+e,'err');}
+  return mySeq;
+}
+
+/* ---------- ket noi / ngat ---------- */
+async function connect(){
+  if(!('serial' in navigator)){$('nohw').style.display='block';return;}
+  try{
+    port=await navigator.serial.requestPort();
+    await port.open({baudRate:BAUD});
+    writer=port.writable.getWriter();
+    reader=port.readable.getReader();
+    keepReading=true; connected=true; gotRx=false; setConnUI(true);
+    log('— Da mo cong COM @'+BAUD,'ack');
+    readLoopDone=readLoop();
+    setTimeout(()=>{send('VER');send('EVENTS',1);send('TLM',200);},350);
+    /* Watchdog: mo COM nhung khong nhan duoc gi -> sai cong / Serial khong tren USB-CDC */
+    setTimeout(()=>{ if(connected && !gotRx){
+      log('⚠ Da mo COM nhung KHONG nhan duoc du lieu tu robot (2s).','err');
+      log('  → Co the sai cong COM, hoac Serial firmware khong nam tren USB-CDC.','err');
+      log('  → Thu chon cong COM khac; hoac bao toi bat USB-CDC trong platformio.ini.','warn');
+    }}, 2200);
+  }catch(e){log('Loi ket noi: '+e,'err');connected=false;setConnUI(false);}
+}
+async function disconnect(){
+  keepReading=false;
+  try{if(connected)await send('TLM',0);}catch(e){}
+  try{if(reader)await reader.cancel();}catch(e){}     /* read() -> done */
+  try{if(readLoopDone)await readLoopDone;}catch(e){}  /* doi loop tra lock */
+  try{if(writer){await writer.close();}writer&&writer.releaseLock();}catch(e){}
+  try{if(port)await port.close();}catch(e){}
+  port=reader=writer=null; readLoopDone=null; connected=false; testRunning=false; setConnUI(false);
+  log('— Da ngat ket noi','warn');
+}
+function setConnUI(on){
+  document.body.classList.toggle('offline',!on);
+  $('lampConn').className='dot'+(on?' g':'');
+  $('connTxt').textContent=on?'Da ket noi':'Chua ket noi';
+  $('btnConn').textContent=on?'NGAT KET NOI':'KET NOI COM';
+  if(!on){$('fwver').textContent='FW —';}
+}
+
+/* ---------- vong doc serial ---------- */
+async function readLoop(){
+  const dec=new TextDecoder(); let buf='';
+  try{
+    while(keepReading){
+      const {value,done}=await reader.read();
+      if(done)break;
+      buf+=dec.decode(value,{stream:true});
+      let i;
+      while((i=buf.indexOf('\n'))>=0){
+        const line=buf.slice(0,i).replace(/\r$/,''); buf=buf.slice(i+1);
+        if(line.length) handleLine(line);
+      }
+    }
+  }catch(e){if(keepReading)log('RX error: '+e,'err');}
+  finally{try{reader.releaseLock();}catch(e){}}
+}
+
+/* ---------- xu ly 1 dong ---------- */
+function handleLine(line){
+  gotRx=true; lastRxMs=Date.now();
+  const m=line[0]; let rest=line.slice(1);
+  let body=rest, ok=true;
+  const star=rest.lastIndexOf('*');
+  if(star>=0){body=rest.slice(0,star);const got=rest.slice(star+1).trim();
+    if(cc(body)!==got.toUpperCase())ok=false;}
+  if(m==='#'){handleAck(body,ok);}
+  else if(m==='@'){if(ok)applyTlm(body.split(','));if($('ckTlm').checked)log('  '+line,'tlm');
+    if(!ok)log('  (CRC sai) '+line,'warn');}
+  else if(m==='!'){handleEvent(body);log('● '+line,'evt');}
+  else{log('  '+line,'fw');}
+}
+function handleAck(body,ok){
+  const f=body.split(',');
+  lastAck={seq:+f[0], ok:f[1]==='OK', raw:body};
+  const lr=$('lastReply'); lr.textContent='« '+body;
+  lr.style.color = (f[1]==='OK') ? 'var(--grn)' : 'var(--red)';
+  if(f[1]==='OK'){
+    const cmd=f[2];
+    if(cmd==='VER')$('fwver').textContent='FW '+(f[3]||'?');
+    else if(cmd==='STATUS')applyTlm(f.slice(3));
+    else if(cmd==='PPINFO')fillPP(f.slice(3));
+    log('« '+body,'ack');
+  }else{log('« '+body,'err');}
+}
+function handleEvent(body){
+  const f=body.split(',');
+  if(f[0]==='ST'){st.name=f[1];renderState();}
+}
+
+/* ---------- ap dung telemetry ---------- */
+function applyTlm(a){
+  if(a.length<8)return;
+  st.name=a[0]; st.x=+a[1]; st.y=+a[2]; st.z=+a[3];
+  st.grip=+a[4]; st.dist=+a[5]; st.xymv=+a[6]; st.zmv=+a[7];
+  st.lim=(a.length>8)?+a[8]:0;
+  st.s1=(a.length>9)?+a[9]:null;
+  st.s2=(a.length>10)?+a[10]:null;
+  renderAll();
+}
+function fillPP(a){ /* pickXYZ, placeXYZ, safez, settle, grip, drop */
+  if(a.length<10)return;
+  $('pkX').value=a[0];$('pkY').value=a[1];$('pkZ').value=a[2];
+  $('plX').value=a[3];$('plY').value=a[4];$('plZ').value=a[5];
+  $('pSafe').value=a[6];$('pSettle').value=a[7];$('pGrip').value=a[8];$('pDrop').value=a[9];
+  pickMk.x=+a[0];pickMk.y=+a[1];placeMk.x=+a[3];placeMk.y=+a[4];
+  draw();
+}
+
+/* ---------- render trang thai ---------- */
+function renderState(){
+  $('rState').textContent=st.name;
+  $('stateBar').classList.toggle('run',st.name!=='IDLE');
+}
+function lamp(id,on,cls){$(id).className='dot'+(on?(' '+(cls||'g')):'');}
+function renderAll(){
+  $('rX').textContent=isFinite(st.x)?st.x.toFixed(1):'--.-';
+  $('rY').textContent=isFinite(st.y)?st.y.toFixed(1):'--.-';
+  $('rZ').textContent=isFinite(st.z)?st.z.toFixed(2):'--.--';
+  $('rD').textContent=(st.dist>=0)?st.dist:'---';
+  $('rS1').textContent=(st.s1!=null&&isFinite(st.s1))?st.s1+'°':'---';
+  $('rS2').textContent=(st.s2!=null&&isFinite(st.s2))?st.s2+'°':'---';
+  renderState();
+  lamp('lGrip',st.grip,'g');
+  lamp('lLim',st.lim,'r');
+  lamp('lXY',st.xymv,'a');
+  lamp('lZ',st.zmv,'a');
+  draw();
+}
+
+/* ===================================================================
+   VE CO CAU 5 KHAU (port IK tu BAOCAO.md)
+   =================================================================== */
+function ik(x,y){
+  const c1=x*x+y*y+L1*L1-L2*L2, d1=2*L1*x, e1=2*L1*y;
+  const dx=x-L0, c2=dx*dx+y*y+L4*L4-L3*L3, d2=2*L4*dx, e2=2*L4*y;
+  const s1=d1*d1+e1*e1-c1*c1, s2=d2*d2+e2*e2-c2*c2;
+  if(s1<0||s2<0)return null;
+  const t1=2*Math.atan2(e1+Math.sqrt(s1), d1+c1);
+  const t2=2*Math.atan2(e2-Math.sqrt(s2), d2+c2);
+  return {t1,t2};
+}
+/* khung toa do mo hinh -> canvas */
+const MX0=-85, MY0=-15, MXS=225, MYS=185;       /* vung mo hinh (mm) – robot 70/130 */
+let CV,CTX,SC,PADX,PADY;
+function setupCanvas(){
+  CV=$('cv');CTX=CV.getContext('2d');
+  const W=CV.width,H=CV.height,p=22;
+  SC=Math.min((W-2*p)/MXS,(H-2*p)/MYS);
+  PADX=(W-MXS*SC)/2; PADY=(H-MYS*SC)/2;
+}
+function sx(mx){return PADX+(mx-MX0)*SC;}
+function sy(my){return CV.height-(PADY+(my-MY0)*SC);}
+function dot(mx,my,r,col){CTX.beginPath();CTX.arc(sx(mx),sy(my),r,0,7);CTX.fillStyle=col;CTX.fill();}
+function line(ax,ay,bx,by,col,w){CTX.beginPath();CTX.moveTo(sx(ax),sy(ay));CTX.lineTo(sx(bx),sy(by));
+  CTX.strokeStyle=col;CTX.lineWidth=w||2;CTX.stroke();}
+function draw(){
+  if(!CTX)return;
+  const W=CV.width,H=CV.height;
+  CTX.clearRect(0,0,W,H);
+  /* luoi */
+  CTX.strokeStyle='#10202c';CTX.lineWidth=1;
+  for(let g=-20;g<=70;g+=10){CTX.beginPath();CTX.moveTo(sx(g),sy(MY0));CTX.lineTo(sx(g),sy(MY0+MYS));CTX.stroke();}
+  for(let g=0;g<=95;g+=10){CTX.beginPath();CTX.moveTo(sx(MX0),sy(g));CTX.lineTo(sx(MX0+MXS),sy(g));CTX.stroke();}
+  /* 4 diem test nhanh */
+  CTX.font='bold 10px Consolas';
+  for(const p of TESTPTS){
+    CTX.beginPath();CTX.arc(sx(p.x),sy(p.y),5,0,7);
+    CTX.strokeStyle='#ffb02099';CTX.lineWidth=1.5;CTX.stroke();
+    CTX.fillStyle='#ffb020';CTX.fillText(p.name,sx(p.x)+7,sy(p.y)+4);
+  }
+  /* truc nen A-C */
+  const A={x:0,y:0}, C={x:L0,y:0};
+  line(A.x,A.y,C.x,C.y,'#2a3744',3);
+  /* markers pick/place */
+  if(pickMk.x!=null){dot(pickMk.x,pickMk.y,6,'#1f8f48');label(pickMk.x,pickMk.y,'P');}
+  if(placeMk.x!=null){dot(placeMk.x,placeMk.y,6,'#9a6212');label(placeMk.x,placeMk.y,'D');}
+  /* co cau – uu tien ve theo GOC SERVO THUC (gom offset) qua dong hoc thuan;
+     neu chua co telemetry s1/s2 thi fallback IK tu (x,y).                    */
+  let B=null,D=null,E=null;
+  if(st.s1!=null&&st.s2!=null&&isFinite(st.s1)&&isFinite(st.s2)){
+    const t1=servoToTheta(st.s1,SV1_OFF,false);
+    const t2=servoToTheta(st.s2,SV2_OFF,SV2_INV);
+    B={x:L1*Math.cos(t1), y:L1*Math.sin(t1)};
+    D={x:L0+L4*Math.cos(t2), y:L4*Math.sin(t2)};
+    const hits=circInt(B,L2,D,L3);
+    if(hits) E=(hits[0].y>=hits[1].y)?hits[0]:hits[1];   /* lay nghiem phia tren */
+  }
+  if(!E){
+    const sol=ik(st.x,st.y);
+    if(sol){
+      B={x:L1*Math.cos(sol.t1), y:L1*Math.sin(sol.t1)};
+      D={x:L0+L4*Math.cos(sol.t2), y:L4*Math.sin(sol.t2)};
+      E={x:st.x,y:st.y};
+    }
+  }
+  if(E&&B&&D){
+    line(A.x,A.y,B.x,B.y,'#23a6ff',4);
+    line(B.x,B.y,E.x,E.y,'#67d0ff',4);
+    line(C.x,C.y,D.x,D.y,'#23a6ff',4);
+    line(D.x,D.y,E.x,E.y,'#67d0ff',4);
+    dot(B.x,B.y,4,'#9fd8ff'); dot(D.x,D.y,4,'#9fd8ff');
+    dot(E.x,E.y,7,'#5ef0ff');
+  }else{
+    dot(st.x,st.y,7,'#ff4d4d');
+  }
+  /* Toa do dau cong tac tinh NGUOC tu goc servo thuc (gom offset) */
+  $('rFKx').textContent=E?E.x.toFixed(1):'--.-';
+  $('rFKy').textContent=E?E.y.toFixed(1):'--.-';
+  /* dong co nen */
+  dot(A.x,A.y,7,'#c9d6e2'); dot(C.x,C.y,7,'#c9d6e2');
+  CTX.fillStyle='#7b8a9a';CTX.font='11px Consolas';
+  CTX.fillText('A',sx(A.x)-12,sy(A.y)+14);
+  CTX.fillText('C',sx(C.x)+6,sy(C.y)+14);
+  CTX.fillStyle='#5ef0ff';
+  CTX.fillText('E('+st.x.toFixed(1)+','+st.y.toFixed(1)+')',sx(st.x)+9,sy(st.y)-8);
+}
+function label(mx,my,t){CTX.fillStyle='#cdd9e5';CTX.font='bold 11px Consolas';CTX.fillText(t,sx(mx)+8,sy(my)+4);}
+
+/* ===================================================================
+   GAN SU KIEN
+   =================================================================== */
+$('btnConn').onclick=()=>connected?disconnect():connect();
+$('btnEstop').onclick=()=>{testRunning=false;setTestBtn(false);send('ABORT');};
+$('btnClear').onclick=()=>{$('console').innerHTML='';};
+
+/* segment buoc nhay */
+function segInit(sel,setter){const g=$(sel);g.querySelectorAll('.btn').forEach(b=>b.onclick=()=>{
+  g.querySelectorAll('.btn').forEach(x=>x.classList.remove('on'));b.classList.add('on');setter(+b.dataset.s);});}
+segInit('segXY',v=>jogXY=v);
+segInit('segZ',v=>jogZ=v);
+
+/* jog XY (tinh tu vi tri telemetry hien tai) */
+const f2=n=>+n.toFixed(2);
+$('jXp').onclick=()=>send('MOVE',f2(st.x+jogXY),f2(st.y));
+$('jXm').onclick=()=>send('MOVE',f2(st.x-jogXY),f2(st.y));
+$('jYp').onclick=()=>send('MOVE',f2(st.x),f2(st.y+jogXY));
+$('jYm').onclick=()=>send('MOVE',f2(st.x),f2(st.y-jogXY));
+$('jHome').onclick=()=>send('HOME');
+$('goXY').onclick=()=>send('MOVE',$('goX').value,$('goY').value);
+
+/* ---------- test nhanh 4 diem (A -> B -> C -> D) ---------- */
+/* cho ACK cua dung 1 lenh (theo seq) */
+function waitAck(sq,ms=3000){return new Promise(res=>{const t0=Date.now();
+  const iv=setInterval(()=>{
+    if(lastAck&&lastAck.seq===sq){clearInterval(iv);res(lastAck);}
+    else if(Date.now()-t0>ms){clearInterval(iv);res(null);}
+  },30);});}
+/* di chuyen toi 1 diem roi cho servo XY dung han */
+async function testMoveTo(p){
+  log('  → '+p.name+' ('+p.x+', '+p.y+')','tx');
+  const sq=await send('MOVE',p.x,p.y);
+  const ack=await waitAck(sq);
+  if(ack&&!ack.ok){log('  ✖ '+p.name+' bi tu choi: '+ack.raw,'err');return false;}
+  await sleep(350);                                    /* cho servo bat dau noi suy */
+  const t0=Date.now();
+  while(st.xymv&&Date.now()-t0<9000) await sleep(80);  /* cho XY noi suy xong (XYMV=0) */
+  await sleep(Math.max(0,+$('tSettle').value||0));     /* dung tai diem */
+  return true;
+}
+function setTestBtn(run){const b=$('tpRun');
+  b.textContent=run?'■ DUNG TEST':'▶ CHAY A → B → C → D';
+  b.classList.toggle('warn',run);b.classList.toggle('acc',!run);}
+async function runTestSeq(){
+  if(testRunning){testRunning=false;return;}            /* bam lan 2 = dung */
+  if(!connected){log('! Chua ket noi COM','warn');return;}
+  testRunning=true; setTestBtn(true);
+  log('▶ Test nhanh: A → B → C → D'+($('ckTestLoop').checked?' (lap lai)':''),'ack');
+  do{
+    for(const p of TESTPTS){
+      if(!testRunning||!connected)break;
+      if(!await testMoveTo(p)){testRunning=false;break;}
+    }
+  }while(testRunning&&connected&&$('ckTestLoop').checked);
+  testRunning=false; setTestBtn(false);
+  log('■ Test nhanh ket thuc','warn');
+}
+$('tpRun').onclick=runTestSeq;
+$('tpA').onclick=()=>send('MOVE',100,90);
+$('tpB').onclick=()=>send('MOVE',110,140);
+$('tpC').onclick=()=>send('MOVE',-20,140);
+$('tpD').onclick=()=>send('MOVE',-15,90);
+
+/* Z */
+$('zUp').onclick=()=>send('ZR',jogZ);
+$('zDn').onclick=()=>send('ZR',-jogZ);
+$('goZ').onclick=()=>send('Z',$('goZv').value);
+$('zStop').onclick=()=>send('ZSTOP');
+$('zZero').onclick=()=>send('ZZERO');
+
+/* gripper */
+$('gSuck').onclick=()=>send('SUCK');
+$('gDrop').onclick=()=>send('DROP');
+$('pOn').onclick=()=>send('PUMP',1);
+$('pOff').onclick=()=>send('PUMP',0);
+
+/* homing */
+$('hTop').onclick=()=>send('HOMETOP');
+
+/* pick & place */
+$('setPick').onclick=()=>{send('PICK',$('pkX').value,$('pkY').value,$('pkZ').value);
+  pickMk.x=+$('pkX').value;pickMk.y=+$('pkY').value;draw();};
+$('setPlace').onclick=()=>{send('PLACE',$('plX').value,$('plY').value,$('plZ').value);
+  placeMk.x=+$('plX').value;placeMk.y=+$('plY').value;draw();};
+/* nhap nhanh toa do A/B/C/D vao pick (diem dau) / place (diem cuoi) */
+const TP=name=>TESTPTS.find(p=>p.name===name);
+document.querySelectorAll('[data-pk]').forEach(b=>b.onclick=()=>{const p=TP(b.dataset.pk);
+  $('pkX').value=p.x;$('pkY').value=p.y;});
+document.querySelectorAll('[data-pl]').forEach(b=>b.onclick=()=>{const p=TP(b.dataset.pl);
+  $('plX').value=p.x;$('plY').value=p.y;});
+$('setParams').onclick=()=>{send('SAFEZ',$('pSafe').value);send('SETTLE',$('pSettle').value);
+  send('GRIPMS',$('pGrip').value);send('DROPMS',$('pDrop').value);};
+$('btnRun').onclick=()=>send('RUN');
+$('btnAbort').onclick=()=>{testRunning=false;setTestBtn(false);send('ABORT');};
+
+/* phim mui ten = jog XY, PageUp/Down = jog Z */
+document.addEventListener('keydown',e=>{
+  if(!connected)return;
+  const tag=(document.activeElement&&document.activeElement.tagName)||'';
+  if(tag==='INPUT')return;
+  switch(e.key){
+    case'ArrowRight':$('jXp').click();break;
+    case'ArrowLeft':$('jXm').click();break;
+    case'ArrowUp':$('jYp').click();break;
+    case'ArrowDown':$('jYm').click();break;
+    case'PageUp':$('zUp').click();break;
+    case'PageDown':$('zDn').click();break;
+    default:return;
+  }
+  e.preventDefault();
+});
+
+/* tu dong ngat khi rut day */
+if('serial' in navigator){
+  navigator.serial.addEventListener('disconnect',()=>{if(connected){keepReading=false;connected=false;setConnUI(false);log('— Thiet bi bi rut','warn');}});
+}else{$('nohw').style.display='block';}
+
+/* nhip cap nhat den DATA: xanh = co telemetry <1.5s, do = mo COM ma im */
+setInterval(()=>{const rx=$('lampRx');
+  if(!connected){rx.className='dot';return;}
+  rx.className='dot '+((Date.now()-lastRxMs<1500)?'g':'r');},500);
+
+/* khoi tao */
+setupCanvas(); renderAll();
+log('San sang. Bam KET NOI COM, chon cong cua ESP32, roi dieu khien.','ack');
+</script>
+</body>
+</html>

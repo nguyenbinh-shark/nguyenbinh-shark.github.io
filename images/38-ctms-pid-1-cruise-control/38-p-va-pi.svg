@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="800" viewBox="0 0 960 800" role="img" aria-labelledby="t1 d1">
+  <title id="t1">Bốn bước P và PI của CTMS: vận tốc và lực yêu cầu</title>
+  <desc id="d1">Dữ liệu MATLAB cho lệnh 10 m/s. P100 còn sai số; P5000 gần đạt đích nhưng yêu cầu 50000 N ban đầu. PI600,1 có đuôi đáp ứng dài. PI800,40 đạt đích nhanh và yêu cầu 8000 N ban đầu. Các đường chưa giới hạn lực.</desc>
+  <defs>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1 { font-size: 24px; font-weight: 800; fill: #0f172a; }
+      .h2 { font-size: 16px; font-weight: 500; fill: #64748b; }
+      .pt { font-size: 16px; font-weight: 700; fill: #1e293b; }
+      .ax { font-size: 14px; font-weight: 500; fill: #64748b; font-variant-numeric: tabular-nums; }
+      .axl { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .lg { font-size: 15px; font-weight: 500; fill: #334155; }
+      .an { font-size: 14px; font-weight: 600; fill: #334155; }
+      .anm { font-size: 14px; font-weight: 500; fill: #475569; }
+      .m { font-family: "Times New Roman", "STIX Two Text", Times, serif; font-style: italic; }
+    </style>
+  </defs>
+  <rect width="960" height="800" fill="#ffffff"/>
+<text x="30" y="42" class="h1">Tăng P làm xe nhanh hơn; thêm I đưa vận tốc về đúng đích</text>
+<text x="30" y="68" class="h2">Dữ liệu MATLAB · lệnh r = 10 m/s · lực chưa giới hạn · khâu D = 0</text>
+<line x1="30" y1="86" x2="930" y2="86" stroke="#e2e8f0"/>
+<line x1="40.0" y1="111.0" x2="66.0" y2="111.0" stroke="#2a78d6" stroke-width="3" stroke-linecap="round"/>
+<text x="74.0" y="116.0" class="lg">P: 100</text>
+<line x1="236.0" y1="111.0" x2="262.0" y2="111.0" stroke="#eb6834" stroke-width="3" stroke-linecap="round"/>
+<text x="270.0" y="116.0" class="lg">P: 5000</text>
+<line x1="432.0" y1="111.0" x2="458.0" y2="111.0" stroke="#1baf7a" stroke-width="3" stroke-linecap="round"/>
+<text x="466.0" y="116.0" class="lg">PI: 600, 1</text>
+<line x1="628.0" y1="111.0" x2="654.0" y2="111.0" stroke="#8b5cf6" stroke-width="3" stroke-linecap="round"/>
+<text x="662.0" y="116.0" class="lg">PI: 800, 40</text>
+<defs><clipPath id="panel-clip-0"><rect x="80" y="165" width="840" height="240"/></clipPath></defs>
+<line x1="80.0" y1="405.0" x2="920.0" y2="405.0" stroke="#cbd5e1"/>
+<text x="72.0" y="410.0" class="ax" text-anchor="end">0</text>
+<line x1="80.0" y1="360.6" x2="920.0" y2="360.6" stroke="#e2e8f0"/>
+<text x="72.0" y="365.6" class="ax" text-anchor="end">2</text>
+<line x1="80.0" y1="316.1" x2="920.0" y2="316.1" stroke="#e2e8f0"/>
+<text x="72.0" y="321.1" class="ax" text-anchor="end">4</text>
+<line x1="80.0" y1="271.7" x2="920.0" y2="271.7" stroke="#e2e8f0"/>
+<text x="72.0" y="276.7" class="ax" text-anchor="end">6</text>
+<line x1="80.0" y1="227.2" x2="920.0" y2="227.2" stroke="#e2e8f0"/>
+<text x="72.0" y="232.2" class="ax" text-anchor="end">8</text>
+<line x1="80.0" y1="182.8" x2="920.0" y2="182.8" stroke="#e2e8f0"/>
+<text x="72.0" y="187.8" class="ax" text-anchor="end">10</text>
+<line x1="80.0" y1="405.0" x2="80.0" y2="410.0" stroke="#cbd5e1"/>
+<text x="80.0" y="426.0" class="ax" text-anchor="middle">0</text>
+<line x1="220.0" y1="405.0" x2="220.0" y2="410.0" stroke="#cbd5e1"/>
+<text x="220.0" y="426.0" class="ax" text-anchor="middle">20</text>
+<line x1="360.0" y1="405.0" x2="360.0" y2="410.0" stroke="#cbd5e1"/>
+<text x="360.0" y="426.0" class="ax" text-anchor="middle">40</text>
+<line x1="500.0" y1="405.0" x2="500.0" y2="410.0" stroke="#cbd5e1"/>
+<text x="500.0" y="426.0" class="ax" text-anchor="middle">60</text>
+<line x1="640.0" y1="405.0" x2="640.0" y2="410.0" stroke="#cbd5e1"/>
+<text x="640.0" y="426.0" class="ax" text-anchor="middle">80</text>
+<line x1="780.0" y1="405.0" x2="780.0" y2="410.0" stroke="#cbd5e1"/>
+<text x="780.0" y="426.0" class="ax" text-anchor="middle">100</text>
+<line x1="920.0" y1="405.0" x2="920.0" y2="410.0" stroke="#cbd5e1"/>
+<text x="920.0" y="426.0" class="ax" text-anchor="middle">120</text>
+<line x1="80.0" y1="405.0" x2="920.0" y2="405.0" stroke="#cbd5e1"/>
+<text x="80.0" y="151.0" class="pt">Vận tốc (m/s) · dải xám = 10 ± 2 %</text>
+<rect x="80.0" y="178.3" width="840.0" height="8.9" fill="#e2e8f0" opacity="0.6"/>
+<line x1="80.0" y1="182.8" x2="920.0" y2="182.8" stroke="#64748b" stroke-width="1.5" stroke-dasharray="6 5"/>
+<polyline points="80.0,405.0 85.2,389.2 91.5,372.5 97.7,358.1 104.0,345.3 109.0,336.3 115.9,325.4 122.3,316.6 131.4,306.0 138.9,298.7 148.1,291.2 156.4,285.6 167.1,279.7 176.8,275.4 189.4,271.0 200.5,268.0 213.9,265.2 236.3,262.0 262.0,259.8 294.4,258.3 337.2,257.4 421.6,256.9 920.0,256.9" fill="none" stroke="#2a78d6" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" clip-path="url(#panel-clip-0)"/>
+<polyline points="80.0,405.0 81.0,288.1 82.3,225.5 83.4,203.5 84.5,193.2 86.2,187.4 87.5,185.9 88.5,185.4 91.1,185.0 920.0,185.0" fill="none" stroke="#eb6834" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" clip-path="url(#panel-clip-0)"/>
+<polyline points="80.0,405.0 83.8,343.3 87.3,303.5 91.5,269.9 96.2,245.0 99.1,234.2 101.8,226.5 104.8,219.9 108.2,214.3 113.2,208.7 117.0,205.9 122.3,203.3 127.6,201.7 133.7,200.6 142.1,199.8 169.5,199.1 920.0,196.6" fill="none" stroke="#1baf7a" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" clip-path="url(#panel-clip-0)"/>
+<polyline points="80.0,405.0 83.0,339.7 85.8,296.7 89.3,259.2 91.5,242.1 93.5,230.0 95.5,220.4 98.2,210.4 101.3,202.1 103.7,197.5 106.7,193.2 110.8,189.3 115.2,186.7 119.7,185.1 124.5,184.1 130.8,183.4 150.3,182.8 920.0,182.8" fill="none" stroke="#8b5cf6" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" clip-path="url(#panel-clip-0)"/>
+<text x="913.0" y="280.9" class="an" text-anchor="end">P = 100: dừng ở 6.667 m/s</text>
+<text x="913.0" y="221.0" class="an" text-anchor="end">PI (600, 1): đuôi chậm vẫn còn ở 120 s</text>
+<defs><clipPath id="panel-clip-1"><rect x="80" y="515" width="840" height="215"/></clipPath></defs>
+<line x1="80.0" y1="730.0" x2="920.0" y2="730.0" stroke="#cbd5e1"/>
+<text x="72.0" y="735.0" class="ax" text-anchor="end">0</text>
+<line x1="80.0" y1="688.7" x2="920.0" y2="688.7" stroke="#e2e8f0"/>
+<text x="72.0" y="693.7" class="ax" text-anchor="end">10</text>
+<line x1="80.0" y1="647.3" x2="920.0" y2="647.3" stroke="#e2e8f0"/>
+<text x="72.0" y="652.3" class="ax" text-anchor="end">20</text>
+<line x1="80.0" y1="606.0" x2="920.0" y2="606.0" stroke="#e2e8f0"/>
+<text x="72.0" y="611.0" class="ax" text-anchor="end">30</text>
+<line x1="80.0" y1="564.6" x2="920.0" y2="564.6" stroke="#e2e8f0"/>
+<text x="72.0" y="569.6" class="ax" text-anchor="end">40</text>
+<line x1="80.0" y1="523.3" x2="920.0" y2="523.3" stroke="#e2e8f0"/>
+<text x="72.0" y="528.3" class="ax" text-anchor="end">50</text>
+<line x1="80.0" y1="730.0" x2="80.0" y2="735.0" stroke="#cbd5e1"/>
+<text x="80.0" y="751.0" class="ax" text-anchor="middle">0</text>
+<line x1="220.0" y1="730.0" x2="220.0" y2="735.0" stroke="#cbd5e1"/>
+<text x="220.0" y="751.0" class="ax" text-anchor="middle">2</text>
+<line x1="360.0" y1="730.0" x2="360.0" y2="735.0" stroke="#cbd5e1"/>
+<text x="360.0" y="751.0" class="ax" text-anchor="middle">4</text>
+<line x1="500.0" y1="730.0" x2="500.0" y2="735.0" stroke="#cbd5e1"/>
+<text x="500.0" y="751.0" class="ax" text-anchor="middle">6</text>
+<line x1="640.0" y1="730.0" x2="640.0" y2="735.0" stroke="#cbd5e1"/>
+<text x="640.0" y="751.0" class="ax" text-anchor="middle">8</text>
+<line x1="780.0" y1="730.0" x2="780.0" y2="735.0" stroke="#cbd5e1"/>
+<text x="780.0" y="751.0" class="ax" text-anchor="middle">10</text>
+<line x1="920.0" y1="730.0" x2="920.0" y2="735.0" stroke="#cbd5e1"/>
+<text x="920.0" y="751.0" class="ax" text-anchor="middle">12</text>
+<line x1="80.0" y1="730.0" x2="920.0" y2="730.0" stroke="#cbd5e1"/>
+<text x="80.0" y="501.0" class="pt">Lực yêu cầu (kN) · phóng to 12 giây đầu</text>
+<text x="920.0" y="772.0" class="axl" text-anchor="end">thời gian (s)</text>
+<polyline points="80.0,725.9 566.9,727.7 1375.3,728.5 8480.0,728.6" fill="none" stroke="#2a78d6" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" clip-path="url(#panel-clip-1)"/>
+<polyline points="80.0,523.3 85.2,587.8 88.0,613.4 90.8,634.4 94.3,655.3 97.8,671.5 101.3,684.1 105.5,695.6 109.0,702.8 113.9,710.3 119.5,716.2 125.8,720.5 134.2,723.9 142.3,725.7 152.4,726.9 166.4,727.6 233.6,728.0 8480.0,728.0" fill="none" stroke="#eb6834" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" clip-path="url(#panel-clip-1)"/>
+<polyline points="80.0,705.2 112.5,711.2 150.3,716.2 194.4,720.2 235.4,722.7 291.4,724.9 352.6,726.3 438.1,727.3 537.5,727.8 795.0,728.1 8480.0,728.1" fill="none" stroke="#1baf7a" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" clip-path="url(#panel-clip-1)"/>
+<polyline points="80.0,696.9 91.5,700.8 106.2,705.0 134.2,711.3 150.3,714.1 169.2,716.8 187.4,718.9 213.0,721.2 264.1,724.2 320.8,726.0 391.5,727.1 491.2,727.7 8480.0,727.9" fill="none" stroke="#8b5cf6" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" clip-path="url(#panel-clip-1)"/>
+<text x="108.9" y="539.8" class="an" text-anchor="start">P = 5000: cần 50 kN ngay lúc khởi động</text>
+<text x="563.0" y="665.9" class="an" text-anchor="start">PI (800, 40): khởi đầu 8 kN</text>
+<text x="563.0" y="682.5" class="anm" text-anchor="start">Lực giữ 10 m/s: chỉ 0.5 kN</text>
+</svg>

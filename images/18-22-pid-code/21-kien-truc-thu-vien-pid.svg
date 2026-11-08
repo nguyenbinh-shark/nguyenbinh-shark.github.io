@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="360" viewBox="0 0 860 360" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="arch-title arch-desc">
+  <title id="arch-title">Sơ đồ khối thư viện PID hướng đối tượng có nhánh phản hồi và bộ lọc cảm biến</title>
+  <desc id="arch-desc">Sơ đồ điều khiển vòng kín gồm Setpoint, nút so sánh, 3 nhánh P, I, D, bộ lọc ngõ ra, đối tượng và nhánh Feedback có bộ lọc cảm biến.</desc>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#334155"/>
+    </marker>
+    <marker id="arr-fb" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#0284c7"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+      .code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    </style>
+  </defs>
+
+  <rect width="860" height="360" rx="12" fill="#ffffff"/>
+  <rect x="1" y="1" width="858" height="358" rx="11" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Vùng bao Class PIDController -->
+  <rect x="145" y="25" width="460" height="235" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="160" y="44" font-size="12" font-weight="800" fill="#475569">class PIDController</text>
+
+  <!-- 1. Đầu vào Setpoint SP -->
+  <line x1="30" y1="135" x2="80" y2="135" stroke="#334155" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="45" y="125" font-size="12" font-weight="800" fill="#0f172a">SP (Đích)</text>
+
+  <!-- 2. Nút so sánh tròn (-) -->
+  <circle cx="95" cy="135" r="14" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+  <text x="83" y="130" font-size="12" font-weight="800" fill="#16a34a">+</text>
+  <text x="95" y="157" font-size="14" font-weight="800" fill="#dc2626" text-anchor="middle">-</text>
+
+  <!-- Từ nút so sánh -> DeadBand -->
+  <line x1="109" y1="135" x2="160" y2="135" stroke="#334155" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="132" y="125" text-anchor="middle" font-size="11" font-weight="700" fill="#0284c7">e</text>
+
+  <!-- Khối Vùng chết DeadBand -->
+  <rect x="165" y="112" width="75" height="46" rx="5" fill="#ffffff" stroke="#0284c7" stroke-width="1.5"/>
+  <text x="202" y="132" text-anchor="middle" font-size="10.5" font-weight="800" fill="#0284c7">DeadBand</text>
+  <text x="202" y="146" text-anchor="middle" font-size="9" fill="#64748b">[0x20]</text>
+
+  <!-- Tách 3 nhánh P, I, D -->
+  <!-- Rẽ nhánh P (lên trên) -->
+  <path d="M 240 135 L 265 135 L 265 65 L 285 65" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arr)"/>
+  <rect x="290" y="45" width="135" height="40" rx="5" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="357" y="65" text-anchor="middle" font-size="11" font-weight="800" fill="#1e40af">Khâu P: Kp × e</text>
+  <text x="357" y="78" text-anchor="middle" font-size="8.5" fill="#3b82f6">Tỉ lệ khoảng cách</text>
+
+  <!-- Rẽ nhánh I (ở giữa) -->
+  <line x1="240" y1="135" x2="285" y2="135" stroke="#334155" stroke-width="1.8" marker-end="url(#arr)"/>
+  <rect x="290" y="112" width="135" height="46" rx="5" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+  <text x="357" y="132" text-anchor="middle" font-size="11" font-weight="800" fill="#92400e">Khâu I: Sổ nợ</text>
+  <text x="357" y="147" text-anchor="middle" font-size="8.5" font-weight="700" fill="#b45309">Changing I + Tustin</text>
+
+  <!-- Rẽ nhánh D (xuống dưới) -->
+  <path d="M 240 135 L 265 135 L 265 205 L 285 205" fill="none" stroke="#334155" stroke-width="1.8" marker-end="url(#arr)"/>
+  <rect x="290" y="185" width="135" height="40" rx="5" fill="#fff1f2" stroke="#e11d48" stroke-width="1.5"/>
+  <text x="357" y="205" text-anchor="middle" font-size="11" font-weight="800" fill="#9f1239">Khâu D: Chiếc phanh</text>
+  <text x="357" y="218" text-anchor="middle" font-size="8.5" fill="#be123c">Deriv on Meas [0x02]</text>
+
+  <!-- Hội tụ vào Nút cộng Sum -->
+  <path d="M 425 65 L 450 65 L 450 123" fill="none" stroke="#334155" stroke-width="1.8"/>
+  <line x1="425" y1="135" x2="450" y2="135" stroke="#334155" stroke-width="1.8"/>
+  <path d="M 425 205 L 450 205 L 450 147" fill="none" stroke="#334155" stroke-width="1.8"/>
+
+  <circle cx="450" cy="135" r="12" fill="#ffffff" stroke="#334155" stroke-width="2"/>
+  <text x="450" y="140" font-size="14" font-weight="800" fill="#0f172a" text-anchor="middle">∑</text>
+
+  <!-- Khối Lọc & Giới hạn ngõ ra -->
+  <line x1="462" y1="135" x2="485" y2="135" stroke="#334155" stroke-width="2" marker-end="url(#arr)"/>
+  <rect x="490" y="112" width="100" height="46" rx="5" fill="#ffffff" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="540" y="131" text-anchor="middle" font-size="10" font-weight="800" fill="#15803d">Lọc &amp; Bão hòa</text>
+  <text x="540" y="146" text-anchor="middle" font-size="8.5" fill="#166534">Out Filter [0x10]</text>
+
+  <!-- Ra khỏi PID Controller -> Tín hiệu Output u(t) -->
+  <line x1="590" y1="135" x2="635" y2="135" stroke="#334155" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="612" y="125" text-anchor="middle" font-size="11" font-weight="800" fill="#0f172a">Output u(t)</text>
+
+  <!-- Đối tượng điều khiển (Plant / Motor / Lò sấy) -->
+  <rect x="640" y="107" width="115" height="56" rx="6" fill="#f1f5f9" stroke="#475569" stroke-width="1.8"/>
+  <text x="697" y="132" text-anchor="middle" font-size="11.5" font-weight="800" fill="#0f172a">Đối tượng</text>
+  <text x="697" y="148" text-anchor="middle" font-size="9.5" fill="#475569">(Động cơ / Lò sấy)</text>
+
+  <!-- Đầu ra hệ thống y(t) -->
+  <line x1="755" y1="135" x2="825" y2="135" stroke="#334155" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="790" y="125" text-anchor="middle" font-size="11.5" font-weight="800" fill="#0f172a">y(t)</text>
+
+  <!-- ĐƯỜNG PHẢN HỒI (FEEDBACK LOOP) VỚI KHỐI LỌC CẢM BIẾN -->
+  <circle cx="785" cy="135" r="3.5" fill="#0284c7"/>
+  
+  <!-- Chạy từ y(t) xuống khối lọc -->
+  <path d="M 785 135 L 785 300 L 585 300" fill="none" stroke="#0284c7" stroke-width="2.2" marker-end="url(#arr-fb)"/>
+
+  <!-- KHỐI BỘ LỌC CẢM BIẾN (SENSOR / LOW-PASS FILTER) -->
+  <rect x="365" y="278" width="215" height="44" rx="6" fill="#f0f9ff" stroke="#0284c7" stroke-width="1.8"/>
+  <text x="472" y="297" text-anchor="middle" font-size="11" font-weight="800" fill="#0369a1">Cảm biến &amp; Lọc thông thấp</text>
+  <text x="472" y="312" text-anchor="middle" font-size="9" fill="#0284c7">(Low-pass Filter / Khử nhiễu PV)</text>
+
+  <!-- Chạy từ khối lọc về nút so sánh (-) -->
+  <path d="M 365 300 L 95 300 L 95 155" fill="none" stroke="#0284c7" stroke-width="2.2" marker-end="url(#arr-fb)"/>
+
+  <!-- Nhãn tín hiệu PV đã lọc sạch -->
+  <text x="230" y="292" text-anchor="middle" font-size="10.5" font-weight="800" fill="#0369a1">← Tín hiệu đo PV (Đã lọc)</text>
+</svg>

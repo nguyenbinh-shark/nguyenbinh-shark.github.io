@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="520" viewBox="0 0 960 520" role="img" aria-labelledby="t1 d1">
+  <title id="t1">Vòng hở: giữ cánh lái lệch 1 độ</title>
+  <desc id="d1">Đồ thị theo thời gian từ 0 đến 30 giây. Góc pitch theta tăng đều khoảng 0.19 độ mỗi giây và không dừng. Góc tấn alpha dao động rồi dừng ở 1.36 độ. Góc quỹ đạo gamma đi sau theta một khoảng bằng alpha.</desc>
+  <defs>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1 { font-size: 24px; font-weight: 800; fill: #0f172a; }
+      .h2 { font-size: 16px; font-weight: 500; fill: #64748b; }
+      .pt { font-size: 16px; font-weight: 700; fill: #1e293b; }
+      .ax { font-size: 14px; font-weight: 500; fill: #64748b; font-variant-numeric: tabular-nums; }
+      .axl { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .lg { font-size: 15px; font-weight: 500; fill: #334155; }
+      .an { font-size: 14px; font-weight: 600; fill: #334155; }
+      .anm { font-size: 14px; font-weight: 500; fill: #475569; }
+      .m { font-family: "Times New Roman", "STIX Two Text", Times, serif; font-style: italic; }
+    </style>
+  </defs>
+  <rect width="960" height="520" fill="#ffffff"/>
+<text x="30" y="42" class="h1">Giữ cánh lái lệch 1°: máy bay nâng mũi mãi không dừng</text>
+<text x="30" y="68" class="h2">Mô hình CTMS, vòng hở · δ = 1° từ t = 0, không có bộ điều khiển</text>
+<line x1="30" y1="86" x2="930" y2="86" stroke="#e2e8f0"/>
+<line x1="40.0" y1="111.0" x2="66.0" y2="111.0" stroke="#eb6834" stroke-width="3" stroke-linecap="round"/>
+<text x="74.0" y="116.0" class="lg"><tspan class="m">θ</tspan> góc pitch</text>
+<line x1="250.0" y1="111.0" x2="276.0" y2="111.0" stroke="#2a78d6" stroke-width="3" stroke-linecap="round"/>
+<text x="284.0" y="116.0" class="lg"><tspan class="m">γ</tspan> góc quỹ đạo bay</text>
+<line x1="460.0" y1="111.0" x2="486.0" y2="111.0" stroke="#1baf7a" stroke-width="3" stroke-linecap="round"/>
+<text x="494.0" y="116.0" class="lg"><tspan class="m">α</tspan> góc tấn</text>
+<line x1="80.0" y1="413.8" x2="920.0" y2="413.8" stroke="#cbd5e1"/>
+<text x="72.0" y="418.8" class="ax" text-anchor="end">0</text>
+<line x1="80.0" y1="341.2" x2="920.0" y2="341.2" stroke="#e2e8f0"/>
+<text x="72.0" y="346.2" class="ax" text-anchor="end">2</text>
+<line x1="80.0" y1="268.8" x2="920.0" y2="268.8" stroke="#e2e8f0"/>
+<text x="72.0" y="273.8" class="ax" text-anchor="end">4</text>
+<line x1="80.0" y1="196.2" x2="920.0" y2="196.2" stroke="#e2e8f0"/>
+<text x="72.0" y="201.2" class="ax" text-anchor="end">6</text>
+<line x1="80.0" y1="450.0" x2="80.0" y2="455.0" stroke="#cbd5e1"/>
+<text x="80.0" y="471.0" class="ax" text-anchor="middle">0</text>
+<line x1="220.0" y1="450.0" x2="220.0" y2="455.0" stroke="#cbd5e1"/>
+<text x="220.0" y="471.0" class="ax" text-anchor="middle">5</text>
+<line x1="360.0" y1="450.0" x2="360.0" y2="455.0" stroke="#cbd5e1"/>
+<text x="360.0" y="471.0" class="ax" text-anchor="middle">10</text>
+<line x1="500.0" y1="450.0" x2="500.0" y2="455.0" stroke="#cbd5e1"/>
+<text x="500.0" y="471.0" class="ax" text-anchor="middle">15</text>
+<line x1="640.0" y1="450.0" x2="640.0" y2="455.0" stroke="#cbd5e1"/>
+<text x="640.0" y="471.0" class="ax" text-anchor="middle">20</text>
+<line x1="780.0" y1="450.0" x2="780.0" y2="455.0" stroke="#cbd5e1"/>
+<text x="780.0" y="471.0" class="ax" text-anchor="middle">25</text>
+<line x1="920.0" y1="450.0" x2="920.0" y2="455.0" stroke="#cbd5e1"/>
+<text x="920.0" y="471.0" class="ax" text-anchor="middle">30</text>
+<line x1="80.0" y1="450.0" x2="920.0" y2="450.0" stroke="#cbd5e1"/>
+<text x="80.0" y="146.0" class="pt">Góc (độ)</text>
+<text x="920.0" y="492.0" class="axl" text-anchor="end">thời gian (s)</text>
+<polyline points="80.0,413.8 92.9,417.2 100.7,418.6 107.4,419.3 120.9,419.1 126.5,418.4 136.0,416.5 147.8,413.1 159.0,409.1 199.8,393.2 216.6,387.7 232.3,383.3 253.0,378.4 301.8,368.1 330.3,361.4 417.7,338.9 920.0,213.8" fill="none" stroke="#2a78d6" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="80.0,413.8 83.4,412.5 87.3,410.4 94.6,405.0 100.2,399.9 121.4,378.0 127.6,372.1 132.6,367.7 141.0,361.4 149.4,356.6 156.7,353.7 163.4,352.0 171.3,351.1 182.5,351.6 190.9,353.0 227.8,362.8 241.8,365.7 255.3,367.5 267.6,368.2 285.0,368.0 335.9,364.5 363.9,363.6 389.7,363.7 449.0,364.8 543.1,364.5 920.0,364.6" fill="none" stroke="#1baf7a" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="80.0,413.8 83.9,413.4 89.0,411.8 95.1,408.4 101.3,403.7 112.5,393.0 138.2,365.5 146.6,357.7 152.2,353.1 161.2,346.9 167.9,343.2 174.6,340.2 180.2,338.3 191.4,335.7 202.6,334.4 236.2,333.3 251.9,332.1 260.9,330.9 277.7,327.7 297.3,322.6 346.0,307.7 379.0,298.7 479.3,274.8 605.8,242.9 920.0,164.7" fill="none" stroke="#eb6834" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="920.0" y="152.7" class="an" text-anchor="end">tăng đều ≈ 0.19°/s, không bao giờ dừng</text>
+<text x="920.0" y="354.4" class="an" text-anchor="end">α dừng ở 1.36°</text>
+<text x="458.0" y="393.8" class="anm" text-anchor="start"><tspan class="m">γ</tspan> = <tspan class="m">θ</tspan> − <tspan class="m">α</tspan>: quỹ đạo đi sau mũi máy bay</text>
+<text x="108.0" y="314.1" class="anm" text-anchor="start"><tspan class="m">α</tspan> vọt lố rồi lắng</text>
+</svg>

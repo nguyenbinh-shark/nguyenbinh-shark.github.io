@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="770" viewBox="0 0 960 770" role="img" aria-labelledby="t1 d1">
+  <title id="t1">Đuôi chậm và góc tấn</title>
+  <desc id="d1">Trên: phóng to quanh 0.2 rad. p bằng 2 bò dần vào dải 2 phần trăm sau 15 giây, p bằng 4.76 sau 8.7 giây, p bằng 50 sau 2 giây. Dưới: với p bằng 4.76, góc tấn vọt lên 10.7 độ rồi tắt dần với hằng số thời gian khoảng 6.5 giây, góc quỹ đạo chúi xuống 1.8 độ trước khi lên theo.</desc>
+  <defs>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1 { font-size: 24px; font-weight: 800; fill: #0f172a; }
+      .h2 { font-size: 16px; font-weight: 500; fill: #64748b; }
+      .pt { font-size: 16px; font-weight: 700; fill: #1e293b; }
+      .ax { font-size: 14px; font-weight: 500; fill: #64748b; font-variant-numeric: tabular-nums; }
+      .axl { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .lg { font-size: 15px; font-weight: 500; fill: #334155; }
+      .an { font-size: 14px; font-weight: 600; fill: #334155; }
+      .anm { font-size: 14px; font-weight: 500; fill: #475569; }
+      .m { font-family: "Times New Roman", "STIX Two Text", Times, serif; font-style: italic; }
+    </style>
+  </defs>
+  <rect width="960" height="770" fill="#ffffff"/>
+<text x="30" y="42" class="h1">Đuôi chậm: góc tấn tắt dần ở hậu trường</text>
+<text x="30" y="68" class="h2">Mô hình CTMS + LQR có <tspan class="m">N̄</tspan> · lệnh θ = 0.2 rad tại t = 0</text>
+<line x1="30" y1="86" x2="930" y2="86" stroke="#e2e8f0"/>
+<line x1="40.0" y1="111.0" x2="66.0" y2="111.0" stroke="#2a78d6" stroke-width="3" stroke-linecap="round"/>
+<text x="74.0" y="116.0" class="lg">p = 2</text>
+<line x1="150.0" y1="111.0" x2="176.0" y2="111.0" stroke="#1baf7a" stroke-width="3" stroke-linecap="round"/>
+<text x="184.0" y="116.0" class="lg">p = 4.76 (Bryson, mục 7)</text>
+<line x1="410.0" y1="111.0" x2="436.0" y2="111.0" stroke="#eb6834" stroke-width="3" stroke-linecap="round"/>
+<text x="444.0" y="116.0" class="lg">p = 50 (CTMS)</text>
+<line x1="80.0" y1="420.0" x2="920.0" y2="420.0" stroke="#e2e8f0"/>
+<text x="72.0" y="425.0" class="ax" text-anchor="end">0.17</text>
+<line x1="80.0" y1="364.4" x2="920.0" y2="364.4" stroke="#e2e8f0"/>
+<text x="72.0" y="369.4" class="ax" text-anchor="end">0.18</text>
+<line x1="80.0" y1="308.9" x2="920.0" y2="308.9" stroke="#e2e8f0"/>
+<text x="72.0" y="313.9" class="ax" text-anchor="end">0.19</text>
+<line x1="80.0" y1="253.3" x2="920.0" y2="253.3" stroke="#e2e8f0"/>
+<text x="72.0" y="258.3" class="ax" text-anchor="end">0.2</text>
+<line x1="80.0" y1="197.8" x2="920.0" y2="197.8" stroke="#e2e8f0"/>
+<text x="72.0" y="202.8" class="ax" text-anchor="end">0.21</text>
+<line x1="80.0" y1="420.0" x2="80.0" y2="425.0" stroke="#cbd5e1"/>
+<text x="80.0" y="441.0" class="ax" text-anchor="middle">0</text>
+<line x1="248.0" y1="420.0" x2="248.0" y2="425.0" stroke="#cbd5e1"/>
+<text x="248.0" y="441.0" class="ax" text-anchor="middle">5</text>
+<line x1="416.0" y1="420.0" x2="416.0" y2="425.0" stroke="#cbd5e1"/>
+<text x="416.0" y="441.0" class="ax" text-anchor="middle">10</text>
+<line x1="584.0" y1="420.0" x2="584.0" y2="425.0" stroke="#cbd5e1"/>
+<text x="584.0" y="441.0" class="ax" text-anchor="middle">15</text>
+<line x1="752.0" y1="420.0" x2="752.0" y2="425.0" stroke="#cbd5e1"/>
+<text x="752.0" y="441.0" class="ax" text-anchor="middle">20</text>
+<line x1="920.0" y1="420.0" x2="920.0" y2="425.0" stroke="#cbd5e1"/>
+<text x="920.0" y="441.0" class="ax" text-anchor="middle">25</text>
+<line x1="80.0" y1="420.0" x2="920.0" y2="420.0" stroke="#cbd5e1"/>
+<text x="80.0" y="156.0" class="pt">θ (rad), phóng to · dải xám = 0.2 ± 2 %</text>
+<rect x="80.0" y="231.1" width="840.0" height="44.4" fill="#e2e8f0" opacity="0.6"/>
+<polyline points="141.3,420.0 144.8,384.9 148.5,353.4 153.2,320.8 156.9,300.7 161.6,281.6 166.0,269.4 168.0,265.5 170.7,261.7 172.7,259.8 175.8,258.5 178.1,258.5 181.8,260.2 184.2,262.1 188.9,267.6 197.3,281.0 207.3,299.4 215.7,313.9 220.4,321.1 227.8,330.6 235.2,337.7 240.9,341.5 248.3,344.4 253.7,345.2 258.8,345.1 262.8,344.5 272.2,341.7 284.0,336.4 304.1,325.8 320.2,318.2 334.0,312.9 349.8,308.2 371.3,303.5 394.8,299.5 454.6,290.4 493.6,285.0 538.0,279.8 576.9,276.0 625.7,272.0 677.7,268.5 730.8,265.6 795.7,262.8 920.0,259.1" fill="none" stroke="#2a78d6" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="129.1,420.0 131.7,384.1 136.4,330.6 140.1,297.0 144.8,264.3 148.5,245.7 150.2,239.0 153.2,229.7 155.9,224.0 157.6,221.5 160.0,219.2 162.3,218.3 164.7,218.6 167.4,220.0 169.4,221.8 173.1,226.4 179.5,237.0 195.9,268.0 202.6,278.7 207.3,284.9 214.7,292.4 220.4,296.3 224.8,298.4 228.8,299.6 233.9,300.3 240.6,300.1 248.0,298.8 287.3,286.6 303.8,282.9 317.6,280.7 338.0,278.4 365.9,275.9 422.4,271.2 464.4,268.2 552.4,263.5 660.6,259.7 775.5,257.2 920.0,255.4" fill="none" stroke="#1baf7a" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="108.0,420.0 110.2,367.5 112.9,316.5 114.9,285.5 117.6,253.1 120.3,229.6 123.3,212.2 126.0,203.3 128.0,199.9 129.7,198.8 131.4,199.0 132.8,200.0 135.8,204.1 141.2,215.4 150.2,236.4 153.9,243.5 158.6,250.7 164.3,256.7 168.0,259.1 173.4,261.1 176.8,261.6 183.8,261.5 205.0,258.5 221.5,257.3 338.7,255.7 576.9,254.1 920.0,253.5" fill="none" stroke="#eb6834" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+<line x1="582.3" y1="420.0" x2="582.3" y2="275.6" stroke="#2a78d6" stroke-width="1.5" stroke-dasharray="5 4"/>
+<line x1="371.0" y1="420.0" x2="371.0" y2="275.6" stroke="#1baf7a" stroke-width="1.5" stroke-dasharray="5 4"/>
+<line x1="147.9" y1="420.0" x2="147.9" y2="275.6" stroke="#eb6834" stroke-width="1.5" stroke-dasharray="5 4"/>
+<text x="588.3" y="412.9" class="anm" text-anchor="start">p = 2: 15.0 s</text>
+<text x="377.0" y="412.9" class="anm" text-anchor="start">p = 4.76: 8.7 s</text>
+<text x="153.9" y="412.9" class="anm" text-anchor="start">p = 50: 2.0 s</text>
+<line x1="80.0" y1="672.5" x2="920.0" y2="672.5" stroke="#cbd5e1"/>
+<text x="72.0" y="677.5" class="ax" text-anchor="end">0</text>
+<line x1="80.0" y1="622.5" x2="920.0" y2="622.5" stroke="#e2e8f0"/>
+<text x="72.0" y="627.5" class="ax" text-anchor="end">4</text>
+<line x1="80.0" y1="572.5" x2="920.0" y2="572.5" stroke="#e2e8f0"/>
+<text x="72.0" y="577.5" class="ax" text-anchor="end">8</text>
+<line x1="80.0" y1="522.5" x2="920.0" y2="522.5" stroke="#e2e8f0"/>
+<text x="72.0" y="527.5" class="ax" text-anchor="end">12</text>
+<line x1="80.0" y1="710.0" x2="80.0" y2="715.0" stroke="#cbd5e1"/>
+<text x="80.0" y="731.0" class="ax" text-anchor="middle">0</text>
+<line x1="248.0" y1="710.0" x2="248.0" y2="715.0" stroke="#cbd5e1"/>
+<text x="248.0" y="731.0" class="ax" text-anchor="middle">5</text>
+<line x1="416.0" y1="710.0" x2="416.0" y2="715.0" stroke="#cbd5e1"/>
+<text x="416.0" y="731.0" class="ax" text-anchor="middle">10</text>
+<line x1="584.0" y1="710.0" x2="584.0" y2="715.0" stroke="#cbd5e1"/>
+<text x="584.0" y="731.0" class="ax" text-anchor="middle">15</text>
+<line x1="752.0" y1="710.0" x2="752.0" y2="715.0" stroke="#cbd5e1"/>
+<text x="752.0" y="731.0" class="ax" text-anchor="middle">20</text>
+<line x1="920.0" y1="710.0" x2="920.0" y2="715.0" stroke="#cbd5e1"/>
+<text x="920.0" y="731.0" class="ax" text-anchor="middle">25</text>
+<line x1="80.0" y1="710.0" x2="920.0" y2="710.0" stroke="#cbd5e1"/>
+<text x="80.0" y="496.0" class="pt">p = 4.76: ba góc (độ) · <tspan fill="#334155">θ</tspan>, <tspan fill="#8b5cf6">γ</tspan>, <tspan fill="#b45309">α</tspan></text>
+<text x="920.0" y="752.0" class="axl" text-anchor="end">thời gian (s)</text>
+<polyline points="80.0,672.5 82.4,671.7 85.4,668.4 88.1,663.7 90.8,657.8 96.5,642.1 114.9,584.3 122.0,565.7 128.0,552.7 131.7,546.1 135.1,541.0 138.1,537.1 141.8,533.2 144.5,530.9 149.2,527.9 152.6,526.4 156.6,525.3 162.3,524.7 169.7,525.2 176.8,526.5 195.9,531.2 205.7,533.1 217.4,534.6 230.2,535.3 246.7,535.2 281.9,533.7 314.5,532.8 456.7,531.2 643.8,530.1 920.0,529.5" fill="none" stroke="#334155" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="80.0,672.5 86.0,683.5 89.4,688.0 93.4,691.8 96.1,693.5 100.8,695.0 103.9,695.1 108.6,694.0 115.3,690.6 120.7,686.6 129.1,679.1 147.5,661.3 154.9,654.8 163.3,648.2 171.7,642.4 182.1,636.3 192.2,631.3 202.6,626.8 221.1,619.8 254.0,608.6 276.2,601.5 312.5,591.0 334.0,585.5 363.9,578.7 393.5,572.8 420.0,568.1 468.4,560.8 520.2,554.5 574.9,549.2 632.7,544.8 691.9,541.3 763.4,538.1 836.7,535.7 920.0,533.8" fill="none" stroke="#8b5cf6" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+<polyline points="80.0,672.5 83.4,664.2 87.1,653.2 100.8,606.0 106.5,587.9 110.2,577.5 114.9,566.0 121.3,553.8 127.0,546.2 130.7,542.8 133.4,541.1 137.8,539.4 140.8,539.0 143.5,539.1 146.9,539.8 154.3,543.0 162.7,548.5 184.8,566.1 197.9,575.3 207.3,580.9 214.4,584.5 231.2,591.5 244.6,596.0 262.4,601.2 296.0,610.2 323.6,617.1 363.9,626.0 408.9,634.2 457.3,641.4 504.4,647.1 559.8,652.5 618.9,657.0 686.1,660.9 766.4,664.3 846.4,666.7 920.0,668.2" fill="none" stroke="#b45309" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+<text x="214.4" y="560.0" class="an" text-anchor="start">← <tspan class="m">α</tspan> vọt 10.7° lúc 1.8 s</text>
+<text x="483.2" y="620.0" class="an" text-anchor="start"><tspan class="m">α</tspan> tắt như e<tspan font-size="11" dy="-7">−t/6.5</tspan><tspan dy="7"> </tspan></text>
+<text x="920.0" y="519.2" class="an" text-anchor="end"><tspan class="m">θ</tspan> giữ 11.5°</text>
+<text x="304.4" y="597.5" class="an" text-anchor="start"><tspan class="m">γ</tspan> đuổi theo chậm</text>
+<text x="147.2" y="698.8" class="anm" text-anchor="start">← <tspan class="m">γ</tspan> chúi −1.8° trước khi lên</text>
+</svg>

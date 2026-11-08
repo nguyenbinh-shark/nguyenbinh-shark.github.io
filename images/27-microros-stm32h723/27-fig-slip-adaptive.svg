@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 620" role="img">
+  <title>Đồ thị hàm hiệp phương sai nhiễu đo thích nghi chống trượt R_v(s)</title>
+  <desc>Đồ thị biểu diễn cơ chế khuếch đại hiệp phương sai nhiễu đo vận tốc R_v(s) = R_0 * (1 + 350 * s^2) khi phát hiện trượt bánh, tự động giảm độ tin cậy của encoder tới 351 lần để chuyển sang ước lượng theo IMU.</desc>
+  <style>
+    text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; fill: #24292f; font-size: 13px; paint-order: stroke; stroke: #ffffff; stroke-width: 3.5px; stroke-linejoin: round; }
+    .hdr-title { font-size: 18px; font-weight: bold; fill: #24292f; }
+    .mono { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; font-size: 12px; }
+    .axis { stroke: #24292f; stroke-width: 2; }
+    .grid-line { stroke: #e1e4e8; stroke-width: 1; stroke-dasharray: 4 3; }
+    .curve { fill: none; stroke: #cf222e; stroke-width: 3.5; stroke-linecap: round; }
+    .area-good { fill: #dafbe1; fill-opacity: 0.4; }
+    .area-mid { fill: #fff8c5; fill-opacity: 0.4; }
+    .area-slip { fill: #ffebe9; fill-opacity: 0.5; }
+    .point-dot { fill: #cf222e; stroke: #ffffff; stroke-width: 2; }
+    .lbl-zone { font-weight: bold; font-size: 13px; }
+  </style>
+
+  <rect width="960" height="620" fill="#ffffff"/>
+
+  <defs>
+    <marker id="arr-axis" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#24292f"/>
+    </marker>
+  </defs>
+
+  <!-- Tiêu đề -->
+  <text x="480" y="32" text-anchor="middle" class="hdr-title">Cơ Chế Phóng Đại Hiệp Phương Sai R_v(s) = R_0 · (1 + 350 s²) Chống Trượt Bánh</text>
+  <text x="480" y="54" text-anchor="middle" font-size="12" fill="#57606a">Khi bánh xe bị xoay trượt, Kalman tự động tăng R_v lên tối đa ~351× để bỏ qua Odometry và tin cậy vào IMU</text>
+
+  <!-- Vùng Đồ Thị Chính (Origin: (100, 460), Chiều rộng 500, Chiều cao 360) -->
+  <g transform="translate(40, 40)">
+    <!-- Các vùng màu nền (Zones) -->
+    <!-- Vùng 1: s in [0, 0.2] (x: 80 -> 180) -->
+    <rect x="80" y="80" width="100" height="340" class="area-good"/>
+    <!-- Vùng 2: s in [0.2, 0.6] (x: 180 -> 380) -->
+    <rect x="180" y="80" width="200" height="340" class="area-mid"/>
+    <!-- Vùng 3: s in [0.6, 1.0] (x: 380 -> 580) -->
+    <rect x="380" y="80" width="200" height="340" class="area-slip"/>
+
+    <!-- Lưới tọa độ dọc (s = 0.0 to 1.0, mỗi 0.2 = 100px) -->
+    <line x1="180" y1="80" x2="180" y2="420" class="grid-line"/>
+    <line x1="280" y1="80" x2="280" y2="420" class="grid-line"/>
+    <line x1="380" y1="80" x2="380" y2="420" class="grid-line"/>
+    <line x1="480" y1="80" x2="480" y2="420" class="grid-line"/>
+    <line x1="580" y1="80" x2="580" y2="420" class="grid-line"/>
+
+    <!-- Lưới tọa độ ngang (R_v/R_0: 1x, 50x, 100x, 200x, 351x) -->
+    <!-- y = 420 - (R_val / 351.0) * 320 -->
+    <!-- R=1x -> y = 419 -->
+    <!-- R=50x -> y = 374 -->
+    <!-- R=100x -> y = 328 -->
+    <!-- R=200x -> y = 237 -->
+    <!-- R=351x -> y = 100 -->
+    <line x1="80" y1="374" x2="580" y2="374" class="grid-line"/>
+    <line x1="80" y1="328" x2="580" y2="328" class="grid-line"/>
+    <line x1="80" y1="237" x2="580" y2="237" class="grid-line"/>
+    <line x1="80" y1="100" x2="580" y2="100" class="grid-line"/>
+
+    <!-- Trục tọa độ -->
+    <line x1="80" y1="420" x2="610" y2="420" class="axis" marker-end="url(#arr-axis)"/>
+    <line x1="80" y1="420" x2="80" y2="60" class="axis" marker-end="url(#arr-axis)"/>
+
+    <!-- Nhãn trục -->
+    <text x="615" y="425" font-weight="bold">Hệ số trượt s</text>
+    <text x="80" y="48" font-weight="bold" text-anchor="middle">Hiệp phương sai R_v / R₀</text>
+
+    <!-- Nhãn vạch trục hoành -->
+    <text x="80" y="440" text-anchor="middle" class="mono">0.0</text>
+    <text x="180" y="440" text-anchor="middle" class="mono">0.2</text>
+    <text x="280" y="440" text-anchor="middle" class="mono">0.4</text>
+    <text x="380" y="440" text-anchor="middle" class="mono">0.6</text>
+    <text x="480" y="440" text-anchor="middle" class="mono">0.8</text>
+    <text x="580" y="440" text-anchor="middle" class="mono" font-weight="bold">1.0</text>
+
+    <!-- Nhãn vạch trục tung -->
+    <text x="70" y="424" text-anchor="end" class="mono">1×</text>
+    <text x="70" y="378" text-anchor="end" class="mono">50×</text>
+    <text x="70" y="332" text-anchor="end" class="mono">100×</text>
+    <text x="70" y="241" text-anchor="end" class="mono">200×</text>
+    <text x="70" y="104" text-anchor="end" class="mono" font-weight="bold" fill="#cf222e">351×</text>
+
+    <!-- Đường cong R_v(s) = R_0 * (1 + 350 * s^2) -->
+    <!-- s=0: (80, 419) -->
+    <!-- s=0.1: (130, 416) -->
+    <!-- s=0.2: (180, 406) -->
+    <!-- s=0.3: (230, 390) -->
+    <!-- s=0.4: (280, 368) -->
+    <!-- s=0.5: (330, 339) -->
+    <!-- s=0.6: (380, 304) -->
+    <!-- s=0.7: (430, 263) -->
+    <!-- s=0.8: (480, 214) -->
+    <!-- s=0.9: (530, 160) -->
+    <!-- s=1.0: (580, 100) -->
+    <path d="M 80 419 C 230 405, 380 340, 580 100" class="curve"/>
+
+    <!-- Các điểm mốc trên đường cong -->
+    <circle cx="80" cy="419" r="5" class="point-dot"/>
+    <circle cx="180" cy="406" r="5" class="point-dot"/>
+    <circle cx="380" cy="304" r="5" class="point-dot"/>
+    <circle cx="580" cy="100" r="6" class="point-dot"/>
+
+    <!-- Nhãn giá trị tại điểm mốc -->
+    <text x="95" y="410" font-weight="bold" fill="#1a7f37">s=0 → R_v = 1.0·R₀</text>
+    <text x="190" y="395" font-size="11" fill="#57606a">s=0.2 → R_v = 15.0·R₀</text>
+    <text x="360" y="290" font-size="11" fill="#bf8700">s=0.6 → R_v = 127.0·R₀</text>
+    <text x="565" y="85" text-anchor="end" font-weight="bold" fill="#cf222e">s=1.0 → R_v = 351.0·R₀ (Cực đại)</text>
+
+    <!-- Nhãn vùng -->
+    <text x="130" y="110" text-anchor="middle" class="lbl-zone" fill="#1a7f37">VÙNG 1: BÁM ĐƯỜNG</text>
+    <text x="130" y="128" text-anchor="middle" font-size="11" fill="#57606a">Tin cậy Odom bánh xe</text>
+
+    <text x="280" y="110" text-anchor="middle" class="lbl-zone" fill="#9a6700">VÙNG 2: BẮT ĐẦU TRƯỢT</text>
+    <text x="280" y="128" text-anchor="middle" font-size="11" fill="#57606a">Giảm dần trọng số Odom</text>
+
+    <text x="480" y="110" text-anchor="middle" class="lbl-zone" fill="#cf222e">VÙNG 3: TRƯỢT NẶNG / QUAY TỰ DO</text>
+    <text x="480" y="128" text-anchor="middle" font-size="11" fill="#57606a">Bỏ qua Odom, dựa 100% vào IMU</text>
+  </g>
+
+  <!-- Khối chú giải thuật toán bên phải -->
+  <g transform="translate(670, 80)">
+    <!-- Box 1: Hai phép đo phần dư độc lập -->
+    <rect x="0" y="0" width="250" height="210" rx="5" fill="#f6f8fa" stroke="#0969da" stroke-width="1.5"/>
+    <text x="15" y="24" font-weight="bold" fill="#0969da">2 Phần Dư Độc Lập:</text>
+
+    <text x="15" y="48" font-weight="bold" fill="#24292f">1. Trượt Góc (Yaw Slip):</text>
+    <text x="15" y="68" class="mono" fill="#cf222e">|ω_odom − ω_gyro| &gt; 0.20 rad/s</text>
+    <text x="15" y="86" font-size="11" fill="#57606a">So sánh vi sai bánh xe với Gyro Z của BMI088 (1 kHz)</text>
+
+    <line x1="15" y1="100" x2="235" y2="100" stroke="#d0d7de"/>
+
+    <text x="15" y="122" font-weight="bold" fill="#24292f">2. Trượt Dọc (Linear Slip):</text>
+    <text x="15" y="142" class="mono" fill="#cf222e">|ȧ_wheel − a_imu| &gt; 1.20 m/s²</text>
+    <text x="15" y="160" font-size="11" fill="#57606a">So sánh đạo hàm gia tốc bánh xe với Accel X của IMU</text>
+
+    <text x="15" y="192" font-weight="bold" class="mono" fill="#0969da">s = max(s_yaw, s_lin) ∈ [0, 1]</text>
+
+    <!-- Box 2: Ảnh hưởng đến Kalman Gain -->
+    <rect x="0" y="225" width="250" height="175" rx="5" fill="#f6f8fa" stroke="#1a7f37" stroke-width="1.5"/>
+    <text x="15" y="248" font-weight="bold" fill="#1a7f37">Cơ Chế Kalman Gain:</text>
+    <text x="15" y="272" class="mono" fill="#24292f">K = P_pred · H^T · (H P H^T + R_v)⁻¹</text>
+    
+    <text x="15" y="302" font-size="12" fill="#57606a">• Khi <tspan font-weight="bold" fill="#1a7f37">s = 0</tspan>: R_v nhỏ → K lớn → Cập nhật trạng thái theo encoder bánh xe.</text>
+    <text x="15" y="342" font-size="12" fill="#57606a">• Khi <tspan font-weight="bold" fill="#cf222e">s → 1</tspan>: R_v tăng 351× → K → 0 → Triệt tiêu hoàn toàn sai số trượt bánh!</text>
+  </g>
+
+  <!-- Chú thích chân trang -->
+  <g transform="translate(40, 520)">
+    <rect x="0" y="0" width="880" height="85" rx="4" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
+    <text x="20" y="24" font-weight="bold" fill="#24292f">Nguyên tắc thiết kế an toàn của bộ quan sát Kalman thích nghi (Adaptive Kalman Observer):</text>
+    <text x="20" y="46" font-size="12" fill="#57606a">• Trong điều kiện bám bình thường, encoder bánh xe không có trôi (zero drift) ở vận tốc dài hạn, giúp hiệu chỉnh bias cho IMU.</text>
+    <text x="20" y="66" font-size="12" fill="#57606a">• Khi robot tăng tốc đột ngột, va chạm hoặc trượt bánh trên sàn trơn, phản ứng phi tuyến bậc hai <tspan class="mono" font-weight="bold" fill="#cf222e">s²</tspan> lập tức cách ly encoder để bảo vệ trạng thái robot.</text>
+  </g>
+</svg>
+

@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="420" viewBox="0 0 960 420" role="img" aria-labelledby="t1 d1">
+  <title id="t1">Vòng kín PI, giới hạn lực và phản hồi vận tốc</title>
+  <desc id="d1">Lấy vận tốc đặt r trừ vận tốc đo v ra sai số e. PI phát lực yêu cầu u yêu cầu. Saturation giới hạn lực thực u. Xe tích phân gia tốc thành vận tốc rồi phản hồi. Tải d được trừ khỏi lực vào xe. Chống windup dừng tích phân khi bão hòa và sai số đẩy xa giới hạn.</desc>
+  <defs>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1 { font-size: 24px; font-weight: 800; fill: #0f172a; }
+      .h2 { font-size: 16px; font-weight: 500; fill: #64748b; }
+      .pt { font-size: 16px; font-weight: 700; fill: #1e293b; }
+      .ax { font-size: 14px; font-weight: 500; fill: #64748b; font-variant-numeric: tabular-nums; }
+      .axl { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .lg { font-size: 15px; font-weight: 500; fill: #334155; }
+      .an { font-size: 14px; font-weight: 600; fill: #334155; }
+      .anm { font-size: 14px; font-weight: 500; fill: #475569; }
+      .m { font-family: "Times New Roman", "STIX Two Text", Times, serif; font-style: italic; }
+    </style>
+  </defs>
+  <rect width="960" height="420" fill="#ffffff"/>
+<text x="30" y="42" class="h1">PI nhìn sai số; chiếc xe nhận lực thực sau bão hòa</text>
+<text x="30" y="68" class="h2">Sơ đồ khái niệm · cảm biến vận tốc lý tưởng · tải d chống chuyển động</text>
+<line x1="30" y1="86" x2="930" y2="86" stroke="#e2e8f0"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
+<text x="36.0" y="156.0" class="an" text-anchor="start">r (m/s)</text>
+<line x1="36" y1="183" x2="124" y2="183" stroke="#475569" stroke-width="2.5" marker-end="url(#arrow)"/>
+<circle cx="146" cy="183" r="20" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+<text x="146.0" y="189.0" class="pt" text-anchor="middle">Σ</text>
+<text x="119.0" y="169.0" class="an" text-anchor="start">+</text>
+<text x="153.0" y="227.0" class="an" text-anchor="start">−</text>
+<line x1="166" y1="183" x2="235" y2="183" stroke="#475569" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="198.0" y="167.0" class="an" text-anchor="middle">e</text>
+<rect x="238" y="146" width="166" height="76" rx="10" fill="#fff7ed" stroke="#eb6834" stroke-width="2"/>
+<text x="321.0" y="179.0" class="pt" text-anchor="middle">Bộ PI</text>
+<text x="321.0" y="203.0" class="anm" text-anchor="middle">Kp + Ki/s</text>
+<line x1="404" y1="183" x2="489" y2="183" stroke="#475569" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="447.0" y="164.0" class="an" text-anchor="middle">u yêu cầu</text>
+<rect x="492" y="146" width="136" height="76" rx="10" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="2"/>
+<text x="560.0" y="179.0" class="pt" text-anchor="middle">Giới hạn lực</text>
+<text x="560.0" y="203.0" class="anm" text-anchor="middle">Saturation</text>
+<line x1="628" y1="183" x2="675" y2="183" stroke="#475569" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="650.0" y="164.0" class="an" text-anchor="middle">u</text>
+<circle cx="695" cy="183" r="17" fill="#ffffff" stroke="#475569" stroke-width="2"/>
+<text x="695.0" y="189.0" class="pt" text-anchor="middle">Σ</text>
+<text x="674.0" y="166.0" class="an" text-anchor="start">+</text>
+<text x="716.0" y="140.0" class="an" text-anchor="start">−</text>
+<line x1="695" y1="105" x2="695" y2="164" stroke="#8b5cf6" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="717.0" y="121.0" class="an" text-anchor="start">d</text>
+<line x1="712" y1="183" x2="745" y2="183" stroke="#475569" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="748" y="146" width="135" height="76" rx="10" fill="#eff6ff" stroke="#2a78d6" stroke-width="2"/>
+<text x="815.5" y="179.0" class="pt" text-anchor="middle">Xe</text>
+<text x="815.5" y="203.0" class="anm" text-anchor="middle">1 / (ms + b)</text>
+<line x1="883" y1="183" x2="930" y2="183" stroke="#475569" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="920.0" y="164.0" class="an" text-anchor="middle">v</text>
+<circle cx="910" cy="183" r="4" fill="#475569"/>
+<polyline points="910,183 910,277 146,277 146,206" fill="none" stroke="#475569" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="547.0" y="267.0" class="anm" text-anchor="middle">Vận tốc đo: phản hồi để sửa sai số</text>
+<rect x="60" y="314" width="840" height="79" rx="10" fill="#f8fafc" stroke="#e2e8f0"/>
+<text x="83.0" y="341.0" class="pt" text-anchor="start">Chống windup bằng tích phân có điều kiện:</text>
+<text x="83.0" y="366.0" class="anm" text-anchor="start">Tạm dừng khâu I khi lực đã chạm giới hạn và sai số vẫn đẩy lực vượt giới hạn.</text>
+</svg>

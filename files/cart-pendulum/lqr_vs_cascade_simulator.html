@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LQR vs Cascade-PID</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --surface: #f8fafc;
+    --ink: #0f172a;
+    --ink-2: #334155;
+    --muted: #64748b;
+    --line: #e2e8f0;
+    --line-2: #cbd5e1;
+    --rail: #94a3b8;
+    --cart: #ffffff;
+    --casc: #2a78d6;
+    --lqr: #eb6834;
+    --warn-bg: #fffbeb;
+    --warn-ink: #92400e;
+    --btn: #ffffff;
+    --btn-hover: #f1f5f9;
+    color-scheme: light;
+  }
+  :root[data-theme="dark"] {
+    --bg: #111827;
+    --surface: #1a2232;
+    --ink: #f1f5f9;
+    --ink-2: #cbd5e1;
+    --muted: #94a3b8;
+    --line: #2b3546;
+    --line-2: #3b475a;
+    --rail: #64748b;
+    --cart: #1f2937;
+    --casc: #3987e5;
+    --lqr: #d95926;
+    --warn-bg: #3a2a12;
+    --warn-ink: #fbbf24;
+    --btn: #1f2937;
+    --btn-hover: #273244;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); }
+  body {
+    font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.45;
+    padding: 12px 14px 16px;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; }
+  h1 { font-size: 1.05rem; margin: 0 0 2px; font-weight: 800; }
+  .lead { margin: 0 0 10px; color: var(--muted); font-size: 0.86rem; }
+  .stage, .chart {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    overflow: hidden;
+  }
+  canvas { display: block; width: 100%; height: auto; }
+  .btns { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+  button {
+    font: inherit;
+    font-weight: 600;
+    font-size: 0.84rem;
+    color: var(--ink);
+    background: var(--btn);
+    border: 1px solid var(--line-2);
+    border-radius: 8px;
+    padding: 7px 12px;
+    min-height: 34px;
+    cursor: pointer;
+  }
+  button:hover { background: var(--btn-hover); }
+  button.on { border-color: var(--lqr); color: var(--warn-ink); background: var(--warn-bg); }
+  .chart-head {
+    display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;
+    gap: 8px; padding: 8px 12px 0;
+  }
+  .chart-head b { font-size: 0.86rem; }
+  .legend { display: flex; gap: 14px; font-size: 0.8rem; color: var(--ink-2); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .sw { width: 22px; height: 3px; border-radius: 2px; display: inline-block; }
+  .sw.dash { background: repeating-linear-gradient(90deg, var(--rail) 0 5px, transparent 5px 9px); }
+  .grid2 { display: grid; grid-template-columns: 1.25fr 1fr; gap: 10px; margin-top: 10px; }
+  @media (max-width: 680px) { .grid2 { grid-template-columns: 1fr; } }
+  .card {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: var(--surface);
+  }
+  .card h2 { font-size: 0.9rem; margin: 0 0 8px; display: flex; align-items: center; gap: 8px; }
+  .card h2 .sw { width: 14px; height: 14px; border-radius: 3px; }
+  .row { display: grid; grid-template-columns: 92px 1fr 86px; align-items: center; gap: 8px; margin: 6px 0; }
+  .row label { font-size: 0.82rem; color: var(--ink-2); }
+  .row output { font-variant-numeric: tabular-nums; font-size: 0.82rem; text-align: right; }
+  input[type=range] { width: 100%; accent-color: var(--lqr); }
+  .seg { display: flex; gap: 0; margin: 0 0 6px; }
+  .seg button { font-size: 0.78rem; padding: 5px 10px; min-height: 30px; border-radius: 0; }
+  .seg button:first-child { border-radius: 8px 0 0 8px; }
+  .seg button:last-child { border-radius: 0 8px 8px 0; border-left: none; }
+  .presets { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+  .presets button { font-size: 0.78rem; padding: 5px 9px; min-height: 30px; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+  th, td { padding: 4px 6px; text-align: right; border-bottom: 1px solid var(--line); }
+  th:first-child, td:first-child { text-align: left; color: var(--muted); font-weight: 500; }
+  thead th { color: var(--muted); font-weight: 600; }
+  .note { font-size: 0.78rem; color: var(--muted); margin: 8px 0 0; }
+  .qr { font-size: 0.86rem; font-weight: 600; margin: 8px 0 0; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .params { font-size: 0.82rem; color: var(--ink-2); margin: 0; padding-left: 18px; }
+  .params li { margin: 2px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Hai xe, một cú đẩy: Cascade-PID và LQR</h1>
+  <p class="lead">Xe trên chạy Cascade-PID của Bài 3 (cố định). Xe dưới chạy LQR: kéo ba thanh trượt để đổi trọng số, K được tính lại ngay trong trình duyệt.</p>
+
+  <div class="stage">
+    <canvas id="cv" width="880" height="360" aria-label="Hai xe con lắc ngược chạy song song"></canvas>
+  </div>
+
+  <div class="btns">
+    <button id="bL">← Đẩy 15 N</button>
+    <button id="bR">Đẩy 15 N →</button>
+    <button id="bTilt">Nghiêng 10°</button>
+    <button id="bRef">Đặt x_ref = 0.5 m</button>
+    <button id="bReset">↺ Đặt lại</button>
+  </div>
+
+  <div class="chart">
+    <div class="chart-head">
+      <b>Vị trí xe x(t) · 10 giây gần nhất</b>
+      <div class="legend">
+        <span><i class="sw" style="background:var(--casc)"></i>Cascade-PID</span>
+        <span><i class="sw" style="background:var(--lqr)"></i>LQR</span>
+        <span><i class="sw dash"></i>x_ref</span>
+      </div>
+    </div>
+    <canvas id="ch" width="880" height="200" aria-label="Đồ thị vị trí hai xe theo thời gian"></canvas>
+  </div>
+
+  <div class="grid2">
+    <section class="card">
+      <h2><i class="sw" style="background:var(--lqr)"></i>LQR · chọn Q và R</h2>
+      <div class="seg" role="group" aria-label="Cách nhập trọng số">
+        <button id="mQR" class="on">Q, R trực tiếp</button>
+        <button id="mBry">Theo luật Bryson</button>
+      </div>
+      <div id="pQR">
+      <div class="row">
+        <label for="q0">Q<sub>x</sub></label>
+        <input id="q0" type="range" min="-2" max="4" step="0.01">
+        <output id="oq0"></output>
+      </div>
+      <div class="row">
+        <label for="q1">Q<sub>v</sub></label>
+        <input id="q1" type="range" min="-2.1" max="3" step="0.01" data-lo="-2">
+        <output id="oq1"></output>
+      </div>
+      <div class="row">
+        <label for="q2">Q<sub>θ</sub></label>
+        <input id="q2" type="range" min="-2" max="4" step="0.01">
+        <output id="oq2"></output>
+      </div>
+      <div class="row">
+        <label for="q3">Q<sub>ω</sub></label>
+        <input id="q3" type="range" min="-2.1" max="3" step="0.01" data-lo="-2">
+        <output id="oq3"></output>
+      </div>
+      <div class="row">
+        <label for="rr">R</label>
+        <input id="rr" type="range" min="-4" max="1" step="0.01">
+        <output id="orr"></output>
+      </div>
+      </div>
+      <div id="pBry" hidden>
+      <div class="row">
+        <label for="sx">x_max</label>
+        <input id="sx" type="range" min="0.05" max="1" step="0.01" value="0.2">
+        <output id="ox"></output>
+      </div>
+      <div class="row">
+        <label for="st">θ_max</label>
+        <input id="st" type="range" min="0.02" max="0.5" step="0.01" value="0.1">
+        <output id="ot"></output>
+      </div>
+      <div class="row">
+        <label for="sf">F_max</label>
+        <input id="sf" type="range" min="0.5" max="20" step="0.5" value="3">
+        <output id="of"></output>
+      </div>
+      </div>
+      <div class="presets">
+        <button data-p="25,0,100,0,0.1111">Bộ chính</button>
+        <button data-p="25,0,100,0,0.01">Mạnh (R nhỏ đi 11 lần)</button>
+        <button data-p="1,0,4,0,1">Rất mềm</button>
+        <button data-p="25,10,100,10,0.1111">Phạt thêm v, ω</button>
+      </div>
+      <table>
+        <thead><tr><th></th><th>x</th><th>v</th><th>θ</th><th>ω</th></tr></thead>
+        <tbody>
+          <tr><td>LQR</td><td id="k0"></td><td id="k1"></td><td id="k2"></td><td id="k3"></td></tr>
+          <tr><td>Cascade</td><td>6.0</td><td>3.0</td><td>50.0</td><td>5.0</td></tr>
+        </tbody>
+      </table>
+      <p class="qr" id="qr"></p>
+      <p class="note">Q = diag(Q<sub>x</sub>, Q<sub>v</sub>, Q<sub>θ</sub>, Q<sub>ω</sub>) là đơn giá cho từng sai lệch, R là đơn giá cho lực; thanh trượt chia theo thang log, kéo hết bên trái Q<sub>v</sub>, Q<sub>ω</sub> thì bằng 0. Chỉ tỉ lệ Q/R có nghĩa: nhân mọi ô với cùng một số thì K không đổi. Chế độ Bryson chỉ là cách điền số khác: Q = diag(1/x_max², 0, 1/θ_max², 0), R = 1/F_max². Bảng ghi hệ số của F = k₁x + k₂v + k₃θ + k₄ω (tức −K).</p>
+    </section>
+
+    <section class="card">
+      <h2><i class="sw" style="background:var(--casc)"></i>Cascade-PID · Bài 3</h2>
+      <ul class="params">
+        <li>Vòng trong: K<sub>p,θ</sub> = 50, K<sub>i,θ</sub> = 0.5, K<sub>d,θ</sub> = 5</li>
+        <li>Vòng ngoài: K<sub>p,x</sub> = 0.12, K<sub>d,x</sub> = 0.06</li>
+        <li>Bão hòa góc đặt θ<sub>ref</sub>: ±10°</li>
+      </ul>
+      <p class="note">Mô hình phi tuyến khớp file Simscape của Bài 1 (xe 0.5 kg, con lắc là khối lượng điểm 0.2 kg cách khớp 0.3 m, ray giảm chấn 0.1 N·s/m), tích phân RK4, điều khiển rời rạc 1 kHz, lực của cả hai xe bị kẹp ở ±20 N. Nghiêng quá 60° hoặc chạy quá ±1.8 m thì xe đó dừng lại.</p>
+    </section>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------- Theme: follow the parent site's toggle (same origin) ----------
+  function readTheme() {
+    var setting = 'system';
+    try { setting = localStorage.getItem('theme') || 'system'; } catch (e) { setting = 'system'; }
+    if (setting === 'dark' || setting === 'light') return setting;
+    return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  }
+  var colors = {};
+  function applyTheme() {
+    document.documentElement.setAttribute('data-theme', readTheme());
+    var cs = getComputedStyle(document.documentElement);
+    ['surface', 'ink', 'ink-2', 'muted', 'line', 'line-2', 'rail', 'cart', 'casc', 'lqr'].forEach(function (k) {
+      colors[k] = cs.getPropertyValue('--' + k).trim();
+    });
+  }
+  applyTheme();
+  window.addEventListener('storage', function (e) { if (e.key === 'theme') applyTheme(); });
+  if (window.matchMedia) {
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+    if (mq.addEventListener) mq.addEventListener('change', applyTheme);
+  }
+
+  // ---------- Plant: nonlinear cart-pendulum, theta > 0 leans toward +x ----------
+  // Same as the Simscape file of Bài 1/3: point-mass pendulum 0.3 m from the pivot, rail damping 0.1 N.s/m
+  var M = 0.5, m = 0.2, l = 0.3, I = 0, b = 0.1, g = 9.80665;
+  var TS = 1e-3, SUB = 2, FMAX = 20;
+
+  function deriv(s, F) {
+    var c = Math.cos(s[2]), sn = Math.sin(s[2]);
+    var d1 = M + m, d2 = m * l * c, d3 = I + m * l * l;
+    var b1 = F - b * s[1] + m * l * s[3] * s[3] * sn, b2 = m * g * l * sn;
+    var det = d1 * d3 - d2 * d2;
+    return [s[1], (d3 * b1 - d2 * b2) / det, s[3], (d1 * b2 - d2 * b1) / det];
+  }
+  function rk4(s, F, h) {
+    var k1 = deriv(s, F);
+    var s2 = s.map(function (v, i) { return v + 0.5 * h * k1[i]; });
+    var k2 = deriv(s2, F);
+    var s3 = s.map(function (v, i) { return v + 0.5 * h * k2[i]; });
+    var k3 = deriv(s3, F);
+    var s4 = s.map(function (v, i) { return v + h * k3[i]; });
+    var k4 = deriv(s4, F);
+    return s.map(function (v, i) { return v + h / 6 * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]); });
+  }
+
+  // ---------- Linear model and discrete LQR (structure-preserving doubling) ----------
+  var p = I + m * l * l, q = m * l, D = (M + m) * p - q * q;
+  var A = [[0, 1, 0, 0], [0, -b * p / D, -q * m * g * l / D, 0], [0, 0, 0, 1], [0, b * q / D, (M + m) * m * g * l / D, 0]];
+  var B = [0, p / D, 0, -q / D];
+
+  function eye() { return [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]]; }
+  function mul(X, Y) {
+    var Z = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+    for (var i = 0; i < 4; i++) for (var j = 0; j < 4; j++) {
+      var acc = 0;
+      for (var k = 0; k < 4; k++) acc += X[i][k] * Y[k][j];
+      Z[i][j] = acc;
+    }
+    return Z;
+  }
+  function add(X, Y, a) {
+    return X.map(function (r, i) { return r.map(function (v, j) { return v + (a === undefined ? 1 : a) * Y[i][j]; }); });
+  }
+  function tr(X) { return X[0].map(function (_, j) { return X.map(function (r) { return r[j]; }); }); }
+  function inv(X) {
+    var a = X.map(function (r, i) { return r.concat(eye()[i]); });
+    for (var c = 0; c < 4; c++) {
+      var piv = c;
+      for (var r = c + 1; r < 4; r++) if (Math.abs(a[r][c]) > Math.abs(a[piv][c])) piv = r;
+      var t = a[c]; a[c] = a[piv]; a[piv] = t;
+      var d = a[c][c];
+      for (var j = 0; j < 8; j++) a[c][j] /= d;
+      for (r = 0; r < 4; r++) if (r !== c) {
+        var f = a[r][c];
+        for (j = 0; j < 8; j++) a[r][j] -= f * a[c][j];
+      }
+    }
+    return a.map(function (r) { return r.slice(4); });
+  }
+  function mv(X, v) { return X.map(function (r) { return r[0] * v[0] + r[1] * v[1] + r[2] * v[2] + r[3] * v[3]; }); }
+
+  // Zero-order-hold discretisation by Taylor series (|A·Ts| is tiny)
+  var Ad = eye(), Gam = eye(), term = eye(), fact = 1;
+  for (var n = 1; n <= 12; n++) {
+    term = mul(term, A);
+    fact *= n;
+    Ad = add(Ad, term, Math.pow(TS, n) / fact);
+    Gam = add(Gam, term, Math.pow(TS, n) / (fact * (n + 1)));
+  }
+  var Bd = mv(Gam, B).map(function (v) { return v * TS; });
+
+  function dlqr(qd, r) {
+    var Rh = r * TS;
+    var G = Bd.map(function (bi) { return Bd.map(function (bj) { return bi * bj / Rh; }); });
+    var H = [[qd[0] * TS, 0, 0, 0], [0, qd[1] * TS, 0, 0], [0, 0, qd[2] * TS, 0], [0, 0, 0, qd[3] * TS]];
+    var Ak = Ad;
+    for (var it = 0; it < 60; it++) {
+      var W = inv(add(eye(), mul(G, H)));
+      var AW = mul(Ak, W);
+      var An = mul(AW, Ak);
+      var Gn = add(G, mul(mul(AW, G), tr(Ak)));
+      var Hn = add(H, mul(mul(mul(tr(Ak), H), W), Ak));
+      var diff = 0, scale = 1;
+      for (var i = 0; i < 4; i++) for (var j = 0; j < 4; j++) {
+        diff = Math.max(diff, Math.abs(Hn[i][j] - H[i][j]));
+        scale = Math.max(scale, Math.abs(Hn[i][j]));
+      }
+      Ak = An; G = Gn; H = Hn;
+      if (diff / scale < 1e-12) break;
+    }
+    var PB = mv(H, Bd);
+    var denom = Rh + Bd[0] * PB[0] + Bd[1] * PB[1] + Bd[2] * PB[2] + Bd[3] * PB[3];
+    var PA = mul(H, Ad);
+    var K = [0, 0, 0, 0];
+    for (var c = 0; c < 4; c++) K[c] = (Bd[0] * PA[0][c] + Bd[1] * PA[1][c] + Bd[2] * PA[2][c] + Bd[3] * PA[3][c]) / denom;
+    return K;
+  }
+
+  // ---------- Controllers ----------
+  var Kpth = 50, Kith = 0.5, Kdth = 5, Kpx = 0.12, Kdx = 0.06, THREF_MAX = 10 * Math.PI / 180;
+  var Klqr = [0, 0, 0, 0];
+
+  function cascadeForce(c, xr) {
+    var thr = -(Kpx * (c.s[0] - xr) + Kdx * c.s[1]);
+    thr = Math.max(-THREF_MAX, Math.min(THREF_MAX, thr));
+    var e = c.s[2] - thr;
+    c.integ += e * TS;
+    return Kpth * e + Kith * c.integ + Kdth * c.s[3];
+  }
+  function lqrForce(c, xr) {
+    var e = [c.s[0] - xr, c.s[1], c.s[2], c.s[3]];
+    return -(Klqr[0] * e[0] + Klqr[1] * e[1] + Klqr[2] * e[2] + Klqr[3] * e[3]);
+  }
+
+  // ---------- Simulation state ----------
+  function newCart(kind) { return { kind: kind, s: [0, 0, 0, 0], integ: 0, F: 0, dead: '' }; }
+  var carts = [newCart('casc'), newCart('lqr')];
+  var xref = 0, dist = 0, distT = 0, simT = 0, acc = 0;
+  var HIST = 500, SAMPLE = 0.02, sampleAcc = 0;
+  var hist = { t: [], c: [], q: [], r: [] };
+
+  function reset() {
+    carts = [newCart('casc'), newCart('lqr')];
+    dist = 0; distT = 0; simT = 0; sampleAcc = 0;
+    hist = { t: [], c: [], q: [], r: [] };
+  }
+
+  function step() {
+    var Fd = 0;
+    if (distT > 0) { Fd = dist; distT -= TS; }
+    carts.forEach(function (c) {
+      if (c.dead) return;
+      var F = c.kind === 'casc' ? cascadeForce(c, xref) : lqrForce(c, xref);
+      F = Math.max(-FMAX, Math.min(FMAX, F));
+      c.F = F;
+      for (var k = 0; k < SUB; k++) c.s = rk4(c.s, F + Fd, TS / SUB);
+      if (Math.abs(c.s[2]) > Math.PI / 3) c.dead = 'Đổ — bấm Đặt lại';
+      else if (Math.abs(c.s[0]) > 1.8) c.dead = 'Ra khỏi ray — bấm Đặt lại';
+    });
+    simT += TS;
+    sampleAcc += TS;
+    if (sampleAcc >= SAMPLE) {
+      sampleAcc -= SAMPLE;
+      hist.t.push(simT); hist.c.push(carts[0].s[0]); hist.q.push(carts[1].s[0]); hist.r.push(xref);
+      if (hist.t.length > HIST) { hist.t.shift(); hist.c.shift(); hist.q.shift(); hist.r.shift(); }
+    }
+  }
+
+  // ---------- Drawing: carts ----------
+  var cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+  var ch = document.getElementById('ch'), cctx = ch.getContext('2d');
+  var CW = cv.width, CH = cv.height, PX = 200;
+
+  function drawLane(c, top, h, label, col) {
+    var rail = top + h - 26, cx = CW / 2;
+    ctx.strokeStyle = colors.rail; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(cx - 1.8 * PX, rail); ctx.lineTo(cx + 1.8 * PX, rail); ctx.stroke();
+    ctx.fillStyle = colors.muted; ctx.font = '12px Inter, Segoe UI, Arial, sans-serif'; ctx.textAlign = 'center';
+    [-1.5, -1, -0.5, 0, 0.5, 1, 1.5].forEach(function (v) {
+      var x = cx + v * PX;
+      ctx.strokeStyle = colors['line-2']; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x, rail); ctx.lineTo(x, rail + 5); ctx.stroke();
+      ctx.fillText(v.toFixed(1), x, rail + 18);
+    });
+    var xr = cx + xref * PX;
+    ctx.strokeStyle = colors.rail; ctx.setLineDash([5, 5]);
+    ctx.beginPath(); ctx.moveTo(xr, top + 30); ctx.lineTo(xr, rail); ctx.stroke(); ctx.setLineDash([]);
+
+    var x = cx + c.s[0] * PX, th = c.s[2];
+    var cartW = 60, cartH = 22, pivotY = rail - cartH, len = 0.6 * PX;
+    ctx.fillStyle = colors.cart; ctx.strokeStyle = col; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x - cartW / 2, pivotY, cartW, cartH, 5) : ctx.rect(x - cartW / 2, pivotY, cartW, cartH);
+    ctx.fill(); ctx.stroke();
+    var tipX = x + len * Math.sin(th), tipY = pivotY - len * Math.cos(th);
+    ctx.strokeStyle = col; ctx.lineWidth = 6; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(x, pivotY); ctx.lineTo(tipX, tipY); ctx.stroke();
+    ctx.fillStyle = col; ctx.beginPath(); ctx.arc(tipX, tipY, 8, 0, 2 * Math.PI); ctx.fill();
+    ctx.fillStyle = colors.cart; ctx.strokeStyle = col; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(x, pivotY, 4, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+
+    ctx.textAlign = 'left'; ctx.font = '700 14px Inter, Segoe UI, Arial, sans-serif';
+    ctx.fillStyle = col; ctx.fillRect(14, top + 12, 12, 12);
+    ctx.fillStyle = colors.ink; ctx.fillText(label, 32, top + 23);
+    ctx.textAlign = 'right'; ctx.font = '13px Inter, Segoe UI, Arial, sans-serif'; ctx.fillStyle = colors['ink-2'];
+    var deg = th * 180 / Math.PI;
+    ctx.fillText('θ ' + deg.toFixed(2) + '°   x ' + c.s[0].toFixed(3) + ' m   F ' + c.F.toFixed(1) + ' N', CW - 14, top + 23);
+    if (c.dead) {
+      ctx.textAlign = 'center'; ctx.font = '700 15px Inter, Segoe UI, Arial, sans-serif'; ctx.fillStyle = colors.ink;
+      ctx.fillText(c.dead, cx, top + 60);
+    }
+  }
+
+  function drawStage() {
+    ctx.fillStyle = colors.surface; ctx.fillRect(0, 0, CW, CH);
+    drawLane(carts[0], 0, CH / 2, 'Cascade-PID', colors.casc);
+    ctx.strokeStyle = colors.line; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, CH / 2); ctx.lineTo(CW, CH / 2); ctx.stroke();
+    drawLane(carts[1], CH / 2, CH / 2, 'LQR', colors.lqr);
+  }
+
+  // ---------- Drawing: strip chart with hover readout ----------
+  var hoverX = null;
+  function niceMax(v) {
+    var steps = [0.05, 0.1, 0.2, 0.25, 0.5, 1, 2];
+    for (var i = 0; i < steps.length; i++) if (v <= steps[i]) return steps[i];
+    return Math.ceil(v);
+  }
+  function drawChart() {
+    var W = ch.width, H = ch.height, L0 = 54, R0 = 14, T0 = 14, B0 = 30;
+    cctx.fillStyle = colors.surface; cctx.fillRect(0, 0, W, H);
+    var n = hist.t.length, tEnd = Math.max(10, simT), tStart = tEnd - 10;
+    var vmax = 0.05;
+    for (var i = 0; i < n; i++) vmax = Math.max(vmax, Math.abs(hist.c[i]), Math.abs(hist.q[i]), Math.abs(hist.r[i]));
+    vmax = niceMax(vmax * 1.1);
+    var X = function (t) { return L0 + (t - tStart) / 10 * (W - L0 - R0); };
+    var Y = function (v) { return T0 + (vmax - v) / (2 * vmax) * (H - T0 - B0); };
+    cctx.font = '12px Inter, Segoe UI, Arial, sans-serif'; cctx.textAlign = 'right'; cctx.fillStyle = colors.muted;
+    [-vmax, -vmax / 2, 0, vmax / 2, vmax].forEach(function (v) {
+      cctx.strokeStyle = v === 0 ? colors['line-2'] : colors.line; cctx.lineWidth = 1;
+      cctx.beginPath(); cctx.moveTo(L0, Y(v)); cctx.lineTo(W - R0, Y(v)); cctx.stroke();
+      cctx.fillText((Math.round(v * 1000) / 1000).toString().replace('-', '−') + ' m', L0 - 6, Y(v) + 4);
+    });
+    cctx.textAlign = 'center';
+    for (var s = Math.ceil(tStart); s <= tEnd; s++) {
+      cctx.fillText(s + ' s', X(s), H - 10);
+    }
+    function series(arr, col, dash) {
+      if (n < 2) return;
+      cctx.strokeStyle = col; cctx.lineWidth = 2; cctx.lineJoin = 'round';
+      cctx.setLineDash(dash ? [6, 5] : []);
+      cctx.beginPath();
+      for (var i = 0; i < n; i++) {
+        var px = X(hist.t[i]), py = Y(arr[i]);
+        if (i === 0) cctx.moveTo(px, py); else cctx.lineTo(px, py);
+      }
+      cctx.stroke(); cctx.setLineDash([]);
+    }
+    series(hist.r, colors.rail, true);
+    series(hist.c, colors.casc, false);
+    series(hist.q, colors.lqr, false);
+
+    if (hoverX !== null && n > 1) {
+      var tH = tStart + (hoverX - L0) / (W - L0 - R0) * 10;
+      var best = 0, bd = Infinity;
+      for (i = 0; i < n; i++) { var d = Math.abs(hist.t[i] - tH); if (d < bd) { bd = d; best = i; } }
+      var hx = X(hist.t[best]);
+      if (hx >= L0 && hx <= W - R0) {
+        cctx.strokeStyle = colors.muted; cctx.lineWidth = 1;
+        cctx.beginPath(); cctx.moveTo(hx, T0); cctx.lineTo(hx, H - B0); cctx.stroke();
+        [[hist.c[best], colors.casc], [hist.q[best], colors.lqr]].forEach(function (pp) {
+          cctx.fillStyle = pp[1]; cctx.strokeStyle = colors.surface; cctx.lineWidth = 2;
+          cctx.beginPath(); cctx.arc(hx, Y(pp[0]), 5, 0, 2 * Math.PI); cctx.fill(); cctx.stroke();
+        });
+        var lines = ['t = ' + hist.t[best].toFixed(2) + ' s', 'Cascade-PID  ' + hist.c[best].toFixed(3) + ' m', 'LQR  ' + hist.q[best].toFixed(3) + ' m'];
+        cctx.font = '12px Inter, Segoe UI, Arial, sans-serif';
+        var bw = 0;
+        lines.forEach(function (s2) { bw = Math.max(bw, cctx.measureText(s2).width); });
+        bw += 16;
+        var bx = hx + 10 + bw > W - R0 ? hx - 10 - bw : hx + 10;
+        cctx.fillStyle = colors.cart; cctx.strokeStyle = colors['line-2'];
+        cctx.beginPath(); cctx.rect(bx, T0 + 4, bw, 58); cctx.fill(); cctx.stroke();
+        cctx.textAlign = 'left'; cctx.fillStyle = colors.ink;
+        lines.forEach(function (s2, k) { cctx.fillText(s2, bx + 8, T0 + 22 + k * 17); });
+      }
+    }
+  }
+  function setHover(clientX) {
+    var rect = ch.getBoundingClientRect();
+    hoverX = (clientX - rect.left) / rect.width * ch.width;
+  }
+  ch.addEventListener('mousemove', function (e) { setHover(e.clientX); });
+  ch.addEventListener('mouseleave', function () { hoverX = null; });
+  ch.addEventListener('touchmove', function (e) { if (e.touches.length) setHover(e.touches[0].clientX); }, { passive: true });
+  ch.addEventListener('touchend', function () { hoverX = null; });
+
+  // ---------- UI ----------
+  // Design state: Q diagonal and R. Both panels write here; each panel's sliders are kept in sync.
+  var qd = [25, 0, 100, 0], rv = 1 / 9;
+  var sx = document.getElementById('sx'), st = document.getElementById('st'), sf = document.getElementById('sf');
+  var sq = [0, 1, 2, 3].map(function (i) { return document.getElementById('q' + i); });
+  var sr = document.getElementById('rr');
+  function fmtN(v) { return String(Number(v.toPrecision(3))); }
+  function clamp(v, el) { return Math.min(+el.max, Math.max(+el.min, v)); }
+  // Log-scale slider; a slider with data-lo reads 0 left of data-lo
+  function logRead(el) {
+    var lo = el.getAttribute('data-lo');
+    if (lo !== null && +el.value < +lo) return 0;
+    return Math.pow(10, +el.value);
+  }
+  function logSet(el, v) { el.value = v > 0 ? clamp(Math.log10(v), el) : el.min; }
+  function syncSliders() {
+    for (var i = 0; i < 4; i++) logSet(sq[i], qd[i]);
+    logSet(sr, rv);
+    if (qd[0] > 0) sx.value = clamp(1 / Math.sqrt(qd[0]), sx);
+    if (qd[2] > 0) st.value = clamp(1 / Math.sqrt(qd[2]), st);
+    sf.value = clamp(1 / Math.sqrt(rv), sf);
+  }
+  function updateK() {
+    for (var i = 0; i < 4; i++) document.getElementById('oq' + i).textContent = fmtN(qd[i]);
+    document.getElementById('orr').textContent = fmtN(rv);
+    var xm = +sx.value, tm = +st.value, fm = +sf.value;
+    document.getElementById('ox').textContent = xm.toFixed(2) + ' m';
+    document.getElementById('ot').textContent = tm.toFixed(2) + ' rad · ' + (tm * 180 / Math.PI).toFixed(1) + '°';
+    document.getElementById('of').textContent = fm.toFixed(1) + ' N';
+    Klqr = dlqr(qd, rv);
+    var lv = function (q, unit) { return q > 0 ? fmtN(1 / Math.sqrt(q)) + unit : 'không phạt'; };
+    document.getElementById('qr').textContent = 'Q = diag(' + qd.map(fmtN).join(', ') + ') · R = ' + fmtN(rv) +
+      ' · tức mức đáng lo: x ' + lv(qd[0], ' m') + ', v ' + lv(qd[1], ' m/s') + ', θ ' + lv(qd[2], ' rad') +
+      ', ω ' + lv(qd[3], ' rad/s') + ', F ' + fmtN(1 / Math.sqrt(rv)) + ' N';
+    for (i = 0; i < 4; i++) document.getElementById('k' + i).textContent = (-Klqr[i]).toFixed(1);
+  }
+  // Read only the slider that moved, so the other weights keep their exact values
+  sq.forEach(function (el, i) {
+    el.addEventListener('input', function () { qd[i] = logRead(el); syncSliders(); updateK(); });
+  });
+  sr.addEventListener('input', function () { rv = logRead(sr); syncSliders(); updateK(); });
+  [sx, st, sf].forEach(function (el) {
+    el.addEventListener('input', function () {
+      var xm = +sx.value, tm = +st.value, fm = +sf.value;
+      qd = [1 / (xm * xm), 0, 1 / (tm * tm), 0]; rv = 1 / (fm * fm);
+      syncSliders(); updateK();
+    });
+  });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-p]'), function (b) {
+    b.addEventListener('click', function () {
+      var v = b.getAttribute('data-p').split(',').map(Number);
+      qd = v.slice(0, 4); rv = v[4];
+      syncSliders(); updateK();
+    });
+  });
+  var mQR = document.getElementById('mQR'), mBry = document.getElementById('mBry');
+  function setMode(bry) {
+    document.getElementById('pQR').hidden = bry;
+    document.getElementById('pBry').hidden = !bry;
+    mQR.classList.toggle('on', !bry); mBry.classList.toggle('on', bry);
+  }
+  mQR.onclick = function () { setMode(false); };
+  mBry.onclick = function () { setMode(true); };
+  syncSliders();
+  function push(dir) { dist = 15 * dir; distT = 0.05; }
+  document.getElementById('bL').onclick = function () { push(-1); };
+  document.getElementById('bR').onclick = function () { push(1); };
+  document.getElementById('bTilt').onclick = function () {
+    carts.forEach(function (c) { if (!c.dead) { c.s[2] = 10 * Math.PI / 180; c.s[3] = 0; } });
+  };
+  var bRef = document.getElementById('bRef');
+  bRef.onclick = function () {
+    xref = xref === 0 ? 0.5 : 0;
+    bRef.textContent = xref === 0 ? 'Đặt x_ref = 0.5 m' : 'Đặt x_ref = 0 m';
+    bRef.classList.toggle('on', xref !== 0);
+  };
+  document.getElementById('bReset').onclick = function () {
+    reset();
+    xref = 0; bRef.textContent = 'Đặt x_ref = 0.5 m'; bRef.classList.remove('on');
+  };
+
+  updateK();
+
+  // ---------- Main loop ----------
+  var last = null;
+  function frame(now) {
+    if (last === null) last = now;
+    var dt = Math.min((now - last) / 1000, 0.05);
+    last = now;
+    acc += dt;
+    while (acc >= TS) { step(); acc -= TS; }
+    drawStage();
+    drawChart();
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

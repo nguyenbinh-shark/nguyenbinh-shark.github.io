@@ -1,0 +1,891 @@
+/* ============================================================
+   PID SERIES — "A-sin & Rùa Vàng"
+   Hệ thống khối chức năng tối giản cho series blog PID (class pid-*)
+   Dùng lại token light/dark của custom.css (--bg-elev, --border,
+   --text, --muted-text, --card-bg) + phong cách tối giản thanh lịch.
+   ============================================================ */
+
+:root {
+  --pid-accent: #3b82f6;
+  --pid-accent-soft: rgba(59, 130, 246, 0.08);
+  --pid-p: #3b82f6;
+  --pid-i: #0ea5e9;
+  --pid-d: #6366f1;
+  --pid-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+html[data-theme="dark"],
+body[data-theme="dark"] {
+  --pid-accent: #60a5fa;
+  --pid-accent-soft: rgba(96, 165, 250, 0.12);
+  --pid-p: #60a5fa;
+  --pid-i: #38bdf8;
+  --pid-d: #818cf8;
+  --pid-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+/* ---------- 1. Nav series: dải chương + trước/sau ---------- */
+.pid-nav {
+  border: 1.5px solid var(--border);
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 0.75rem 0.95rem;
+  margin: 0 0 1.6rem;
+  box-shadow: var(--pid-shadow);
+}
+
+.pid-nav__top {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.pid-nav__label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text);
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.pid-nav__label:hover {
+  color: var(--pid-accent);
+}
+
+.pid-nav__chapters {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  padding: 0.45rem 0 0.1rem;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pid-nav__num {
+  flex: 0 0 auto;
+  min-width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted-text);
+  text-decoration: none;
+  background: var(--bg-elev);
+  transition: all 0.15s ease;
+}
+
+a.pid-nav__num:hover {
+  border-color: var(--pid-accent);
+  color: var(--pid-accent);
+}
+
+.pid-nav__num--current {
+  background: var(--pid-accent);
+  border-color: var(--pid-accent);
+  color: #ffffff;
+}
+
+a.pid-nav__num--current:hover {
+  color: #ffffff;
+}
+
+.pid-nav__num--todo {
+  opacity: 0.5;
+}
+
+.pid-nav__prevnext {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.pid-nav__prevnext a {
+  font-size: 0.84rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--pid-accent);
+}
+
+.pid-nav__prevnext a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- 2. Hero chương: số lớn + chip meta ---------- */
+.pid-hero {
+  position: relative;
+  border: 1.5px solid var(--border);
+  border-left: 3px solid var(--pid-accent);
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 1.1rem 1.3rem;
+  margin: 0 0 1.6rem;
+  box-shadow: var(--pid-shadow);
+}
+
+.pid-hero__row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.pid-hero__num {
+  font-size: 1.9rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--pid-accent);
+}
+
+.pid-hero__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.pid-hero__meta {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+  margin-top: 0.7rem;
+}
+
+.pid-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.32rem;
+  padding: 0.18rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--bg-elev);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted-text);
+}
+
+.pid-chip i {
+  color: var(--pid-accent);
+}
+
+/* ---------- 3. Cảnh chuyện: khối kể chuyện có nhãn ---------- */
+.pid-scene {
+  border: 1.5px solid var(--border);
+  border-left: 3px solid var(--pid-accent);
+  background: var(--bg-elev);
+  border-radius: 10px;
+  padding: 0.9rem 1.15rem;
+  margin: 1.4rem 0;
+}
+
+.pid-scene__label {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--pid-accent);
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+}
+
+.pid-scene p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---------- 4. Thẻ nhân vật (dàn vai) ---------- */
+.pid-cast {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.7rem;
+  margin: 1.4rem 0;
+}
+
+.pid-cast__card {
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: var(--card-bg);
+  box-shadow: var(--pid-shadow);
+  padding: 0.85rem 0.85rem;
+  text-align: center;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.pid-cast__card:hover {
+  transform: translateY(-2px);
+  border-color: var(--pid-accent);
+}
+
+.pid-cast__card i {
+  font-size: 1.35rem;
+  color: var(--pid-accent);
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.pid-cast__name {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.pid-cast__real {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--muted-text);
+  margin-top: 0.2rem;
+}
+
+/* ---------- 4b. Infographic vòng lặp: Đo → So sánh → Hành động ---------- */
+.pid-loop {
+  display: flex;
+  align-items: stretch;
+  gap: 0.5rem;
+  margin: 1.4rem 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pid-loop__step {
+  flex: 1 1 150px;
+  max-width: 210px;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: var(--card-bg);
+  box-shadow: var(--pid-shadow);
+  padding: 0.75rem 0.8rem;
+  text-align: center;
+}
+
+.pid-loop__step i {
+  color: var(--pid-accent);
+  font-size: 1.2rem;
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+.pid-loop__step b {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.pid-loop__step span {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--muted-text);
+  margin-top: 0.15rem;
+}
+
+.pid-loop__arrow {
+  align-self: center;
+  color: var(--muted-text);
+  font-size: 1.2rem;
+  font-weight: 700;
+  flex: 0 0 auto;
+}
+
+.pid-loop__back {
+  width: 100%;
+  text-align: center;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--muted-text);
+}
+
+/* ---------- 5. Hình minh họa có thanh chú thích ---------- */
+.pid-fig {
+  display: block;
+  margin: 1.6rem 0;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--card-bg);
+  box-shadow: var(--pid-shadow);
+}
+
+.pid-fig img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0;
+  border-radius: 0;
+}
+
+.pid-fig--narrow img {
+  width: min(100%, 620px);
+  margin-inline: auto;
+}
+
+.pid-fig figcaption {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  padding: 0.6rem 0.95rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--muted-text);
+  background: var(--bg-elev);
+  border-top: 1px solid var(--border);
+  margin: 0;
+  width: 100%;
+}
+
+.pid-fig figcaption strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.pid-badge {
+  flex: 0 0 auto;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  border: 1.5px solid #0ea5e9;
+  color: #0ea5e9;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  text-transform: uppercase;
+}
+
+/* ---------- 6. Demo nhúng: thanh công cụ + iframe ---------- */
+.pid-demo {
+  display: block;
+  margin: 1.8rem 0;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--card-bg);
+  box-shadow: var(--pid-shadow);
+}
+
+.pid-demo__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.55rem 0.9rem;
+  background: var(--bg-elev);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.pid-demo__title {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--text);
+}
+
+.pid-demo__title i {
+  color: var(--pid-accent);
+  margin-right: 0.35rem;
+}
+
+.pid-demo__acts {
+  display: flex;
+  gap: 0.45rem;
+  flex-wrap: wrap;
+}
+
+.pid-demo__acts a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--pid-accent);
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  border-radius: 6px;
+  padding: 0.25rem 0.6rem;
+  min-height: 28px;
+  transition: all 0.15s ease;
+}
+
+.pid-demo__acts a:hover {
+  border-color: var(--pid-accent);
+}
+
+.pid-demo iframe {
+  display: block;
+  width: 100%;
+  min-height: 420px;
+  height: 540px;
+  border: 0;
+  margin: 0;
+  background: #fff;
+}
+
+.pid-demo--tall iframe {
+  height: 880px;
+}
+
+html[data-theme="dark"] .pid-demo iframe,
+body[data-theme="dark"] .pid-demo iframe {
+  background: #0b0f19;
+}
+
+.pid-demo__touch {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 0.65rem 0.9rem;
+  background: var(--bg-elev);
+  border-top: 1px solid var(--border);
+  font-size: 0.82rem;
+  color: var(--text);
+}
+
+.pid-demo__touch .pid-chip i {
+  color: var(--pid-p);
+}
+
+.pid-chip--locked {
+  opacity: 0.75;
+}
+
+.pid-chip--locked i {
+  color: var(--muted-text);
+}
+
+/* ---------- 7. Thuật ngữ lần đầu ---------- */
+.pid-term {
+  border-bottom: 1.5px dotted var(--pid-accent);
+  font-weight: 600;
+  text-decoration: none;
+  color: inherit;
+  cursor: help;
+}
+
+/* ---------- 8. Góc kỹ thuật (gập/mở) ---------- */
+details.pid-tech {
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  background: var(--bg-elev);
+  padding: 0;
+  margin: 1.6rem 0;
+  overflow: hidden;
+}
+
+details.pid-tech summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text);
+  min-height: 40px;
+}
+
+details.pid-tech summary::-webkit-details-marker {
+  display: none;
+}
+
+details.pid-tech summary::after {
+  content: "▸";
+  margin-left: auto;
+  color: var(--muted-text);
+  transition: transform 0.15s ease;
+}
+
+details.pid-tech[open] summary::after {
+  transform: rotate(90deg);
+}
+
+details.pid-tech summary i {
+  color: var(--pid-accent);
+}
+
+.pid-tech__body {
+  padding: 0.2rem 1.2rem 1rem;
+}
+
+.pid-tech__skip {
+  margin: 0.8rem 0 0;
+  font-size: 0.82rem;
+  font-style: italic;
+  color: var(--muted-text);
+}
+
+/* ---------- 9. Hồi tưởng chương trước ---------- */
+.pid-recall {
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-elev);
+  padding: 0.8rem 1.1rem;
+  margin: 1.4rem 0;
+  font-size: 0.9rem;
+}
+
+.pid-recall i {
+  color: var(--pid-accent);
+  margin-right: 0.4rem;
+}
+
+.pid-recall a {
+  font-weight: 600;
+  color: var(--pid-accent);
+}
+
+/* ---------- 10. Câu chốt (takeaway) ---------- */
+.pid-takeaway {
+  position: relative;
+  border: 1.5px solid var(--border);
+  border-left: 3px solid var(--pid-accent);
+  border-radius: 12px;
+  background: var(--card-bg);
+  box-shadow: var(--pid-shadow);
+  padding: 1.3rem 1.4rem 1.1rem;
+  margin: 1.8rem 0;
+  text-align: center;
+}
+
+.pid-takeaway__label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--pid-accent);
+  margin-bottom: 0.4rem;
+}
+
+.pid-takeaway p {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--text);
+  margin: 0;
+}
+
+/* ---------- 11. Bỏ lửng (cliffhanger) ---------- */
+.pid-cliff {
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-elev);
+  padding: 0.9rem 1.2rem;
+  margin: 1.5rem 0;
+}
+
+.pid-cliff p {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--text);
+}
+
+.pid-cliff strong {
+  color: var(--pid-accent);
+}
+
+/* ---------- 12. CTA ---------- */
+.pid-cta {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin: 1.6rem 0 0.6rem;
+}
+
+.pid-cta .btn {
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 8px;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
+/* ---------- 13. Sơ đồ chương (trang đích) ---------- */
+.pid-map {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+  margin: 1.4rem 0;
+}
+
+.pid-map__card {
+  display: block;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  background: var(--card-bg);
+  box-shadow: var(--pid-shadow);
+  padding: 0.9rem 1rem;
+  text-decoration: none !important;
+  color: inherit !important;
+  position: relative;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+a.pid-map__card:hover {
+  transform: translateY(-2px);
+  border-color: var(--pid-accent);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.pid-map__num {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--pid-accent);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.pid-map__title {
+  display: block;
+  font-weight: 700;
+  font-size: 0.92rem;
+  margin: 0.2rem 0 0.3rem;
+  color: var(--text);
+}
+
+.pid-map__desc {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--muted-text);
+  line-height: 1.4;
+}
+
+.pid-map__status {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--muted-text);
+}
+
+.pid-map__card--current {
+  border-color: var(--pid-accent);
+  border-width: 2px;
+}
+
+/* ---------- 14. Bộ chip P / I / D tối giản ---------- */
+.pid-pidcard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 12px;
+  margin: 1.4rem 0;
+}
+
+.pid-pidcard__item {
+  border: 1.5px solid var(--border);
+  border-top: 3px solid var(--letter, var(--pid-accent));
+  border-radius: 12px;
+  background: var(--card-bg);
+  padding: 0.85rem 0.95rem;
+  box-shadow: var(--pid-shadow);
+}
+
+.pid-pidcard__item.p {
+  --letter: var(--pid-p);
+}
+
+.pid-pidcard__item.i {
+  --letter: var(--pid-i);
+}
+
+.pid-pidcard__item.d {
+  --letter: var(--pid-d);
+}
+
+.pid-pidcard__letter {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--letter);
+  line-height: 1;
+}
+
+.pid-pidcard__name {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--text);
+  margin-left: 0.25rem;
+}
+
+.pid-pidcard__hint {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--muted-text);
+  margin-top: 0.35rem;
+  line-height: 1.4;
+}
+
+/* ---------- 15. Bảng ba loại đối tượng ---------- */
+.pid-type-table {
+  margin: 1.45rem 0;
+  overflow-x: auto;
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--pid-shadow);
+  background: var(--card-bg);
+}
+
+.pid-type-table table {
+  width: 100%;
+  min-width: 650px;
+  border-collapse: collapse;
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+.pid-type-table th,
+.pid-type-table td {
+  padding: 0.72rem 0.78rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  text-align: left;
+}
+
+.pid-type-table thead th {
+  background: var(--bg-elev);
+  color: var(--text);
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.pid-type-table tbody tr:last-child th,
+.pid-type-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.pid-type-table tbody th {
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.pid-type-table tbody td {
+  color: var(--muted-text);
+}
+
+.pid-type-dot {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  margin-right: 0.32rem;
+  border-radius: 50%;
+  vertical-align: 0.04em;
+}
+
+.pid-type-dot--easy {
+  background: #3b82f6;
+}
+
+.pid-type-dot--mid {
+  background: #0ea5e9;
+}
+
+.pid-type-dot--hard {
+  background: #6366f1;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 640px) {
+  .pid-nav,
+  .pid-hero {
+    border-radius: 10px;
+  }
+  .pid-nav {
+    padding: 0.65rem 0.75rem;
+  }
+  .pid-nav__chapters {
+    padding-top: 0.55rem;
+  }
+  .pid-nav__prevnext a {
+    flex: 1 1 0;
+    line-height: 1.35;
+  }
+  .pid-nav__prevnext a:last-child {
+    text-align: right;
+  }
+  .pid-hero {
+    padding: 1rem;
+  }
+  .pid-hero__row {
+    align-items: flex-start;
+    gap: 0.55rem;
+  }
+  .pid-hero__title {
+    flex: 1 1 15rem;
+    line-height: 1.45;
+  }
+  .pid-hero__meta {
+    gap: 0.35rem;
+  }
+  .pid-chip {
+    padding-inline: 0.55rem;
+  }
+  .pid-fig {
+    border-radius: 10px;
+  }
+  .pid-fig figcaption {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.7rem 0.8rem 0.75rem;
+    line-height: 1.5;
+  }
+  .pid-fig {
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  .pid-fig img[src$=".svg"] {
+    width: 720px;
+    max-width: none;
+  }
+  .pid-fig img[src$=".svg"] + figcaption {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+  }
+  .pid-tech__body {
+    padding: 0.15rem 1rem 1rem;
+  }
+  .pid-demo iframe {
+    height: 480px;
+    min-height: 400px;
+  }
+  .pid-demo--tall iframe {
+    height: 820px;
+    min-height: 660px;
+  }
+  .pid-takeaway {
+    padding: 1.2rem 1.1rem 1rem;
+  }
+  .pid-takeaway p {
+    font-size: 1.05rem;
+  }
+  .pid-hero__num {
+    font-size: 1.6rem;
+  }
+}
+
+/* ---------- Print: ẩn khối tương tác ---------- */
+@media print {
+  .pid-nav,
+  .pid-demo,
+  .pid-cta,
+  .pid-cliff {
+    display: none !important;
+  }
+  details.pid-tech {
+    display: none !important;
+  }
+}

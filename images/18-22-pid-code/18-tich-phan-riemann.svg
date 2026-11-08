@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="360" viewBox="0 0 800 360" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="riemann-title riemann-desc">
+  <title id="riemann-title">Phương pháp tích phân Riemann</title>
+  <desc id="riemann-desc">Chia thời gian thành các hình chữ nhật nhỏ, nhấn mạnh diện tích error nhân dt của vòng lặp hiện tại.</desc>
+  <defs>
+    <marker id="arr-axis" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#475569"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+      .code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    </style>
+  </defs>
+
+  <rect width="800" height="360" rx="12" fill="#ffffff"/>
+  <rect x="1" y="1" width="798" height="358" rx="11" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Axes -->
+  <line x1="65" y1="300" x2="760" y2="300" stroke="#475569" stroke-width="2" marker-end="url(#arr-axis)"/>
+  <line x1="65" y1="300" x2="65" y2="35" stroke="#475569" stroke-width="2" marker-end="url(#arr-axis)"/>
+  <text x="50" y="35" text-anchor="end" font-size="12" font-weight="700" fill="#475569">Sai số e(t)</text>
+  <text x="760" y="322" text-anchor="end" font-size="12" font-weight="700" fill="#475569">Thời gian t</text>
+
+  <!-- Past Riemann Rectangles (Đơn sắc trung tính) -->
+  <g fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5">
+    <rect x="80" y="250" width="70" height="50"/>
+    <rect x="150" y="215" width="70" height="85"/>
+    <rect x="220" y="165" width="70" height="135"/>
+    <rect x="290" y="130" width="70" height="170"/>
+    <rect x="360" y="145" width="70" height="155"/>
+    <rect x="430" y="135" width="70" height="165"/>
+    <!-- Slot 500-570 is the highlighted bar -->
+    <rect x="570" y="90" width="70" height="210"/>
+    <rect x="640" y="95" width="70" height="205"/>
+  </g>
+
+  <!-- Highlighted Rectangle (Nhấn mạnh vòng hiện tại: error x dt) -->
+  <g>
+    <rect x="500" y="110" width="70" height="190" fill="#fef3c7" stroke="#d97706" stroke-width="2"/>
+    <text x="535" y="200" text-anchor="middle" font-size="13" font-weight="800" fill="#b45309" class="code">error × dt</text>
+  </g>
+
+  <!-- Continuous Curve e(t) -->
+  <path d="M 65 265 C 170 240, 260 110, 400 150 S 610 85, 745 98" fill="none" stroke="#0f172a" stroke-width="3"/>
+  <text x="370" y="125" fill="#0f172a" font-size="12" font-weight="700">Đường cong sai số e(t)</text>
+
+  <!-- dt dimension on highlighted bar -->
+  <line x1="500" y1="316" x2="570" y2="316" stroke="#475569" stroke-width="1.5"/>
+  <path d="M 500 312 V 320 M 570 312 V 320" stroke="#475569" stroke-width="1.5"/>
+  <text x="535" y="335" text-anchor="middle" font-size="12" font-weight="700" fill="#0f172a" class="code">dt</text>
+
+  <!-- Legend / Insight Badge -->
+  <g transform="translate(90, 50)">
+    <rect x="0" y="0" width="220" height="48" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1"/>
+    <text x="10" y="19" font-size="11.5" font-weight="700" fill="#0f172a">Tích phân Riemann:</text>
+    <text x="10" y="36" font-size="11" font-weight="500" fill="#475569">Mỗi chu kỳ cộng thêm 1 cột hình chữ nhật</text>
+  </g>
+</svg>

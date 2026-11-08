@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="700" viewBox="0 0 1080 700" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="t30c d30c">
+  <title id="t30c">Vòng trong PID vị trí bánh của Bài 4 so với PID vận tốc bánh của Bài 5</title>
+  <desc id="d30c">Hai sơ đồ xếp chồng cho cùng một bánh xe. Sơ đồ trên là Bài 4: khối xy2wheel_simple xuất góc bánh đặt, đi qua một điểm cộng trừ với pos_1 đo được, rồi vào khối PID một cổng vào với hệ số 20, 1, 5; ngõ ra là mô-men đưa vào khớp Revolute, kênh mô-men ra góc là khâu bậc hai; tín hiệu vel_1 tồn tại nhưng không dùng. Sơ đồ dưới là Bài 5: khối xy_tracking_ctrl_vel xuất tốc độ bánh đặt đi thẳng vào cổng Ref của khối PID hai bậc tự do với hệ số 5, 1, 0, rời rạc chu kỳ 1 mili giây, chống windup clamping và kẹp tích phân cộng trừ 5; cổng Meas nhận vel_1 đo được; kênh mô-men ra vận tốc là khâu bậc một; tín hiệu pos_1 vẫn xuất ra nhưng không còn nối vào vòng kín.</desc>
+  <defs>
+    <marker id="ar30c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9.5 5 L 0 8.5 z" fill="#1e293b"/>
+    </marker>
+    <marker id="arf30c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9.5 5 L 0 8.5 z" fill="#475569"/>
+    </marker>
+    <marker id="ard30c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1.5 L 9.5 5 L 0 8.5 z" fill="#94a3b8"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1 { font-size: 24px; font-weight: 800; fill: #0f172a; }
+      .h2 { font-size: 15px; font-weight: 500; fill: #64748b; }
+      .bt { font-size: 16px; font-weight: 700; fill: #0f172a; }
+      .bs { font-size: 14px; font-weight: 500; fill: #475569; }
+      .sn { font-size: 15px; font-weight: 600; fill: #1e293b; }
+      .fb { font-size: 14px; font-weight: 600; fill: #475569; }
+      .nt { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .dm { font-size: 14px; font-weight: 600; fill: #94a3b8; }
+      .lb { font-size: 14px; font-weight: 700; fill: #b45309; }
+      .op { font-size: 17px; font-weight: 700; fill: #0f172a; }
+      .blk { fill: #ffffff; stroke: #1e293b; stroke-width: 1.8; }
+      .blkg { fill: #f8fafc; stroke: #94a3b8; stroke-width: 1.6; stroke-dasharray: 6 4; }
+      .ln  { fill: none; stroke: #1e293b; stroke-width: 1.8; }
+      .lf  { fill: none; stroke: #475569; stroke-width: 1.8; }
+      .ld  { fill: none; stroke: #94a3b8; stroke-width: 1.6; stroke-dasharray: 6 4; }
+      .zone { fill: none; stroke: #cbd5e1; stroke-width: 1.4; stroke-dasharray: 3 4; }
+    </style>
+  </defs>
+
+  <rect width="1080" height="700" fill="#ffffff"/>
+  <text x="34" y="42" class="h1">Vòng trong đổi biến hồi tiếp: góc bánh → vận tốc bánh</text>
+  <text x="34" y="70" class="h2">Cùng một cơ hệ, cùng trần mô-men ±10 N·m. Chỉ đổi tín hiệu hồi tiếp, dạng khối PID và bộ hệ số.</text>
+
+  <!-- ================= PANEL A — BAI 4 ================= -->
+  <rect x="24" y="92" width="1032" height="250" rx="10" class="zone"/>
+  <text x="42" y="118" class="lb">BÀI 4 — PID VỊ TRÍ BÁNH · kênh τ → φ là khâu BẬC HAI</text>
+
+  <rect x="50" y="185" width="180" height="62" class="blk"/>
+  <text x="140" y="210" text-anchor="middle" class="bt">xy2wheel_simple</text>
+  <text x="140" y="231" text-anchor="middle" class="bs">góc bánh đặt φ*</text>
+
+  <path d="M 230 216 H 300" class="ln" marker-end="url(#ar30c)"/>
+  <text x="265" y="206" text-anchor="middle" class="bs">φ* [rad]</text>
+
+  <circle cx="322" cy="216" r="19" class="blk"/>
+  <text x="292" y="209" class="op">+</text>
+  <text x="337" y="256" class="op">−</text>
+  <path d="M 341 216 H 400" class="ln" marker-end="url(#ar30c)"/>
+
+  <rect x="404" y="182" width="200" height="68" class="blk"/>
+  <text x="504" y="209" text-anchor="middle" class="bt">PID Controller</text>
+  <text x="504" y="232" text-anchor="middle" class="bs">P 20 · I 1 · D 5 · liên tục</text>
+
+  <path d="M 604 216 H 664" class="ln" marker-end="url(#ar30c)"/>
+  <text x="634" y="206" text-anchor="middle" class="bs">τ [N·m]</text>
+
+  <rect x="668" y="178" width="232" height="76" class="blk"/>
+  <text x="784" y="203" text-anchor="middle" class="bt">Simulink-PS → robot</text>
+  <text x="784" y="223" text-anchor="middle" class="bs">torque_1 → khớp Revolute</text>
+  <text x="784" y="243" text-anchor="middle" class="bs">τ → φ  (bậc hai)</text>
+
+  <path d="M 784 254 V 306 H 322 V 235" class="lf" marker-end="url(#arf30c)"/>
+  <text x="553" y="298" text-anchor="middle" class="fb">pos_1 [rad] — góc bánh đo được, qua PS-Simulink Converter2</text>
+
+  <path d="M 900 216 H 918" class="ld" marker-end="url(#ard30c)"/>
+  <rect x="922" y="194" width="126" height="44" rx="6" class="blkg"/>
+  <text x="985" y="212" text-anchor="middle" class="dm">vel_1</text>
+  <text x="985" y="230" text-anchor="middle" class="dm">không dùng</text>
+
+  <!-- ================= PANEL B — BAI 5 ================= -->
+  <rect x="24" y="372" width="1032" height="270" rx="10" class="zone"/>
+  <text x="42" y="398" class="lb">BÀI 5 — PID VẬN TỐC BÁNH · kênh τ → φ̇ là khâu BẬC MỘT</text>
+
+  <rect x="50" y="468" width="180" height="62" class="blk"/>
+  <text x="140" y="493" text-anchor="middle" class="bt">xy_tracking_ctrl_vel</text>
+  <text x="140" y="514" text-anchor="middle" class="bs">tốc độ bánh đặt φ̇*</text>
+
+  <path d="M 230 499 H 330 V 478 H 400" class="ln" marker-end="url(#ar30c)"/>
+  <text x="278" y="489" text-anchor="middle" class="bs">φ̇* [rad/s]</text>
+  <text x="394" y="470" text-anchor="end" class="nt">Ref</text>
+
+  <rect x="404" y="452" width="200" height="94" class="blk"/>
+  <text x="504" y="482" text-anchor="middle" class="bt">PID Controller (2DOF)</text>
+  <text x="504" y="504" text-anchor="middle" class="bs">P 5 · I 1 · D 0 · Ts = 1 ms</text>
+  <text x="504" y="524" text-anchor="middle" class="bs">clamping · kẹp tích phân ±5</text>
+
+  <path d="M 604 499 H 664" class="ln" marker-end="url(#ar30c)"/>
+  <text x="634" y="489" text-anchor="middle" class="bs">τ [N·m]</text>
+
+  <rect x="668" y="461" width="232" height="76" class="blk"/>
+  <text x="784" y="486" text-anchor="middle" class="bt">Simulink-PS → robot</text>
+  <text x="784" y="506" text-anchor="middle" class="bs">torque_1 → khớp Revolute</text>
+  <text x="784" y="526" text-anchor="middle" class="bs">τ → φ̇  (bậc một)</text>
+
+  <path d="M 784 537 V 590 H 330 V 520 H 400" class="lf" marker-end="url(#arf30c)"/>
+  <text x="557" y="582" text-anchor="middle" class="fb">vel_1 [rad/s] — vận tốc góc bánh đo được, qua PS-Simulink Converter3 → Goto velo_1</text>
+  <text x="394" y="538" text-anchor="end" class="nt">Meas</text>
+
+  <path d="M 900 499 H 918" class="ld" marker-end="url(#ard30c)"/>
+  <rect x="922" y="477" width="126" height="44" rx="6" class="blkg"/>
+  <text x="985" y="495" text-anchor="middle" class="dm">pos_1</text>
+  <text x="985" y="513" text-anchor="middle" class="dm">bỏ trống</text>
+
+  <text x="34" y="672" class="nt">Điểm cộng rời biến mất — khối 2DOF tự trừ bên trong. Hồi tiếp đổi từ pos_* sang vel_*. Hệ số 20 / 1 / 5 → 5 / 1 / 0.</text>
+</svg>

@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="820" viewBox="0 0 960 820" role="img" aria-labelledby="t1 d1">
+  <title id="t1">Ảnh hưởng của bão hòa lực và chống windup</title>
+  <desc id="d1">Dữ liệu MATLAB với PI800,40 và lực thực giới hạn từ -1500 đến 1500 N. Không chống windup: vận tốc vọt lố 10.52 phần trăm và lắng sau 46.30 s. Tích phân có điều kiện: không vọt lố và lắng sau 26.24 s. Lực yêu cầu vẫn khởi đầu ở 8000 N.</desc>
+  <defs>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1 { font-size: 24px; font-weight: 800; fill: #0f172a; }
+      .h2 { font-size: 16px; font-weight: 500; fill: #64748b; }
+      .pt { font-size: 16px; font-weight: 700; fill: #1e293b; }
+      .ax { font-size: 14px; font-weight: 500; fill: #64748b; font-variant-numeric: tabular-nums; }
+      .axl { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .lg { font-size: 15px; font-weight: 500; fill: #334155; }
+      .an { font-size: 14px; font-weight: 600; fill: #334155; }
+      .anm { font-size: 14px; font-weight: 500; fill: #475569; }
+      .m { font-family: "Times New Roman", "STIX Two Text", Times, serif; font-style: italic; }
+    </style>
+  </defs>
+  <rect width="960" height="820" fill="#ffffff"/>
+<text x="30" y="42" class="h1">Giới hạn lực 1500 N làm lộ chuyện tích phân tích lũy quá mức</text>
+<text x="30" y="68" class="h2">Thử nghiệm bổ sung · PI (800, 40) · −1500 ≤ lực thực ≤ 1500 N · r = 10 m/s</text>
+<line x1="30" y1="86" x2="930" y2="86" stroke="#e2e8f0"/>
+<line x1="40.0" y1="111.0" x2="66.0" y2="111.0" stroke="#eb6834" stroke-width="3" stroke-linecap="round"/>
+<text x="74.0" y="116.0" class="lg">Không chống windup</text>
+<line x1="310.0" y1="111.0" x2="336.0" y2="111.0" stroke="#2a78d6" stroke-width="3" stroke-linecap="round"/>
+<text x="344.0" y="116.0" class="lg">Tích phân có điều kiện</text>
+<defs><clipPath id="panel-clip-0"><rect x="80" y="165" width="840" height="240"/></clipPath></defs>
+<line x1="80.0" y1="405.0" x2="920.0" y2="405.0" stroke="#cbd5e1"/>
+<text x="72.0" y="410.0" class="ax" text-anchor="end">0</text>
+<line x1="80.0" y1="364.3" x2="920.0" y2="364.3" stroke="#e2e8f0"/>
+<text x="72.0" y="369.3" class="ax" text-anchor="end">2</text>
+<line x1="80.0" y1="323.6" x2="920.0" y2="323.6" stroke="#e2e8f0"/>
+<text x="72.0" y="328.6" class="ax" text-anchor="end">4</text>
+<line x1="80.0" y1="283.0" x2="920.0" y2="283.0" stroke="#e2e8f0"/>
+<text x="72.0" y="288.0" class="ax" text-anchor="end">6</text>
+<line x1="80.0" y1="242.3" x2="920.0" y2="242.3" stroke="#e2e8f0"/>
+<text x="72.0" y="247.3" class="ax" text-anchor="end">8</text>
+<line x1="80.0" y1="201.6" x2="920.0" y2="201.6" stroke="#e2e8f0"/>
+<text x="72.0" y="206.6" class="ax" text-anchor="end">10</text>
+<line x1="80.0" y1="405.0" x2="80.0" y2="410.0" stroke="#cbd5e1"/>
+<text x="80.0" y="426.0" class="ax" text-anchor="middle">0</text>
+<line x1="185.0" y1="405.0" x2="185.0" y2="410.0" stroke="#cbd5e1"/>
+<text x="185.0" y="426.0" class="ax" text-anchor="middle">10</text>
+<line x1="290.0" y1="405.0" x2="290.0" y2="410.0" stroke="#cbd5e1"/>
+<text x="290.0" y="426.0" class="ax" text-anchor="middle">20</text>
+<line x1="395.0" y1="405.0" x2="395.0" y2="410.0" stroke="#cbd5e1"/>
+<text x="395.0" y="426.0" class="ax" text-anchor="middle">30</text>
+<line x1="500.0" y1="405.0" x2="500.0" y2="410.0" stroke="#cbd5e1"/>
+<text x="500.0" y="426.0" class="ax" text-anchor="middle">40</text>
+<line x1="605.0" y1="405.0" x2="605.0" y2="410.0" stroke="#cbd5e1"/>
+<text x="605.0" y="426.0" class="ax" text-anchor="middle">50</text>
+<line x1="710.0" y1="405.0" x2="710.0" y2="410.0" stroke="#cbd5e1"/>
+<text x="710.0" y="426.0" class="ax" text-anchor="middle">60</text>
+<line x1="815.0" y1="405.0" x2="815.0" y2="410.0" stroke="#cbd5e1"/>
+<text x="815.0" y="426.0" class="ax" text-anchor="middle">70</text>
+<line x1="920.0" y1="405.0" x2="920.0" y2="410.0" stroke="#cbd5e1"/>
+<text x="920.0" y="426.0" class="ax" text-anchor="middle">80</text>
+<line x1="80.0" y1="405.0" x2="920.0" y2="405.0" stroke="#cbd5e1"/>
+<text x="80.0" y="151.0" class="pt">Vận tốc (m/s) · dải xám = 10 ± 2 %</text>
+<rect x="80.0" y="197.5" width="840.0" height="8.1" fill="#e2e8f0" opacity="0.6"/>
+<line x1="80.0" y1="201.6" x2="920.0" y2="201.6" stroke="#64748b" stroke-width="1.5" stroke-dasharray="6 5"/>
+<polyline points="80.0,405.0 98.8,352.6 118.8,301.9 139.6,254.1 160.7,210.2 167.7,197.0 171.0,192.4 174.0,189.2 177.3,186.5 181.8,183.9 187.0,182.0 192.3,180.9 201.0,180.2 214.6,180.5 308.7,187.8 393.4,192.4 475.6,195.4 582.7,197.9 709.1,199.6 869.4,200.7 1340.0,201.5" fill="none" stroke="#eb6834" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" clip-path="url(#panel-clip-0)"/>
+<polyline points="80.0,405.0 96.7,358.2 114.5,312.4 132.4,270.1 148.1,236.1 151.2,231.0 154.3,226.9 157.7,223.4 161.4,220.4 165.5,217.9 170.7,215.6 176.2,213.9 183.4,212.4 194.6,211.0 212.0,209.8 283.3,207.3 384.8,205.1 511.1,203.5 642.0,202.6 822.7,202.0 1340.0,201.6" fill="none" stroke="#2a78d6" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" clip-path="url(#panel-clip-0)"/>
+<text x="342.5" y="172.1" class="an" text-anchor="start">Không chống windup: vọt lố 10.52 %</text>
+<text x="489.5" y="242.3" class="an" text-anchor="start">Chống windup: thời gian lắng 26.24 s</text>
+<defs><clipPath id="panel-clip-1"><rect x="80" y="515" width="840" height="230"/></clipPath></defs>
+<line x1="80.0" y1="745.0" x2="920.0" y2="745.0" stroke="#cbd5e1"/>
+<text x="72.0" y="750.0" class="ax" text-anchor="end">0</text>
+<line x1="80.0" y1="677.4" x2="920.0" y2="677.4" stroke="#e2e8f0"/>
+<text x="72.0" y="682.4" class="ax" text-anchor="end">0.5</text>
+<line x1="80.0" y1="609.7" x2="920.0" y2="609.7" stroke="#e2e8f0"/>
+<text x="72.0" y="614.7" class="ax" text-anchor="end">1</text>
+<line x1="80.0" y1="542.1" x2="920.0" y2="542.1" stroke="#e2e8f0"/>
+<text x="72.0" y="547.1" class="ax" text-anchor="end">1.5</text>
+<line x1="80.0" y1="745.0" x2="80.0" y2="750.0" stroke="#cbd5e1"/>
+<text x="80.0" y="766.0" class="ax" text-anchor="middle">0</text>
+<line x1="185.0" y1="745.0" x2="185.0" y2="750.0" stroke="#cbd5e1"/>
+<text x="185.0" y="766.0" class="ax" text-anchor="middle">5</text>
+<line x1="290.0" y1="745.0" x2="290.0" y2="750.0" stroke="#cbd5e1"/>
+<text x="290.0" y="766.0" class="ax" text-anchor="middle">10</text>
+<line x1="395.0" y1="745.0" x2="395.0" y2="750.0" stroke="#cbd5e1"/>
+<text x="395.0" y="766.0" class="ax" text-anchor="middle">15</text>
+<line x1="500.0" y1="745.0" x2="500.0" y2="750.0" stroke="#cbd5e1"/>
+<text x="500.0" y="766.0" class="ax" text-anchor="middle">20</text>
+<line x1="605.0" y1="745.0" x2="605.0" y2="750.0" stroke="#cbd5e1"/>
+<text x="605.0" y="766.0" class="ax" text-anchor="middle">25</text>
+<line x1="710.0" y1="745.0" x2="710.0" y2="750.0" stroke="#cbd5e1"/>
+<text x="710.0" y="766.0" class="ax" text-anchor="middle">30</text>
+<line x1="815.0" y1="745.0" x2="815.0" y2="750.0" stroke="#cbd5e1"/>
+<text x="815.0" y="766.0" class="ax" text-anchor="middle">35</text>
+<line x1="920.0" y1="745.0" x2="920.0" y2="750.0" stroke="#cbd5e1"/>
+<text x="920.0" y="766.0" class="ax" text-anchor="middle">40</text>
+<line x1="80.0" y1="745.0" x2="920.0" y2="745.0" stroke="#cbd5e1"/>
+<text x="80.0" y="501.0" class="pt">Lực thực cấp cho xe (kN) · lực yêu cầu ban đầu là 8 kN</text>
+<text x="920.0" y="787.0" class="axl" text-anchor="end">thời gian (s)</text>
+<line x1="80.0" y1="542.1" x2="920.0" y2="542.1" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="6 5"/>
+<polyline points="80.0,542.1 250.6,542.1 255.2,563.9 259.4,580.7 263.6,595.0 267.7,606.9 272.1,617.8 278.4,630.5 284.5,640.2 290.5,647.8 297.1,654.4 303.4,659.3 311.3,664.0 320.3,667.9 330.7,671.0 342.4,673.3 355.4,674.9 370.6,676.0 392.8,676.8 421.4,677.2 532.6,677.4 2600.0,677.4" fill="none" stroke="#eb6834" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" clip-path="url(#panel-clip-1)"/>
+<polyline points="80.0,542.1 212.6,542.1 217.3,564.2 221.6,581.3 225.7,595.2 230.0,607.6 234.1,617.7 240.5,630.6 246.8,640.6 252.8,648.1 259.4,654.6 267.7,660.8 276.2,665.4 283.8,668.4 294.9,671.5 305.1,673.4 317.4,674.9 332.6,676.0 354.8,676.8 383.3,677.2 494.5,677.4 2600.0,677.4" fill="none" stroke="#2a78d6" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" clip-path="url(#panel-clip-1)"/>
+<text x="913.7" y="532.6" class="an" text-anchor="end">Giới hạn 1.5 kN</text>
+<text x="500.0" y="575.9" class="anm" text-anchor="start">Khâu I có điều kiện giúp nhả lực sớm hơn</text>
+</svg>

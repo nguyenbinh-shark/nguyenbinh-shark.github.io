@@ -1,0 +1,1113 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Chương 7 - Đấu Trường Huấn Luyện Viên PID & Tỉ Lệ Vàng 4–5</title>
+<style>
+  :root {
+    --bg: #0b0e1a;
+    --panel: #0f1322;
+    --ink: #FFF1E8;
+    --muted: #83769C;
+    --line: #5F574F;
+    --acc: #FFEC27;
+    --blue: #29ADFF;
+    --blue-dark: #29ADFF;
+    --amber: #FFA300;
+    --amber-dark: #FFA300;
+    --rose: #FF77A8;
+    --rose-dark: #FF77A8;
+    --green: #00E436;
+    --green-dark: #00E436;
+    --purple: #83769C;
+    --red: #FF004D;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 14px;
+    color: var(--ink);
+    font-family: "Courier New", ui-monospace, Consolas, monospace;
+    background-color: var(--bg);
+    background-image:linear-gradient(45deg,#0d1122 25%,transparent 25%,transparent 75%,#0d1122 75%),linear-gradient(45deg,#0d1122 25%,transparent 25%,transparent 75%,#0d1122 75%);
+    background-size:26px 26px;
+    background-position:0 0,13px 13px;
+  }
+  .wrap {
+    width: 100%;
+    max-width: 980px;
+    margin: auto;
+  }
+  .header-box {
+    margin-bottom: 12px;
+    padding: 12px 16px;
+    background: #1D2B53;
+    border: 2px solid var(--line);
+    box-shadow: 4px 4px 0 #000;
+  }
+  .header-box h1 {
+    margin: 0 0 4px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+    color: var(--acc);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .header-box p {
+    margin: 0;
+    font-size: 0.84rem;
+    color: #C2C3C7;
+    line-height: 1.45;
+  }
+  .header-box p b { color: var(--acc); }
+
+  /* Student Selector Tabs — character select */
+  .student-bar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .student-tab {
+    flex: 1 1 240px;
+    padding: 10px 12px;
+    background: var(--panel);
+    border: 2px solid var(--line);
+    box-shadow: 3px 3px 0 #000;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+    color: var(--ink);
+  }
+  .student-tab:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 #000; }
+  .student-tab.active {
+    border-color: var(--acc);
+    background: #1a2340;
+    box-shadow: 3px 3px 0 #000, inset 0 0 0 1px rgba(255,236,39,.25);
+  }
+  .student-tab .tab-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+    gap: 6px;
+  }
+  .student-tab .tab-title {
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: var(--ink);
+    text-transform: uppercase;
+    letter-spacing: .03em;
+  }
+  .student-tab.active .tab-title { color: var(--acc); }
+  .student-tab .badge {
+    padding: 2px 7px;
+    border: 1px solid rgba(0,0,0,.6);
+    font-size: 0.64rem;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    box-shadow: 2px 2px 0 #000;
+  }
+  .badge.easy { background: #008751; color: var(--ink); }
+  .badge.med { background: #AB5236; color: var(--ink); }
+  .badge.hard { background: #7E2553; color: var(--ink); }
+  .student-tab .tab-desc {
+    margin: 0;
+    font-size: 0.72rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* Main Canvas Panel */
+  .panel {
+    position: relative;
+    border: 2px solid var(--line);
+    background: var(--panel);
+    overflow: hidden;
+    margin-bottom: 12px;
+    box-shadow: 4px 4px 0 #000;
+  }
+  .panel::after {
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:repeating-linear-gradient(0deg,rgba(0,0,0,.13) 0 1px,transparent 1px 3px);
+  }
+  .panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #1D2B53;
+    border-bottom: 2px solid var(--line);
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--acc);
+    flex-wrap: wrap;
+  }
+  .panel canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  canvas.px { image-rendering: pixelated; }
+
+  /* HUD Stats Grid */
+  .hud {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .stat-card {
+    padding: 9px 10px;
+    background: var(--panel);
+    border: 2px solid var(--line);
+    box-shadow: 3px 3px 0 #000;
+    text-align: center;
+  }
+  .stat-card b {
+    display: block;
+    font-size: 1.02rem;
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--acc);
+  }
+  .stat-card span {
+    display: block;
+    margin-top: 3px;
+    font-size: 0.62rem;
+    color: var(--muted);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  /* Sliders Control Box */
+  .controls-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .slider-card {
+    padding: 12px 14px;
+    background: var(--panel);
+    border: 2px solid var(--line);
+    box-shadow: 3px 3px 0 #000;
+  }
+  .slider-card.p-card { border-color: #1e5f96; }
+  .slider-card.i-card { border-color: #9c6a1e; }
+  .slider-card.d-card { border-color: #7E2553; }
+
+  .slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    gap: 6px;
+  }
+  .slider-header label {
+    font-size: 0.76rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+  }
+  .slider-header .val {
+    font-size: 0.9rem;
+    font-weight: 900;
+    white-space: nowrap;
+  }
+  .p-card .slider-header label, .p-card .slider-header .val { color: var(--blue); }
+  .i-card .slider-header label, .i-card .slider-header .val { color: var(--amber); }
+  .d-card .slider-header label, .d-card .slider-header .val { color: var(--rose); }
+
+  input[type=range] {
+    width: 100%;
+    margin: 8px 0 4px;
+    cursor: pointer;
+  }
+  .p-card input[type=range] { accent-color: var(--blue); }
+  .i-card input[type=range] { accent-color: var(--amber); }
+  .d-card input[type=range] { accent-color: var(--rose); }
+
+  .slider-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.68rem;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  /* Action Buttons Row */
+  .action-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  button {
+    min-height: 44px;
+    padding: 9px 14px;
+    border: 2px solid #C2C3C7;
+    background: #1D2B53;
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    user-select: none;
+    box-shadow: 3px 3px 0 #000;
+  }
+  button:active { transform: translate(2px,2px); box-shadow: 1px 1px 0 #000; }
+  button.primary {
+    background: #008751;
+    border-color: var(--green);
+    color: var(--ink);
+  }
+  button.warn {
+    background: #2a0f1e;
+    border-color: var(--red);
+    color: var(--red);
+  }
+  button.chip-btn {
+    background: var(--panel);
+    border-color: var(--line);
+    font-size: 0.72rem;
+  }
+  button.chip-btn.active {
+    background: #008751;
+    border-color: var(--green);
+    color: var(--ink);
+  }
+
+  /* Coach Box — RPG dialog */
+  .coach-box {
+    padding: 12px 14px;
+    background: #141a30;
+    border: 2px solid var(--line);
+    box-shadow: 4px 4px 0 #000;
+    margin-bottom: 12px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .coach-avatar {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--acc);
+    background: #1D2B53;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+  }
+  .coach-content {
+    flex: 1;
+    min-width: 0;
+  }
+  .coach-title {
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+    color: var(--acc);
+    margin-bottom: 3px;
+  }
+  .coach-msg {
+    margin: 0;
+    font-size: 0.82rem;
+    color: #C2C3C7;
+    line-height: 1.5;
+  }
+  .coach-msg b { color: var(--acc); }
+  .coach-msg .alert { color: var(--red); font-weight: 700; }
+  .coach-msg .success { color: var(--green); font-weight: 800; }
+
+  /* Bottom Guide */
+  .guide-note {
+    padding: 12px 14px;
+    background: var(--panel);
+    border: 2px solid var(--line);
+    box-shadow: 4px 4px 0 #000;
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+  .guide-note b { color: #C2C3C7; }
+
+  @media (max-width: 768px) {
+    body { padding: 8px; }
+    .hud { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .controls-grid { grid-template-columns: 1fr; }
+    .student-bar { flex-direction: column; }
+    .action-row button { flex: 1 1 45%; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <div class="header-box">
+    <h1>🏆 ĐẤU TRƯỜNG HUẤN LUYỆN VIÊN PID · CHƯƠNG 7</h1>
+    <p>Chào mừng bạn tới phòng thí nghiệm tối thượng! Hãy dùng 3 núm vặn <b>P (Lực kéo)</b>, <b>I (Lực tích tụ)</b>, <b>D (Lực hãm)</b> để nêm bộ số chinh phục cả 3 loại học trò có tính khí khác nhau.</p>
+  </div>
+
+  <!-- Student Selection -->
+  <div class="student-bar" role="tablist">
+    <button class="student-tab active" id="tabEasy" type="button" role="tab" aria-selected="true">
+      <div class="tab-head">
+        <span class="tab-title">Học trò 1: DỄ</span>
+        <span class="badge easy">Loại I · Lò xo</span>
+      </div>
+      <p class="tab-desc">Trễ rất ngắn (Tu=0,1s), phản xạ nhanh, tự ổn định tốt. Chỉ cần nêm nhẹ là vào vạch.</p>
+    </button>
+    <button class="student-tab" id="tabMed" type="button" role="tab" aria-selected="false">
+      <div class="tab-head">
+        <span class="tab-title">Học trò 2: VỪA</span>
+        <span class="badge med">Loại II · Bồn nước</span>
+      </div>
+      <p class="tab-desc">Trễ vừa (Tu=0,4s), có quán tính và lực cản vừa phải. Đòi hỏi phối hợp khéo P, I, D.</p>
+    </button>
+    <button class="student-tab" id="tabHard" type="button" role="tab" aria-selected="false">
+      <div class="tab-head">
+        <span class="tab-title">Học trò 3: KHÓ</span>
+        <span class="badge hard">Loại III · Đất nặn</span>
+      </div>
+      <p class="tab-desc">Trễ dài (Tu=1,0s), KHÔNG tự ổn định, trôi tự do. Cực dễ mất kiểm soát nếu vặn ẩu!</p>
+    </button>
+  </div>
+
+  <!-- Canvas Scene -->
+  <section class="panel">
+    <div class="panel-header">
+      <span>ĐƯỜNG ĐUA TRỰC TIẾP · A-SIN & RÙA VÀNG</span>
+      <span id="speedIndicator" style="color:var(--muted)">Băng chuyền: 16% · Lực đạp: 0%</span>
+    </div>
+    <canvas id="scene" class="px" width="314" height="93" aria-label="Đường đua mô phỏng vị trí A-sin và Rùa Vàng"></canvas>
+  </section>
+
+  <!-- Realtime Response Graph -->
+  <section class="panel">
+    <div class="panel-header">
+      <span>ĐỒ THỊ ĐÁP ỨNG THỜI GIAN THỰC (VỊ TRÍ vs THỜI GIAN)</span>
+      <span style="color:var(--green)">Dải ổn định mục tiêu: ±2% vạch đích</span>
+    </div>
+    <canvas id="graph" width="940" height="230" aria-label="Đồ thị đáp ứng thời gian thực của vòng lặp điều khiển PID"></canvas>
+  </section>
+
+  <!-- HUD Stats -->
+  <div class="hud">
+    <div class="stat-card"><b id="errVal">100%</b><span>Sai lệch hiện tại (e)</span></div>
+    <div class="stat-card"><b id="overVal">0%</b><span>Vọt lố lớn nhất</span></div>
+    <div class="stat-card"><b id="crossVal">0</b><span>Số nhịp dao động</span></div>
+    <div class="stat-card"><b id="settleVal">--</b><span>Thời gian ổn định (s)</span></div>
+    <div class="stat-card"><b id="ratioVal">--</b><span>Tỉ số Ti / Td</span></div>
+  </div>
+
+  <!-- Sliders -->
+  <div class="controls-grid">
+    <!-- P Slider -->
+    <div class="slider-card p-card">
+      <div class="slider-header">
+        <label for="kpRange">LỰC KÉO (Kp) · Hiện tại</label>
+        <span class="val" id="kpVal">3,0</span>
+      </div>
+      <input id="kpRange" type="range" min="0.2" max="6.0" step="0.1" value="3.0">
+      <div class="slider-meta"><span>Nhẹ chân (0,2)</span><span>Mạnh mẽ (6,0)</span></div>
+      <div style="margin-top:4px;font-size:0.7rem;color:var(--blue);font-weight:600">Khâu tỉ lệ khuếch đại lực kéo tức thời</div>
+    </div>
+
+    <!-- I Slider -->
+    <div class="slider-card i-card">
+      <div class="slider-header">
+        <label for="tiRange">LỰC TÍCH TỤ (Ti & Ki) · Quá khứ</label>
+        <span class="val" id="tiVal">2,5 s <small style="font-size:0.75rem;font-weight:600;color:var(--muted)">(Ki ≈ 1,20)</small></span>
+      </div>
+      <input id="tiRange" type="range" min="0.5" max="20.0" step="0.5" value="2.5">
+      <div class="slider-meta"><span>Dồn lực gắt Ti=0,5s (Ki to)</span><span>Dồn lực tà tà Ti=20s (Ki nhỏ)</span></div>
+      <div style="margin-top:4px;font-size:0.7rem;color:var(--amber);font-weight:600">Quy đổi: <b>Ki = Kp / Ti</b> (Ti càng nhỏ thì dồn lực càng nhanh)</div>
+    </div>
+
+    <!-- D Slider -->
+    <div class="slider-card d-card">
+      <div class="slider-header">
+        <label for="tdRange">LỰC HÃM (Td & Kd) · Tương lai</label>
+        <span class="val" id="tdVal">0,3 s <small style="font-size:0.75rem;font-weight:600;color:var(--muted)">(Kd ≈ 0,90)</small></span>
+      </div>
+      <input id="tdRange" type="range" min="0.0" max="3.0" step="0.1" value="0.3">
+      <div class="slider-meta"><span>Tắt lực hãm (0s)</span><span>Hãm từ xa (3s)</span></div>
+      <div style="margin-top:4px;font-size:0.7rem;color:var(--rose);font-weight:600">Quy đổi: <b>Kd = Kp × Td</b> (Td càng lớn thì lực hãm càng mạnh)</div>
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="action-row">
+    <button class="primary" id="startBtn" type="button">▶ CHẠY ĐUA / BẮT ĐẦU</button>
+    <button id="resetBtn" type="button">🔄 ĐẶT LẠI TỪ ĐẦU</button>
+    <button class="chip-btn" id="goldenBtn" type="button" title="Áp dụng ngay tỉ lệ vàng Ti / Td = 4.5">✨ Áp dụng Tỉ Lệ Vàng 4–5</button>
+    <button class="warn" id="stepTargetBtn" type="button">⚡ Rùa dời vạch (50m ➔ 80m)</button>
+    <button class="warn" id="gustBtn" type="button">🌊 Đổi gió / Lực cản bất ngờ</button>
+  </div>
+
+  <!-- Auto-Coach Box -->
+  <div class="coach-box">
+    <div class="coach-avatar">👴</div>
+    <div class="coach-content">
+      <div class="coach-title">LỜI KHUYÊN CỦA BÁC HUẤN LUYỆN VIÊN GIÀ</div>
+      <p class="coach-msg" id="coachMsg">
+        Hãy bắt đầu bằng <b>Quy trình 4 bước</b>: Tăng <b>Kp</b> trước cho hệ bứt tốc nhanh, sau đó chỉnh <b>Ti</b> để xóa sai số tồn dư, và thêm <b>Td</b> để dập vọt lố. Bấm <b>"CHẠY ĐUA"</b> để kiểm tra!
+      </p>
+    </div>
+  </div>
+
+  <!-- Quick Guide -->
+  <div class="guide-note">
+    <b>💡 Bí kíp thi đấu:</b><br>
+    • <b>Học trò Dễ:</b> Cho Kp cao (2,5–4), Ti ngắn (1,5–3s), Td nhẹ (0,2–0,5s) là ổn định ngay trong 8 giây.<br>
+    • <b>Học trò Vừa:</b> Giữ tỉ lệ vàng <b>Ti / Td = 4 ~ 5</b> (ví dụ Ti = 4,5s, Td = 0,9s) để không bị vọt lố.<br>
+    • <b>Học trò Khó:</b> Tuyệt đối không để Kp quá cao kẻo bị "run vì trễ" (Chương 6); phải kiên nhẫn tăng Td để ghìm quán tính trôi của đất nặn!
+  </div>
+</main>
+
+<script>
+"use strict";
+
+// DOM Elements
+const scene = document.getElementById("scene"), graph = document.getElementById("graph");
+const sc = scene.getContext("2d"), gc = graph.getContext("2d");
+const tabEasy = document.getElementById("tabEasy"), tabMed = document.getElementById("tabMed"), tabHard = document.getElementById("tabHard");
+const kpRange = document.getElementById("kpRange"), tiRange = document.getElementById("tiRange"), tdRange = document.getElementById("tdRange");
+const kpVal = document.getElementById("kpVal"), tiVal = document.getElementById("tiVal"), tdVal = document.getElementById("tdVal");
+const startBtn = document.getElementById("startBtn"), resetBtn = document.getElementById("resetBtn"), goldenBtn = document.getElementById("goldenBtn");
+const stepTargetBtn = document.getElementById("stepTargetBtn"), gustBtn = document.getElementById("gustBtn");
+const errVal = document.getElementById("errVal"), overVal = document.getElementById("overVal"), crossVal = document.getElementById("crossVal"), settleVal = document.getElementById("settleVal"), ratioVal = document.getElementById("ratioVal");
+const coachMsg = document.getElementById("coachMsg"), speedIndicator = document.getElementById("speedIndicator");
+
+// Student Definitions (Based on Chapter 6)
+const STUDENTS = {
+  easy: {
+    name: "Loại I (DỄ)",
+    tu: 0.1, tg: 0.8,
+    belt: 0.5, maxSpeed: 10.0, slew: 180,
+    selfReg: 0.06,
+    defaultKp: 3.0, defaultTi: 2.5, defaultTd: 0.3,
+    targetSettle: 10, maxAllowedOver: 5
+  },
+  med: {
+    name: "Loại II (VỪA)",
+    tu: 0.4, tg: 1.8,
+    belt: 0.8, maxSpeed: 10.0, slew: 100,
+    selfReg: 0.02,
+    defaultKp: 2.5, defaultTi: 4.5, defaultTd: 0.9,
+    targetSettle: 20, maxAllowedOver: 8
+  },
+  hard: {
+    name: "Loại III (KHÓ)",
+    tu: 1.0, tg: 3.0,
+    belt: 1.0, maxSpeed: 10.0, slew: 55,
+    selfReg: 0.0,
+    defaultKp: 1.8, defaultTi: 6.0, defaultTd: 1.3,
+    targetSettle: 35, maxAllowedOver: 12
+  }
+};
+
+let currentStudentKey = "easy";
+let student = STUDENTS.easy;
+
+// State Variables
+let targetPos = 50; // setpoint in meters (0-100)
+let pos = 0;
+let actualVelocity = 0;
+let command = 0;
+let integralSum = 0;
+let prevError = 50;
+let lastDeriv = 0;
+let simTime = 0;
+let running = false;
+let lastFrameTime = performance.now();
+
+// Delay buffer for Tu
+let delayQueue = [];
+
+// Performance Tracking
+let trace = [];
+let maxOvershootPct = 0;
+let crossings = 0;
+let prevSign = 1;
+let settleTime = null;
+let settleStableClock = 0;
+let loadGust = 0;
+let lastDelayedCmd = 0;
+
+// Formatting
+const fmt = (n, d = 1) => n.toFixed(d).replace(".", ",");
+const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+
+function updateSliderLabels() {
+  const kp = Number(kpRange.value);
+  const ti = Number(tiRange.value);
+  const td = Number(tdRange.value);
+
+  const kiEquiv = ti > 0 ? (kp / ti) : 0;
+  const kdEquiv = kp * td;
+
+  kpVal.textContent = fmt(kp, 1);
+  tiVal.innerHTML = `${fmt(ti, 1)} s <small style="font-size:0.75rem;font-weight:600;color:var(--muted)">(Ki ≈ ${fmt(kiEquiv, 2)})</small>`;
+  tdVal.innerHTML = td === 0
+    ? `0 (Tắt) <small style="font-size:0.75rem;font-weight:600;color:var(--muted)">(Kd = 0)</small>`
+    : `${fmt(td, 1)} s <small style="font-size:0.75rem;font-weight:600;color:var(--muted)">(Kd ≈ ${fmt(kdEquiv, 2)})</small>`;
+
+  if (td > 0) {
+    const ratio = ti / td;
+    ratioVal.textContent = fmt(ratio, 1);
+    if (ratio >= 3.8 && ratio <= 5.2) {
+      ratioVal.style.color = "var(--green-dark)";
+    } else {
+      ratioVal.style.color = "var(--ink)";
+    }
+  } else {
+    ratioVal.textContent = "Không có D";
+    ratioVal.style.color = "var(--muted)";
+  }
+}
+
+function selectStudent(key) {
+  currentStudentKey = key;
+  student = STUDENTS[key];
+
+  [tabEasy, tabMed, tabHard].forEach(t => t.classList.remove("active"));
+  if (key === "easy") tabEasy.classList.add("active");
+  if (key === "med") tabMed.classList.add("active");
+  if (key === "hard") tabHard.classList.add("active");
+
+  kpRange.value = student.defaultKp;
+  tiRange.value = student.defaultTi;
+  tdRange.value = student.defaultTd;
+
+  updateSliderLabels();
+  resetSim();
+
+  coachMsg.innerHTML = `Đã chọn <b>${student.name}</b>. Đặc tính: Độ trễ <i>T<sub>u</sub></i> = ${fmt(student.tu)}s, Quán tính <i>T<sub>g</sub></i> = ${fmt(student.tg)}s. Hãy bấm <b>CHẠY ĐUA</b> để xem phản ứng!`;
+}
+
+function resetSim() {
+  pos = 0;
+  actualVelocity = 0;
+  command = 0;
+  integralSum = 0;
+  prevError = targetPos - pos;
+  lastDeriv = 0;
+  simTime = 0;
+  running = false;
+  startBtn.textContent = "▶ CHẠY ĐUA / BẮT ĐẦU";
+  startBtn.classList.remove("warn");
+  startBtn.classList.add("primary");
+
+  delayQueue = [];
+  trace = [{ t: 0, p: 0, target: targetPos }];
+  maxOvershootPct = 0;
+  crossings = 0;
+  prevSign = 1;
+  settleTime = null;
+  settleStableClock = 0;
+  loadGust = 0;
+  lastDelayedCmd = 0;
+
+  errVal.textContent = fmt(targetPos) + "%";
+  overVal.textContent = "0%";
+  crossVal.textContent = "0";
+  settleVal.textContent = "--";
+
+  lastFrameTime = performance.now();
+  drawScene();
+  drawGraph();
+}
+
+function applyGoldenRatio() {
+  const td = Number(tdRange.value);
+  if (td > 0.1) {
+    tiRange.value = Math.min(20, (td * 4.5)).toFixed(1);
+  } else {
+    tdRange.value = "0.8";
+    tiRange.value = "3.6";
+  }
+  updateSliderLabels();
+  coachMsg.innerHTML = `✨ Đã áp dụng <b>Tỉ lệ vàng <i>T<sub>i</sub> / T<sub>d</sub></i> = 4.5</b> (<i>T<sub>i</sub></i> = ${tiRange.value}s, <i>T<sub>d</sub></i> = ${tdRange.value}s). Hãy chạy đua để kiểm nghiệm độ mượt mà!`;
+}
+
+function evaluateCoach() {
+  const kp = Number(kpRange.value);
+  const ti = Number(tiRange.value);
+  const td = Number(tdRange.value);
+  const ratio = td > 0 ? ti / td : 999;
+
+  if (settleTime !== null && maxOvershootPct <= student.maxAllowedOver) {
+    coachMsg.innerHTML = `<span class="success">🎉 XUẤT SẮC!</span> Bạn đã chế ngự thành công <b>${student.name}</b> với thời gian xác lập <b>${fmt(settleTime)}s</b> và vọt lố chỉ <b>${fmt(maxOvershootPct)}%</b>! Tỉ số <i>T<sub>i</sub> / T<sub>d</sub></i> = ${fmt(ratio)} rất chuẩn!`;
+  } else if (maxOvershootPct > 20) {
+    coachMsg.innerHTML = `<span class="alert">⚠️ VỌT LỐ QUÁ CAO (${fmt(maxOvershootPct)}%)!</span> Khâu I đang dồn lực quá đà hoặc thiếu lực hãm D. <b>Cách nêm:</b> Tăng thêm <i>T<sub>d</sub></i> (lực hãm) hoặc kéo dài <i>T<sub>i</sub></i> lên ${fmt(ti*1.4)}s.`;
+  } else if (crossings >= 4) {
+    coachMsg.innerHTML = `<span class="alert">⚡ HỆ THỐNG BỊ DAO ĐỘNG LẮC LƯ!</span> Kp đang hơi gắt so với độ trễ của học trò này. <b>Cách nêm:</b> Giảm <i>K<sub>p</sub></i> xuống ${fmt(kp*0.75)} và kiểm tra tỉ lệ vàng <i>T<sub>i</sub> / T<sub>d</sub></i> = 4 ~ 5.`;
+  } else if (settleTime === null && simTime >= 25) {
+    coachMsg.innerHTML = `<span>⏳ QUÁ Ì ẠCH!</span> A-sin tiến về đích quá chậm. <b>Cách nêm:</b> Mạnh dạn tăng <i>K<sub>p</sub></i> lên ${fmt(kp*1.4)} để bứt tốc dứt khoát hơn.`;
+  }
+}
+
+// Simulation Engine Step
+function stepSim(dt) {
+  const kp = Number(kpRange.value);
+  const ti = Number(tiRange.value);
+  const td = Number(tdRange.value);
+
+  const currentError = targetPos - pos;
+
+  // Anti-windup: stop accumulating when actuator is saturated
+  const satLimit = 100;
+  if (Math.abs(command) < satLimit || (command >= satLimit && currentError < 0) || (command <= -satLimit && currentError > 0)) {
+    integralSum += (currentError * dt) / ti;
+  }
+  // Clamp integral to prevent extreme values
+  integralSum = clamp(integralSum, -60, 60);
+
+  // Derivative with low-pass filter to reduce noise
+  const rawDeriv = (currentError - prevError) / dt;
+  const filtAlpha = 0.2;
+  lastDeriv = filtAlpha * rawDeriv + (1 - filtAlpha) * lastDeriv;
+  prevError = currentError;
+
+  // PID Controller Output
+  const uP = kp * currentError;
+  const uI = kp * integralSum;
+  const uD = kp * td * lastDeriv;
+
+  const rawCommand = uP + uI + uD;
+  command = clamp(rawCommand, -satLimit, satLimit);
+
+  // Delay buffer simulation (Tu) — proper dead time
+  delayQueue.push({ t: simTime + student.tu, cmd: command });
+  while (delayQueue.length > 0 && delayQueue[0].t <= simTime) {
+    lastDelayedCmd = delayQueue.shift().cmd;
+  }
+  const delayedCmd = lastDelayedCmd;
+
+  // Actuator dynamics (Tg rate limiter / slew)
+  const targetActualSpeed = clamp(delayedCmd, -100, 100);
+  const maxSlew = student.slew * dt;
+  const diff = targetActualSpeed - actualVelocity;
+  actualVelocity = clamp(actualVelocity + clamp(diff, -maxSlew, maxSlew), -100, 100);
+
+  // Physical motion: Net Speed = Runner Speed - Belt Speed - Self Regulation + Load Gust
+  const runnerSpeedMps = (actualVelocity / 100) * student.maxSpeed;
+  const selfRegDrag = student.selfReg * pos;
+  const netMps = runnerSpeedMps - (student.belt + loadGust) - selfRegDrag;
+
+  pos = clamp(pos + netMps * dt, -5, 110);
+  simTime += dt;
+
+  // Record trace
+  if (trace.length === 0 || simTime - trace[trace.length - 1].t >= 0.12) {
+    trace.push({ t: simTime, p: pos, target: targetPos });
+    if (trace.length > 800) trace.shift();
+  }
+
+  // Statistics update
+  if (pos > targetPos) {
+    const overPct = ((pos - targetPos) / targetPos) * 100;
+    maxOvershootPct = Math.max(maxOvershootPct, overPct);
+  }
+
+  const currentSign = pos >= targetPos ? 1 : -1;
+  if (trace.length > 5 && currentSign !== prevSign && Math.abs(pos - targetPos) > 0.5) {
+    crossings++;
+    prevSign = currentSign;
+  }
+
+  // Settle time check: within ±2% of setpoint for at least 2 seconds
+  const tol = targetPos * 0.02;
+  const absErr = Math.abs(pos - targetPos);
+  if (absErr <= tol) {
+    settleStableClock += dt;
+    if (settleStableClock >= 2.0 && settleTime === null) {
+      settleTime = simTime - 2.0;
+    }
+  } else {
+    settleStableClock = 0;
+  }
+
+  // Auto stop at 50s
+  if (simTime >= 50) {
+    running = false;
+    startBtn.textContent = "▶ CHẠY LẠI";
+    evaluateCoach();
+  }
+}
+
+// Animation Loop
+function loop(timestamp) {
+  const rawDt = (timestamp - lastFrameTime) / 1000;
+  lastFrameTime = timestamp;
+  const dt = Math.min(rawDt, 0.05); // cap frame time
+
+  if (running) {
+    // 5x simulation sub-steps for smooth physics
+    const subSteps = 5;
+    for (let i = 0; i < subSteps; i++) {
+      stepSim(dt / subSteps);
+    }
+
+    // Update live HUD
+    errVal.textContent = fmt(Math.abs(targetPos - pos)) + "%";
+    overVal.textContent = fmt(maxOvershootPct) + "%";
+    crossVal.textContent = crossings;
+    settleVal.textContent = settleTime !== null ? fmt(settleTime) + " s" : (simTime >= 15 ? "Đang đo..." : "--");
+  }
+
+  drawScene();
+  drawGraph();
+  requestAnimationFrame(loop);
+}
+
+/* ══════════════ PIXEL ARCADE KIT (hiển thị only — không đụng mô phỏng) ══════════════ */
+const PX={
+  blk:"#000000",navy:"#1D2B53",purp:"#7E2553",dgrn:"#008751",brn:"#AB5236",
+  dgy:"#5F574F",lgy:"#C2C3C7",wht:"#FFF1E8",red:"#FF004D",org:"#FFA300",
+  yel:"#FFEC27",grn:"#00E436",blu:"#29ADFF",ind:"#83769C",pnk:"#FF77A8",pch:"#FFCCAA"
+};
+
+function drawSprite(c,rows,map,x,y,flip){
+  for(let r=0;r<rows.length;r++){
+    const row=rows[r], n=row.length;
+    for(let i=0;i<n;i++){
+      const k=flip?row[n-1-i]:row[i];
+      if(k===".") continue;
+      c.fillStyle=map[k];
+      c.fillRect(x+i,y+r,1,1);
+    }
+  }
+}
+
+function pxCircle(c,cx,cy,r,col){
+  c.fillStyle=col;
+  for(let dy=-r;dy<=r;dy++)for(let dx=-r;dx<=r;dx++)
+    if(dx*dx+dy*dy<=r*r) c.fillRect(cx+dx,cy+dy,1,1);
+}
+
+function plaqueText(c,txt,x,y,col){
+  c.font='bold 8px "Courier New",monospace';
+  c.textAlign="left"; c.textBaseline="alphabetic";
+  const w=c.measureText(txt).width;
+  c.fillStyle="rgba(0,0,0,.55)";
+  c.fillRect(x-2,y-8,w+4,10);
+  c.fillStyle=col;
+  c.fillText(txt,x,y);
+}
+
+/* ── Sprite A-sin (12×18) ── */
+const RPAL={h:PX.brn,s:PX.pch,r:PX.red,y:PX.yel,a:PX.blu,d:PX.navy,p:PX.purp,k:PX.dgy,e:PX.blk,w:PX.wht};
+const RUN_TOP=[
+"...hhhhhh...",
+"..hhhhhhhh..",
+".rrrrrrrrrr.",
+".rrrrrrrrrry",
+"rr.ssssssss.",
+"r..ssessess.",
+"...ssddss...",
+"..p.aaaaaa..",
+".pp.aaaaaa..",
+".ppaaayaaa..",
+".ppaaaaaass.",
+".ppyyyyyyy.."
+];
+const RUN_LEGS_A=[
+"..aaaa.aaa..",
+"..ss....ss..",
+".ss......ss.",
+".ss......ss.",
+"kk........kk",
+"kkk......kkk"
+];
+const RUN_LEGS_B=[
+"..aaaaaaa...",
+"...ss.ss....",
+"...ss..ss...",
+"....ss......",
+"....kk......",
+"...kkk......"
+];
+const RUN_LEGS_IDLE=[
+"..aaaaaa....",
+"...ss.ss....",
+"...ss.ss....",
+"...ss.ss....",
+"...kk.kk....",
+"..kkk.kkk..."
+];
+const RUN_HEAD_PANIC = RUN_TOP.slice(0,5).concat([
+"r..wwswwsww.",
+"...ssdddds.."
+],RUN_TOP.slice(7));
+
+function runner(c,x,y,moving,t,panic){
+  x=Math.round(x); y=Math.round(y);
+  const fr=Math.floor(t*9)%2;
+  if(moving){
+    c.fillStyle=PX.lgy;
+    for(let i=0;i<3;i++){
+      const ph=Math.floor(t*14)+i;
+      c.fillRect(x-4-((ph*3)%6), y-4-((ph*2)%3), 2, 2);
+      c.fillRect(x-8-((ph*5)%8), y-3-((ph*3)%3), 1, 1);
+    }
+  }
+  let top, legs;
+  if(panic){ top=RUN_HEAD_PANIC; legs=RUN_LEGS_IDLE; y-=Math.floor(t*16)%2; }
+  else if(moving){ top=RUN_TOP; legs=fr?RUN_LEGS_A:RUN_LEGS_B; if(fr) y-=1; }
+  else { top=RUN_TOP; legs=RUN_LEGS_IDLE; }
+  drawSprite(c,top.concat(legs),RPAL,x-6,y-18);
+}
+
+/* ── Rùa Vàng ── */
+function turtle(c,x,y,t){
+  x=Math.round(x); y=Math.round(y);
+  const shimmer=Math.floor(t*2)%2;
+  c.fillStyle="rgba(0,0,0,.3)";
+  c.fillRect(x-9,y+10,22,2);
+  c.fillStyle=PX.dgrn;
+  c.fillRect(x-8,y+7,3,3); c.fillRect(x+2,y+7,3,3); c.fillRect(x+6,y+7,3,3);
+  c.fillRect(x-12,y+6,3,2);
+  const shellHi=shimmer?PX.yel:PX.org, shellLo=shimmer?PX.org:PX.brn;
+  c.fillStyle=shellLo; c.fillRect(x-10,y-1,20,8);
+  c.fillStyle=shellHi; c.fillRect(x-9,y-2,18,3); c.fillRect(x-7,y-3,14,1); c.fillRect(x-4,y-4,8,1);
+  c.fillStyle=shellLo;
+  c.fillRect(x-6,y+2,2,2); c.fillRect(x-1,y+2,2,2); c.fillRect(x+4,y+2,2,2);
+  c.fillStyle=PX.dgrn; c.fillRect(x+9,y-2,7,6);
+  c.fillStyle=PX.wht; c.fillRect(x+12,y-1,2,2);
+  c.fillStyle=PX.blk; c.fillRect(x+13,y-1,1,1);
+  c.fillStyle=PX.pnk; c.fillRect(x+11,y+2,2,1);
+  c.fillStyle=PX.yel;
+  c.fillRect(x+10,y-5,2,3); c.fillRect(x+13,y-6,2,4); c.fillRect(x+16,y-5,2,3);
+  c.fillRect(x+10,y-3,8,1);
+  c.fillStyle=PX.red; c.fillRect(x+13,y-4,2,1);
+}
+
+function cld(c,x,y,big){
+  c.fillStyle=PX.lgy;
+  if(big){ c.fillRect(x,y,10,2); c.fillRect(x+2,y-2,6,2); }
+  else   { c.fillRect(x,y,7,2); c.fillRect(x+1,y-1,4,1); }
+}
+
+function drawScene() {
+  const w = scene.width, h = scene.height, t = performance.now()/1000;
+  const isOver = pos > targetPos + 2;
+  let shx = 0;
+  if (isOver) shx = (Math.floor(t*22)%2) ? 1 : -1;
+  sc.save();
+  sc.translate(shx, 0);
+
+  // Trời band + mặt trời + núi + mây
+  sc.fillStyle=PX.navy; sc.fillRect(-2,0,w+4,26);
+  sc.fillStyle=PX.purp; sc.fillRect(-2,26,w+4,8);
+  sc.fillStyle=PX.pnk;  sc.fillRect(-2,34,w+4,6);
+  pxCircle(sc,270,30,6,PX.org);
+  pxCircle(sc,270,30,4,PX.yel);
+  sc.fillStyle=PX.navy;
+  [[0,9],[20,5],[42,13],[68,7],[94,15],[122,9],[150,12],[176,6],[202,10],[228,5],[252,9],[280,6]].forEach(([mx,mh])=>{
+    sc.fillRect(mx,42-mh,22,mh);
+  });
+  const cx1=(Math.floor(t*4)%(w+40))-30;
+  cld(sc,cx1,14,1); cld(sc,(Math.floor(t*2.5)%(w+40))-30,22,0);
+
+  // Đất
+  sc.fillStyle=PX.dgrn; sc.fillRect(-2,42,w+4,4);
+  sc.fillStyle=PX.brn;  sc.fillRect(-2,46,w+4,h-46);
+  sc.fillStyle=PX.dgy;
+  for(let i=0;i<80;i++){
+    const sx=(i*61+17)%w, sy=48+((i*37)%44);
+    if(sy>50) sc.fillRect(sx,sy,1,1);
+  }
+
+  const left = 14, right = w - 14, roadY = 52, roadH = 8;
+  const trackLen = right - left;
+
+  // Băng chuyền + chevron chạy lùi
+  sc.fillStyle=PX.dgy; sc.fillRect(left,roadY,trackLen,roadH);
+  sc.fillStyle=PX.blk;
+  const boff=Math.floor(t*12)%14;
+  for(let x=left+4-boff;x<right;x+=14){
+    if(x<left||x>right-6) continue;
+    sc.fillRect(x,roadY+1,3,1); sc.fillRect(x+1,roadY+3,3,1); sc.fillRect(x+2,roadY+5,3,1);
+  }
+  sc.fillStyle=PX.lgy;
+  sc.fillRect(left,roadY-1,trackLen,1); sc.fillRect(left,roadY+roadH,trackLen,1);
+
+  const targetX = left + (targetPos / 100) * trackLen;
+  const runnerX = left + clamp(pos / 100, 0, 1.15) * trackLen;
+
+  // Dải dung sai ±2% (xanh lá)
+  const tolW = Math.max(6, Math.round((4 / 100) * trackLen));
+  sc.fillStyle="rgba(0,228,54,.18)";
+  sc.fillRect(Math.round(targetX-tolW/2), 40, tolW, 32);
+  sc.fillStyle=PX.grn;
+  sc.fillRect(Math.round(targetX-tolW/2), 40, 1, 32);
+  sc.fillRect(Math.round(targetX+tolW/2), 40, 1, 32);
+
+  // Cột đích caro
+  for(let yy=40;yy<72;yy+=4){
+    sc.fillStyle=(((yy-40)/4)%2)?PX.yel:PX.blk;
+    sc.fillRect(targetX-3,yy,2,4); sc.fillRect(targetX+1,yy,2,4);
+  }
+
+  // Rùa & A-sin
+  turtle(sc, targetX-8, roadY+roadH-10, t);
+  runner(sc, runnerX, roadY+roadH, Math.abs(actualVelocity)>2, t, isOver);
+
+  plaqueText(sc, isOver?"A-SIN (VỌT LỐ!)":"A-SIN", clamp(runnerX-20,4,226), 38, isOver?PX.red:PX.blu);
+  plaqueText(sc, "ĐÍCH "+Math.round(targetPos)+"M", clamp(targetX-16,4,252), 38, PX.org);
+
+  // HUD
+  plaqueText(sc, "T: "+fmt(simTime)+" S", 3, 10, PX.yel);
+  plaqueText(sc, "ĐẠP: "+Math.round(actualVelocity)+"%", 62, 10, Math.abs(actualVelocity)>2?PX.blu:PX.ind);
+  if (loadGust > 0) {
+    plaqueText(sc, "GIÓ NGƯỢC/LỰC CẢN: +50%", 3, 21, PX.red);
+  }
+
+  sc.restore();
+
+  speedIndicator.textContent = `Học trò: ${student.name} · Băng chuyền: ${Math.round(student.belt*10)}% · Lực đạp: ${Math.round(actualVelocity)}%`;
+}
+
+function drawGraph() {
+  const w = graph.width, h = graph.height;
+  gc.clearRect(0, 0, w, h);
+  gc.fillStyle = "#0f1322";
+  gc.fillRect(0, 0, w, h);
+
+  const padL = 55, padR = 30, padT = 25, padB = 35;
+  const plotW = w - padL - padR, plotH = h - padT - padB;
+
+  // Grid Lines
+  gc.strokeStyle = "#232c4e";
+  gc.lineWidth = 1;
+  gc.setLineDash([2,3]);
+  gc.font = '11px "Courier New",monospace';
+  for (let p = 0; p <= 110; p += 20) {
+    const y = padT + plotH - (p / 110) * plotH;
+    gc.beginPath(); gc.moveTo(padL, y); gc.lineTo(padL + plotW, y); gc.stroke();
+    gc.fillStyle = PX.ind;
+    gc.fillText(p + "m", 15, y + 4);
+  }
+
+  // Target Line (Golden Dashed)
+  const targetY = padT + plotH - (targetPos / 110) * plotH;
+  gc.strokeStyle = PX.org;
+  gc.lineWidth = 2.5;
+  gc.setLineDash([7, 5]);
+  gc.beginPath();
+  gc.moveTo(padL, targetY);
+  gc.lineTo(padL + plotW, targetY);
+  gc.stroke();
+  gc.setLineDash([]);
+
+  // Time Axis markers
+  const maxT = Math.max(20, simTime + 5);
+  for (let t = 0; t <= maxT; t += 10) {
+    const x = padL + (t / maxT) * plotW;
+    gc.strokeStyle = "#232c4e";
+    gc.beginPath(); gc.moveTo(x, padT); gc.lineTo(x, padT + plotH); gc.stroke();
+    gc.fillStyle = PX.ind;
+    gc.fillText(t + "s", x - 8, h - 12);
+  }
+  gc.setLineDash([]);
+
+  // Draw Response Curve
+  if (trace.length > 1) {
+    gc.strokeStyle = PX.blu;
+    gc.lineWidth = 2.5;
+    gc.shadowColor = PX.blu;
+    gc.shadowBlur = 7;
+    gc.beginPath();
+    for (let i = 0; i < trace.length; i++) {
+      const pt = trace[i];
+      const x = padL + (pt.t / maxT) * plotW;
+      const y = padT + plotH - (pt.p / 110) * plotH;
+      if (i === 0) gc.moveTo(x, y);
+      else gc.lineTo(x, y);
+    }
+    gc.stroke();
+    gc.shadowBlur = 0;
+
+    // Settling marker line if stable
+    if (settleTime !== null) {
+      const settleX = padL + (settleTime / maxT) * plotW;
+      gc.strokeStyle = PX.grn;
+      gc.lineWidth = 2;
+      gc.setLineDash([4, 4]);
+      gc.beginPath();
+      gc.moveTo(settleX, padT);
+      gc.lineTo(settleX, padT + plotH);
+      gc.stroke();
+      gc.setLineDash([]);
+
+      gc.fillStyle = PX.grn;
+      gc.font = 'bold 11px "Courier New",monospace';
+      gc.fillText(`Ổn định: ${fmt(settleTime)}s`, settleX + 5, padT + 20);
+    }
+  }
+}
+
+// Event Listeners
+[kpRange, tiRange, tdRange].forEach(inp => {
+  inp.addEventListener("input", updateSliderLabels);
+});
+
+tabEasy.addEventListener("click", () => selectStudent("easy"));
+tabMed.addEventListener("click", () => selectStudent("med"));
+tabHard.addEventListener("click", () => selectStudent("hard"));
+
+startBtn.addEventListener("click", () => {
+  if (!running) {
+    running = true;
+    startBtn.textContent = "⏸ TẠM DỪNG";
+    startBtn.classList.remove("primary");
+    startBtn.classList.add("warn");
+  } else {
+    running = false;
+    startBtn.textContent = "▶ TIẾP TỤC";
+    startBtn.classList.remove("warn");
+    startBtn.classList.add("primary");
+  }
+});
+
+resetBtn.addEventListener("click", resetSim);
+goldenBtn.addEventListener("click", applyGoldenRatio);
+
+stepTargetBtn.addEventListener("click", () => {
+  targetPos = targetPos === 50 ? 80 : 50;
+  coachMsg.innerHTML = `⚡ Rùa Vàng đã đổi vạch đích sang <b>${targetPos}m</b>! Hãy xem bộ số PID của bạn bám đuổi ra sao!`;
+});
+
+gustBtn.addEventListener("click", () => {
+  loadGust = loadGust === 0 ? 0.8 : 0;
+  coachMsg.innerHTML = loadGust > 0
+    ? `<span class="alert">🌊 Gió lớn thổi ngược!</span> Lực cản tăng thêm 50%. Khâu I sẽ phải dồn thêm lực để bù tải!`
+    : `Gió đã lặng, lực cản trở về bình thường.`;
+});
+
+// Initialization
+updateSliderLabels();
+selectStudent("easy");
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>
