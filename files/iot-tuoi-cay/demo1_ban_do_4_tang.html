@@ -1,0 +1,734 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Demo 1 — Bản đồ X-Quang 4 Tầng Hệ Thống Tưới IoT</title>
+<style>
+  :root {
+    --bg: #0b1120;
+    --panel: #111827;
+    --panel-2: #0f172a;
+    --border: #1e293b;
+    --border-hi: #334155;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --cyan: #38bdf8;
+    --green: #22c55e;
+    --amber: #f59e0b;
+    --red: #ef4444;
+    --violet: #a78bfa;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 12px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; }
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .title-box h1 {
+    margin: 0;
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .title-box p {
+    margin: 2px 0 0;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .controls {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  button {
+    border: 1px solid var(--border-hi);
+    background: var(--panel);
+    color: var(--text);
+    padding: 7px 12px;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  button:hover { border-color: var(--cyan); color: var(--cyan); }
+  button.primary {
+    background: rgba(56, 189, 248, 0.14);
+    border-color: var(--cyan);
+    color: var(--cyan);
+  }
+  button.primary.active {
+    background: var(--cyan);
+    color: #0b1120;
+  }
+  .stage {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px;
+    overflow: hidden;
+  }
+  svg#archSvg {
+    display: block;
+    width: 100%;
+    height: auto;
+    user-select: none;
+  }
+  .tier-bg { rx: 10; ry: 10; stroke-width: 1; stroke-dasharray: 4 4; }
+  .wire {
+    fill: none;
+    stroke: #334155;
+    stroke-width: 2.2;
+    transition: stroke 0.2s ease, stroke-width 0.2s ease, opacity 0.2s ease;
+  }
+  .wire.dim { opacity: 0.2; }
+  .wire.active-up { stroke: var(--cyan); stroke-width: 3; opacity: 1; }
+  .wire.active-down { stroke: var(--amber); stroke-width: 3; opacity: 1; }
+  .wire.active-ota { stroke: var(--violet); stroke-width: 3; opacity: 1; }
+  .wire.active-drive { stroke: var(--violet); stroke-width: 3; opacity: 1; }
+  .wire.active-act { stroke: var(--green); stroke-width: 3; opacity: 1; }
+
+  .node { cursor: pointer; transition: opacity 0.2s ease; }
+  .node.dim { opacity: 0.32; }
+  .node rect.card {
+    fill: #111827;
+    stroke: #334155;
+    stroke-width: 1.6;
+    rx: 9;
+    ry: 9;
+    transition: stroke 0.2s ease, fill 0.2s ease;
+  }
+  .node:hover rect.card { stroke: var(--cyan); }
+  .node.selected rect.card {
+    fill: #172554;
+    stroke: var(--cyan);
+    stroke-width: 2.5;
+  }
+  .node text.n-title {
+    fill: #f8fafc;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .node text.n-sub {
+    fill: #94a3b8;
+    font-size: 10px;
+  }
+  .tier-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .legend {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding: 6px 4px 2px;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; }
+  .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
+  .inspector {
+    margin-top: 10px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  .ins-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .ins-badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    background: rgba(56, 189, 248, 0.15);
+    color: var(--cyan);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+  }
+  .ins-title {
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .ins-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .ins-item {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+  }
+  .ins-item b {
+    display: block;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--cyan);
+    margin-bottom: 3px;
+  }
+  .ins-item.warn b { color: var(--amber); }
+  .ins-item span {
+    font-size: 0.82rem;
+    color: #e2e8f0;
+    line-height: 1.45;
+  }
+  @media (max-width: 680px) {
+    body { padding: 8px; }
+    .ins-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="title-box">
+      <h1>Bản đồ X-Quang 4 Tầng Hệ Thống Tưới IoT (Bấm vào từng khối để khám phá)</h1>
+      <p>Chọn bất kỳ thành phần nào bên dưới để xem đường dữ liệu chạy và tác động khi thành phần đó mất kết nối.</p>
+    </div>
+    <div class="controls">
+      <button id="btnTour" class="primary" type="button">▶ Chạy vòng tuần hoàn 4 tầng</button>
+      <button id="btnReset" type="button">↺ Hiện toàn bộ</button>
+      <button id="btnHwGallery" type="button">📷 Ảnh phần cứng thật</button>
+    </div>
+  </div>
+
+  <div class="stage">
+    <svg id="archSvg" viewBox="0 0 920 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sơ đồ 4 tầng hệ thống tưới nhỏ giọt IoT">
+      <defs>
+        <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="2.5" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- 4 Tier Backgrounds -->
+      <rect class="tier-bg" x="8" y="8" width="208" height="384" fill="rgba(34,197,94,0.04)" stroke="rgba(34,197,94,0.35)"/>
+      <text class="tier-label" x="18" y="26" fill="#4ade80">Tầng 1 · Ngoài vườn (12 chậu)</text>
+
+      <rect class="tier-bg" x="232" y="8" width="218" height="384" fill="rgba(56,189,248,0.04)" stroke="rgba(56,189,248,0.35)"/>
+      <text class="tier-label" x="242" y="26" fill="#38bdf8">Tầng 2 · Hộp điều khiển biên</text>
+
+      <rect class="tier-bg" x="466" y="8" width="222" height="384" fill="rgba(245,158,11,0.04)" stroke="rgba(245,158,11,0.35)"/>
+      <text class="tier-label" x="476" y="26" fill="#fbbf24">Tầng 3 · Đám mây &amp; VPS</text>
+
+      <rect class="tier-bg" x="704" y="8" width="208" height="384" fill="rgba(167,139,250,0.04)" stroke="rgba(167,139,250,0.35)"/>
+      <text class="tier-label" x="714" y="26" fill="#a78bfa">Tầng 4 · Web &amp; Lưu trữ</text>
+
+      <!-- Wires -->
+      <g id="wiresLayer">
+        <!-- soil -> stm32 -->
+        <path id="w-soil-stm32" class="wire" d="M 196 86 C 225 86, 225 148, 250 148" data-kind="up"/>
+        <!-- aht30 -> stm32 -->
+        <path id="w-aht-stm32" class="wire" d="M 196 196 L 250 172" data-kind="up"/>
+        <!-- stm32 -> pump/valves -->
+        <path id="w-stm32-act" class="wire" d="M 250 202 C 220 202, 225 314, 196 314" data-kind="act"/>
+        <!-- stm32 <-> ec600n -->
+        <path id="w-stm32-4g" class="wire" d="M 341 206 L 341 242" data-kind="up"/>
+        <!-- ec600n <-> emqx -->
+        <path id="w-4g-emqx" class="wire" d="M 432 276 C 460 276, 456 142, 484 142" data-kind="up"/>
+        <!-- emqx <-> vps -->
+        <path id="w-emqx-vps" class="wire" d="M 577 174 L 577 242" data-kind="up"/>
+        <!-- vps <-> web -->
+        <path id="w-vps-web" class="wire" d="M 670 264 C 692 264, 694 144, 720 144" data-kind="up"/>
+        <!-- web -> vps command -->
+        <path id="w-web-vps" class="wire" d="M 720 166 C 698 166, 696 286, 670 286" data-kind="down"/>
+        <!-- vps -> drive -->
+        <path id="w-vps-drive" class="wire" d="M 670 308 L 720 314" data-kind="drive"/>
+        <!-- emqx -> esp32 OTA -->
+        <path id="w-emqx-esp32" class="wire" d="M 484 158 C 446 158, 462 346, 432 346" data-kind="ota"/>
+        <!-- vps -> esp32 download bin -->
+        <path id="w-vps-esp32" class="wire" d="M 484 294 C 455 294, 460 356, 432 356" data-kind="ota"/>
+        <!-- esp32 -> stm32 SWD -->
+        <path id="w-esp32-stm32" class="wire" d="M 250 346 C 228 346, 228 184, 250 184" data-kind="ota"/>
+      </g>
+
+      <!-- Nodes (10 components) -->
+      <!-- Tier 1 -->
+      <g class="node" id="n-soil" data-id="soil" transform="translate(22,52)">
+        <rect class="card" width="174" height="68"/>
+        <text class="n-title" x="12" y="24">4 Cảm biến Độ ẩm Đất</text>
+        <text class="n-sub" x="12" y="42">Điện dung · PA0..PA3</text>
+        <text class="n-sub" x="12" y="57">Đặt ở B-1, B-3, C-1, C-3</text>
+      </g>
+
+      <g class="node" id="n-aht" data-id="aht" transform="translate(22,160)">
+        <rect class="card" width="174" height="68"/>
+        <text class="n-title" x="12" y="24">Cảm biến Không khí AHT30</text>
+        <text class="n-sub" x="12" y="42">Giao tiếp I2C · PB6/PB7</text>
+        <text class="n-sub" x="12" y="57">Đo Nhiệt độ &amp; Độ ẩm → VPD</text>
+      </g>
+
+      <g class="node" id="n-act" data-id="act" transform="translate(22,272)">
+        <rect class="card" width="174" height="86"/>
+        <text class="n-title" x="12" y="23">Bơm 12V &amp; 3 Van A/B/C</text>
+        <text class="n-sub" x="12" y="40">Relay PB4 (Bơm) · PB5/8/9</text>
+        <text class="n-sub" x="12" y="55">12 đầu nhỏ giọt hiệu chuẩn</text>
+        <text class="n-sub" x="12" y="71" fill="#fbbf24">*Chưa gắn phao &amp; đo lưu lượng</text>
+      </g>
+
+      <!-- Tier 2 -->
+      <g class="node" id="n-stm32" data-id="stm32" transform="translate(250,126)">
+        <rect class="card" width="182" height="80"/>
+        <text class="n-title" x="12" y="24">STM32F401RCT6</text>
+        <text class="n-sub" x="12" y="42">Bộ não tại biên · Vòng 100ms</text>
+        <text class="n-sub" x="12" y="58">Lọc nhiễu, Tự động A/B/C,</text>
+        <text class="n-sub" x="12" y="72">Khóa liên động &amp; Lưu Flash</text>
+      </g>
+
+      <g class="node" id="n-4g" data-id="ec600n" transform="translate(250,242)">
+        <rect class="card" width="182" height="64"/>
+        <text class="n-title" x="12" y="24">Modem 4G Quectel EC600N</text>
+        <text class="n-sub" x="12" y="41">USART1 DMA · Không cần Wi-Fi</text>
+        <text class="n-sub" x="12" y="55">Chạy TLS 1.2 &amp; lấy giờ 4G/NTP</text>
+      </g>
+
+      <g class="node" id="n-esp32" data-id="esp32" transform="translate(250,318)">
+        <rect class="card" width="182" height="62"/>
+        <text class="n-title" x="12" y="22">ESP32 (Trạm nạp OTA)</text>
+        <text class="n-sub" x="12" y="39">Wi-Fi + 4 dây SWD sang STM32</text>
+        <text class="n-sub" x="12" y="53">Nạp code mới &amp; Reset từ xa</text>
+      </g>
+
+      <!-- Tier 3 -->
+      <g class="node" id="n-emqx" data-id="emqx" transform="translate(484,104)">
+        <rect class="card" width="186" height="70"/>
+        <text class="n-title" x="12" y="24">EMQX Cloud (MQTT Broker)</text>
+        <text class="n-sub" x="12" y="42">Cổng 8883 TLS · 5 Topic chuẩn</text>
+        <text class="n-sub" x="12" y="57">Chuyển tin, Giữ Retain &amp; LWT</text>
+      </g>
+
+      <g class="node" id="n-vps" data-id="vps" transform="translate(484,242)">
+        <rect class="card" width="186" height="80"/>
+        <text class="n-title" x="12" y="24">Backend VPS (FastAPI)</text>
+        <text class="n-sub" x="12" y="42">Lưu SQLite · Check quyền RBAC</text>
+        <text class="n-sub" x="12" y="58">Chốt an toàn · WebSocket</text>
+        <text class="n-sub" x="12" y="72">Qua Cloudflare Tunnel ra HTTPS</text>
+      </g>
+
+      <!-- Tier 4 -->
+      <g class="node" id="n-web" data-id="web" transform="translate(720,114)">
+        <rect class="card" width="180" height="76"/>
+        <text class="n-title" x="12" y="24">Giao diện Web HMI</text>
+        <text class="n-sub" x="12" y="42">React + TypeScript (Điện thoại/PC)</text>
+        <text class="n-sub" x="12" y="58">Sơ đồ vườn, Biểu đồ, Cài đặt</text>
+        <text class="n-sub" x="12" y="71">Chế độ Live &amp; Demo thử nghiệm</text>
+      </g>
+
+      <g class="node" id="n-drive" data-id="drive" transform="translate(720,276)">
+        <rect class="card" width="180" height="76"/>
+        <text class="n-title" x="12" y="24">Google Drive + Apps Script</text>
+        <text class="n-sub" x="12" y="42">Tự chạy mỗi 15 phút</text>
+        <text class="n-sub" x="12" y="58">Kéo phần mới (Cursor + SHA-256)</text>
+        <text class="n-sub" x="12" y="71">Lưu file CSV 27 cột theo ngày</text>
+      </g>
+
+      <!-- Animated Packets Container -->
+      <g id="packetsLayer"></g>
+    </svg>
+
+    <div class="legend">
+      <span><i class="dot" style="background:var(--cyan)"></i> Số đo đi lên (Telemetry / WebSocket)</span>
+      <span><i class="dot" style="background:var(--amber)"></i> Lệnh điều khiển / Cài đặt đi xuống</span>
+      <span><i class="dot" style="background:var(--green)"></i> Đóng cắt Bơm / Van vật lý</span>
+      <span><i class="dot" style="background:var(--violet)"></i> Nạp OTA &amp; Sao lưu Drive</span>
+    </div>
+  </div>
+
+  <div class="inspector" id="inspector">
+    <div class="ins-head">
+      <span class="ins-title" id="insTitle">Chọn 1 khối ở trên để soi chi tiết (hoặc bấm "Chạy vòng tuần hoàn 4 tầng")</span>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <button id="btnInsPhoto" type="button" hidden style="padding:3px 9px;font-size:0.74rem;border-color:#38bdf8;color:#7dd3fc;">📷 Xem ảnh phần cứng thật</button>
+        <span class="ins-badge" id="insTier">Tổng quan 4 tầng</span>
+      </div>
+    </div>
+    <div class="ins-grid">
+      <div class="ins-item">
+        <b>Nó là gì?</b>
+        <span id="insWhat">Hệ thống chia thành 4 tầng độc lập: Ngoài vườn đo và tưới → Hộp mạch xử lý tại chỗ → Đám mây &amp; VPS lưu và kiểm tra → Trình duyệt Web và Google Drive cho người dùng xem.</span>
+      </div>
+      <div class="ins-item">
+        <b>Nhiệm vụ chính</b>
+        <span id="insRole">Mỗi khối giữ một vai trò rõ ràng: STM32 tự quyết định tưới ngoài vườn, EMQX làm bưu điện trung gian, VPS làm thủ thư và chốt an toàn, Web chỉ hiển thị và gửi yêu cầu.</span>
+      </div>
+      <div class="ins-item">
+        <b>Dữ liệu đi vào / đi ra</b>
+        <span id="insFlow">Số đo đi từ trái sang phải (Vườn → Web/Drive). Lệnh bấm nút và cài đặt đi từ phải sang trái (Web → Vườn) rồi gửi phản hồi xác nhận ngược lại.</span>
+      </div>
+      <div class="ins-item warn">
+        <b>Nếu thành phần này hỏng / mất mạng?</b>
+        <span id="insFail">Nhờ thiết kế tách tầng, nếu mất 4G hoặc tắt Web thì STM32 ngoài vườn vẫn giữ lịch và cảm biến để tưới tự động an toàn tại chỗ.</span>
+      </div>
+    </div>
+    <div id="insPhotoWrap" hidden></div>
+  </div>
+</div>
+
+<script src="./hardware-photos.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  const COMPONENTS = {
+    soil: {
+      tier: "Tầng 1 · Cảm biến",
+      title: "4 Cảm biến Độ ẩm Đất Điện dung (B-1, B-3, C-1, C-3)",
+      what: "4 que đo cắm ở vùng rễ sâu ~15 cm của Hàng B và Hàng C, hoạt động như tụ điện (nước càng nhiều, điện áp analog ra càng thấp).",
+      role: "Đo độ ẩm đất liên tục giúp Hàng B và Hàng C biết lúc nào đất khô để mở van, lúc nào đủ ẩm để dừng — khác với Hàng A chỉ tưới theo giờ.",
+      flow: "Đưa điện áp 0–3.3 V vào 4 chân ADC PA0..PA3 của STM32. Không có cảm biến riêng cho tất cả 12 chậu mà đo 2 điểm đại diện mỗi hàng B, C.",
+      fail: "Nếu đứt dây hoặc tuột khỏi đất, giá trị đọc lệch chuẩn (hoặc báo lỗi). Không dùng giá trị lỗi đó để tự mở van bừa.",
+      wires: ["w-soil-stm32"]
+    },
+    aht: {
+      tier: "Tầng 1 · Cảm biến",
+      title: "Cảm biến Vi khí hậu Không khí AHT30",
+      what: "Cảm biến số đo Nhiệt độ (°C) và Độ ẩm không khí (%) đặt tại vườn, nối với STM32 qua 2 dây chuẩn I2C (PB6/PB7).",
+      role: "Cung cấp dữ liệu để STM32 tính chỉ số VPD (độ thiếu hụt hơi nước không khí) — giúp Hàng C nhận biết trời trưa nắng khô nóng.",
+      flow: "Gửi 6 byte dữ liệu số 20-bit qua I2C vào STM32, sau đó được đóng gói lên /data cùng với độ ẩm đất.",
+      fail: "Nếu mất kết nối AHT30, VPD tạm thời không tính được (trả về null), Hàng C sẽ không kích hoạt mức bù nóng VPD mà chạy theo ngưỡng cơ bản.",
+      wires: ["w-aht-stm32"]
+    },
+    act: {
+      tier: "Tầng 1 · Chấp hành thủy lực",
+      title: "Máy Bơm 12V, 3 Van Điện từ (A/B/C) & 12 Đầu nhỏ giọt",
+      what: "Phần cơ khí – thủy lực trực tiếp đưa nước vào 12 chậu cà chua. Các van là loại thường đóng (mất điện tự khép lại).",
+      role: "Đóng mở đúng nhánh được chọn. Lưu ý trung thực: phần cứng hiện KHÔNG có phao bồn nước và KHÔNG có đồng hồ đo xung lưu lượng vật lý.",
+      flow: "Nhận lệnh 0/1 qua mạch Relay cách ly từ chân PB4 (Bơm) và PB5/PB8/PB9 (Van A/B/C). Lượng nước hiển thị được tính bằng thời gian chạy × lưu lượng đã hiệu chuẩn của 12 vòi.",
+      fail: "Mất điện → van thường đóng tự khép tránh ngập úng. Nếu kẹt van mà không mở, hệ thống có khóa an toàn ngắt bơm và giới hạn thời gian maxSeconds.",
+      wires: ["w-stm32-act"]
+    },
+    stm32: {
+      tier: "Tầng 2 · Bộ não tại biên",
+      title: "Vi điều khiển STM32F401RCT6 (LQFP64 · ARM Cortex-M4)",
+      what: "Con chip trung tâm đặt trong hộp điện ngoài vườn. Đây là nơi DUY NHẤT trực tiếp đọc cảm biến và ra lệnh đóng/ngắt Relay.",
+      role: "Lọc nhiễu 2 tầng cho cảm biến đất, tính VPD, chạy máy trạng thái tự động 100ms, xếp lượt luân phiên 1 van (A→B→C), kiểm tra khóa liên động bơm–van.",
+      flow: "Nhận ADC/I2C vào; gửi JSON số đo/sự kiện qua Modem 4G; nhận lệnh /command & /config từ MQTT; lưu cấu hình vào vùng Flash Sector 5 (128 KiB sau).",
+      fail: "Nếu treo hoặc mất điện, các chân điều khiển về mức tắt an toàn. Nếu chỉ mất 4G/Web thì STM32 vẫn tự tưới độc lập bằng cấu hình trong Flash.",
+      wires: ["w-soil-stm32", "w-aht-stm32", "w-stm32-act", "w-stm32-4g", "w-esp32-stm32"]
+    },
+    ec600n: {
+      tier: "Tầng 2 · Truyền thông 4G",
+      title: "Modem 4G LTE Quectel EC600N",
+      what: "Module gắn SIM 4G đóng vai trò chiếc điện thoại truyền dữ liệu cho STM32 ở những khu vườn không có Wi-Fi.",
+      role: "Nối Internet di động, tự xử lý mã hóa bảo mật TLS 1.2 (MQTTS cổng 8883) và lấy giờ chuẩn từ trạm 4G/máy chủ NTP cho đồng hồ STM32.",
+      flow: "Giao tiếp 2 chiều với STM32 qua cổng USART1 (PA9/PA10 dùng DMA để không làm treo chip) và gửi/nhận bản tin MQTT với EMQX Cloud.",
+      fail: "Nếu mất sóng 4G, STM32 chuyển sang chạy tự lập tại vườn; khi sóng quay lại, modem tự kết nối lại EMQX mà không cần bấm nút.",
+      wires: ["w-stm32-4g", "w-4g-emqx"]
+    },
+    esp32: {
+      tier: "Tầng 2 · Trạm nạp OTA",
+      title: "Board ESP32 (Bộ nạp Firmware STM32 từ xa qua SWD)",
+      what: "Một kỹ thuật viên tí hon đặt cạnh STM32 ngoài vườn, nối 4 dây nạp (SWDIO, SWCLK, GND, NRST) và dùng Wi-Fi để tải file chương trình mới.",
+      role: "Giúp Admin ở nhà bấm nút trên Web vẫn nạp được code mới cho STM32 ngoài vườn, đồng thời hỗ trợ 3 nút Reset từ xa (ESP32, STM32, EC600N).",
+      flow: "Nhận lệnh nạp từ EMQX → tải file .bin từ link ký của VPS → kiểm tra đúng chip STM32F401 (DEV_ID=0x423) → xóa, ghi, kiểm tra lại qua SWD.",
+      fail: "Nếu ESP32 mất Wi-Fi hoặc không thấy STM32, tính năng nạp từ xa bị khóa để an toàn — hệ thống tưới của STM32 vẫn chạy bình thường.",
+      wires: ["w-emqx-esp32", "w-vps-esp32", "w-esp32-stm32"]
+    },
+    emqx: {
+      tier: "Tầng 3 · Trạm chuyển tin",
+      title: "EMQX Cloud Broker (Giao thức MQTTS)",
+      what: "Trạm bưu điện trung gian nằm trên mây, nhận và phân phát mọi gói tin giữa ngoài vườn và máy chủ VPS qua cổng bảo mật 8883.",
+      role: "Phân luồng tin theo 5 kênh (Topic): /data, /events, /status, /command, /config. Giữ sẵn bản /config mới nhất (Retain) và phát di chúc offline (LWT).",
+      flow: "Nhận số đo từ 4G chuyển lên VPS; nhận lệnh và cài đặt từ VPS chuyển xuống 4G (hoặc sang ESP32 khi nạp OTA).",
+      fail: "Nếu mất kết nối giữa EMQX và vườn quá thời gian chờ, EMQX tự báo trạng thái 'offline' lên topic /status để Web không hiểu nhầm số liệu cũ là đang chạy.",
+      wires: ["w-4g-emqx", "w-emqx-vps", "w-emqx-esp32"]
+    },
+    vps: {
+      tier: "Tầng 3 · Máy chủ trung tâm",
+      title: "Backend VPS (FastAPI + SQLite + Cloudflare Tunnel)",
+      what: "Máy chủ chạy 24/7 làm thủ thư lưu dữ liệu, kiểm tra bảo mật và cầu nối trung tâm giữa EMQX và Web HMI.",
+      role: "Chặn người dùng không đủ quyền (RBAC), chặn lệnh bật bơm nguy hiểm khi van đóng, lưu lịch sử vào SQLite, đẩy số liệu tức thời qua WebSocket và mở API cho Drive.",
+      flow: "Nhận dữ liệu từ EMQX → lưu SQLite → đẩy lên Web HMI qua WebSocket. Nhận HTTP từ Web → kiểm tra an toàn → phát xuống EMQX.",
+      fail: "Nếu VPS tắt hoặc mất mạng, Web HMI không mở được và không lưu lịch sử mới, nhưng STM32 ngoài vườn vẫn tiếp tục tưới tự động theo cài đặt sẵn.",
+      wires: ["w-emqx-vps", "w-vps-web", "w-web-vps", "w-vps-drive", "w-vps-esp32"]
+    },
+    web: {
+      tier: "Tầng 4 · Giao diện người dùng",
+      title: "Giao diện Web HMI (React + TypeScript trên trình duyệt)",
+      what: "Bảng điều khiển mở trên điện thoại hoặc máy tính để theo dõi vườn, bấm nút tưới, xem biểu đồ và đổi thông số.",
+      role: "Hiển thị sơ đồ thủy lực động, gửi lệnh tới Backend (có hộp xác nhận), có chế độ Demo để thử nghiệm thao tác mà không tác động tới vườn thật.",
+      flow: "Lấy dữ liệu ban đầu qua REST API, nhận số nhảy liên tục qua WebSocket, và gửi các yêu cầu điều khiển (POST /commands, POST /config) kèm mã JWT.",
+      fail: "Đóng tab trình duyệt hoặc tắt điện thoại KHÔNG làm tắt tưới. Nút trên Web chỉ gửi yêu cầu — trạng thái thật phụ thuộc vào phản hồi từ STM32.",
+      wires: ["w-vps-web", "w-web-vps"]
+    },
+    drive: {
+      tier: "Tầng 4 · Lưu trữ khoa học",
+      title: "Google Drive + Google Apps Script (Tự chạy mỗi 15 phút)",
+      what: "Kho sao lưu số liệu thực nghiệm tự động ngoài Google Cloud giúp mở bằng Excel / Google Sheets phục vụ phân tích số liệu thực nghiệm.",
+      role: "Cứ 15 phút tự hỏi VPS để lấy thêm các dòng số đo mới (dựa vào con trỏ after_id), kiểm tra vân tay SHA-256 chống lỗi rồi ghép vào file CSV ngày.",
+      flow: "Apps Script gọi HTTPS /drive-backup/changes lên VPS → nhận gói CSV Base64 + SHA-256 → xác minh đúng rồi lưu vào thư mục trạm trên Drive.",
+      fail: "Nếu chưa cài Trigger 15 phút hoặc sai token, Drive ngừng nhận dòng mới nhưng dữ liệu gốc vẫn còn nguyên trong SQLite trên VPS.",
+      wires: ["w-vps-drive"]
+    }
+  };
+
+  const ALL_IDS = Object.keys(COMPONENTS);
+  const TOUR_ORDER = ["soil", "aht", "stm32", "ec600n", "emqx", "vps", "web", "act", "esp32", "drive"];
+
+  const wires = Array.from(document.querySelectorAll("#wiresLayer .wire"));
+  const nodes = Array.from(document.querySelectorAll(".node"));
+  const packetsLayer = document.getElementById("packetsLayer");
+
+  const insTitle = document.getElementById("insTitle");
+  const insTier = document.getElementById("insTier");
+  const insWhat = document.getElementById("insWhat");
+  const insRole = document.getElementById("insRole");
+  const insFlow = document.getElementById("insFlow");
+  const insFail = document.getElementById("insFail");
+
+  const btnTour = document.getElementById("btnTour");
+  const btnReset = document.getElementById("btnReset");
+  const btnHwGallery = document.getElementById("btnHwGallery");
+  const btnInsPhoto = document.getElementById("btnInsPhoto");
+  const insPhotoWrap = document.getElementById("insPhotoWrap");
+
+  let selectedId = null;
+  let tourTimer = null;
+  let tourIdx = 0;
+  let activePackets = [];
+
+  const WIRE_COLOR = {
+    up: "#38bdf8",
+    down: "#f59e0b",
+    act: "#22c55e",
+    ota: "#a78bfa",
+    drive: "#a78bfa"
+  };
+
+  function spawnPacket(wireEl, reverse, delayOffset) {
+    const kind = wireEl.getAttribute("data-kind") || "up";
+    const color = WIRE_COLOR[kind] || "#38bdf8";
+    const len = wireEl.getTotalLength();
+
+    const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    const halo = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    halo.setAttribute("r", "7");
+    halo.setAttribute("fill", color);
+    halo.setAttribute("opacity", "0.28");
+
+    const dot = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    dot.setAttribute("r", "4");
+    dot.setAttribute("fill", color);
+    dot.setAttribute("filter", "url(#glow)");
+
+    g.appendChild(halo);
+    g.appendChild(dot);
+    packetsLayer.appendChild(g);
+
+    activePackets.push({
+      el: g,
+      wire: wireEl,
+      len: len,
+      reverse: !!reverse,
+      progress: delayOffset || 0,
+      speed: 0.48
+    });
+  }
+
+  function clearPackets() {
+    activePackets = [];
+    while (packetsLayer.firstChild) packetsLayer.removeChild(packetsLayer.firstChild);
+  }
+
+  function highlightComponent(id) {
+    selectedId = id;
+    clearPackets();
+
+    if (!id) {
+      nodes.forEach(n => n.classList.remove("dim", "selected"));
+      wires.forEach(w => {
+        w.classList.remove("dim", "active-up", "active-down", "active-ota", "active-drive", "active-act");
+      });
+      insTitle.textContent = "Chọn 1 khối ở trên để soi chi tiết (hoặc bấm \"Chạy vòng tuần hoàn 4 tầng\")";
+      insTier.textContent = "Tổng quan 4 tầng";
+      insWhat.textContent = "Hệ thống chia thành 4 tầng độc lập: Ngoài vườn đo và tưới → Hộp mạch xử lý tại chỗ → Đám mây & VPS lưu và kiểm tra → Trình duyệt Web và Google Drive cho người dùng xem.";
+      insRole.textContent = "Mỗi khối giữ một vai trò rõ ràng: STM32 tự quyết định tưới ngoài vườn, EMQX làm bưu điện trung gian, VPS làm thủ thư và chốt an toàn, Web chỉ hiển thị và gửi yêu cầu.";
+      insFlow.textContent = "Số đo đi từ trái sang phải (Vườn → Web/Drive). Lệnh bấm nút và cài đặt đi từ phải sang trái (Web → Vườn) rồi gửi phản hồi xác nhận ngược lại.";
+      insFail.textContent = "Nhờ thiết kế tách tầng, nếu mất 4G hoặc tắt Web thì STM32 ngoài vườn vẫn giữ lịch và cảm biến để tưới tự động an toàn tại chỗ.";
+      btnInsPhoto.hidden = true;
+      if (window.IoTHardwareViewer) window.IoTHardwareViewer.renderInline(insPhotoWrap, null);
+      return;
+    }
+
+    const info = COMPONENTS[id];
+    insTitle.textContent = info.title;
+    insTier.textContent = info.tier;
+    insWhat.textContent = info.what;
+    insRole.textContent = info.role;
+    insFlow.textContent = info.flow;
+    insFail.textContent = info.fail;
+
+    if (window.IoTHardwareViewer && window.IoTHardwareViewer.hasItem(id)) {
+      btnInsPhoto.hidden = false;
+      window.IoTHardwareViewer.renderInline(insPhotoWrap, id);
+    } else {
+      btnInsPhoto.hidden = true;
+      if (window.IoTHardwareViewer) window.IoTHardwareViewer.renderInline(insPhotoWrap, null);
+    }
+
+    const activeWireSet = new Set(info.wires);
+
+    nodes.forEach(n => {
+      const nid = n.getAttribute("data-id");
+      n.classList.toggle("selected", nid === id);
+      n.classList.toggle("dim", nid !== id);
+    });
+
+    // Un-dim neighbor nodes connected by active wires
+    const connectedPairs = {
+      "w-soil-stm32": ["soil", "stm32"],
+      "w-aht-stm32": ["aht", "stm32"],
+      "w-stm32-act": ["stm32", "act"],
+      "w-stm32-4g": ["stm32", "ec600n"],
+      "w-4g-emqx": ["ec600n", "emqx"],
+      "w-emqx-vps": ["emqx", "vps"],
+      "w-vps-web": ["vps", "web"],
+      "w-web-vps": ["web", "vps"],
+      "w-vps-drive": ["vps", "drive"],
+      "w-emqx-esp32": ["emqx", "esp32"],
+      "w-vps-esp32": ["vps", "esp32"],
+      "w-esp32-stm32": ["esp32", "stm32"]
+    };
+
+    wires.forEach(w => {
+      const wid = w.id;
+      const isAct = activeWireSet.has(wid);
+      const kind = w.getAttribute("data-kind") || "up";
+      w.classList.remove("active-up", "active-down", "active-ota", "active-drive", "active-act", "dim");
+      if (isAct) {
+        w.classList.add("active-" + kind);
+        spawnPacket(w, false, 0);
+        spawnPacket(w, false, 0.5);
+        (connectedPairs[wid] || []).forEach(nid => {
+          const nodeEl = document.querySelector('.node[data-id="' + nid + '"]');
+          if (nodeEl) nodeEl.classList.remove("dim");
+        });
+      } else {
+        w.classList.add("dim");
+      }
+    });
+  }
+
+  function showIdlePulses() {
+    clearPackets();
+    wires.forEach((w, idx) => {
+      spawnPacket(w, false, (idx * 0.17) % 1);
+    });
+  }
+
+  let lastTs = performance.now();
+  function animate(ts) {
+    const dt = Math.min(0.05, (ts - lastTs) / 1000);
+    lastTs = ts;
+    for (let i = 0; i < activePackets.length; i++) {
+      const p = activePackets[i];
+      p.progress = (p.progress + dt * p.speed) % 1;
+      const d = p.reverse ? (1 - p.progress) * p.len : p.progress * p.len;
+      const pt = p.wire.getPointAtLength(d);
+      p.el.setAttribute("transform", "translate(" + pt.x.toFixed(1) + "," + pt.y.toFixed(1) + ")");
+    }
+    requestAnimationFrame(animate);
+  }
+
+  nodes.forEach(n => {
+    n.addEventListener("click", () => {
+      stopTour();
+      const id = n.getAttribute("data-id");
+      highlightComponent(id);
+    });
+  });
+
+  function stopTour() {
+    if (tourTimer) {
+      clearInterval(tourTimer);
+      tourTimer = null;
+    }
+    btnTour.classList.remove("active");
+    btnTour.textContent = "▶ Chạy vòng tuần hoàn 4 tầng";
+  }
+
+  btnTour.addEventListener("click", () => {
+    if (tourTimer) {
+      stopTour();
+      return;
+    }
+    btnTour.classList.add("active");
+    btnTour.textContent = "⏸ Dừng hướng dẫn tự động";
+    tourIdx = 0;
+    highlightComponent(TOUR_ORDER[tourIdx]);
+    tourTimer = setInterval(() => {
+      tourIdx = (tourIdx + 1) % TOUR_ORDER.length;
+      highlightComponent(TOUR_ORDER[tourIdx]);
+    }, 3200);
+  });
+
+  btnReset.addEventListener("click", () => {
+    stopTour();
+    highlightComponent(null);
+    showIdlePulses();
+  });
+
+  if (btnHwGallery) {
+    btnHwGallery.addEventListener("click", () => {
+      if (window.IoTHardwareViewer) {
+        window.IoTHardwareViewer.open(selectedId && window.IoTHardwareViewer.hasItem(selectedId) ? selectedId : "stm32");
+      }
+    });
+  }
+  if (btnInsPhoto) {
+    btnInsPhoto.addEventListener("click", () => {
+      if (window.IoTHardwareViewer && selectedId && window.IoTHardwareViewer.hasItem(selectedId)) {
+        window.IoTHardwareViewer.open(selectedId);
+      }
+    });
+  }
+  if (window.IoTHardwareViewer) {
+    window.IoTHardwareViewer.attachSvgTriggers([
+      { selector: "#n-soil", id: "soil", pillPos: "br", openOnNodeClick: false },
+      { selector: "#n-aht", id: "aht", pillPos: "br", openOnNodeClick: false },
+      { selector: "#n-act", id: "act", pillPos: "br", openOnNodeClick: false },
+      { selector: "#n-stm32", id: "stm32", pillPos: "tr", openOnNodeClick: false },
+      { selector: "#n-4g", id: "ec600n", pillPos: "tr", openOnNodeClick: false },
+      { selector: "#n-esp32", id: "esp32", pillPos: "br", openOnNodeClick: false }
+    ]);
+  }
+
+  showIdlePulses();
+  requestAnimationFrame(animate);
+})();
+</script>
+</body>
+</html>

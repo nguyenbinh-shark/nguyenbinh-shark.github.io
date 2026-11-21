@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="380" viewBox="0 0 800 380" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="cir-title cir-desc">
+  <title id="cir-title">Đồ thị hệ số biến tốc độ tích phân WangHongxi</title>
+  <desc id="cir-desc">Đồ thị hàm f(e) theo độ lớn sai số |e| chia làm 3 vùng: ngắt tích phân khi ở xa, chuyển tiếp tuyến tính và bật 100% khi áp sát đích.</desc>
+  <defs>
+    <marker id="arr-cir" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#475569"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+      .code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    </style>
+  </defs>
+
+  <rect width="800" height="380" rx="12" fill="#ffffff"/>
+  <rect x="1" y="1" width="798" height="378" rx="11" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Main Graph Area -->
+  <g transform="translate(60, 40)">
+    <!-- 3 Zone Backgrounds -->
+    <!-- Zone 1: Áp sát đích (0 to B = 160px) -->
+    <rect x="50" y="40" width="160" height="230" fill="#f0fdf4" fill-opacity="0.8"/>
+    <!-- Zone 2: Chuyển tiếp (B to A+B = 220px) -->
+    <rect x="210" y="40" width="220" height="230" fill="#fefce8" fill-opacity="0.8"/>
+    <!-- Zone 3: Xa xôi (> A+B = 220px) -->
+    <rect x="430" y="40" width="220" height="230" fill="#f8fafc" fill-opacity="0.8"/>
+
+    <!-- Grid lines -->
+    <line x1="50" y1="80" x2="650" y2="80" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3 3"/>
+    <line x1="210" y1="40" x2="210" y2="270" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3 3"/>
+    <line x1="430" y1="40" x2="430" y2="270" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3 3"/>
+
+    <!-- Axes -->
+    <line x1="50" y1="270" x2="670" y2="270" stroke="#475569" stroke-width="2" marker-end="url(#arr-cir)"/>
+    <line x1="50" y1="270" x2="50" y2="25" stroke="#475569" stroke-width="2" marker-end="url(#arr-cir)"/>
+
+    <text x="40" y="20" text-anchor="end" font-size="12" font-weight="800" fill="#0f172a">Hệ số f(e)</text>
+    <text x="670" y="295" text-anchor="end" font-size="12" font-weight="800" fill="#0f172a">Độ lớn sai số |e|</text>
+
+    <!-- Axis Labels -->
+    <text x="40" y="84" text-anchor="end" font-size="12" font-weight="700" fill="#16a34a">1.0 (100%)</text>
+    <text x="40" y="274" text-anchor="end" font-size="12" font-weight="700" fill="#64748b">0.0 (0%)</text>
+
+    <text x="50" y="292" text-anchor="middle" font-size="12" font-weight="700" fill="#64748b">0</text>
+    <text x="210" y="292" text-anchor="middle" font-size="12" font-weight="800" fill="#16a34a">B (Ví dụ 5°C)</text>
+    <text x="430" y="292" text-anchor="middle" font-size="12" font-weight="800" fill="#d97706">A + B (Ví dụ 25°C)</text>
+
+    <!-- Curve of f(e) -->
+    <!-- 0 to B: flat 1.0 (y=80) -->
+    <!-- B to A+B: ramp down from y=80 to y=270 -->
+    <!-- >A+B: flat 0.0 (y=270) -->
+    <path d="M 50 80 L 210 80 L 430 270 L 650 270" fill="none" stroke="#d97706" stroke-width="3.5" stroke-linejoin="round"/>
+
+    <!-- Key Points -->
+    <circle cx="50" cy="80" r="4.5" fill="#16a34a"/>
+    <circle cx="210" cy="80" r="4.5" fill="#16a34a"/>
+    <circle cx="430" cy="270" r="4.5" fill="#dc2626"/>
+
+    <!-- Zone Annotations -->
+    <!-- Zone 1: 100% -->
+    <g transform="translate(65, 95)">
+      <rect width="130" height="50" rx="6" fill="#ffffff" stroke="#86efac" stroke-width="1.2"/>
+      <text x="65" y="20" text-anchor="middle" font-size="11" font-weight="800" fill="#15803d">VÙNG 1: CẬP BẾN</text>
+      <text x="65" y="38" text-anchor="middle" font-size="10" font-weight="700" fill="#166534">f(e) = 1.0 (Bật 100% I)</text>
+    </g>
+
+    <!-- Zone 2: Linear ramp -->
+    <g transform="translate(235, 120)">
+      <rect width="170" height="55" rx="6" fill="#ffffff" stroke="#fde047" stroke-width="1.2"/>
+      <text x="85" y="20" text-anchor="middle" font-size="11" font-weight="800" fill="#854d0e">VÙNG 2: CHUYỂN TIẾP</text>
+      <text x="85" y="36" text-anchor="middle" font-size="10" font-weight="700" fill="#a16207" class="code">(A - |e| + B) / A</text>
+      <text x="85" y="48" text-anchor="middle" font-size="9" fill="#713f12">Tăng tốc mượt mà</text>
+    </g>
+
+    <!-- Zone 3: 0% -->
+    <g transform="translate(470, 185)">
+      <rect width="140" height="50" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+      <text x="70" y="20" text-anchor="middle" font-size="11" font-weight="800" fill="#475569">VÙNG 3: XA XÔI</text>
+      <text x="70" y="38" text-anchor="middle" font-size="10" font-weight="700" fill="#dc2626">f(e) = 0 (Ngắt khâu I)</text>
+    </g>
+  </g>
+</svg>

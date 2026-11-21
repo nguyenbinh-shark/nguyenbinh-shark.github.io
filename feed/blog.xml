@@ -1,0 +1,1827 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" >
+  <generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator>
+  <link href="https://nguyenbinh-shark.github.io/feed/blog.xml" rel="self" type="application/atom+xml" />
+  <link href="https://nguyenbinh-shark.github.io/" rel="alternate" type="text/html" />
+  <updated>2026-11-21T15:19:05+00:00</updated>
+  <id>https://nguyenbinh-shark.github.io/feed/blog.xml</id>
+
+  
+  
+  <title type="html">Trần Nguyên Bình (Nguyen-Binh Tran) | Blog</title>
+
+  
+    <subtitle>Trần Nguyên Bình (Nguyen-Binh Tran) — Sinh viên Kỹ thuật Cơ điện tử tại Đại học Bách Khoa Hà Nội (HUST). Robotics, hệ thống nhúng, lý thuyết điều khiển và mô phỏng. Mechatronics Engineering student at Hanoi University of Science and Technology (HUST) specializing in Robotics, Control Systems, and Embedded Systems.</subtitle>
+  
+
+  
+    <author>
+      <name>Trần Nguyên Bình</name>
+      
+        <email>trannguyenbinh.shark@gmail.com</email>
+      
+      
+    </author>
+  
+
+  
+  
+  
+  
+
+  
+    <entry>
+      
+
+      <title type="html">IoT Tưới Cây 3 Hàng · Bài 6 — Luồng sao lưu CSV, Google Drive 15 phút &amp;amp; Cách dò lỗi</title>
+      <link href="https://nguyenbinh-shark.github.io/posts/2026/11/iot-tuoi-06-luong-sao-luu-drive-va-do-loi/" rel="alternate" type="text/html" title="IoT Tưới Cây 3 Hàng · Bài 6 — Luồng sao lưu CSV, Google Drive 15 phút &amp;amp; Cách dò lỗi" />
+      <published>2026-11-19T00:00:00+00:00</published>
+      <updated>2026-11-19T00:00:00+00:00</updated>
+      <id>https://nguyenbinh-shark.github.io/posts/2026/11/index</id>
+
+      
+      
+        <content type="html" xml:base="https://nguyenbinh-shark.github.io/posts/2026/11/iot-tuoi-06-luong-sao-luu-drive-va-do-loi/"><![CDATA[<nav class="pid-nav" aria-label="Điều hướng series Hệ thống tưới IoT">
+  <div class="pid-nav__top">
+    <a class="pid-nav__label" href="/iot-tuoi-cay-series/">Hệ thống Tưới IoT 3 Hàng · 6 bài hướng dẫn</a>
+  </div>
+  <div class="pid-nav__chapters">
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-01-cau-truc-va-thanh-phan/" title="Bài 1 — Cấu trúc hệ thống">1</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-02-luong-du-lieu-vuon-len-web/" title="Bài 2 — Luồng đi lên">2</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-03-luong-bam-nut-dieu-khien/" title="Bài 3 — Luồng bấm nút điều khiển">3</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-04-luong-tu-dong-3-hang-abc/" title="Bài 4 — Luồng tự động tại vườn">4</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-05-luong-cau-hinh-retain-va-ota/" title="Bài 5 — Cài đặt Retain &amp; Nạp OTA">5</a>
+    <a class="pid-nav__num pid-nav__num--current" href="/posts/2026/11/iot-tuoi-06-luong-sao-luu-drive-va-do-loi/" title="Bài 6 — Sao lưu Drive &amp; Dò lỗi (đang xem)">6</a>
+  </div>
+  <div class="pid-nav__prevnext">
+    <a href="/posts/2026/11/iot-tuoi-05-luong-cau-hinh-retain-va-ota/">‹ Bài 5: Cài đặt &amp; OTA</a>
+    <a href="/iot-tuoi-cay-series/">Về trang tổng quan Series ›</a>
+  </div>
+</nav>
+
+<div class="pid-hero">
+  <div class="pid-hero__row">
+    <span class="pid-hero__num">06</span>
+    <span class="pid-hero__title">Cơ chế lưu trữ dữ liệu thực nghiệm phục vụ phân tích, cách tránh sai lệch khi tổng hợp CSV và bảng khoanh vùng sự cố theo từng chặng dữ liệu.</span>
+  </div>
+  <div class="pid-hero__meta">
+    <span class="pid-chip"><i class="fas fa-clock"></i> ~8 phút</span>
+    <span class="pid-chip"><i class="fas fa-cloud-upload-alt"></i> Animation Sao lưu Drive 15 phút</span>
+    <span class="pid-chip"><i class="fas fa-stethoscope"></i> Máy dò 5 lỗi hay gặp</span>
+  </div>
+</div>
+
+<div class="pid-scene">
+  <span class="pid-scene__label">Hai hiểu lầm phổ biến khi vận hành</span>
+  <p><strong>Hiểu lầm 1:</strong> Sau khi bấm nút <em>"Sao lưu dữ liệu hôm nay ngay"</em> trên Web, mở Google Drive chưa thấy dòng mới có thể dẫn tới nhầm lẫn rằng hệ thống bị hỏng. Thực tế, nút trên Web chỉ xuất CSV trên VPS, còn đồng bộ sang Google Drive là một lịch tự động chạy riêng mỗi 15 phút trên Google.</p>
+  <p><strong>Hiểu lầm 2:</strong> Mở file CSV 27 cột bằng Excel, quét cả cột lượng nước <code>daily_l</code> rồi dùng hàm <code>=SUM(...)</code> sẽ cho kết quả sai lệch lên tới hàng trăm lít nước chỉ trong một buổi sáng, vì cột này đã là giá trị tích lũy cộng dồn qua từng gói tin.</p>
+</div>
+
+<h2 id="1-animation-tương-tác-sao-lưu-drive-15-phút--máy-dò-lỗi-nhanh">1. Animation tương tác: Sao lưu Drive 15 phút &amp; Máy dò lỗi nhanh</h2>
+
+<p>Hãy thử cả 2 thẻ bên dưới: <strong>Phần 1</strong> mô phỏng cách <code class="language-plaintext highlighter-rouge">DriveBackup.gs</code> dùng con trỏ <code class="language-plaintext highlighter-rouge">after_id</code> để không tải trùng bản ghi; <strong>Phần 2</strong> là bảng dò lỗi theo luồng giúp xác định nhanh mắt xích đang gặp sự cố từ triệu chứng quan sát được:</p>
+
+<figure class="pid-demo pid-demo--tall">
+  <div class="pid-demo__bar">
+    <span class="pid-demo__title"><i class="fas fa-database"></i> Animation 6 — Sao lưu Google Drive (Cursor &amp; SHA-256) &amp; Máy dò lỗi theo luồng</span>
+    <span class="pid-demo__acts">
+      <a href="/files/iot-tuoi-cay/demo6_luong_luu_drive_va_do_loi.html" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> Mở tab mới</a>
+      <a href="/files/iot-tuoi-cay/demo6_luong_luu_drive_va_do_loi.html" download=""><i class="fas fa-download"></i> Tải về</a>
+    </span>
+  </div>
+  <iframe src="/files/iot-tuoi-cay/demo6_luong_luu_drive_va_do_loi.html" loading="lazy" title="Animation 6 — Sao lưu Google Drive 15 phút và Máy dò lỗi theo luồng"></iframe>
+  <div class="pid-demo__touch">
+    <strong>Thực hành ngay:</strong>
+    <span class="pid-chip"><i class="fas fa-play"></i> Chạy Drive sync 2 lần liên tiếp</span>
+    <span class="pid-chip"><i class="fas fa-bug"></i> Thử bấm 5 triệu chứng lỗi</span>
+  </div>
+</figure>
+
+<hr />
+
+<h2 id="2-hai-nhánh-lưu-trữ-dữ-liệu-hoàn-toàn-độc-lập">2. Hai nhánh lưu trữ dữ liệu hoàn toàn độc lập</h2>
+
+<figure class="pid-fig">
+  <img src="/images/53-58-iot-tuoi-cay/d04_8_flow7_backup.png" alt="Sơ đồ hai nhánh sao lưu dữ liệu độc lập: CSV tại VPS và Google Drive 15 phút" loading="lazy" />
+  <figcaption><span class="pid-badge">Luồng 7</span> <span><strong>Từ một nguồn SQLite rẽ làm 2 nhánh:</strong> Nhánh 1 tạo tệp CSV ngay trên VPS để tải tay; Nhánh 2 chạy ngầm trên Google Apps Script mỗi 15 phút.</span></figcaption>
+</figure>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Nhánh lưu dữ liệu</th>
+      <th style="text-align: left">Cách hoạt động</th>
+      <th style="text-align: left">Dùng khi nào?</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><strong>Nhánh 1: CSV trên VPS</strong> (<code class="language-plaintext highlighter-rouge">exports_csv/</code>)</td>
+      <td style="text-align: left">Worker tự xuất mỗi 30 phút, hoặc xuất tức thì khi bấm nút <strong>Tạo CSV / Xuất theo khoảng thời gian</strong> trên Web HMI.</td>
+      <td style="text-align: left">Cần tải gấp file CSV chuẩn 27 cột UTF-8 BOM ngay về máy tính.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>Nhánh 2: Google Drive</strong> (<code class="language-plaintext highlighter-rouge">DriveBackup.gs</code>)</td>
+      <td style="text-align: left">Google Apps Script tự thức dậy mỗi 15 phút, gọi <code class="language-plaintext highlighter-rouge">/drive-backup/changes?after_id=...</code>, đối chiếu mã vân tay <code class="language-plaintext highlighter-rouge">SHA-256</code> rồi ghép thêm dòng mới vào <code class="language-plaintext highlighter-rouge">Tuoi_cay_YYYY-MM-DD.csv</code> theo trạm.</td>
+      <td style="text-align: left">Lưu lâu dài, an toàn tách khỏi VPS và chia sẻ cho cả nhóm mở xem trên Google Sheets.</td>
+    </tr>
+  </tbody>
+</table>
+
+<figure class="pid-fig">
+  <img src="/images/53-58-iot-tuoi-cay/05_sensor_chart_and_csv_modal.png" alt="Giao diện xuất dữ liệu CSV theo khoảng thời gian trên Web HMI" loading="lazy" />
+  <figcaption><span class="pid-badge">Xuất dữ liệu</span> <span><strong>Xuất CSV trên Web:</strong> Chọn trạm, chọn khoảng ngày muốn phân tích và tải file 27 cột tương thích Excel.</span></figcaption>
+</figure>
+
+<blockquote>
+  <p><strong>Lưu ý khi tổng hợp số liệu từ CSV:</strong> Mỗi dòng trong file CSV chứa <code class="language-plaintext highlighter-rouge">daily_l</code> là <strong>lượng nước tích lũy từ đầu ngày tới thời điểm ghi dòng đó</strong> (ví dụ <code class="language-plaintext highlighter-rouge">0.5 L → 1.2 L → 1.8 L</code>). Để biết cả ngày Hàng A, B, C tưới hết bao nhiêu lít, hãy <strong>lấy giá trị lớn nhất / cuối cùng trước khi reset trong ngày</strong> (của ví dụ trên là <code class="language-plaintext highlighter-rouge">1.8 L</code>), tuyệt đối <strong>không <code class="language-plaintext highlighter-rouge">SUM</code> cả cột</strong>! Sau đó tính <code class="language-plaintext highlighter-rouge">% tiết kiệm nước = (Lượng_A - Lượng_C) / Lượng_A × 100%</code>.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="3-lộ-trình-làm-quen-và-vận-hành-an-toàn">3. Lộ trình làm quen và vận hành an toàn</h2>
+
+<p>Để không làm ảnh hưởng đến vườn cà chua thật khi mới làm quen với hệ thống, nên thực hành lần lượt theo <strong>3 mức an toàn</strong> sau:</p>
+
+<ol>
+  <li><strong>Mức 1 — Thao tác trên chế độ <code class="language-plaintext highlighter-rouge">Demo</code> của Web HMI:</strong> Gạt công tắc từ <code class="language-plaintext highlighter-rouge">Live</code> sang <code class="language-plaintext highlighter-rouge">Demo</code> ngay trên thanh trái màn hình. Ở chế độ này trình duyệt tự tạo dữ liệu giả lập để thử đóng mở van, kiểm tra khóa bơm hoặc kịch bản cạn bồn mà không tác động tới phần cứng thật.</li>
+  <li><strong>Mức 2 — Chạy thiết bị mô phỏng Python trên máy tính (<code class="language-plaintext highlighter-rouge">sim_&lt;ten_thiet_bi&gt;</code>):</strong> Chạy <code class="language-plaintext highlighter-rouge">simulate_stm32.py</code> bằng mã có tiền tố <code class="language-plaintext highlighter-rouge">sim_</code> riêng biệt (tuyệt đối không lấy trùng <code class="language-plaintext highlighter-rouge">device_id</code> của trạm thật ngoài vườn) để quan sát luồng tin chạy qua EMQX → VPS → WebSocket thật.</li>
+  <li><strong>Mức 3 — Vận hành &amp; hiệu chuẩn vườn thật (<code class="language-plaintext highlighter-rouge">Live</code>):</strong> Đăng nhập đúng tài khoản, kiểm tra góc trái đang ở <code class="language-plaintext highlighter-rouge">Live</code>, chọn đúng trạm, đo hứng cốc 12 vòi <code class="language-plaintext highlighter-rouge">A-1..C-4</code> (giữ cả 4 vòi trong cùng hàng cùng chảy lúc đo để đúng áp lực) rồi nhập lưu lượng thực vào bảng cấu hình.</li>
+</ol>
+
+<hr />
+
+<h2 id="4-bảng-tra-cứu-5-lỗi-thường-gặp--hướng-dẫn-bảo-mật-khi-bàn-giao">4. Bảng tra cứu 5 lỗi thường gặp &amp; Hướng dẫn bảo mật khi bàn giao</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Biểu hiện quan sát được</th>
+      <th style="text-align: left">Đoạn luồng đang tắc</th>
+      <th style="text-align: left">Hạng mục cần kiểm tra</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><strong>1. Không mở được trang Web</strong></td>
+      <td style="text-align: left">Trình duyệt ↔ Tunnel ↔ VPS</td>
+      <td style="text-align: left">Kiểm tra <code class="language-plaintext highlighter-rouge">/health</code> của backend; kiểm tra tác vụ backend &amp; Cloudflare Tunnel trên VPS (vườn vẫn tự tưới bình thường!).</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>2. Web mở được nhưng báo <code class="language-plaintext highlighter-rouge">Offline</code></strong></td>
+      <td style="text-align: left">STM32 ↔ Modem 4G ↔ EMQX</td>
+      <td style="text-align: left">Kiểm tra nguồn hộp điện ngoài vườn, LED nhấp nháy <code class="language-plaintext highlighter-rouge">PC13</code>, SIM 4G còn data hay lỏng ăng-ten.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>3. Bấm Bật Bơm bị báo lỗi từ chối</strong></td>
+      <td style="text-align: left">Chốt 1 (RBAC) hoặc Chốt 2 (An toàn)</td>
+      <td style="text-align: left">Đăng nhập User/Admin; <strong>Mở ít nhất 1 van trước khi bật bơm</strong>; chuyển từ <code class="language-plaintext highlighter-rouge">AUTO</code> sang <code class="language-plaintext highlighter-rouge">THỦ CÔNG</code> nếu muốn bấm tay.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>4. Số trên Web đứng yên lâu</strong></td>
+      <td style="text-align: left">WebSocket hoặc 4G</td>
+      <td style="text-align: left">Bấm nút <strong>Làm mới</strong> trên Web; nhìn mốc giờ cập nhật gần nhất (<code class="language-plaintext highlighter-rouge">recorded_at</code>) để biết số đó mới hay cũ.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>5. Không thấy dòng mới trên Drive</strong></td>
+      <td style="text-align: left">Nhánh Google Apps Script</td>
+      <td style="text-align: left">Nhớ rằng nút trên Web chỉ xuất CSV tại VPS; hãy kiểm tra <em>Triggers (15 phút)</em> và <em>Executions</em> trong dự án Apps Script.</td>
+    </tr>
+  </tbody>
+</table>
+
+<details class="pid-tech">
+  <summary><i class="fas fa-shield-alt"></i> Checklist bảo mật bắt buộc khi bàn giao sang nhóm mới</summary>
+  <div class="pid-tech__body">
+    <p>Trong toàn bộ 6 bài hướng dẫn công khai này, mọi mật khẩu, khóa bí mật và thông số máy chủ riêng đã được ẩn bằng tên giữ chỗ. Khi nhận bàn giao nội bộ, người phụ trách cần thực hiện riêng:</p>
+    <ul>
+      <li>Đổi mật khẩu tài khoản Admin/User mặc định trên Web HMI ngay lần đầu nhận hệ thống.</li>
+      <li>Giữ kín tệp <code>backend/.env</code> (chứa mật khẩu MQTT Broker, <code>JWT_SECRET</code>, <code>BACKUP_READ_TOKEN</code>) và khóa trong <em>Script Properties</em> của Google Apps Script — không dán lên GitHub hay ảnh chụp màn hình công khai.</li>
+      <li>Không cấp nhầm tiền tố <code>sim_</code> cho trạm ngoài vườn, và mỗi trạm/máy thử mô phỏng phải dùng <code>device_id</code> riêng để dữ liệu không trộn vào nhau.</li>
+    </ul>
+  </div>
+</details>
+
+<div class="pid-takeaway">
+  <span class="pid-takeaway__label">Tổng kết cả 6 bài</span>
+  <p>Hệ thống được tổ chức qua 6 luồng mạch lạc: <strong>4 tầng tách bạch → Luồng số đo đi lên → Luồng bấm nút 2 chiều qua 3 chốt an toàn → Tự động A/B/C luân phiên tại biên → Cấu hình Retain &amp; Nạp OTA → Sao lưu Drive &amp; Dò lỗi theo luồng</strong>. Nắm rõ các luồng này giúp việc vận hành, kiểm thử và bảo trì toàn hệ thống trở nên minh bạch và kiểm soát được ở từng chặng.</p>
+</div>
+
+<div class="pid-cta">
+  <a class="btn" href="/posts/2026/11/iot-tuoi-05-luong-cau-hinh-retain-va-ota/"><i class="fas fa-arrow-left"></i> Quay lại Bài 5</a>
+  <a class="btn btn--success" href="/iot-tuoi-cay-series/"><i class="fas fa-home"></i> Về trang Tổng quan Series</a>
+</div>]]></content>
+      
+
+      
+      
+      
+      
+      
+
+      <author>
+        <name>Trần Nguyên Bình</name>
+        
+          <email>trannguyenbinh.shark@gmail.com</email>
+        
+        
+      </author>
+
+      
+        
+          <category term="blog" />
+        
+          <category term="iot-tuoi-cay" />
+        
+      
+
+      
+        <category term="iot" />
+      
+        <category term="embedded" />
+      
+        <category term="stm32" />
+      
+        <category term="mqtt" />
+      
+        <category term="tutorial" />
+      
+
+      
+      
+        <summary type="html"><![CDATA[Hiểu 2 nhánh sao lưu CSV độc lập (VPS và Google Drive 15 phút dùng con trỏ + SHA-256), tránh bẫy cộng sai cột daily_l trong Excel và thực hành dò lỗi theo luồng dữ liệu.]]></summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      
+
+      <title type="html">IoT Tưới Cây 3 Hàng · Bài 5 — Luồng đổi cài đặt (Cờ Retain) &amp;amp; Nạp firmware từ xa (ESP32 OTA)</title>
+      <link href="https://nguyenbinh-shark.github.io/posts/2026/11/iot-tuoi-05-luong-cau-hinh-retain-va-ota/" rel="alternate" type="text/html" title="IoT Tưới Cây 3 Hàng · Bài 5 — Luồng đổi cài đặt (Cờ Retain) &amp;amp; Nạp firmware từ xa (ESP32 OTA)" />
+      <published>2026-11-18T00:00:00+00:00</published>
+      <updated>2026-11-18T00:00:00+00:00</updated>
+      <id>https://nguyenbinh-shark.github.io/posts/2026/11/index</id>
+
+      
+      
+        <content type="html" xml:base="https://nguyenbinh-shark.github.io/posts/2026/11/iot-tuoi-05-luong-cau-hinh-retain-va-ota/"><![CDATA[<nav class="pid-nav" aria-label="Điều hướng series Hệ thống tưới IoT">
+  <div class="pid-nav__top">
+    <a class="pid-nav__label" href="/iot-tuoi-cay-series/">Hệ thống Tưới IoT 3 Hàng · 6 bài hướng dẫn</a>
+  </div>
+  <div class="pid-nav__chapters">
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-01-cau-truc-va-thanh-phan/" title="Bài 1 — Cấu trúc hệ thống">1</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-02-luong-du-lieu-vuon-len-web/" title="Bài 2 — Luồng đi lên">2</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-03-luong-bam-nut-dieu-khien/" title="Bài 3 — Luồng bấm nút điều khiển">3</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-04-luong-tu-dong-3-hang-abc/" title="Bài 4 — Luồng tự động tại vườn">4</a>
+    <a class="pid-nav__num pid-nav__num--current" href="/posts/2026/11/iot-tuoi-05-luong-cau-hinh-retain-va-ota/" title="Bài 5 — Cài đặt Retain &amp; Nạp OTA (đang xem)">5</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-06-luong-sao-luu-drive-va-do-loi/" title="Bài 6 — Sao lưu Drive &amp; Dò lỗi">6</a>
+  </div>
+  <div class="pid-nav__prevnext">
+    <a href="/posts/2026/11/iot-tuoi-04-luong-tu-dong-3-hang-abc/">‹ Bài 4: Tự động 3 hàng</a>
+    <a href="/posts/2026/11/iot-tuoi-06-luong-sao-luu-drive-va-do-loi/">Bài 6: Sao lưu Drive &amp; Dò lỗi ›</a>
+  </div>
+</nav>
+
+<div class="pid-hero">
+  <div class="pid-hero__row">
+    <span class="pid-hero__num">05</span>
+    <span class="pid-hero__title">Làm sao đổi thông số khi vườn đang mất mạng mà lúc có sóng lại nó vẫn tự cập nhật? Và bằng cách nào ta sửa code cho con chip STM32 ngoài ruộng ngay từ máy tính ở nhà?</span>
+  </div>
+  <div class="pid-hero__meta">
+    <span class="pid-chip"><i class="fas fa-clock"></i> ~8 phút</span>
+    <span class="pid-chip"><i class="fas fa-thumbtack"></i> Animation Cờ Retain</span>
+    <span class="pid-chip"><i class="fas fa-upload"></i> Animation Nạp OTA qua ESP32</span>
+  </div>
+</div>
+
+<div class="pid-scene">
+  <span class="pid-scene__label">Câu chuyện 2 tờ giấy trên bảng thông báo</span>
+  <p>Tưởng tượng EMQX là bảng thông báo chung. Nếu Admin viết lên một mẩu giấy ghi chú <em>"Từ nay cứ dưới 38% là tưới"</em> rồi dùng <strong>đinh ghim chặt lên bảng (<code>Retain = true</code>)</strong>, thì dù STM32 đi vắng vì mất 4G, ngay khi quay về nó vẫn nhìn thấy tờ giấy đó!</p>
+  <p>Ngược lại, lệnh <em>"Bật bơm ngay bây giờ!"</em> tuyệt đối <strong>KHÔNG được ghim (<code>Retain = false</code>)</strong> — nếu không 3 ngày sau mất điện có lại, STM32 đọc nhầm tờ giấy cũ và tự nhiên bật bơm lúc nửa đêm!</p>
+</div>
+
+<h2 id="1-animation-tương-tác-thử-tắt-4g-với-cờ-retain--theo-dõi-luồng-ota">1. Animation tương tác: Thử tắt 4G với Cờ Retain &amp; Theo dõi luồng OTA</h2>
+
+<p>Hãy chuyển qua lại 2 thẻ bên dưới: ở <strong>Phần 1</strong>, hãy thử bấm <strong>Ngắt sóng 4G</strong>, bấm <strong>Lưu cài đặt mới</strong>, rồi bật lại sóng 4G để xem tờ giấy ghim hoạt động thế nào! Ở <strong>Phần 2</strong>, theo dõi 6 bước nạp firmware STM32 qua ESP32:</p>
+
+<figure class="pid-demo pid-demo--tall">
+  <div class="pid-demo__bar">
+    <span class="pid-demo__title"><i class="fas fa-sync-alt"></i> Animation 5 — Luồng Cấu hình (Retain) &amp; Nạp Firmware STM32 từ xa qua ESP32</span>
+    <span class="pid-demo__acts">
+      <a href="/files/iot-tuoi-cay/demo5_luong_cau_hinh_va_ota.html" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> Mở tab mới</a>
+      <a href="/files/iot-tuoi-cay/demo5_luong_cau_hinh_va_ota.html" download=""><i class="fas fa-download"></i> Tải về</a>
+    </span>
+  </div>
+  <iframe src="/files/iot-tuoi-cay/demo5_luong_cau_hinh_va_ota.html" loading="lazy" title="Animation 5 — Luồng đổi cấu hình Retain và Nạp firmware OTA qua ESP32"></iframe>
+  <div class="pid-demo__touch">
+    <strong>Thử nghiệm 2 phần:</strong>
+    <span class="pid-chip"><i class="fas fa-thumbtack"></i> Ngắt 4G → Lưu /config → Bật lại 4G</span>
+    <span class="pid-chip"><i class="fas fa-microchip"></i> Xem 6 bước ESP32 nạp SWD cho STM32</span>
+  </div>
+</figure>
+
+<hr />
+
+<h2 id="2-luồng-5a--đổi-cài-đặt-tưới-config--chỉ-admin">2. Luồng 5A — Đổi cài đặt tưới (<code class="language-plaintext highlighter-rouge">/config</code> · Chỉ Admin)</h2>
+
+<figure class="pid-fig">
+  <img src="/images/53-58-iot-tuoi-cay/d04_6_flow5_config.png" alt="Sơ đồ luồng 5 thay đổi cấu hình và ghim bản tin Retain trên MQTT Broker" loading="lazy" />
+  <figcaption><span class="pid-badge">Luồng 5</span> <span><strong>3 mốc phân biệt:</strong> (1) Đang sửa trên màn hình → (2) Đã lưu trên VPS &amp; ghim trên EMQX → (3) STM32 đã nhận và ghi xuống Flash.</span></figcaption>
+</figure>
+
+<p>Trên giao diện <strong>Cài đặt</strong> mới nhất, toàn bộ thông số được chia làm <strong>2 lớp gọn gàng</strong> để tách bạch thao tác vận hành hằng ngày khỏi các thông số kỹ thuật sâu:</p>
+
+<ul>
+  <li><strong>Lớp 1 — Dùng thường xuyên (<code class="language-plaintext highlighter-rouge">Lịch tưới &amp; lượng nước</code>):</strong> Gồm 3 cột to rõ cho <strong>Hàng A</strong> (chọn 1–24 lần/ngày + giờ tưới), <strong>Hàng B</strong> (ngưỡng bắt đầu/dừng + lượng nước) và <strong>Hàng C</strong> (ngưỡng cơ sở + khung tự tính minh họa lúc <code class="language-plaintext highlighter-rouge">VPD</code> nóng khô), kèm công tắc bật/tắt cửa sổ hỏi xác nhận.</li>
+  <li><strong>Lớp 2 — <code class="language-plaintext highlighter-rouge">Cấu hình kỹ thuật</code> (gập gọn mặc định):</strong> Chỉ mở ra khi cần <strong>Calib lưu lượng từng vòi (<code class="language-plaintext highlighter-rouge">A-1..C-4</code>)</strong>, chỉnh giới hạn an toàn &amp; thời gian ngấm, thông số bù khí hậu, hiệu chuẩn cảm biến đất ADC 12-bit, đồng bộ giờ đồng hồ, quản lý thiết bị hoặc phân quyền tài khoản.</li>
+</ul>
+
+<figure class="pid-fig">
+  <img src="/images/53-58-iot-tuoi-cay/config_daily_layout.png" alt="Lớp 1 Dùng thường xuyên Lịch tưới và lượng nước trên Web HMI" loading="lazy" />
+  <figcaption><span class="pid-badge">Lớp 1 · Dùng hằng ngày</span> <span><strong>Giao diện Cài đặt 3 cột mới:</strong> Gọn gàng, dễ chỉnh lịch/ngưỡng ẩm và bấm ngay <em>Lưu &amp; Gửi thông số</em> ở góc trên.</span></figcaption>
+</figure>
+
+<figure class="pid-fig">
+  <img src="/images/53-58-iot-tuoi-cay/config_technical_layout.png" alt="Lớp 2 Cấu hình kỹ thuật mở rộng với bảng Calib lưu lượng 12 vòi và các mục gập gọn" loading="lazy" />
+  <figcaption><span class="pid-badge">Lớp 2 · Kỹ thuật</span> <span><strong>Mục Cấu hình kỹ thuật (mở khi cần):</strong> Tách riêng bảng Calib 12 vòi <code>A-1..C-4</code>, giới hạn an toàn, bù VPD, hiệu chuẩn ADC, quản lý trạm và tài khoản.</span></figcaption>
+</figure>
+
+<ul>
+  <li>Chỉ tài khoản <strong>Admin</strong> mới có quyền gửi cấu hình (<code class="language-plaintext highlighter-rouge">POST /config</code>).</li>
+  <li>Backend lưu vào SQLite rồi đẩy lên topic <code class="language-plaintext highlighter-rouge">iot/devices/{id}/config</code> với cờ <strong><code class="language-plaintext highlighter-rouge">Retain = true</code></strong>.</li>
+  <li><strong>Tại STM32:</strong> Khi nhận cấu hình mới, STM32 kiểm tra toàn bộ gói tin vào vùng nhớ tạm trước (hợp lệ mới áp dụng — không để áp dụng nửa vời), rồi ghi xuống vùng <strong>Flash cấu hình Sector 5 (<code class="language-plaintext highlighter-rouge">0x08020000</code>)</strong> để không bị mất khi cúp điện.</li>
+</ul>
+
+<figure class="pid-fig">
+  <img src="/images/53-58-iot-tuoi-cay/d06_2_topic_anatomy.png" alt="Giải phẫu cấu trúc tên kênh MQTT Topic iot/devices/tram_01/data" loading="lazy" />
+  <figcaption><span class="pid-badge">Cấu trúc Topic</span> <span><strong>Địa chỉ 3 phần:</strong> <code>iot/devices</code> / <code>mã trạm</code> / <code>loại tin</code> (<code>data</code>, <code>events</code>, <code>status</code>, <code>command</code>, <code>config</code>).</span></figcaption>
+</figure>
+
+<hr />
+
+<h2 id="3-luồng-5b--cập-nhật-firmware-stm32-từ-xa-qua-esp32-ota-swd">3. Luồng 5B — Cập nhật Firmware STM32 từ xa qua ESP32 (OTA SWD)</h2>
+
+<p>Làm sao nạp lại chương trình cho chip STM32 đang đặt ngoài vườn mà không cần mang laptop ra cắm cáp? Dự án đặt thêm một board <strong>ESP32</strong> làm “kỹ thuật viên trực tại chỗ”, nối Wi-Fi và nối 4 dây nạp <strong>SWD</strong> (<code class="language-plaintext highlighter-rouge">SWDIO</code>, <code class="language-plaintext highlighter-rouge">SWCLK</code>, <code class="language-plaintext highlighter-rouge">GND</code>, <code class="language-plaintext highlighter-rouge">NRST</code>) sang STM32, đồng thời tách riêng chức năng này sang một <strong>tab độc lập ở thanh bên trái (chỉ Admin thấy)</strong> để tránh bấm nhầm trong lúc cài đặt tưới:</p>
+
+<figure class="pid-fig">
+  <img src="/images/53-58-iot-tuoi-cay/firmware_ota_tab.png" alt="Tab riêng Cập nhật firmware STM32 qua ESP32 chỉ dành cho Admin ở chế độ Live" loading="lazy" />
+  <figcaption><span class="pid-badge">Tab riêng · Chỉ Admin</span> <span><strong>Tab Cập nhật firmware STM32 qua ESP32:</strong> Nhắc rõ đúng dòng chip <code>STM32F401RCT6 (họ STM32F401xB/C)</code>, địa chỉ <code>0x08000000</code> và khóa thao tác khi đang ở chế độ Demo.</span></figcaption>
+</figure>
+
+<ol>
+  <li><strong>Dừng tưới &amp; Kiểm tra chip (<code class="language-plaintext highlighter-rouge">Kiểm tra STM32</code>):</strong> Admin mở tab cập nhật firmware (chỉ Admin thấy, không lẫn trong Cài đặt). Bấm kiểm tra để ESP32 xác nhận đúng chip <code class="language-plaintext highlighter-rouge">STM32F401RCT6</code> (họ <code class="language-plaintext highlighter-rouge">STM32F401xB/C</code>, <code class="language-plaintext highlighter-rouge">DEV_ID=0x423</code>). <em>Tuyệt đối không dùng file build của chip khác như F407.</em></li>
+  <li><strong>Tải file <code class="language-plaintext highlighter-rouge">.bin</code> lên VPS:</strong> Backend kiểm tra tính hợp lệ và kích thước ảnh (quan trọng: chương trình STM32 nằm trong <strong>128 KiB đầu</strong> tính từ <code class="language-plaintext highlighter-rouge">0x08000000</code> để <strong>không đè vào 128 KiB vùng Flash cấu hình</strong> từ <code class="language-plaintext highlighter-rouge">0x08020000</code>!), tính mã SHA-256 và sinh một <strong>Link tải có chữ ký hết hạn sau 30 phút</strong>.</li>
+  <li><strong>Phát lệnh nạp qua MQTT → ESP32 tải &amp; nạp SWD:</strong> ESP32 dùng Wi-Fi tải <code class="language-plaintext highlighter-rouge">.bin</code> từ link ký rồi lần lượt báo từng giai đoạn: <strong>Tải tệp → Xóa Flash → Ghi → Đọc kiểm tra (<code class="language-plaintext highlighter-rouge">verify 100%</code>)</strong>.</li>
+  <li><strong>Quy tắc xác nhận an toàn:</strong> <code class="language-plaintext highlighter-rouge">verify 100%</code> mới chỉ chứng minh đọc lại dữ liệu khớp. Chỉ khi nhận thông báo cuối <strong><code class="language-plaintext highlighter-rouge">flash: OK</code></strong> VÀ thấy gói số liệu <code class="language-plaintext highlighter-rouge">/data</code> mới từ STM32 chạy lại trên Web thì mới coi là thành công! Nếu rớt mạng giữa chừng (trạng thái <strong><code class="language-plaintext highlighter-rouge">unknown</code></strong>), hệ thống <strong>tuyệt đối không tự động gửi nạp lại</strong> mà khóa nút chờ người vận hành kiểm tra chip rồi thao tác thủ công.</li>
+</ol>
+
+<details class="pid-tech">
+  <summary><i class="fas fa-hdd"></i> Góc kỹ thuật mở rộng: Bản đồ Flash 256 KiB của STM32 &amp; 3 nút Reset từ xa</summary>
+  <div class="pid-tech__body">
+    <ul>
+      <li><strong>Phân vùng Flash nội 256 KiB (<code>STM32F401XX_FLASH.ld</code>):</strong> 128 KiB đầu (<code>0x08000000</code>) chứa mã chương trình; 128 KiB sau (<code>0x08020000</code>, Sector 5) chứa cấu hình 12 vòi, lịch và ngưỡng ẩm đã lưu.</li>
+      <li><strong>3 nút Reset từ xa trên tab OTA Admin:</strong> <code>Reset ESP32</code>, <code>Reset STM32</code> và <code>Reset EC600N</code> (ESP32 phát một xung kích 300 ms để khởi động lại modem 4G nếu bị treo sóng).</li>
+      <li><strong>Giới hạn hiện tại cần biết:</strong> Giao thức topic OTA mặc định của ESP32 hiện dùng chung cho 1 trạm/1 namespace broker — không gắn 2 bộ nạp ESP32 cùng lúc dùng chung bộ topic này trước khi nâng cấp định danh riêng.</li>
+    </ul>
+  </div>
+</details>
+
+<div class="pid-takeaway">
+  <span class="pid-takeaway__label">Tóm tắt Bài 5</span>
+  <p>Lệnh tức thời <code>/command</code> dùng <strong>Retain = false</strong> để tránh kích nhầm lệnh cũ; thông số cài đặt <code>/config</code> dùng <strong>Retain = true</strong> để EMQX giữ sẵn cho STM32 tải lại sau khi mất mạng. Còn khi cần sửa code ngoài vườn, <strong>ESP32</strong> tải file từ Link ký VPS rồi nạp sang STM32 qua <strong>4 dây SWD</strong>.</p>
+</div>
+
+<div class="pid-cliff">
+  <p>Các luồng đo đạc, điều khiển, tự động và cập nhật đều đã thông suốt. Phần tiếp theo giải đáp các vấn đề khi tổng hợp dữ liệu thực nghiệm: <strong>dữ liệu được lưu trữ theo cơ chế nào, vì sao không được cộng trực tiếp cột <code>daily_l</code> trong Excel, và cách khoanh vùng sự cố theo từng chặng dữ liệu.</strong> Nội dung này được trình bày trong Bài 6.</p>
+</div>
+
+<div class="pid-cta">
+  <a class="btn" href="/posts/2026/11/iot-tuoi-04-luong-tu-dong-3-hang-abc/"><i class="fas fa-arrow-left"></i> Quay lại Bài 4</a>
+  <a class="btn btn--success" href="/posts/2026/11/iot-tuoi-06-luong-sao-luu-drive-va-do-loi/"><i class="fas fa-arrow-right"></i> Sang Bài 6: Sao lưu Drive &amp; Cách dò lỗi</a>
+</div>]]></content>
+      
+
+      
+      
+      
+      
+      
+
+      <author>
+        <name>Trần Nguyên Bình</name>
+        
+          <email>trannguyenbinh.shark@gmail.com</email>
+        
+        
+      </author>
+
+      
+        
+          <category term="blog" />
+        
+          <category term="iot-tuoi-cay" />
+        
+      
+
+      
+        <category term="iot" />
+      
+        <category term="embedded" />
+      
+        <category term="stm32" />
+      
+        <category term="esp32" />
+      
+        <category term="mqtt" />
+      
+        <category term="tutorial" />
+      
+
+      
+      
+        <summary type="html"><![CDATA[Hiểu sự khác nhau sống còn giữa /command (Retain=false) và /config (Retain=true) khi mất mạng, đồng thời quan sát luồng Admin nạp firmware mới cho STM32 từ xa qua ESP32 và 4 dây SWD.]]></summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      
+
+      <title type="html">IoT Tưới Cây 3 Hàng · Bài 4 — Luồng tự động tại vườn: 3 chiến lược A–B–C &amp;amp; Luân phiên 1 van</title>
+      <link href="https://nguyenbinh-shark.github.io/posts/2026/11/iot-tuoi-04-luong-tu-dong-3-hang-abc/" rel="alternate" type="text/html" title="IoT Tưới Cây 3 Hàng · Bài 4 — Luồng tự động tại vườn: 3 chiến lược A–B–C &amp;amp; Luân phiên 1 van" />
+      <published>2026-11-17T00:00:00+00:00</published>
+      <updated>2026-11-17T00:00:00+00:00</updated>
+      <id>https://nguyenbinh-shark.github.io/posts/2026/11/index</id>
+
+      
+      
+        <content type="html" xml:base="https://nguyenbinh-shark.github.io/posts/2026/11/iot-tuoi-04-luong-tu-dong-3-hang-abc/"><![CDATA[<nav class="pid-nav" aria-label="Điều hướng series Hệ thống tưới IoT">
+  <div class="pid-nav__top">
+    <a class="pid-nav__label" href="/iot-tuoi-cay-series/">Hệ thống Tưới IoT 3 Hàng · 6 bài hướng dẫn</a>
+  </div>
+  <div class="pid-nav__chapters">
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-01-cau-truc-va-thanh-phan/" title="Bài 1 — Cấu trúc hệ thống">1</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-02-luong-du-lieu-vuon-len-web/" title="Bài 2 — Luồng đi lên">2</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-03-luong-bam-nut-dieu-khien/" title="Bài 3 — Luồng bấm nút điều khiển">3</a>
+    <a class="pid-nav__num pid-nav__num--current" href="/posts/2026/11/iot-tuoi-04-luong-tu-dong-3-hang-abc/" title="Bài 4 — Luồng tự động tại vườn (đang xem)">4</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-05-luong-cau-hinh-retain-va-ota/" title="Bài 5 — Cài đặt Retain &amp; Nạp OTA">5</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-06-luong-sao-luu-drive-va-do-loi/" title="Bài 6 — Sao lưu Drive &amp; Dò lỗi">6</a>
+  </div>
+  <div class="pid-nav__prevnext">
+    <a href="/posts/2026/11/iot-tuoi-03-luong-bam-nut-dieu-khien/">‹ Bài 3: Luồng Bấm nút</a>
+    <a href="/posts/2026/11/iot-tuoi-05-luong-cau-hinh-retain-va-ota/">Bài 5: Cài đặt &amp; OTA ›</a>
+  </div>
+</nav>
+
+<div class="pid-hero">
+  <div class="pid-hero__row">
+    <span class="pid-hero__num">04</span>
+    <span class="pid-hero__title">Chế độ Tự động (AUTO) nằm hoàn toàn trong chip STM32 ngoài vườn: dù đứt mạng 4G hay tắt máy chủ, 3 hàng cây vẫn xếp hàng luân phiên mở đúng 1 van mỗi lượt để giữ áp lực nước đều.</span>
+  </div>
+  <div class="pid-hero__meta">
+    <span class="pid-chip"><i class="fas fa-clock"></i> ~9 phút</span>
+    <span class="pid-chip"><i class="fas fa-sliders-h"></i> 1 mô phỏng VPD &amp; Xếp lượt tương tác</span>
+    <span class="pid-chip"><i class="fas fa-wifi-slash"></i> Chạy độc lập khi mất mạng</span>
+  </div>
+</div>
+
+<div class="pid-scene">
+  <span class="pid-scene__label">Hai vấn đề thực tế ngoài vườn</span>
+  <p><strong>Vấn đề 1:</strong> Tưới nước xuống mặt chậu cà chua, phải mất 15–30 phút nước mới thấm tới đầu đo sâu 15 cm. Nếu cứ phun cho tới khi cảm biến kịp báo ướt thì lượng nước đọng trên mặt ngấm xuống tiếp sẽ làm rễ úng nước!</p>
+  <p><strong>Vấn đề 2:</strong> Cả 3 hàng A, B, C dùng chung một bơm. Nếu mở cả 3 van cùng lúc, nước chảy yếu và các chậu cuối hàng bị thiếu nước. Vì thế trong chế độ AUTO, STM32 phải chia lượt: <strong>tại một thời điểm chỉ mở tối đa 1 van</strong>.</p>
+</div>
+
+<h2 id="1-thử-nghiệm-tương-tác-làm-bộ-não-stm32-ngay-trên-trình-duyệt">1. Thử nghiệm tương tác: Làm “Bộ não STM32” ngay trên trình duyệt!</h2>
+
+<p>Hãy thử bấm nút <strong>Tắt sóng 4G</strong>, kéo các thanh trượt độ ẩm đất / nhiệt độ / độ ẩm không khí hoặc bấm <strong>⚡ Cả 3 hàng cùng cần tưới</strong> để nhìn tận mắt STM32 quyết định và xoay vòng <code class="language-plaintext highlighter-rouge">A → B → C</code> ra sao:</p>
+
+<figure class="pid-demo pid-demo--tall">
+  <div class="pid-demo__bar">
+    <span class="pid-demo__title"><i class="fas fa-brain"></i> Animation 4 — Bộ mô phỏng Tự động tại biên STM32 (3 Hàng A/B/C &amp; Luân phiên 1 van)</span>
+    <span class="pid-demo__acts">
+      <a href="/files/iot-tuoi-cay/demo4_luong_tu_dong_abc.html" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> Mở tab mới</a>
+      <a href="/files/iot-tuoi-cay/demo4_luong_tu_dong_abc.html" download=""><i class="fas fa-download"></i> Tải về</a>
+    </span>
+  </div>
+  <iframe src="/files/iot-tuoi-cay/demo4_luong_tu_dong_abc.html" loading="lazy" title="Animation 4 — Mô phỏng bộ não tự động STM32 cho 3 hàng A B C"></iframe>
+  <div class="pid-demo__touch">
+    <strong>Thử ngay:</strong>
+    <span class="pid-chip"><i class="fas fa-wifi"></i> Bật/Tắt sóng 4G</span>
+    <span class="pid-chip"><i class="fas fa-sun"></i> Trưa nắng gắt (VPD ≥ 1,2 kPa)</span>
+    <span class="pid-chip"><i class="fas fa-random"></i> Xếp lượt luân phiên A → B → C</span>
+  </div>
+</figure>
+
+<hr />
+
+<h2 id="2-so-sánh-nhanh-3-luồng-quyết-định-a--b--c-bên-trong-stm32">2. So sánh nhanh 3 luồng quyết định A – B – C bên trong STM32</h2>
+
+<figure class="pid-fig">
+  <img src="/images/53-58-iot-tuoi-cay/d09_1_three_strategies.png" alt="So sánh ba chiến lược tưới đối chứng A B C" loading="lazy" />
+  <figcaption><span class="pid-badge">3 chiến lược</span> <span><strong>Cùng một bồn nước, 3 cách tưới:</strong> Hàng A làm mốc hẹn giờ; Hàng B nhìn đất; Hàng C nhìn cả đất lẫn không khí (VPD).</span></figcaption>
+</figure>
+
+<h3 id="hàng-a-tưới-theo-giờ-hẹn-open-loop">Hàng A: Tưới theo giờ hẹn (Open-loop)</h3>
+<ul>
+  <li>STM32 so sánh đồng hồ phần cứng <strong>RTC</strong> (chạy bằng thạch anh 32,768 kHz, tự đồng bộ qua mạng 4G/NTP) với danh sách <strong>1–24 mốc giờ/ngày</strong> đã lưu.</li>
+  <li>Đúng mốc giờ → mở khóa nhu cầu tưới cho Hàng A, dừng khi chạy đủ thời gian <code class="language-plaintext highlighter-rouge">row1DurationSec</code> hoặc đủ thể tích mục tiêu <code class="language-plaintext highlighter-rouge">targetL[0]</code>. Có chốt chống kích lặp 2 lần trong cùng một phút.</li>
+</ul>
+
+<h3 id="hàng-b-phản-hồi-độ-ẩm-đất--chu-kỳ-nghỉ-thấm-soaking">Hàng B: Phản hồi độ ẩm đất + Chu kỳ nghỉ thấm (<code class="language-plaintext highlighter-rouge">soaking</code>)</h3>
+
+<figure class="pid-fig">
+  <img src="/images/53-58-iot-tuoi-cay/d09_2_row_b_logic.png" alt="Logic điều khiển vòng kín Hàng B kèm chu kỳ nghỉ thấm soaking" loading="lazy" />
+  <figcaption><span class="pid-badge">Hàng B</span> <span><strong>Hysteresis + Nghỉ thấm:</strong> Khô dưới ngưỡng thấp thì bật; đủ ngưỡng cao hoặc đủ thể tích đợt thì nghỉ ngấm cho nước thấm đều.</span></figcaption>
+</figure>
+
+<ul>
+  <li>Lấy trung bình 2 cảm biến đất <code class="language-plaintext highlighter-rouge">B-1</code> và <code class="language-plaintext highlighter-rouge">B-3</code>: $\text{Avg}_B = \frac{S_1 + S_2}{2}$.</li>
+  <li>Nếu $\text{Avg}_B &lt; \text{ngưỡng thấp}$ (ví dụ 35%) → tạo nhu cầu tưới.</li>
+  <li>Mỗi đợt không bơm ồ ạt cho đến khi ướt sũng mà dừng khi đạt <code class="language-plaintext highlighter-rouge">targetL[1]</code> (hoặc chạm ngưỡng cao 55%), sau đó chuyển sang <strong>Nghỉ thấm (<code class="language-plaintext highlighter-rouge">soaking</code>)</strong> (mặc định 1800 giây = 30 phút) để nước kịp ngấm xuống vùng rễ rồi mới đo lại!</li>
+</ul>
+
+<h3 id="hàng-c-cảm-biến-đất--bù-vi-khí-hậu-vpd">Hàng C: Cảm biến đất + Bù vi khí hậu VPD</h3>
+
+<figure class="pid-fig">
+  <img src="/images/53-58-iot-tuoi-cay/d09_3_row_c_vpd.png" alt="Logic điều khiển Hàng C kết hợp độ ẩm đất và chỉ số VPD" loading="lazy" />
+  <figcaption><span class="pid-badge">Hàng C</span> <span><strong>Thích nghi thời tiết:</strong> Khi trời nóng khô làm lá mất nước nhanh, Hàng C tự đẩy ngưỡng bật lên sớm hơn và cấp thêm nước.</span></figcaption>
+</figure>
+
+<p>Cảm biến AHT30 đo nhiệt độ không khí $T\ (^\circ\text{C})$ và độ ẩm tương đối $RH\ (\%)$ để tính <strong>Độ thiếu hụt áp suất hơi nước ($VPD$)</strong>:</p>
+
+\[e_s = 0.6108 \times \exp\left(\frac{17.27 \times T}{T + 237.3}\right), \qquad VPD = e_s \times \left(1 - \frac{RH}{100}\right)\ (\text{kPa})\]
+
+<ul>
+  <li>Hiểu nôm na: $VPD$ càng cao nghĩa là không khí càng “khát nước” và hút hơi nước qua lá cà chua càng mạnh.</li>
+  <li>Khi $VPD \ge \text{vpdHot}$ (ví dụ $\ge 1.2\text{ kPa}$): STM32 tự động cộng thêm <code class="language-plaintext highlighter-rouge">vpdThresholdBoost</code> vào ngưỡng bật của Hàng C (tưới sớm trước khi cây héo) và tăng lượng nước mục tiêu theo hệ số <code class="language-plaintext highlighter-rouge">vpdVolumeBoost</code>.</li>
+</ul>
+
+<figure class="pid-fig">
+  <img src="/images/53-58-iot-tuoi-cay/config_daily_layout.png" alt="Giao diện Cài đặt 3 cột mới trên Web HMI cho Hàng A, Hàng B và Hàng C kèm bảng minh họa VPD" loading="lazy" />
+  <figcaption><span class="pid-badge">Bố cục Cài đặt mới</span> <span><strong>3 cột trực quan trên Web HMI:</strong> Hàng A chỉnh 1–24 lần/ngày, Hàng B chỉnh ngưỡng ẩm + nước, Hàng C tự minh họa ngay ngưỡng &amp; lượng nước khi trời nóng khô (VPD ≥ 1,2 kPa).</span></figcaption>
+</figure>
+
+<hr />
+
+<h2 id="3-cơ-chế-chia-lượt-luân-phiên-1-van-a--b--c">3. Cơ chế Chia lượt Luân phiên 1 Van (<code class="language-plaintext highlighter-rouge">A → B → C</code>)</h2>
+
+<p>Để cả 3 hàng đều nhận áp lực nước khỏe và không bị 1 hàng chiếm bơm quá lâu, bộ điều phối <code class="language-plaintext highlighter-rouge">AUTO</code> phân biệt rạch ròi 4 khái niệm:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Khái niệm</th>
+      <th style="text-align: left">Ý nghĩa dễ nhớ</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><strong>Lượt (<code class="language-plaintext highlighter-rouge">Slice</code>)</strong></td>
+      <td style="text-align: left">Một lần được mở van tối đa (ví dụ <code class="language-plaintext highlighter-rouge">autoSliceSeconds = 300</code> giây = 5 phút, chỉnh được trên Web).</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>Đợt (<code class="language-plaintext highlighter-rouge">Cycle</code>)</strong></td>
+      <td style="text-align: left">Toàn bộ lượng nước một hàng cần trong lần tưới đó (có thể phải chia qua nhiều lượt mới đủ).</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>Chờ lượt (<code class="language-plaintext highlighter-rouge">Pending</code>)</strong></td>
+      <td style="text-align: left">Hàng còn thiếu nước nhưng tạm đóng van nhường cho hàng khác; <strong>tiến độ <code class="language-plaintext highlighter-rouge">cycle_l</code> được giữ nguyên</strong> để lượt sau tưới tiếp, không phải bắt đầu lại từ 0!</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>Chờ ngấm (<code class="language-plaintext highlighter-rouge">Soaking</code>)</strong></td>
+      <td style="text-align: left">Đã tưới xong cả đợt và đang nghỉ cho nước thấm (khác hoàn toàn với chờ lượt).</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li><strong>Ví dụ:</strong> Cả A, B, C cùng cần tưới, thời gian lượt 5 phút → Mở A (5 phút) → <strong>Tắt bơm → Đóng van A → Mở van B → Bật bơm</strong> (5 phút) → Đổi sang C (5 phút) → Quay lại A tưới nốt phần còn thiếu. Nếu A tưới xong sớm ở phút thứ 2 thì nhường ngay sang B, không chờ hết 5 phút!</li>
+  <li><strong>Tính nước từng vòi:</strong> Do áp lực dọc ống khác nhau, 12 vòi <code class="language-plaintext highlighter-rouge">A-1..C-4</code> được đo hứng cốc riêng (<code class="language-plaintext highlighter-rouge">potDripRateLph</code> đơn vị L/h). Khi bơm chạy và van hàng nào mở, STM32 cộng đúng tổng lưu lượng 4 vòi của hàng đó × thời gian tưới thực.</li>
+</ul>
+
+<div class="pid-takeaway">
+  <span class="pid-takeaway__label">Tóm tắt Bài 4</span>
+  <p>Thuật toán tự động chạy trên <strong>STM32 (chu kỳ 100 ms)</strong> nên mất 4G vẫn tưới chuẩn xác. <strong>Hàng A</strong> giữ mốc hẹn giờ; <strong>Hàng B</strong> thêm cảm biến đất &amp; nghỉ thấm; <strong>Hàng C</strong> cộng thêm bù khí hậu VPD; và bộ điều phối luôn giữ <strong>tối đa 1 van mở</strong> theo vòng lặp A → B → C.</p>
+</div>
+
+<div class="pid-cliff">
+  <p>Giả sử cây cà chua đã lớn hơn và cần tăng lượng nước mỗi đợt từ 2,0 L lên 2,5 L — hoặc cần nâng cấp firmware mới cho STM32 từ xa mà không cần kết nối cáp USB trực tiếp tại vườn. <strong>Bài 5 trình bày cách đồng bộ cấu hình bền vững khi mất mạng và quy trình nạp firmware qua ESP32.</strong></p>
+</div>
+
+<div class="pid-cta">
+  <a class="btn" href="/posts/2026/11/iot-tuoi-03-luong-bam-nut-dieu-khien/"><i class="fas fa-arrow-left"></i> Quay lại Bài 3</a>
+  <a class="btn btn--success" href="/posts/2026/11/iot-tuoi-05-luong-cau-hinh-retain-va-ota/"><i class="fas fa-arrow-right"></i> Sang Bài 5: Cài đặt Retain &amp; OTA</a>
+</div>]]></content>
+      
+
+      
+      
+      
+      
+      
+
+      <author>
+        <name>Trần Nguyên Bình</name>
+        
+          <email>trannguyenbinh.shark@gmail.com</email>
+        
+        
+      </author>
+
+      
+        
+          <category term="blog" />
+        
+          <category term="iot-tuoi-cay" />
+        
+      
+
+      
+        <category term="iot" />
+      
+        <category term="embedded" />
+      
+        <category term="stm32" />
+      
+        <category term="mqtt" />
+      
+        <category term="tutorial" />
+      
+
+      
+      
+        <summary type="html"><![CDATA[Hiểu cách STM32 tự điều khiển tưới ngoài vườn ngay cả khi mất sóng 4G: 3 chiến lược đối chứng A, B, C, chu kỳ nghỉ thấm chống úng, bù khí hậu VPD và cơ chế xếp lượt luân phiên 1 van.]]></summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      
+
+      <title type="html">IoT Tưới Cây 3 Hàng · Bài 3 — Bấm nút trên Web: Dữ liệu chạy đi đâu &amp;amp; Phản hồi về ra sao?</title>
+      <link href="https://nguyenbinh-shark.github.io/posts/2026/11/iot-tuoi-03-luong-bam-nut-dieu-khien/" rel="alternate" type="text/html" title="IoT Tưới Cây 3 Hàng · Bài 3 — Bấm nút trên Web: Dữ liệu chạy đi đâu &amp;amp; Phản hồi về ra sao?" />
+      <published>2026-11-16T00:00:00+00:00</published>
+      <updated>2026-11-16T00:00:00+00:00</updated>
+      <id>https://nguyenbinh-shark.github.io/posts/2026/11/index</id>
+
+      
+      
+        <content type="html" xml:base="https://nguyenbinh-shark.github.io/posts/2026/11/iot-tuoi-03-luong-bam-nut-dieu-khien/"><![CDATA[<nav class="pid-nav" aria-label="Điều hướng series Hệ thống tưới IoT">
+  <div class="pid-nav__top">
+    <a class="pid-nav__label" href="/iot-tuoi-cay-series/">Hệ thống Tưới IoT 3 Hàng · 6 bài hướng dẫn</a>
+  </div>
+  <div class="pid-nav__chapters">
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-01-cau-truc-va-thanh-phan/" title="Bài 1 — Cấu trúc hệ thống">1</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-02-luong-du-lieu-vuon-len-web/" title="Bài 2 — Luồng đi lên">2</a>
+    <a class="pid-nav__num pid-nav__num--current" href="/posts/2026/11/iot-tuoi-03-luong-bam-nut-dieu-khien/" title="Bài 3 — Luồng bấm nút điều khiển (đang xem)">3</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-04-luong-tu-dong-3-hang-abc/" title="Bài 4 — Luồng tự động tại vườn">4</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-05-luong-cau-hinh-retain-va-ota/" title="Bài 5 — Cài đặt Retain &amp; Nạp OTA">5</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-06-luong-sao-luu-drive-va-do-loi/" title="Bài 6 — Sao lưu Drive &amp; Dò lỗi">6</a>
+  </div>
+  <div class="pid-nav__prevnext">
+    <a href="/posts/2026/11/iot-tuoi-02-luong-du-lieu-vuon-len-web/">‹ Bài 2: Luồng đi lên</a>
+    <a href="/posts/2026/11/iot-tuoi-04-luong-tu-dong-3-hang-abc/">Bài 4: Tự động 3 hàng ›</a>
+  </div>
+</nav>
+
+<div class="pid-hero">
+  <div class="pid-hero__row">
+    <span class="pid-hero__num">03</span>
+    <span class="pid-hero__title">Bấm một nút trên Web không phải "nối dây điện trực tiếp tới máy bơm": lệnh phải đi qua 3 chốt kiểm tra an toàn rồi mới chạy vòng phản hồi quay về đổi màu giao diện!</span>
+  </div>
+  <div class="pid-hero__meta">
+    <span class="pid-chip"><i class="fas fa-clock"></i> ~9 phút</span>
+    <span class="pid-chip"><i class="fas fa-gamepad"></i> 6 kịch bản bấm nút tương tác</span>
+    <span class="pid-chip"><i class="fas fa-shield-alt"></i> Khóa liên động 3 lớp</span>
+  </div>
+</div>
+
+<div class="pid-scene">
+  <span class="pid-scene__label">Tại sao không cho Web bật bơm thẳng luôn cho nhanh?</span>
+  <p>Hãy hình dung trường hợp có thao tác bấm nhầm nút <strong>Bật Bơm</strong> trong khi cả 3 van điện từ đang đóng kín — hoặc một tài khoản chỉ có quyền xem cố gửi yêu cầu điều khiển lúc hệ thống đang vận hành. Nếu không có chốt kiểm tra, áp suất bơm có thể làm bung khớp nối ống PE16.</p>
+</div>
+
+<h2 id="1-thử-bấm-nút-ngay-xem-gói-tin-đi-đâu-và-bị-chặn-lúc-nào">1. Thử bấm nút ngay: Xem gói tin đi đâu và bị chặn lúc nào!</h2>
+
+<p>Đây là phần trực quan nhất của toàn bộ hệ thống. Hãy bấm lần lượt <strong>6 nút thao tác</strong> dưới đây (đặc biệt là <strong>nút số 2: Bật bơm khi 3 van đóng</strong> và <strong>nút số 4: Khách cố bấm</strong>) để thấy ranh giới giữa lệnh hợp lệ và lệnh bị chặn đỏ:</p>
+
+<figure class="pid-demo pid-demo--tall">
+  <div class="pid-demo__bar">
+    <span class="pid-demo__title"><i class="fas fa-mouse-pointer"></i> Animation 3 — Cỗ máy Bấm nút Điều khiển (Web ↔ Backend ↔ EMQX ↔ STM32)</span>
+    <span class="pid-demo__acts">
+      <a href="/files/iot-tuoi-cay/demo3_luong_bam_nut_web.html" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> Mở tab mới</a>
+      <a href="/files/iot-tuoi-cay/demo3_luong_bam_nut_web.html" download=""><i class="fas fa-download"></i> Tải về</a>
+    </span>
+  </div>
+  <iframe src="/files/iot-tuoi-cay/demo3_luong_bam_nut_web.html" loading="lazy" title="Animation 3 — Luồng bấm nút điều khiển từ Web xuống Bơm và Van"></iframe>
+  <div class="pid-demo__touch">
+    <strong>Thử ngay 6 kịch bản:</strong>
+    <span class="pid-chip"><i class="fas fa-tint"></i> Mở Van B → Bật Bơm</span>
+    <span class="pid-chip"><i class="fas fa-ban"></i> Bơm khi 3 van đóng (400)</span>
+    <span class="pid-chip"><i class="fas fa-lock"></i> Khách Guest bấm (403)</span>
+    <span class="pid-chip"><i class="fas fa-exclamation-circle"></i> E-STOP &amp; Reset nước</span>
+  </div>
+</figure>
+
+<hr />
+
+<h2 id="2-giải-phẫu-hành-trình-2-chiều-sau-một-cú-click-chuột">2. Giải phẫu hành trình 2 chiều sau một cú click chuột</h2>
+
+<figure class="pid-fig">
+  <img src="/images/53-58-iot-tuoi-cay/d04_4_flow3_command.png" alt="Sơ đồ luồng 3 từ thao tác trên Web qua các chốt kiểm tra xuống điều khiển ngoài vườn" loading="lazy" />
+  <figcaption><span class="pid-badge">Luồng 3</span> <span><strong>Nguyên tắc 3 mức:</strong> (1) Web đã gửi yêu cầu ≠ (2) STM32 đã nhận lệnh ≠ (3) Bơm/van ngoài vườn đã thực sự cấp nước.</span></figcaption>
+</figure>
+
+<p>Khi bạn bấm nút trên Web HMI (ví dụ <strong>Mở van B</strong> rồi <strong>Bật bơm</strong>), dữ liệu không chạy một lèo tới máy bơm mà phải đi hết vòng khép kín gồm <strong>2 chiều</strong>:</p>
+
+<h3 id="chiều-đi-xuống-màu-vàng-cam--gửi-yêu-cầu--vượt-3-chốt-kiểm-tra">Chiều đi xuống (Màu vàng cam — Gửi yêu cầu &amp; Vượt 3 chốt kiểm tra)</h3>
+
+<ol>
+  <li><strong>Web HMI:</strong> Nếu đang bật xác nhận an toàn, trình duyệt hỏi lại <em>“Bạn chắc chắn muốn thao tác?”</em> rồi gửi gói <code class="language-plaintext highlighter-rouge">POST /commands</code> kèm thẻ đăng nhập <strong>JWT</strong>.</li>
+  <li><strong>Chốt 1 tại Backend — Phân quyền RBAC:</strong> Backend kiểm tra thẻ JWT:
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">Guest</code> (Khách): <strong>Bị chặn ngay (lỗi <code class="language-plaintext highlighter-rouge">403</code>)</strong> — kể cả ai đó dùng phần mềm gửi thẳng request bỏ qua nút ẩn trên giao diện!</li>
+      <li><code class="language-plaintext highlighter-rouge">User</code> (Vận hành) và <code class="language-plaintext highlighter-rouge">Admin</code> (Quản trị): <strong>Được đi tiếp</strong>.</li>
+    </ul>
+  </li>
+  <li><strong>Chốt 2 tại Backend — An toàn thủy lực &amp; Ghi sổ truy vết:</strong>
+    <ul>
+      <li>Nếu là lệnh <code class="language-plaintext highlighter-rouge">pump_on</code> (Bật bơm) mà Backend nhìn dữ liệu gần nhất thấy <strong>cả 3 van đang đóng</strong> → <strong>Chặn ngay lập tức (lỗi <code class="language-plaintext highlighter-rouge">400</code>)</strong>, không hề đẩy lệnh xuống MQTT!</li>
+      <li>Nếu hợp lệ: Backend ghi vào sổ <code class="language-plaintext highlighter-rouge">commands</code> và <code class="language-plaintext highlighter-rouge">history</code> (<em>ai vừa bấm nút gì lúc mấy giờ</em>) rồi mới bắn JSON lên EMQX topic <code class="language-plaintext highlighter-rouge">iot/devices/{id}/command</code> (với <code class="language-plaintext highlighter-rouge">Retain = false</code>).</li>
+    </ul>
+  </li>
+  <li><strong>Chốt 3 tại STM32 — Khóa liên động phần cứng:</strong>
+    <ul>
+      <li>Khi nhận lệnh qua Modem 4G EC600N, chính STM32 cũng <strong>tự kiểm tra lại lần cuối</strong> xem số van đang mở có <code class="language-plaintext highlighter-rouge">&gt;= 1</code> không rồi mới cấp điện rơ-le chân <code class="language-plaintext highlighter-rouge">PB4</code> (Bơm) hoặc <code class="language-plaintext highlighter-rouge">PB5/PB8/PB9</code> (Van).</li>
+    </ul>
+  </li>
+</ol>
+
+<figure class="pid-fig">
+  <img src="/images/53-58-iot-tuoi-cay/d04_7_flow6_auth.png" alt="Sơ đồ phân quyền 3 bậc Guest User Admin và kiểm tra JWT trên Backend" loading="lazy" />
+  <figcaption><span class="pid-badge">Chốt 1 RBAC</span> <span><strong>Phân quyền 3 bậc:</strong> Nút ẩn trên Web chỉ là lớp vỏ lịch sự; kiểm tra JWT trên máy chủ mới là chốt chặn thực sự.</span></figcaption>
+</figure>
+
+<h3 id="chiều-phản-hồi-quay-về-màu-xanh-lá--xác-nhận-thật">Chiều phản hồi quay về (Màu xanh lá — Xác nhận thật!)</h3>
+
+<blockquote>
+  <p><strong>Điểm quan trọng cần lưu ý:</strong> Sau khi bấm nút, dòng chữ <em>“Đã gửi lệnh”</em> mới chỉ cho biết Backend đã đưa tin lên đường truyền MQTT. Nếu lúc đó vườn rớt 4G, lệnh không tới nơi. Vì vậy, Web HMI <strong>KHÔNG tự vẽ nước chảy giả trên sơ đồ</strong>. Nó chờ STM32 đóng rơ-le thật → phát tin <code class="language-plaintext highlighter-rouge">/events</code> và <code class="language-plaintext highlighter-rouge">/data</code> mới quay ngược qua EMQX → VPS → WebSocket về trình duyệt → <strong>lúc đó van và ống trên màn hình mới chuyển màu xanh và hiện dòng nước chảy.</strong></p>
+</blockquote>
+
+<figure class="pid-fig">
+  <img src="/images/53-58-iot-tuoi-cay/03_active_watering_flow.png" alt="Giao diện Web HMI hiển thị bơm chạy và nước chảy vào 4 chậu Hàng B" loading="lazy" />
+  <figcaption><span class="pid-badge">Sau khi phản hồi về</span> <span><strong>Hình ảnh thực tế trên Web:</strong> Khi STM32 báo <code>pump_on=true</code> và Van B mở, sơ đồ mới bật hiệu ứng bơm quay và dòng chảy xanh dọc Hàng B.</span></figcaption>
+</figure>
+
+<hr />
+
+<h2 id="3-luồng-đặc-biệt-nút-đặt-lại-số-lít-về-0-reset_water">3. Luồng đặc biệt: Nút “Đặt lại số lít về 0” (<code class="language-plaintext highlighter-rouge">reset_water</code>)</h2>
+
+<p>Khi muốn bắt đầu một buổi thí nghiệm mới trên Web mà không làm hỏng sổ số liệu gốc, hệ thống sử dụng một kỹ thuật rất khéo gọi là <strong>bù trừ hiển thị (<code class="language-plaintext highlighter-rouge">water_offsets.json</code>)</strong>:</p>
+
+<figure class="pid-fig">
+  <img src="/images/53-58-iot-tuoi-cay/d04_5_flow4_reset_water.png" alt="Sơ đồ luồng đặt lại số lít nước hiển thị về 0 dùng water_offsets" loading="lazy" />
+  <figcaption><span class="pid-badge">Luồng 4</span> <span><strong>Đặt lại nước thông minh:</strong> VPS lưu mốc bù để Web về 0.00 L ngay lập tức, đồng thời gửi lệnh reset xuống STM32.</span></figcaption>
+</figure>
+
+<p>Ví dụ lúc bạn bấm đặt lại, Hàng B đang tích lũy <strong>12,00 L</strong>:</p>
+<ul>
+  <li><strong>Nhánh 1 (Ngay lập tức tại VPS):</strong> VPS ghi số <code class="language-plaintext highlighter-rouge">12.0</code> vào <code class="language-plaintext highlighter-rouge">water_offsets.json</code> → từ giờ mỗi gói tin mới gửi lên sẽ tự trừ <code class="language-plaintext highlighter-rouge">12.0</code> trước khi hiển thị (<code class="language-plaintext highlighter-rouge">12 - 12 = 0.00 L</code> ngay lập tức!). Kể cả nếu STM32 đang mất sóng chưa nhận lệnh và đếm tiếp lên <code class="language-plaintext highlighter-rouge">15.0 L</code>, màn hình Web vẫn hiện chuẩn xác <code class="language-plaintext highlighter-rouge">15 - 12 = 3.00 L</code>.</li>
+  <li><strong>Nhánh 2 (Gửi xuống STM32):</strong> Đồng thời VPS gửi lệnh <code class="language-plaintext highlighter-rouge">reset_water</code> xuống vườn. Khi STM32 đặt lại bộ đếm gốc về <code class="language-plaintext highlighter-rouge">0</code> và gửi số nhỏ hơn <code class="language-plaintext highlighter-rouge">12.0</code> lên lại, VPS tự động xóa mốc bù đi để đếm tiếp bình thường.</li>
+</ul>
+
+<blockquote>
+  <p><em>Lưu ý giao diện mới:</em> Trên phiên bản Web HMI mới nhất, nút đặt lại nhanh trên sơ đồ tổng quan được chủ động ẩn để tránh bấm nhầm làm lệch số liệu đang theo dõi; nhưng cơ chế bù trừ <code class="language-plaintext highlighter-rouge">water_offsets.json</code> ở máy chủ vẫn hoạt động mỗi khi gọi lệnh <code class="language-plaintext highlighter-rouge">reset_water</code>.</p>
+</blockquote>
+
+<details class="pid-tech">
+  <summary><i class="fas fa-terminal"></i> Góc kỹ thuật mở rộng: Toàn bộ 9 lệnh trên kênh /command</summary>
+  <div class="pid-tech__body">
+    <p>Mọi thao tác trên Web HMI đều được Backend dịch thành 1 trong 9 lệnh JSON gửi xuống topic <code>iot/devices/{id}/command</code>:</p>
+    <ul>
+      <li><code>start</code> / <code>stop</code> (kèm <code>row: 1|2|3</code>): Mở / đóng van hàng A, B hoặc C ở chế độ Thủ công.</li>
+      <li><code>pump_on</code> / <code>pump_off</code>: Bật / tắt máy bơm tổng (PB4).</li>
+      <li><code>set_mode</code> (kèm <code>mode: "auto" | "manual"</code>): Chuyển qua lại giữa Thủ công và Tự động.</li>
+      <li><code>estop</code>: Dừng khẩn cấp (ngắt bơm trước, đóng hết cả 3 van sau).</li>
+      <li><code>clear_fault</code>: Xóa cờ khóa lỗi sau khi người vận hành đã kiểm tra ngoài vườn.</li>
+      <li><code>sync_rtc</code>: Gửi mốc giờ chuẩn (Unix epoch + ISO) để đồng bộ lại đồng hồ bên trong STM32.</li>
+      <li><code>reset_water</code> (kèm <code>row</code> hoặc cả 3 hàng): Đặt lại bộ đếm lít nước trong ngày.</li>
+    </ul>
+  </div>
+</details>
+
+<div class="pid-takeaway">
+  <span class="pid-takeaway__label">Tóm tắt Bài 3</span>
+  <p>Mỗi cú bấm nút đều phải vượt qua <strong>Chốt quyền (RBAC) → Chốt an toàn Backend (Cấm bật bơm khi van đóng) → Chốt cứng STM32</strong>. Thông báo "Đã gửi" chưa đủ: hãy luôn quan sát <strong>vòng phản hồi quay về</strong> để biết bơm/van ngoài vườn đã thực sự đổi trạng thái.</p>
+</div>
+
+<div class="pid-cliff">
+  <p>Đó là cơ chế điều khiển thủ công bằng nút bấm. Tuy nhiên trong thực tế, cây cần được tưới vào buổi sáng và buổi trưa nắng khi không có người trực theo dõi — thậm chí lúc kết nối 4G tạm thời gián đoạn. <strong>Bài 4 sẽ trình bày cách STM32 tự động ra quyết định và luân phiên chia nước cho 3 hàng A–B–C.</strong></p>
+</div>
+
+<div class="pid-cta">
+  <a class="btn" href="/posts/2026/11/iot-tuoi-02-luong-du-lieu-vuon-len-web/"><i class="fas fa-arrow-left"></i> Quay lại Bài 2</a>
+  <a class="btn btn--success" href="/posts/2026/11/iot-tuoi-04-luong-tu-dong-3-hang-abc/"><i class="fas fa-arrow-right"></i> Sang Bài 4: Bộ não Tự động 3 hàng</a>
+</div>]]></content>
+      
+
+      
+      
+      
+      
+      
+
+      <author>
+        <name>Trần Nguyên Bình</name>
+        
+          <email>trannguyenbinh.shark@gmail.com</email>
+        
+        
+      </author>
+
+      
+        
+          <category term="blog" />
+        
+          <category term="iot-tuoi-cay" />
+        
+      
+
+      
+        <category term="iot" />
+      
+        <category term="embedded" />
+      
+        <category term="stm32" />
+      
+        <category term="mqtt" />
+      
+        <category term="tutorial" />
+      
+
+      
+      
+        <summary type="html"><![CDATA[Theo dấu từng bước khi người dùng bấm nút Mở van hay Bật bơm trên Web HMI: đi qua 3 chốt kiểm tra (RBAC, Backend Guard, STM32 Interlock), vòng phản hồi quay về và luồng đặt lại số lít.]]></summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      
+
+      <title type="html">IoT Tưới Cây 3 Hàng · Bài 2 — Luồng đi lên: Con số từ vườn bay lên Web như thế nào?</title>
+      <link href="https://nguyenbinh-shark.github.io/posts/2026/11/iot-tuoi-02-luong-du-lieu-vuon-len-web/" rel="alternate" type="text/html" title="IoT Tưới Cây 3 Hàng · Bài 2 — Luồng đi lên: Con số từ vườn bay lên Web như thế nào?" />
+      <published>2026-11-15T00:00:00+00:00</published>
+      <updated>2026-11-15T00:00:00+00:00</updated>
+      <id>https://nguyenbinh-shark.github.io/posts/2026/11/index</id>
+
+      
+      
+        <content type="html" xml:base="https://nguyenbinh-shark.github.io/posts/2026/11/iot-tuoi-02-luong-du-lieu-vuon-len-web/"><![CDATA[<nav class="pid-nav" aria-label="Điều hướng series Hệ thống tưới IoT">
+  <div class="pid-nav__top">
+    <a class="pid-nav__label" href="/iot-tuoi-cay-series/">Hệ thống Tưới IoT 3 Hàng · 6 bài hướng dẫn</a>
+  </div>
+  <div class="pid-nav__chapters">
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-01-cau-truc-va-thanh-phan/" title="Bài 1 — Cấu trúc hệ thống">1</a>
+    <a class="pid-nav__num pid-nav__num--current" href="/posts/2026/11/iot-tuoi-02-luong-du-lieu-vuon-len-web/" title="Bài 2 — Luồng đi lên (đang xem)">2</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-03-luong-bam-nut-dieu-khien/" title="Bài 3 — Luồng bấm nút điều khiển">3</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-04-luong-tu-dong-3-hang-abc/" title="Bài 4 — Luồng tự động tại vườn">4</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-05-luong-cau-hinh-retain-va-ota/" title="Bài 5 — Cài đặt Retain &amp; Nạp OTA">5</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-06-luong-sao-luu-drive-va-do-loi/" title="Bài 6 — Sao lưu Drive &amp; Dò lỗi">6</a>
+  </div>
+  <div class="pid-nav__prevnext">
+    <a href="/posts/2026/11/iot-tuoi-01-cau-truc-va-thanh-phan/">‹ Bài 1: Cấu trúc</a>
+    <a href="/posts/2026/11/iot-tuoi-03-luong-bam-nut-dieu-khien/">Bài 3: Luồng bấm nút ›</a>
+  </div>
+</nav>
+
+<div class="pid-hero">
+  <div class="pid-hero__row">
+    <span class="pid-hero__num">02</span>
+    <span class="pid-hero__title">Gói tin số đo đi qua 6 chặng: Làm mượt nhiễu ở STM32 → 4G → EMQX → Lưu vào 2 bảng SQLite → Đẩy qua WebSocket để màn hình tự nhảy số.</span>
+  </div>
+  <div class="pid-hero__meta">
+    <span class="pid-chip"><i class="fas fa-clock"></i> ~8 phút</span>
+    <span class="pid-chip"><i class="fas fa-play-circle"></i> 3 kịch bản Animation</span>
+    <span class="pid-chip"><i class="fas fa-bolt"></i> WebSocket thời gian thực</span>
+  </div>
+</div>
+
+<div class="pid-scene">
+  <span class="pid-scene__label">Tình huống ngoài vườn</span>
+  <p>Khi nắng lên, đất ở Hàng B khô dần từ 46% xuống 42%. Ngay lập tức, biểu đồ trên màn hình Web HMI tự động tụt xuống mà bạn không cần chạm tay vào nút tải lại trang. Ngược lại, nếu vườn bị mất điện đột ngột, tại sao Web tự biết đổi nhãn sang <strong>Offline</strong> để bạn không nhìn nhầm số cũ?</p>
+</div>
+
+<h2 id="1-animation-tương-tác-theo-chân-gói-tin-đi-từ-vườn-lên-web">1. Animation tương tác: Theo chân gói tin đi từ Vườn lên Web</h2>
+
+<p>Hãy chọn lần lượt <strong>3 kịch bản</strong> bên dưới và bấm <strong>▶ Chạy tự động</strong> hoặc <strong>⏭ Bước tiếp theo</strong> để xem gói tin đi qua từng trạm và biến đổi ra sao:</p>
+
+<figure class="pid-demo pid-demo--tall">
+  <div class="pid-demo__bar">
+    <span class="pid-demo__title"><i class="fas fa-satellite-dish"></i> Animation 2 — Hành trình gói số đo Telemetry &amp; Trạng thái Online/Offline</span>
+    <span class="pid-demo__acts">
+      <a href="/files/iot-tuoi-cay/demo2_luong_vuon_len_web.html" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> Mở tab mới</a>
+      <a href="/files/iot-tuoi-cay/demo2_luong_vuon_len_web.html" download=""><i class="fas fa-download"></i> Tải về</a>
+    </span>
+  </div>
+  <iframe src="/files/iot-tuoi-cay/demo2_luong_vuon_len_web.html" loading="lazy" title="Animation 2 — Luồng dữ liệu đi lên từ vườn lên Web HMI"></iframe>
+  <div class="pid-demo__touch">
+    <strong>3 kịch bản nên thử:</strong>
+    <span class="pid-chip"><i class="fas fa-check"></i> Gửi số đo định kỳ</span>
+    <span class="pid-chip"><i class="fas fa-sync"></i> Vừa mở trang Web (REST + WS)</span>
+    <span class="pid-chip"><i class="fas fa-exclamation-triangle"></i> Mất sóng 4G (Di chúc LWT)</span>
+  </div>
+</figure>
+
+<hr />
+
+<h2 id="2-chuyện-gì-xảy-ra-ở-từng-chặng-trên-đường-đi-lên">2. Chuyện gì xảy ra ở từng chặng trên đường đi lên?</h2>
+
+<figure class="pid-fig">
+  <img src="/images/53-58-iot-tuoi-cay/d04_2_flow1_telemetry.png" alt="Sơ đồ luồng 1 từ số đo ngoài vườn lên màn hình Web theo dõi" loading="lazy" />
+  <figcaption><span class="pid-badge">Luồng 1</span> <span><strong>Từ cảm biến lên màn hình:</strong> Nhánh trên gửi số liệu định kỳ; nhánh dưới gửi cảnh báo sự kiện tức thời.</span></figcaption>
+</figure>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Chặng</th>
+      <th style="text-align: left">Chuyện gì xảy ra với dữ liệu?</th>
+      <th style="text-align: left">Lý do kỹ sư thiết kế như vậy</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><strong>1. Cảm biến → STM32</strong></td>
+      <td style="text-align: left">Đọc 16 mẫu điện áp ADC mỗi kênh đất, cắt bỏ 2 mẫu cao nhất &amp; 2 mẫu thấp nhất, lọc mượt EMA; đọc AHT30 và tính <code class="language-plaintext highlighter-rouge">vpd_kpa</code>.</td>
+      <td style="text-align: left">Chống hiện tượng sóng 4G hoặc rơ-le đóng ngắt gây gai nhiễu làm nhảy số giả trên biểu đồ.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>2. STM32 → 4G → EMQX</strong></td>
+      <td style="text-align: left">Gói JSON được gửi lên kênh <code class="language-plaintext highlighter-rouge">iot/devices/{id}/data</code> (với <code class="language-plaintext highlighter-rouge">QoS 1</code>), định kỳ ~30 giây/lần hoặc ngay sau khi có thao tác bật/tắt van (chống gửi dày dưới 1,5 giây).</td>
+      <td style="text-align: left">Giao thức MQTT rất nhẹ nên tốn ít tiền data 4G và truyền qua vùng sóng yếu ổn định hơn HTTP thông thường.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>3. EMQX → Backend VPS</strong></td>
+      <td style="text-align: left">Backend (<code class="language-plaintext highlighter-rouge">mqtt.py</code>) nhận gói tin, lọc chống bão tin (<code class="language-plaintext highlighter-rouge">4.8 giây</code>), trừ mốc bù <code class="language-plaintext highlighter-rouge">water_offsets</code> (nếu có), rồi lưu vào SQLite.</td>
+      <td style="text-align: left">Lưu vào <strong>2 nơi</strong>: bảng <code class="language-plaintext highlighter-rouge">sensor_data</code> giữ đúng 1 giá trị mới nhất để mở web là thấy ngay; bảng <code class="language-plaintext highlighter-rouge">telemetry_logs</code> nối đuôi toàn bộ lịch sử để vẽ biểu đồ và xuất CSV.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>4. VPS → Web HMI</strong></td>
+      <td style="text-align: left">Backend đẩy ngay gói tin mới sang đường ống <strong>WebSocket (<code class="language-plaintext highlighter-rouge">/ws/sensor_data</code>)</strong> tới tất cả trình duyệt đang mở.</td>
+      <td style="text-align: left">Bạn không cần bấm F5! Độ trễ từ lúc VPS nhận tới lúc màn hình nhảy số chỉ dưới 100 mili-giây.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="3-khi-mới-mở-trình-duyệt--khi-mất-sóng-4g-thì-sao">3. Khi mới mở trình duyệt &amp; Khi mất sóng 4G thì sao?</h2>
+
+<figure class="pid-fig">
+  <img src="/images/53-58-iot-tuoi-cay/d04_3_flow2_open_web.png" alt="Sơ đồ luồng 2 khi người dùng mở trang Web kết hợp REST và WebSocket" loading="lazy" />
+  <figcaption><span class="pid-badge">Đồng bộ kép</span> <span><strong>REST + WebSocket:</strong> Mở trang lên là lấy ngay số liệu đã lưu trong SQLite (REST), rồi mở kênh nghe liên tục (WebSocket).</span></figcaption>
+</figure>
+
+<ul>
+  <li><strong>Lúc vừa mở trang web (hoặc bấm F5):</strong> Web không thể ngồi đợi 30 giây tới gói 4G kế tiếp. Nó gọi ngay API <code class="language-plaintext highlighter-rouge">REST</code> (<code class="language-plaintext highlighter-rouge">/latest</code> và <code class="language-plaintext highlighter-rouge">/history</code>) để lấy dữ liệu có sẵn trong SQLite hiển thị tức thì, <strong>cùng lúc mở WebSocket</strong> đón các tin tiếp theo (kèm tự động hỏi lại mỗi 30 giây để bù nếu mạng trình duyệt chập chờn).</li>
+  <li><strong>Lúc ngoài vườn mất sóng 4G:</strong> Trước khi kết nối, STM32 đã gửi sẵn cho EMQX một bản <strong>“Di chúc” (Last Will &amp; Testament — LWT)</strong>. Nếu EMQX chờ quá lâu không thấy hồi âm từ vườn, chính EMQX tự phát chữ <code class="language-plaintext highlighter-rouge">"offline"</code> lên kênh <code class="language-plaintext highlighter-rouge">/status</code>. Nhờ vậy Web đổi màu báo Offline để người vận hành <strong>không đọc nhầm các con số cũ đang đứng yên trên màn hình</strong>.</li>
+</ul>
+
+<blockquote>
+  <p><strong>Mẹo phân biệt cực nhanh:</strong> Web mở được và xoay vòng kết nối xanh với VPS ≠ thiết bị ngoài vườn đang Online! Phải nhìn đồng thời cả trạng thái <strong>Online/Offline của trạm</strong> lẫn <strong>giờ gói tin cuối cùng (<code class="language-plaintext highlighter-rouge">recorded_at</code>)</strong>.</p>
+</blockquote>
+
+<details class="pid-tech">
+  <summary><i class="fas fa-code"></i> Góc kỹ thuật mở rộng: Một gói tin /data thật trông như thế nào?</summary>
+  <div class="pid-tech__body">
+    <p>Đây là cấu trúc JSON chuẩn hóa giữa firmware STM32 và Backend VPS trên topic <code>iot/devices/stm32_tram_01/data</code>:</p>
+    <pre><code>{
+  "device_id": "stm32_tram_01",
+  "seq": 105,
+  "recorded_at": "2026-11-15T08:00:00+07:00",
+  "soil_pct": [42.5, 44.0, 46.2, 48.1],
+  "temp_c": 29.4,
+  "rh_pct": 71.0,
+  "vpd_kpa": 1.22,
+  "tank_ok": true,
+  "pump_on": false,
+  "control_mode": "manual",
+  "rssi_dbm": -69,
+  "rtc_time": "08:00:00",
+  "rows": [
+    {"id": 1, "valve": false, "daily_l": 1.20, "flow_lpm": 0.0, "mode": "idle"},
+    {"id": 2, "valve": false, "daily_l": 0.95, "flow_lpm": 0.0, "mode": "idle"},
+    {"id": 3, "valve": false, "daily_l": 1.10, "flow_lpm": 0.0, "mode": "idle"}
+  ]
+}</code></pre>
+    <p class="pid-tech__skip">Mảng <code>soil_pct</code> chứa 4 cảm biến theo đúng thứ tự: <code>[B-1, B-3, C-1, C-3]</code>; mảng <code>rows</code> ứng với 3 hàng <code>1=A, 2=B, 3=C</code>.</p>
+  </div>
+</details>
+
+<div class="pid-takeaway">
+  <span class="pid-takeaway__label">Tóm tắt Bài 2</span>
+  <p>Dữ liệu đi lên theo chuỗi <strong>Cảm biến → STM32 (Lọc nhiễu) → 4G → EMQX → VPS (SQLite) → WebSocket → Web HMI</strong>. Kết hợp <strong>REST + WebSocket</strong> giúp mở trang là có đồ thị ngay, còn cơ chế <strong>Di chúc LWT</strong> giúp phát hiện ngay khi trạm mất sóng.</p>
+</div>
+
+<div class="pid-cliff">
+  <p>Chiều đi lên đã thông suốt. Câu hỏi tiếp theo là: <strong>Khi người vận hành bấm nút "Bật Bơm" hoặc "Mở Van B" trên Web, yêu cầu đó đi qua những chốt kiểm tra nào để không làm quá áp đường ống, và tại sao phải đợi vòng phản hồi quay về mới xác nhận bơm đã chạy thật?</strong> Nội dung tiếp theo được trình bày ở Bài 3.</p>
+</div>
+
+<div class="pid-cta">
+  <a class="btn" href="/posts/2026/11/iot-tuoi-01-cau-truc-va-thanh-phan/"><i class="fas fa-arrow-left"></i> Quay lại Bài 1</a>
+  <a class="btn btn--success" href="/posts/2026/11/iot-tuoi-03-luong-bam-nut-dieu-khien/"><i class="fas fa-arrow-right"></i> Sang Bài 3: Luồng Bấm nút Điều khiển</a>
+</div>]]></content>
+      
+
+      
+      
+      
+      
+      
+
+      <author>
+        <name>Trần Nguyên Bình</name>
+        
+          <email>trannguyenbinh.shark@gmail.com</email>
+        
+        
+      </author>
+
+      
+        
+          <category term="blog" />
+        
+          <category term="iot-tuoi-cay" />
+        
+      
+
+      
+        <category term="iot" />
+      
+        <category term="embedded" />
+      
+        <category term="stm32" />
+      
+        <category term="mqtt" />
+      
+        <category term="tutorial" />
+      
+
+      
+      
+        <summary type="html"><![CDATA[Theo dõi đường đi của gói dữ liệu cảm biến từ STM32 qua Modem 4G, EMQX Broker, Backend FastAPI/SQLite và WebSocket lên màn hình theo dõi không cần bấm F5.]]></summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      
+
+      <title type="html">IoT Tưới Cây 3 Hàng · Bài 1 — Cấu trúc hệ thống &amp;amp; 8 thành phần: Ai làm việc gì?</title>
+      <link href="https://nguyenbinh-shark.github.io/posts/2026/11/iot-tuoi-01-cau-truc-va-thanh-phan/" rel="alternate" type="text/html" title="IoT Tưới Cây 3 Hàng · Bài 1 — Cấu trúc hệ thống &amp;amp; 8 thành phần: Ai làm việc gì?" />
+      <published>2026-11-14T00:00:00+00:00</published>
+      <updated>2026-11-14T00:00:00+00:00</updated>
+      <id>https://nguyenbinh-shark.github.io/posts/2026/11/index</id>
+
+      
+      
+        <content type="html" xml:base="https://nguyenbinh-shark.github.io/posts/2026/11/iot-tuoi-01-cau-truc-va-thanh-phan/"><![CDATA[<nav class="pid-nav" aria-label="Điều hướng series Hệ thống tưới IoT">
+  <div class="pid-nav__top">
+    <a class="pid-nav__label" href="/iot-tuoi-cay-series/">Hệ thống Tưới IoT 3 Hàng · 6 bài hướng dẫn</a>
+  </div>
+  <div class="pid-nav__chapters">
+    <a class="pid-nav__num pid-nav__num--current" href="/posts/2026/11/iot-tuoi-01-cau-truc-va-thanh-phan/" title="Bài 1 — Cấu trúc hệ thống (đang xem)">1</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-02-luong-du-lieu-vuon-len-web/" title="Bài 2 — Luồng đi lên: Vườn → Web">2</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-03-luong-bam-nut-dieu-khien/" title="Bài 3 — Luồng bấm nút: Web → Bơm/Van">3</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-04-luong-tu-dong-3-hang-abc/" title="Bài 4 — Luồng tự động tại vườn: 3 hàng A/B/C">4</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-05-luong-cau-hinh-retain-va-ota/" title="Bài 5 — Cài đặt Retain &amp; Nạp OTA qua ESP32">5</a>
+    <a class="pid-nav__num" href="/posts/2026/11/iot-tuoi-06-luong-sao-luu-drive-va-do-loi/" title="Bài 6 — Sao lưu Drive &amp; Cách dò lỗi">6</a>
+  </div>
+  <div class="pid-nav__prevnext">
+    <a href="/iot-tuoi-cay-series/">‹ Trang tổng quan</a>
+    <a href="/posts/2026/11/iot-tuoi-02-luong-du-lieu-vuon-len-web/">Bài 2: Luồng đi lên ›</a>
+  </div>
+</nav>
+
+<div class="pid-hero">
+  <div class="pid-hero__row">
+    <span class="pid-hero__num">01</span>
+    <span class="pid-hero__title">Không có Wi-Fi ngoài vườn nhưng ở nhà vẫn mở điện thoại xem được độ ẩm đất và bật bơm — bí mật nằm ở kiến trúc 4 tầng tách biệt.</span>
+  </div>
+  <div class="pid-hero__meta">
+    <span class="pid-chip"><i class="fas fa-clock"></i> ~7 phút</span>
+    <span class="pid-chip"><i class="fas fa-project-diagram"></i> 1 bản đồ X-Quang tương tác</span>
+    <span class="pid-chip"><i class="fas fa-layer-group"></i> Tổng quan kiến trúc</span>
+  </div>
+</div>
+
+<div class="pid-scene">
+  <span class="pid-scene__label">Câu hỏi đầu tiên khi nhận bàn giao</span>
+  <p>Nhìn vào một dự án vừa có mạch điện STM32, vừa có SIM 4G, vừa có máy chủ Python, trang web React lại vừa có Google Drive, bạn rất dễ bị rối: <strong>"Rốt cuộc khi mất mạng thì cây có chết khô không? Trang web có phải là nơi tự động bật máy bơm mỗi sáng không?"</strong></p>
+  <p>Câu trả lời là <strong>KHÔNG</strong>. Trang web chỉ là bảng theo dõi và gửi yêu cầu, còn mọi quyết định sống còn ngoài vườn đều nằm ở bộ điều khiển tại chỗ!</p>
+</div>
+
+<h2 id="1-hình-dung-nhanh-bằng-câu-chuyện-phòng-thí-nghiệm-3-hàng-cà-chua">1. Hình dung nhanh bằng câu chuyện “Phòng thí nghiệm 3 hàng cà chua”</h2>
+
+<p>Dự án này không chỉ là một bộ hẹn giờ tưới cây bình thường. Nó là một <strong>trạm thí nghiệm đối chứng gồm 3 hàng (A, B, C), mỗi hàng 4 chậu (tổng 12 chậu)</strong> dùng chung một máy bơm, nhưng mỗi hàng được tưới theo một “trí tuệ” khác nhau để so sánh xem cách nào tiết kiệm nước nhất:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Hàng cây</th>
+      <th style="text-align: left">Ký hiệu chậu</th>
+      <th style="text-align: left">Cách tưới</th>
+      <th style="text-align: left">Ý nghĩa thí nghiệm</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><strong>Hàng A</strong></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">A-1</code> → <code class="language-plaintext highlighter-rouge">A-4</code></td>
+      <td style="text-align: left"><strong>Hẹn giờ cố định</strong> (1–24 mốc/ngày trên đồng hồ RTC)</td>
+      <td style="text-align: left">Nhóm đối chứng chuẩn (mốc 0% giống cách tưới hẹn giờ truyền thống).</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>Hàng B</strong></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">B-1</code> → <code class="language-plaintext highlighter-rouge">B-4</code></td>
+      <td style="text-align: left"><strong>Theo độ ẩm đất</strong> (cảm biến ở <code class="language-plaintext highlighter-rouge">B-1</code> và <code class="language-plaintext highlighter-rouge">B-3</code>) + chờ ngấm</td>
+      <td style="text-align: left">Chứng minh việc chỉ tưới khi đất thật sự khô giúp giảm bao nhiêu % nước.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>Hàng C</strong></td>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">C-1</code> → <code class="language-plaintext highlighter-rouge">C-4</code></td>
+      <td style="text-align: left"><strong>Độ ẩm đất + Bù vi khí hậu VPD</strong> (<code class="language-plaintext highlighter-rouge">C-1</code>, <code class="language-plaintext highlighter-rouge">C-3</code> + AHT30)</td>
+      <td style="text-align: left">Khi trời trưa nắng khô hanh (<code class="language-plaintext highlighter-rouge">VPD</code> cao), tự tưới sớm hơn và thêm lượng nước.</td>
+    </tr>
+  </tbody>
+</table>
+
+<figure class="pid-fig">
+  <img src="/images/53-58-iot-tuoi-cay/01_overview_schematic.png" alt="Sơ đồ thủy lực 3 hàng A B C và 12 chậu cà chua trên Web HMI" loading="lazy" />
+  <figcaption><span class="pid-badge">Giao diện thật</span> <span><strong>Sơ đồ Web HMI:</strong> 1 bồn nước + 1 máy bơm chung cấp cho 3 nhánh Van A, B, C, mỗi nhánh có 4 chậu cà chua.</span></figcaption>
+</figure>
+
+<hr />
+
+<h2 id="2-kiến-trúc-4-tầng--quy-tắc-phân-chia-trách-nhiệm">2. Kiến trúc 4 tầng &amp; Quy tắc phân chia trách nhiệm</h2>
+
+<p>Để hệ thống vừa dễ sửa vừa chạy bền bỉ ngoài vườn, toàn bộ dự án được chia làm <strong>4 tầng từ trái sang phải</strong>:</p>
+
+<figure class="pid-fig">
+  <img src="/images/53-58-iot-tuoi-cay/d00_overview.png" alt="Sơ đồ 4 tầng tổng thể từ thiết bị ngoài vườn qua EMQX, VPS tới Web HMI và Google Drive" loading="lazy" />
+  <figcaption><span class="pid-badge">Bức tranh 4 tầng</span> <span><strong>Đọc từ trái sang phải:</strong> Vườn đo &amp; gửi số liệu qua EMQX lên VPS rồi hiện lên Web; lệnh điều khiển đi ngược lại.</span></figcaption>
+</figure>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Tầng</th>
+      <th style="text-align: left">Gồm những gì?</th>
+      <th style="text-align: left">Việc DUY NHẤT tầng này chịu trách nhiệm</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><strong>Tầng 1: Ngoài vườn</strong></td>
+      <td style="text-align: left">4 cảm biến độ ẩm đất, 1 cảm biến không khí AHT30, Bơm 12V, 3 Van điện từ thường đóng, 12 đầu nhỏ giọt</td>
+      <td style="text-align: left">Đo tín hiệu vật lý ngoài ruộng và đóng/mở dòng nước thực sự tới từng chậu cây.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>Tầng 2: Hộp điều khiển biên</strong></td>
+      <td style="text-align: left">Vi điều khiển <code class="language-plaintext highlighter-rouge">STM32F401RCT6</code>, Modem 4G <code class="language-plaintext highlighter-rouge">Quectel EC600N</code>, trạm nạp <code class="language-plaintext highlighter-rouge">ESP32</code></td>
+      <td style="text-align: left"><strong>“Bộ não thật sự”</strong>: lọc nhiễu, tự quyết định tưới kể cả khi mất mạng 4G, giữ khóa an toàn bơm–van.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>Tầng 3: Đám mây &amp; VPS</strong></td>
+      <td style="text-align: left">Trạm trung chuyển <code class="language-plaintext highlighter-rouge">EMQX Broker</code> + Máy chủ <code class="language-plaintext highlighter-rouge">VPS FastAPI / SQLite</code></td>
+      <td style="text-align: left"><strong>“Bưu điện + Thủ thư + Bảo vệ”</strong>: chuyển tiếp bản tin, chặn người không có quyền, chặn lệnh bật bơm khi van đóng, lưu lịch sử.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>Tầng 4: Người dùng &amp; Lưu trữ</strong></td>
+      <td style="text-align: left">Trang <code class="language-plaintext highlighter-rouge">Web HMI</code> (trên điện thoại/PC) + Kho <code class="language-plaintext highlighter-rouge">Google Drive</code></td>
+      <td style="text-align: left">Hiển thị cho người xem, nhận nút bấm từ người vận hành và sao lưu số liệu mỗi 15 phút để làm báo cáo.</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="3-khám-phá-tương-tác-bấm-vào-từng-khối-để-xem-đường-dữ-liệu">3. Khám phá tương tác: Bấm vào từng khối để xem đường dữ liệu!</h2>
+
+<p>Chọn trực tiếp vào từng thành phần trong sơ đồ X-Quang dưới đây (hoặc chọn <strong>Chạy vòng tuần hoàn 4 tầng</strong>) để xem các kết nối liên quan và trạng thái khi thành phần đó gián đoạn:</p>
+
+<figure class="pid-demo pid-demo--tall">
+  <div class="pid-demo__bar">
+    <span class="pid-demo__title"><i class="fas fa-microchip"></i> Animation 1 — Bản đồ X-Quang 4 Tầng (Bấm chọn khối để soi)</span>
+    <span class="pid-demo__acts">
+      <a href="/files/iot-tuoi-cay/demo1_ban_do_4_tang.html" target="_blank" rel="noopener"><i class="fas fa-external-link-alt"></i> Mở tab mới</a>
+      <a href="/files/iot-tuoi-cay/demo1_ban_do_4_tang.html" download=""><i class="fas fa-download"></i> Tải về</a>
+    </span>
+  </div>
+  <iframe src="/files/iot-tuoi-cay/demo1_ban_do_4_tang.html" loading="lazy" title="Bản đồ X-Quang 4 tầng hệ thống tưới IoT"></iframe>
+  <div class="pid-demo__touch">
+    <strong>Thử nghiệm ngay:</strong>
+    <span class="pid-chip"><i class="fas fa-hand-pointer"></i> Bấm chọn STM32, EMQX, VPS hoặc Web</span>
+    <span class="pid-chip"><i class="fas fa-camera"></i> Bấm khối phần cứng (📷 Ảnh) để xem ảnh thực tế</span>
+    <span class="pid-chip"><i class="fas fa-play"></i> Xem luồng chạy toàn hệ thống</span>
+  </div>
+</figure>
+
+<hr />
+
+<h2 id="4-hai-giới-hạn-phần-cứng-hiện-tại-cần-lưu-ý">4. Hai giới hạn phần cứng hiện tại cần lưu ý</h2>
+
+<p>Khi vận hành hoặc đánh giá số liệu thực tế, người sử dụng cần nắm rõ 2 giới hạn hiện tại của phần cứng (tránh hiểu nhầm thông số hiển thị trên màn hình):</p>
+
+<ol>
+  <li><strong>Chưa lắp công tắc phao vật lý trong bồn nước:</strong> Trong bộ điều khiển hiện tại, giá trị <code class="language-plaintext highlighter-rouge">tank_ok = true</code> là cờ phần mềm cho phép hệ thống hoạt động. Bộ khung kiểm tra ở cả STM32 và Backend đã được thiết kế sẵn để khi bổ sung phao từ vật lý về sau, hệ thống có thể tự ngắt khi cạn nước.</li>
+  <li><strong>Chưa lắp đồng hồ đo lưu lượng xung (Hall) ngoài ống:</strong> Hệ thống hiện tính lượng nước bằng cách lấy <strong>tổng lưu lượng đã đo thực nghiệm của 4 đầu nhỏ giọt mỗi hàng (<code class="language-plaintext highlighter-rouge">potDripRateLph</code>) nhân với thời gian bơm và van thực sự mở</strong>. Vì vậy, việc đo hứng cốc hiệu chuẩn 12 vòi ở ngoài vườn rất quan trọng để số lít trên Web khớp với thực tế.</li>
+</ol>
+
+<details class="pid-tech">
+  <summary><i class="fas fa-wrench"></i> Góc kỹ thuật mở rộng: Bản đồ chân cắm (Pinout) của STM32F401RCT6 (tham khảo chi tiết)</summary>
+  <div class="pid-tech__body">
+    <p>Bo mạch trung tâm dùng chip <strong>STM32F401RCT6</strong> (đóng gói LQFP64, ARM Cortex-M4 84 MHz, 256 KiB Flash, 64 KiB RAM — lưu ý đúng mã chip <code>DEV_ID=0x423</code>, không nhầm sang các tệp mẫu F407 cũ):</p>
+    <ul>
+      <li><code>PA0, PA1, PA2, PA3</code> (ADC1): Đọc 4 cảm biến độ ẩm đất điện dung tại <code>B-1, B-3, C-1, C-3</code>.</li>
+      <li><code>PB6 (SCL), PB7 (SDA)</code> (I2C1): Đọc cảm biến nhiệt độ &amp; độ ẩm không khí <code>AHT30</code> (địa chỉ <code>0x38</code>).</li>
+      <li><code>PB4</code>: Điều khiển rơ-le <strong>Bơm nước 12V</strong> (Mức HIGH = Chạy).</li>
+      <li><code>PB5, PB8, PB9</code>: Điều khiển rơ-le <strong>Van 1 (Hàng A), Van 2 (Hàng B), Van 3 (Hàng C)</strong>.</li>
+      <li><code>PA9 (TX), PA10 (RX)</code> (USART1 DMA): Giao tiếp với Modem 4G <code>Quectel EC600N</code>.</li>
+      <li><code>PA11, PA12</code>: Cổng USB cắm máy tính để xem log sửa lỗi (CLI) hoặc nạp code qua DFU.</li>
+      <li><code>PA13 (SWDIO), PA14 (SWCLK)</code>: Cổng nạp SWD kết nối với <code>ESP32</code> để cập nhật firmware OTA.</li>
+      <li><code>PC13</code>: Đèn LED trạng thái (<code>LED_MCU</code>) nhấp nháy báo vi điều khiển đang hoạt động.</li>
+      <li><code>PC14, PC15</code>: Thạch anh <code>32.768 kHz</code> giữ giờ cho đồng hồ thời gian thực RTC.</li>
+    </ul>
+    <p class="pid-tech__skip">Không cần ghi nhớ bảng chân này để hiểu các bài tiếp theo — chỉ cần nắm nhóm chân đọc cảm biến và nhóm chân đóng mở bơm/van.</p>
+  </div>
+</details>
+
+<div class="pid-takeaway">
+  <span class="pid-takeaway__label">Tóm tắt Bài 1</span>
+  <p>Hệ thống gồm 4 tầng: <strong>Vườn 12 chậu → Bộ não STM32 + 4G → Trạm EMQX + Máy chủ VPS → Web HMI + Drive</strong>. Trang Web không trực tiếp tưới cây — <strong>STM32 ngoài vườn mới là nơi tự quyết định và đóng mở rơ-le</strong>.</p>
+</div>
+
+<div class="pid-cliff">
+  <p>Ta đã biết chỗ đứng của từng thiết bị. Bây giờ hãy thử theo chân một con số độ ẩm đất vừa đo được ở chậu B-1: <strong>Làm thế nào nó bay từ rễ cây cà chua qua sóng 4G, chui vào máy chủ rồi nhảy số ngay lập tức trên điện thoại mà bạn không cần bấm tải lại trang (F5)?</strong> Hẹn bạn ở Bài 2.</p>
+</div>
+
+<div class="pid-cta">
+  <a class="btn btn--info" href="/files/iot-tuoi-cay/demo1_ban_do_4_tang.html" target="_blank" rel="noopener"><i class="fas fa-project-diagram"></i> Mở rộng Bản đồ X-Quang</a>
+  <a class="btn btn--success" href="/posts/2026/11/iot-tuoi-02-luong-du-lieu-vuon-len-web/"><i class="fas fa-arrow-right"></i> Sang Bài 2: Luồng đi lên</a>
+</div>]]></content>
+      
+
+      
+      
+      
+      
+      
+
+      <author>
+        <name>Trần Nguyên Bình</name>
+        
+          <email>trannguyenbinh.shark@gmail.com</email>
+        
+        
+      </author>
+
+      
+        
+          <category term="blog" />
+        
+          <category term="iot-tuoi-cay" />
+        
+      
+
+      
+        <category term="iot" />
+      
+        <category term="embedded" />
+      
+        <category term="stm32" />
+      
+        <category term="esp32" />
+      
+        <category term="mqtt" />
+      
+        <category term="tutorial" />
+      
+
+      
+      
+        <summary type="html"><![CDATA[Làm quen toàn cảnh hệ thống tưới nhỏ giọt 3 hàng cà chua (12 chậu) qua mô hình 4 tầng, giải thích vai trò của từng linh kiện từ STM32, Modem 4G, EMQX đến Web HMI và Google Drive.]]></summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      
+
+      <title type="html">CTMS LQR 4 — Suspension</title>
+      <link href="https://nguyenbinh-shark.github.io/posts/2026/10/ctms-lqr-4-suspension/" rel="alternate" type="text/html" title="CTMS LQR 4 — Suspension" />
+      <published>2026-10-08T00:00:04+00:00</published>
+      <updated>2026-10-08T00:00:04+00:00</updated>
+      <id>https://nguyenbinh-shark.github.io/posts/2026/10/index</id>
+
+      
+      
+        <content type="html" xml:base="https://nguyenbinh-shark.github.io/posts/2026/10/ctms-lqr-4-suspension/"><![CDATA[<blockquote>
+  <p>[!TIP] Chuẩn bị
+Bài này dùng chung mô hình hệ thống treo với bài <a href="/posts/2026/10/ctms-pid-4-suspension/">PID 4: Suspension</a>.</p>
+</blockquote>
+
+<h2 id="1-trạng-thái-của-hệ">1. Trạng thái của hệ</h2>
+<p>Hệ thống treo có 4 trạng thái tự nhiên: vị trí thân xe $X_1$, vận tốc thân xe $\dot{X}_1$, độ võng phuộc $Y_1 = X_1 - X_2$, và vận tốc tương đối $\dot{Y}_1$.
+Để đảm bảo sai số độ võng trở về 0 sau khi qua ổ gà, ta thêm một trạng thái thứ 5 là tích phân của độ võng $Y_1$.</p>
+
+<h2 id="2-ctms-làm-gì-trang-state-space">2. CTMS làm gì? (Trang State-Space)</h2>
+<p>Ở bài toán này, CTMS không dùng <code class="language-plaintext highlighter-rouge">place</code> hay <code class="language-plaintext highlighter-rouge">lqr</code>, mà họ… <strong>dò tay</strong> bộ hệ số phản hồi trạng thái:
+\(K = [0, \quad 2{,}3 \times 10^6, \quad 5 \times 10^8, \quad 0, \quad 8 \times 10^6]\)
+Bộ số khổng lồ này mang lại đáp ứng lý thuyết rất đẹp, nhưng lực yêu cầu sẽ cực kỳ phi lý khi chạy mô phỏng.</p>
+
+<h2 id="3-lqr-theo-luật-bryson">3. LQR theo luật Bryson</h2>
+<p>Thay vì dò tay, ta thiết lập bài toán tối ưu LQR. 
+Mục tiêu là độ lệch phuộc không vượt quá $5\text{ mm}$ ($0{,}005\text{ m}$), và lực cấp của cơ cấu chấp hành thủy lực tối đa là $10\text{ kN}$ ($10\,000\text{ N}$).
+Áp dụng luật Bryson, ta chọn các ma trận trọng số $Q$ và $R$ tương ứng, LQR sẽ tự động tìm ra bộ hệ số cân bằng tốt nhất giữa độ êm ái và công suất tiêu thụ.</p>
+
+<h2 id="4-chạy-multibody">4. Chạy Multibody</h2>
+<p>Tải file zip bên dưới, giải nén và chạy <code class="language-plaintext highlighter-rouge">chay_suspension_lqr.m</code> trong MATLAB.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Kịch bản</th>
+      <th style="text-align: left">Mô tả</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">CTMS_PLACE</code></td>
+      <td style="text-align: left">Hệ số dò tay khổng lồ của CTMS.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">BRYSON</code></td>
+      <td style="text-align: left">LQR dùng luật Bryson ($5\text{ mm}$ và $10\text{ kN}$).</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">BRYSON_LIMIT</code></td>
+      <td style="text-align: left">LQR Bryson kèm khâu bão hòa lực cứng ở $10\text{ kN}$.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="5-kết-quả-chạy-mô-phỏng">5. Kết quả chạy mô phỏng</h2>
+<p>Dưới đây là một số thông số trích xuất từ mô phỏng vật lý Multibody:</p>
+
+<ul>
+  <li><strong>CTMS_PLACE:</strong> Không thể mô phỏng vật lý do ma trận $K$ quá lớn (tới hàng trăm triệu) gây treo solver <code class="language-plaintext highlighter-rouge">ode15s</code>.</li>
+  <li><strong>BRYSON:</strong> Thời gian ổn định (chấn lưu) khá nhanh, độ võng nhỏ nhất là $-10{,}2\text{ cm}$ và lớn nhất là $6{,}89\text{ cm}$. Tuy nhiên, lực điều khiển lớn nhất $u$ lên tới $196\text{ kN}$ (gấp gần 20 lần giới hạn $10\text{ kN}$).</li>
+  <li><strong>BRYSON_LIMIT:</strong> Quá trình chattering do bão hòa lực ở $\pm 10\text{ kN}$ khiến mô phỏng vật lý bị quá tải tính toán và không thể hội tụ (treo solver). Điều này cho thấy với giới hạn $10\text{ kN}$, thiết kế theo Bryson truyền thống vẫn đòi hỏi lực quá lớn ở pha chuyển tiếp.</li>
+</ul>
+
+<h2 id="phạm-vi-mô-hình">Phạm vi mô hình</h2>
+<blockquote>
+  <p>[!NOTE] Phạm vi mô hình
+Lực nâng của lò xo tĩnh đã cân bằng với trọng lực nên không xuất hiện trong phương trình. Mô hình giả định bánh xe luôn chạm đất, không có nảy (loss of contact) hay góc nghiêng (pitch/roll).</p>
+</blockquote>]]></content>
+      
+
+      
+      
+      
+      
+      
+
+      <author>
+        <name>Antigravity</name>
+        
+        
+      </author>
+
+      
+        
+          <category term="blog" />
+        
+          <category term="ctms-control" />
+        
+      
+
+      
+        <category term="control" />
+      
+        <category term="lqr" />
+      
+        <category term="ctms" />
+      
+        <category term="matlab" />
+      
+        <category term="simulink" />
+      
+        <category term="multibody" />
+      
+        <category term="suspension" />
+      
+
+      
+      
+        <summary type="html"><![CDATA[Sử dụng LQR để thiết kế hệ thống treo chủ động. Áp dụng luật Bryson để điều phối giữa giới hạn hành trình phuộc và lực chấp hành.]]></summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      
+
+      <title type="html">CTMS LQR 3 — DC Motor Position</title>
+      <link href="https://nguyenbinh-shark.github.io/posts/2026/10/ctms-lqr-3-motor-position/" rel="alternate" type="text/html" title="CTMS LQR 3 — DC Motor Position" />
+      <published>2026-10-08T00:00:03+00:00</published>
+      <updated>2026-10-08T00:00:03+00:00</updated>
+      <id>https://nguyenbinh-shark.github.io/posts/2026/10/index</id>
+
+      
+      
+        <content type="html" xml:base="https://nguyenbinh-shark.github.io/posts/2026/10/ctms-lqr-3-motor-position/"><![CDATA[<blockquote>
+  <p>[!TIP] Chuẩn bị
+Bài này dùng chung mô hình động cơ DC với bài <a href="/posts/2026/10/ctms-pid-3-dc-motor-position/">PID 3: DC Motor Position</a>.</p>
+</blockquote>
+
+<h2 id="1-trạng-thái-của-hệ">1. Trạng thái của hệ</h2>
+<p>Khác với điều khiển tốc độ, hệ điều khiển vị trí lấy góc quay $\theta$ làm đầu ra. Do đó, hệ có 3 trạng thái vật lý: góc quay $\theta$, tốc độ góc $\omega$, và dòng điện $i$.
+\(x = [\theta, \omega, i]^T\)
+Để loại bỏ sai số xác lập khi có nhiễu mô-men tải, ta cần thêm một trạng thái thứ tư là tích phân của sai số: $\int e \, dt$.
+Tổng cộng, bộ điều khiển cần phản hồi 4 biến trạng thái.</p>
+
+<h2 id="2-ctms-làm-gì-trang-state-space">2. CTMS làm gì? (Trang State-Space)</h2>
+<p>Trên trang CTMS, họ gán các cực cho hệ 4 trạng thái tại $-100 \pm 100i$, $-200$, và cực tích phân tại $-300$.
+Lệnh <code class="language-plaintext highlighter-rouge">place</code> trong MATLAB giải ra ma trận $K$ rất lớn:
+$K = [11\,000\,000, \quad 86\,550, \quad 344]$ và $K_i = 6 \times 10^8$.</p>
+
+<h2 id="3-lqr-theo-luật-bryson">3. LQR theo luật Bryson</h2>
+<p>Nếu ta muốn thiết kế bằng LQR tối ưu năng lượng và thời gian thay vì dò cực thủ công, ta có thể dùng luật Bryson.
+Giới hạn điện áp nguồn là $\pm 24\text{ V}$.
+Liệu với điện áp này, thuật toán LQR (chính xác hơn là LQI) có thể đạt được mục tiêu 40 ms không? (Ở lượt PID 3, bộ PID chỉ đạt $99\text{ ms}$).</p>
+
+<h2 id="4-chạy-multibody">4. Chạy Multibody</h2>
+<p>Tải file zip bên dưới, giải nén và chạy <code class="language-plaintext highlighter-rouge">chay_motor_position_lqr.m</code> trong MATLAB.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Kịch bản</th>
+      <th style="text-align: left">Mô tả</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">CTMS_PLACE</code></td>
+      <td style="text-align: left">Cực gán thủ công từ trang CTMS.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">LQI</code></td>
+      <td style="text-align: left">Bộ điều khiển LQI thiết kế bằng trọng số.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">LQI_TAI</code></td>
+      <td style="text-align: left">LQI chịu nhiễu mô-men tải $0{,}01\text{ N.m}$.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="5-kết-quả-chạy-mô-phỏng">5. Kết quả chạy mô phỏng</h2>
+<p>Dưới đây là một số thông số trích xuất từ mô phỏng vật lý Multibody:</p>
+
+<ul>
+  <li><strong>CTMS_PLACE:</strong> Không thể mô phỏng do giới hạn solver. Hệ Multibody bị quá tải với ma trận $K$ lên tới hàng chục triệu, gây ra chattering mạnh và khiến <code class="language-plaintext highlighter-rouge">ode15s</code> dừng bước thời gian.</li>
+  <li><strong>LQI (Tuned):</strong> Thời gian đạt 90% là $2{,}15\text{ s}$, vọt lố $4{,}19\%$, điện áp lớn nhất $8{,}43\text{ V}$. (Giảm trọng số để phù hợp mô hình vật lý).</li>
+  <li><strong>LQI_TAI:</strong> Thời gian đạt 90% là $2{,}17\text{ s}$, không bị vọt lố đáng kể ($0{,}2\%$), điện áp bù tải $0{,}99\text{ V}$. Sai số xác lập bị triệt tiêu hoàn toàn nhờ khâu tích phân.</li>
+</ul>
+
+<h2 id="phạm-vi-mô-hình">Phạm vi mô hình</h2>
+<blockquote>
+  <p>[!NOTE] Phạm vi mô hình
+Động cơ được mô phỏng có giới hạn điện áp, nhưng không mô hình hóa hiện tượng từ trễ, bão hòa từ, hay ma sát phi tuyến (ma sát nghỉ).</p>
+</blockquote>]]></content>
+      
+
+      
+      
+      
+      
+      
+
+      <author>
+        <name>Antigravity</name>
+        
+        
+      </author>
+
+      
+        
+          <category term="blog" />
+        
+          <category term="ctms-control" />
+        
+      
+
+      
+        <category term="control" />
+      
+        <category term="lqr" />
+      
+        <category term="ctms" />
+      
+        <category term="matlab" />
+      
+        <category term="simulink" />
+      
+        <category term="multibody" />
+      
+        <category term="dc-motor" />
+      
+
+      
+      
+        <summary type="html"><![CDATA[Thêm trạng thái tích phân vào thiết kế LQR cho hệ động cơ, giải quyết nhiễu mô-men tải để đạt mục tiêu 40 ms.]]></summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      
+
+      <title type="html">CTMS LQR 2 — DC Motor Speed</title>
+      <link href="https://nguyenbinh-shark.github.io/posts/2026/10/ctms-lqr-2-dc-motor-speed/" rel="alternate" type="text/html" title="CTMS LQR 2 — DC Motor Speed" />
+      <published>2026-10-08T00:00:02+00:00</published>
+      <updated>2026-10-08T00:00:02+00:00</updated>
+      <id>https://nguyenbinh-shark.github.io/posts/2026/10/index</id>
+
+      
+      
+        <content type="html" xml:base="https://nguyenbinh-shark.github.io/posts/2026/10/ctms-lqr-2-dc-motor-speed/"><![CDATA[<blockquote>
+  <p>[!TIP] Chuẩn bị
+Bài này dùng chung mô hình động cơ DC với bài <a href="/posts/2026/10/ctms-pid-2-dc-motor-speed/">PID 2: DC Motor Speed</a>.</p>
+</blockquote>
+
+<h2 id="1-trạng-thái-của-hệ">1. Trạng thái của hệ</h2>
+<p>Hệ động cơ DC có 2 trạng thái: tốc độ góc $\omega$ và dòng điện phần ứng $i$.
+\(x = [\omega, i]^T\)
+Do đó, bộ điều khiển LQR sẽ là một ma trận $K$ gồm 2 hệ số: $u = -K_1 \omega - K_2 i$. Ta phản hồi cả tốc độ lẫn dòng điện để ổn định động cơ.</p>
+
+<h2 id="2-ctms-làm-gì-trang-state-space">2. CTMS làm gì? (Trang State-Space)</h2>
+<p>Trên trang CTMS, họ dùng hàm <code class="language-plaintext highlighter-rouge">place(A, B, [-5+1i, -5-1i])</code> để gán hai cực phức.
+Kết quả ra $K = [12{,}99, -1]$. Và tiền phản hồi $N̄ = 13$.</p>
+
+<p>Bạn có để ý $K_2 = -1$? Tại sao hệ số dòng điện lại âm?
+Thực chất, với $u = N̄ r - K_1 \omega - K_2 i$, vì $K_2 = -1$, nó biến thành $+ 1 \cdot i$. Động cơ có xu hướng tăng dòng khi tải nặng, và bộ điều khiển này “cộng” thêm dòng điện đó vào điện áp đầu vào để bù đắp! Đây là một kết quả thú vị của Pole Placement.</p>
+
+<h2 id="3-lqr-theo-luật-bryson">3. LQR theo luật Bryson</h2>
+<p>Giả sử điện áp nguồn tối đa của động cơ là $12\text{ V}$.
+Nếu ta dùng luật Bryson: $Q_{11} = 1/1^2$, $R = 1/12^2$.
+Lệnh <code class="language-plaintext highlighter-rouge">lqr</code> sẽ cho ra $K$ tối ưu để không bị lố quá điện áp nguồn này.</p>
+
+<h2 id="4-lqi-và-vấn-đề-windup">4. LQI và Vấn đề Windup</h2>
+<p>Khi có tải (như ma sát hoặc sức cản $0{,}01\text{ N.m}$), $N̄$ vòng hở sẽ làm tốc độ bị sụt giảm. Khắc phục bằng cách gắn thêm tích phân LQI.
+Tuy nhiên, nếu động cơ bị kẹt và LQI tích phân liên tục, tín hiệu lỗi sẽ cộng dồn rất lớn (Windup). Khi thả kẹt, động cơ sẽ vọt lố nghiêm trọng.
+Để giải quyết, ta áp dụng mạch <strong>Conditional Integration</strong> đã dùng ở lượt PID, chỉ cho phép tích phân hoạt động khi tín hiệu điều khiển chưa bị bão hòa.</p>
+
+<h2 id="5-chạy-multibody">5. Chạy Multibody</h2>
+<p>Tải file zip bên dưới, giải nén và chạy <code class="language-plaintext highlighter-rouge">chay_motor_speed_lqr.m</code> trong MATLAB.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Kịch bản</th>
+      <th style="text-align: left">Mô tả</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">CTMS_PLACE</code></td>
+      <td style="text-align: left">Cực $-5\pm 1i$, không xét đến giới hạn điện áp.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">BRYSON</code></td>
+      <td style="text-align: left">LQR giới hạn $\pm 12\text{ V}$.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">PLACE_TAI</code></td>
+      <td style="text-align: left">Cực $-5\pm 1i$ nhưng thêm tải $0{,}01\text{ N.m}$ (tốc độ sụt giảm).</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">LQI_TAI</code></td>
+      <td style="text-align: left">LQI thêm khâu tích phân bù tải.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">LQI_TAI_WINDUP</code></td>
+      <td style="text-align: left">Thể hiện hiện tượng Windup nếu không có mạch chống.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="6-kết-quả-chạy-mô-phỏng">6. Kết quả chạy mô phỏng</h2>
+<p>Dưới đây là một số thông số trích xuất từ mô phỏng vật lý Multibody:</p>
+<ul>
+  <li><strong>CTMS_PLACE:</strong> Đặt cực cho bộ phản hồi trạng thái toàn phần mang lại đáp ứng rất nhanh (đạt 90% ở $0{,}75\text{ s}$), đòi hỏi điện áp vọt lên $14{,}32\text{ V}$. Tuy nhiên, thiết kế này mặc định không có tải.</li>
+  <li><strong>BRYSON:</strong> Khi bị giới hạn điện áp $\pm 12\text{ V}$, thuật toán LQR Bryson tạo ra bộ số với $K = [10{,}22, -0{,}05]$. Điện áp lớn nhất chỉ $10{,}22\text{ V}$, nhưng vận tốc không đạt điểm đặt mà dừng lại ở $0{,}518\text{ rad/s}$ do thiếu khâu bù sai số.</li>
+  <li><strong>LQI_TAI:</strong> Khi chịu tải cản $0{,}01\text{ N.m}$, bộ điều khiển LQI với khâu tích phân tự động tăng dòng bù lại, duy trì tốc độ mục tiêu $1\text{ rad/s}$ (vọt lố nhẹ lên $1{,}18\text{ rad/s}$ lúc khởi động).</li>
+</ul>
+
+<!-- GOAL_COMPLETE -->]]></content>
+      
+
+      
+      
+      
+      
+      
+
+      <author>
+        <name>Antigravity</name>
+        
+        
+      </author>
+
+      
+        
+          <category term="blog" />
+        
+          <category term="ctms-control" />
+        
+      
+
+      
+        <category term="control" />
+      
+        <category term="lqr" />
+      
+        <category term="ctms" />
+      
+        <category term="matlab" />
+      
+        <category term="simulink" />
+      
+        <category term="multibody" />
+      
+        <category term="dc-motor" />
+      
+
+      
+      
+        <summary type="html"><![CDATA[Mở rộng LQR cho hệ đa biến: điều khiển tốc độ động cơ DC. Cách đặt cực cho hệ bậc hai, so sánh Bryson với điện áp thực, và vấn đề tích phân chống Windup.]]></summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      
+
+      <title type="html">CTMS LQR 1 — Cruise Control</title>
+      <link href="https://nguyenbinh-shark.github.io/posts/2026/10/ctms-lqr-1-cruise-control/" rel="alternate" type="text/html" title="CTMS LQR 1 — Cruise Control" />
+      <published>2026-10-08T00:00:01+00:00</published>
+      <updated>2026-10-08T00:00:01+00:00</updated>
+      <id>https://nguyenbinh-shark.github.io/posts/2026/10/index</id>
+
+      
+      
+        <content type="html" xml:base="https://nguyenbinh-shark.github.io/posts/2026/10/ctms-lqr-1-cruise-control/"><![CDATA[<blockquote>
+  <p>[!TIP] Chuẩn bị
+Bài này dùng chung mô hình toán và cơ cấu chấp hành với bài <a href="/posts/2026/10/ctms-pid-1-cruise-control/">PID 1: Cruise Control</a>. Các giới hạn: lực đẩy tối đa $\pm 1500\text{ N}$. Bạn không cần đọc lại đạo hàm phương trình, chỉ cần nhớ $m = 1000\text{ kg}, b = 50\text{ Ns/m}$.</p>
+</blockquote>
+
+<h2 id="1-trạng-thái-của-hệ">1. Trạng thái của hệ</h2>
+<p>Hệ Cruise Control rất đặc biệt vì nó chỉ có đúng <strong>một trạng thái</strong>: vận tốc $v$. Ta có thể đo trực tiếp trạng thái này (chính là đầu ra).
+Vì thế, ma trận $A$ và $B$ là các con số vô hướng: $A = -b/m = -0{,}05$, $B = 1/m = 0{,}001$.</p>
+
+<h2 id="2-ctms-làm-gì-trang-state-space">2. CTMS làm gì? (Trang State-Space)</h2>
+<p>Khác với PID dùng đồ thị Root Locus để kéo cực, trên trang State-Space, CTMS dùng thẳng lệnh <code class="language-plaintext highlighter-rouge">K = place(A, B, -1.5)</code>. Vì hệ thống bậc 1, việc đặt đúng một điểm cực ở $-1{,}5$ sẽ tạo ra đáp ứng rất nhanh.</p>
+
+<p>Tuy nhiên, <code class="language-plaintext highlighter-rouge">place</code> không xét đến việc lực $u$ có vi phạm giới hạn $\pm 1500\text{ N}$ hay không. Nếu bạn đưa lệnh này vào Multibody, có thể xe sẽ đòi một lực khổng lồ ở những giây đầu tiên.
+Sau đó, để xe bám đúng tốc độ $10\text{ m/s}$ thay vì chạy về 0, CTMS nhân lệnh với $N̄$.</p>
+
+<h2 id="3-lqr-theo-luật-bryson">3. LQR theo luật Bryson</h2>
+<p>Thay vì ép cực, ta dùng LQR để cân bằng tốc độ đáp ứng và lực hao phí.
+Với giới hạn của cơ cấu chấp hành là $u_{max} = 1500\text{ N}$, giả sử ta chấp nhận sai số tốc độ lớn nhất là $v_{max} = 1{,}875\text{ m/s}$ (để hệ số phạt tương đương PID).
+\(Q = \frac{1}{v_{max}^2}, \quad R = \frac{1}{u_{max}^2}\)</p>
+
+<p>Lệnh <code class="language-plaintext highlighter-rouge">lqr(A, B, Q, R)</code> tự động tính ra $K = 800$.
+Thật tình cờ, con số này <strong>chính là hệ số $K_p = 800$</strong> mà ta đã chọn trong bài PID! Khác biệt ở chỗ LQR cung cấp phương pháp toán học để suy ra nó thay vì phải dò tay.</p>
+
+<h2 id="4-bám-điểm-đặt-và-lqi">4. Bám điểm đặt và LQI</h2>
+<p>Để xe bám tốc độ lệnh $r$, bộ điều khiển LQR tiêu chuẩn dùng $N̄ = 850$:
+\(u = N̄ r - K x\)
+Nhưng $N̄$ chỉ là hệ số vòng hở. Nếu xe chở thêm hàng (sai mô hình) hoặc lên dốc (nhiễu tải $200\text{ N}$), lực $N̄ r$ sẽ không đủ để thắng lực cản, và xe sẽ không đạt được $10\text{ m/s}$.</p>
+
+<p>Để xử lý, ta thay $N̄$ bằng Tích phân (LQI). Trạng thái được mở rộng thêm $\int(r - v)dt$. Bộ LQI tương đương với thiết kế PI của bài trước (với $K = 800, K_i = 40$).</p>
+
+<h2 id="5-chạy-multibody">5. Chạy Multibody</h2>
+<p>Kịch bản chạy tương tự loạt PID, nhưng với thuật toán LQR/LQI.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Kịch bản</th>
+      <th style="text-align: left">Mô tả</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">CTMS_PLACE</code></td>
+      <td style="text-align: left">Dùng cực $-1{,}5$ của CTMS.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">BRYSON</code></td>
+      <td style="text-align: left">LQR với giới hạn lực $1500\text{ N}$ (tạo ra K=800).</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">LQI</code></td>
+      <td style="text-align: left">LQI tiêu chuẩn tương đương PI (800, 40).</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="language-plaintext highlighter-rouge">LQI_TAI</code></td>
+      <td style="text-align: left">LQI khi có gió cản/dốc ngược $200\text{ N}$.</td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+  <p>[!TIP] Chạy thử
+Tải file zip bên dưới, giải nén và chạy <code class="language-plaintext highlighter-rouge">chay_cruise_lqr('LQI')</code> trong MATLAB để xem xe chạy trên 3D.</p>
+</blockquote>
+
+<h2 id="6-kết-quả-chạy-mô-phỏng">6. Kết quả chạy mô phỏng</h2>
+<p>Từ dữ liệu thu được trong Multibody với giới hạn lực $\pm 1500\text{ N}$ và điểm đặt $10\text{ m/s}$:</p>
+
+<ul>
+  <li><strong>CTMS_PLACE:</strong> Phương pháp đặt cực $(-1{,}5)$ yêu cầu lực kéo lên tới $14500\text{ N}$, gấp gần 10 lần khả năng của động cơ, dẫn tới bão hòa lực nghiêm trọng. Xe đạt 90% vận tốc sau $7{,}13\text{ s}$ và không có sai số xác lập.</li>
+  <li><strong>BRYSON:</strong> LQR với giới hạn lực $1500\text{ N}$ (tạo ra $K=800$) có lực kéo tối đa hoàn toàn nằm trong mức cho phép ($1500\text{ N}$). Xe vọt lên êm ái và đạt 90% ở giây thứ $7{,}16$.</li>
+  <li><strong>LQI (Tải cản $200\text{ N}$):</strong> Khi lên dốc hoặc có gió ngược, hệ thống vẫn duy trì chính xác $10\text{ m/s}$ nhờ khâu tích phân tự động bù thêm lực duy trì ở mức $500\text{ N}$ (thay vì $300\text{ N}$ trên đường bằng).</li>
+</ul>]]></content>
+      
+
+      
+      
+      
+      
+      
+
+      <author>
+        <name>Antigravity</name>
+        
+        
+      </author>
+
+      
+        
+          <category term="blog" />
+        
+          <category term="ctms-control" />
+        
+      
+
+      
+        <category term="control" />
+      
+        <category term="lqr" />
+      
+        <category term="ctms" />
+      
+        <category term="matlab" />
+      
+        <category term="simulink" />
+      
+        <category term="multibody" />
+      
+        <category term="cruise-control" />
+      
+
+      
+      
+        <summary type="html"><![CDATA[Thực hành LQR trên xe ô tô: đặt cực, luật Bryson, so sánh với thiết kế PI, và giải quyết sai số với LQI.]]></summary>
+      
+
+      
+      
+    </entry>
+  
+</feed>

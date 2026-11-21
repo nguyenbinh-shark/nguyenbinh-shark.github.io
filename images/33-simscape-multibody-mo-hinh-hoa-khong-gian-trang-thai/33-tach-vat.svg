@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" viewBox="0 0 1000 600" role="img" aria-labelledby="t1 d1">
+  <title id="t1">Sơ đồ tách vật cho xe và con lắc</title>
+  <desc id="d1">Bên trái: xe tách riêng, chịu lực đẩy F, trọng lực M g, phản lực ray R, và tại điểm treo chịu lực trừ N theo phương ngang cùng trừ P theo phương đứng do con lắc tác dụng. Bên phải: con lắc tách riêng, tại điểm treo chịu lực N và P do xe tác dụng, tại khối tâm chịu trọng lực m g, và quay với gia tốc góc theta hai chấm.</desc>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#475569"/>
+    </marker>
+    <marker id="arA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#b45309"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1 { font-size: 24px; font-weight: 800; fill: #0f172a; }
+      .h2 { font-size: 16px; font-weight: 500; fill: #64748b; }
+      .pl { font-size: 14px; font-weight: 800; fill: #64748b; letter-spacing: .06em; }
+      .bs { font-size: 15px; font-weight: 500; fill: #64748b; }
+      .m  { font-family: "Times New Roman", "STIX Two Text", Times, serif; font-style: italic; font-size: 22px; fill: #1e293b; }
+      .mA { font-family: "Times New Roman", "STIX Two Text", Times, serif; font-style: italic; font-size: 22px; fill: #92400e; }
+      .eq { font-family: "Times New Roman", "STIX Two Text", Times, serif; font-style: italic; font-size: 21px; fill: #1e293b; }
+    </style>
+  </defs>
+
+  <rect width="1000" height="600" fill="#ffffff"/>
+  <text x="40" y="46" class="h1">Tách vật: mỗi vật một sơ đồ lực</text>
+  <text x="40" y="74" class="h2">Cắt khớp quay ra, thay bằng cặp nội lực N, P. Hai vật nhận hai lực bằng nhau, ngược chiều.</text>
+  <line x1="40" y1="94" x2="960" y2="94" stroke="#e2e8f0"/>
+
+  <!-- Cart -->
+  <text x="40" y="126" class="pl">XE (KHỐI LƯỢNG M)</text>
+  <rect x="140" y="270" width="200" height="80" rx="6" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <circle cx="240" cy="270" r="6" fill="#ffffff" stroke="#1e293b" stroke-width="2.5"/>
+  <path d="M 50 310 H 136" stroke="#b45309" stroke-width="3" marker-end="url(#arA)"/>
+  <text x="76" y="298" class="mA">F</text>
+  <path d="M 320 270 H 250" stroke="#475569" stroke-width="2.5" marker-end="url(#ar)"/>
+  <text x="300" y="258" class="m">−N</text>
+  <path d="M 240 180 V 260" stroke="#475569" stroke-width="2.5" marker-end="url(#ar)"/>
+  <text x="252" y="200" class="m">−P</text>
+  <path d="M 200 350 V 430" stroke="#475569" stroke-width="2.5" marker-end="url(#ar)"/>
+  <text x="160" y="424" class="m">Mg</text>
+  <path d="M 290 440 V 354" stroke="#475569" stroke-width="2.5" marker-end="url(#ar)"/>
+  <text x="302" y="430" class="m">R</text>
+  <text x="140" y="466" class="bs">tạm bỏ ma sát ray (thêm ở mục 5.6)</text>
+
+  <text x="40" y="510" class="bs">Phương ngang (R và Mg không góp mặt):</text>
+  <text x="40" y="544" class="eq">M ẍ = F − N</text>
+
+  <!-- Divider -->
+  <line x1="470" y1="110" x2="470" y2="560" stroke="#e2e8f0"/>
+
+  <!-- Pendulum: pivot (580,400), theta 25 deg, rod 280, G at 140 -->
+  <text x="500" y="126" class="pl">CON LẮC (KHỐI LƯỢNG m, QUÁN TÍNH I)</text>
+  <line x1="580" y1="400" x2="580" y2="170" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <line x1="580" y1="400" x2="698.3" y2="146.2" stroke="#1e293b" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="580" cy="400" r="6" fill="#ffffff" stroke="#1e293b" stroke-width="2.5"/>
+  <circle cx="639.2" cy="273.1" r="8" fill="#b45309" stroke="#ffffff" stroke-width="2"/>
+  <text x="652" y="268" class="mA">G</text>
+  <path d="M 580 340 A 60 60 0 0 1 605.4 345.6" fill="none" stroke="#475569" stroke-width="1.8"/>
+  <text x="596" y="332" class="m">θ</text>
+
+  <path d="M 584 400 H 660" stroke="#475569" stroke-width="2.5" marker-end="url(#ar)"/>
+  <text x="640" y="424" class="m">N</text>
+  <path d="M 580 480 V 408" stroke="#475569" stroke-width="2.5" marker-end="url(#ar)"/>
+  <text x="552" y="476" class="m">P</text>
+  <path d="M 639.2 281 V 360" stroke="#475569" stroke-width="2.5" marker-end="url(#ar)"/>
+  <text x="650" y="356" class="m">mg</text>
+  <path d="M 700 230 A 70 70 0 0 1 690 300" fill="none" stroke="#b45309" stroke-width="2.5" marker-end="url(#arA)"/>
+  <text x="708" y="276" class="mA">I θ̈</text>
+
+  <text x="760" y="180" class="bs">Tịnh tiến của khối tâm G:</text>
+  <text x="760" y="214" class="eq">m ẍ<tspan dy="5" font-size="15">G</tspan><tspan dy="-5"> = N</tspan></text>
+  <text x="760" y="246" class="eq">m ÿ<tspan dy="5" font-size="15">G</tspan><tspan dy="-5"> = P − m g</tspan></text>
+  <text x="760" y="292" class="bs">Quay quanh G</text>
+  <text x="760" y="312" class="bs">(mô-men của N, P):</text>
+  <text x="760" y="346" class="eq">I θ̈ = l P sin θ − l N cos θ</text>
+
+  <text x="500" y="520" class="bs">Bốn phương trình, hai ẩn phụ N, P.</text>
+  <text x="500" y="544" class="bs">Khử N, P đi là còn đúng hai phương trình chuyển động.</text>
+</svg>

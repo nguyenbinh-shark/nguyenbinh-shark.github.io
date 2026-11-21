@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="860" height="420" viewBox="0 0 860 420" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="anat-title anat-desc">
+  <title id="anat-title">Sơ đồ giải phẫu thuật toán SimpleFOC PIDController operator()</title>
+  <desc id="anat-desc">Sơ đồ 6 bước tính toán bên trong hàm operator của class PIDController gồm đo thời gian, 3 nhánh P-I-D, cộng dồn bão hòa, giới hạn tốc độ ramp và lưu trạng thái.</desc>
+  <defs>
+    <marker id="arr-m" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#334155"/>
+    </marker>
+    <marker id="arr-blue" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arr-amber" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#d97706"/>
+    </marker>
+    <marker id="arr-rose" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#e11d48"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+      .code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+    </style>
+  </defs>
+
+  <rect width="860" height="420" rx="12" fill="#ffffff"/>
+  <rect x="1" y="1" width="858" height="418" rx="11" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Tiêu đề -->
+  <text x="430" y="30" text-anchor="middle" font-size="15" font-weight="800" fill="#0f172a">Giải phẫu luồng tính toán trong PIDController::operator()</text>
+
+  <!-- Khung bao class -->
+  <rect x="25" y="45" width="810" height="345" rx="8" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="40" y="65" font-size="12" font-weight="800" fill="#475569">float PIDController::operator() (float error)</text>
+
+  <!-- 1. Đầu vào error -->
+  <line x1="40" y1="205" x2="95" y2="205" stroke="#334155" stroke-width="2" marker-end="url(#arr-m)"/>
+  <text x="65" y="195" text-anchor="middle" font-size="11" font-weight="800" fill="#0f172a">error</text>
+
+  <!-- 2. Khối đo thời gian micros() -->
+  <rect x="100" y="80" width="125" height="65" rx="6" fill="#f1f5f9" stroke="#64748b" stroke-width="1.5"/>
+  <text x="162" y="100" text-anchor="middle" font-size="11" font-weight="800" fill="#334155">1. Lấy mẫu Ts</text>
+  <text x="162" y="117" text-anchor="middle" font-size="9" class="code" fill="#475569">micros() - t_prev</text>
+  <text x="162" y="133" text-anchor="middle" font-size="8.5" fill="#dc2626">Bẫy tràn số (0..0.5s)</text>
+
+  <!-- Đường dẫn Ts xuống P, I, D -->
+  <path d="M 162 145 L 162 205 L 255 205" fill="none" stroke="#64748b" stroke-width="1.5" stroke-dasharray="3 3"/>
+
+  <!-- Tách 3 nhánh P, I, D -->
+  <!-- Nhánh P -->
+  <path d="M 235 205 L 255 205 L 255 112 L 275 112" fill="none" stroke="#2563eb" stroke-width="2" marker-end="url(#arr-blue)"/>
+  <rect x="280" y="90" width="165" height="46" rx="6" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="362" y="110" text-anchor="middle" font-size="11" font-weight="800" fill="#1e40af">2. Khâu P (Tỉ lệ)</text>
+  <text x="362" y="126" text-anchor="middle" font-size="9.5" class="code" fill="#2563eb">P * error</text>
+
+  <!-- Nhánh I (Tustin + Antiwindup) -->
+  <line x1="235" y1="205" x2="275" y2="205" stroke="#d97706" stroke-width="2" marker-end="url(#arr-amber)"/>
+  <rect x="280" y="180" width="165" height="52" rx="6" fill="#fffbeb" stroke="#d97706" stroke-width="1.5"/>
+  <text x="362" y="199" text-anchor="middle" font-size="11" font-weight="800" fill="#92400e">3. Khâu I (Tustin + Kẹp)</text>
+  <text x="362" y="214" text-anchor="middle" font-size="8.5" class="code" fill="#b45309">I_prev + I*Ts*0.5*(e+e_prev)</text>
+  <text x="362" y="226" text-anchor="middle" font-size="8" fill="#d97706">constrain(-limit, limit)</text>
+
+  <!-- Nhánh D -->
+  <path d="M 235 205 L 255 205 L 255 295 L 275 295" fill="none" stroke="#e11d48" stroke-width="2" marker-end="url(#arr-rose)"/>
+  <rect x="280" y="272" width="165" height="46" rx="6" fill="#fff1f2" stroke="#e11d48" stroke-width="1.5"/>
+  <text x="362" y="292" text-anchor="middle" font-size="11" font-weight="800" fill="#9f1239">4. Khâu D (Đạo hàm)</text>
+  <text x="362" y="308" text-anchor="middle" font-size="9.5" class="code" fill="#e11d48">D * (error - error_prev)/Ts</text>
+
+  <!-- Tổng hợp và Saturation -->
+  <path d="M 445 112 L 470 112 L 470 195 L 485 195" fill="none" stroke="#334155" stroke-width="1.8"/>
+  <path d="M 445 205 L 485 205" fill="none" stroke="#334155" stroke-width="1.8"/>
+  <path d="M 445 295 L 470 295 L 470 215 L 485 215" fill="none" stroke="#334155" stroke-width="1.8"/>
+
+  <!-- Nút tổng & Saturation -->
+  <rect x="490" y="175" width="130" height="60" rx="6" fill="#ffffff" stroke="#0284c7" stroke-width="1.8"/>
+  <text x="555" y="196" text-anchor="middle" font-size="11" font-weight="800" fill="#0369a1">5. Tổng &amp; Kẹp ngõ ra</text>
+  <text x="555" y="212" text-anchor="middle" font-size="9" class="code" fill="#0284c7">u = P + I + D</text>
+  <text x="555" y="226" text-anchor="middle" font-size="8.5" fill="#64748b">constrain(-limit, limit)</text>
+
+  <!-- Nối sang Output Ramp -->
+  <line x1="620" y1="205" x2="650" y2="205" stroke="#334155" stroke-width="2" marker-end="url(#arr-m)"/>
+
+  <!-- Khối Output Ramp -->
+  <rect x="655" y="175" width="145" height="60" rx="6" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.8"/>
+  <text x="727" y="196" text-anchor="middle" font-size="11" font-weight="800" fill="#6d28d9">6. Output Ramp</text>
+  <text x="727" y="212" text-anchor="middle" font-size="8.5" class="code" fill="#7c3aed">|Δu/Ts| ≤ output_ramp</text>
+  <text x="727" y="226" text-anchor="middle" font-size="8" fill="#8b5cf6">Lưu trạng thái &amp; Return</text>
+
+  <!-- Đầu ra cuối cùng -->
+  <line x1="800" y1="205" x2="825" y2="205" stroke="#334155" stroke-width="2" marker-end="url(#arr-m)"/>
+  <text x="815" y="195" text-anchor="end" font-size="11" font-weight="800" fill="#0f172a">output</text>
+
+  <!-- Khối ghi chú chân trang -->
+  <text x="430" y="405" text-anchor="middle" font-size="11" font-weight="600" fill="#475569">Mọi công thức lý thuyết đều được gói gọn trong 40 dòng lệnh C++ tối ưu hiệu năng cao.</text>
+</svg>

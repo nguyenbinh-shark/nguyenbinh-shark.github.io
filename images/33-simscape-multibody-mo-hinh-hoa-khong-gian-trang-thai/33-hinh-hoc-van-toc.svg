@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="560" viewBox="0 0 1000 560" role="img" aria-labelledby="t1 d1">
+  <title id="t1">Hình học và vận tốc khối tâm của con lắc trên xe</title>
+  <desc id="d1">Bên trái: xe ở vị trí x trên ray, lực F đẩy xe, con lắc dài gắn ở điểm treo trên xe, ngả một góc theta so với phương thẳng đứng, khối tâm G cách điểm treo một đoạn l. Bên phải: vận tốc khối tâm là tổng của vận tốc xe nằm ngang và vận tốc quay l nhân theta chấm vuông góc với thanh; góc giữa hai vector bằng theta.</desc>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#475569"/>
+    </marker>
+    <marker id="arA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#b45309"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1 { font-size: 24px; font-weight: 800; fill: #0f172a; }
+      .h2 { font-size: 16px; font-weight: 500; fill: #64748b; }
+      .pl { font-size: 14px; font-weight: 800; fill: #64748b; letter-spacing: .06em; }
+      .bs { font-size: 15px; font-weight: 500; fill: #64748b; }
+      .m  { font-family: "Times New Roman", "STIX Two Text", Times, serif; font-style: italic; font-size: 22px; fill: #1e293b; }
+      .mA { font-family: "Times New Roman", "STIX Two Text", Times, serif; font-style: italic; font-size: 22px; fill: #92400e; }
+      .eq { font-family: "Times New Roman", "STIX Two Text", Times, serif; font-style: italic; font-size: 21px; fill: #1e293b; }
+    </style>
+  </defs>
+
+  <rect width="1000" height="560" fill="#ffffff"/>
+  <text x="40" y="46" class="h1">Hình học và vận tốc khối tâm</text>
+  <text x="40" y="74" class="h2">Cả Newton–Euler lẫn Lagrange đều bắt đầu từ đúng hai dòng tọa độ của khối tâm G.</text>
+  <line x1="40" y1="94" x2="960" y2="94" stroke="#e2e8f0"/>
+
+  <!-- Left panel -->
+  <text x="40" y="126" class="pl">HÌNH HỌC</text>
+  <line x1="60" y1="430" x2="520" y2="430" stroke="#94a3b8" stroke-width="3"/>
+  <line x1="90" y1="410" x2="90" y2="450" stroke="#475569" stroke-width="2"/>
+  <text x="90" y="472" text-anchor="middle" class="bs">gốc</text>
+  <path d="M 92 455 H 278" stroke="#475569" stroke-width="1.8" marker-end="url(#ar)"/>
+  <text x="185" y="478" text-anchor="middle" class="m">x</text>
+
+  <rect x="210" y="370" width="140" height="60" rx="6" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
+  <text x="280" y="408" text-anchor="middle" class="bs">xe, M</text>
+  <path d="M 120 400 H 206" stroke="#b45309" stroke-width="3" marker-end="url(#arA)"/>
+  <text x="150" y="390" class="mA">F</text>
+
+  <!-- pendulum: pivot (280,370), theta = 25 deg, l = 130 px, rod 260 px -->
+  <line x1="280" y1="370" x2="280" y2="130" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="6 5"/>
+  <line x1="280" y1="370" x2="389.9" y2="134.4" stroke="#1e293b" stroke-width="7" stroke-linecap="round"/>
+  <circle cx="280" cy="370" r="6" fill="#ffffff" stroke="#1e293b" stroke-width="2.5"/>
+  <circle cx="334.9" cy="252.2" r="8" fill="#b45309" stroke="#ffffff" stroke-width="2"/>
+  <path d="M 280 300 A 70 70 0 0 1 309.6 306.6" fill="none" stroke="#475569" stroke-width="1.8"/>
+  <text x="300" y="292" class="m">θ</text>
+  <text x="348" y="250" class="mA">G</text>
+  <text x="290" y="330" class="m">l</text>
+  <text x="272" y="362" text-anchor="end" class="bs">điểm treo</text>
+
+  <text x="40" y="520" class="eq">x<tspan dy="5" font-size="15">G</tspan><tspan dy="-5"> = x + l sin θ,    y</tspan><tspan dy="5" font-size="15">G</tspan><tspan dy="-5"> = l cos θ</tspan></text>
+
+  <!-- Right panel -->
+  <line x1="560" y1="110" x2="560" y2="500" stroke="#e2e8f0"/>
+  <text x="590" y="126" class="pl">VẬN TỐC KHỐI TÂM</text>
+
+  <!-- triangle: start (610,250), xdot to (770,250), l*thetadot along (0.906,0.423)*120 -->
+  <path d="M 610 250 H 766" stroke="#475569" stroke-width="3" marker-end="url(#ar)"/>
+  <text x="690" y="236" text-anchor="middle" class="m">ẋ</text>
+  <text x="690" y="215" text-anchor="middle" class="bs">xe kéo G đi ngang</text>
+  <path d="M 770 250 L 875.5 299.3" stroke="#475569" stroke-width="3" marker-end="url(#ar)"/>
+  <text x="846" y="262" class="m">l θ̇</text>
+  <text x="846" y="240" class="bs">quay quanh</text>
+  <text x="846" y="222" class="bs">điểm treo</text>
+  <path d="M 610 250 L 873 303" stroke="#b45309" stroke-width="3" marker-end="url(#arA)"/>
+  <text x="740" y="312" class="mA">v<tspan dy="5" font-size="15">G</tspan><tspan dy="-5"></tspan></text>
+  <path d="M 815 250 A 45 45 0 0 1 810.8 269" fill="none" stroke="#475569" stroke-width="1.5"/>
+  <text x="822" y="285" class="m">θ</text>
+
+  <text x="590" y="356" class="bs">Hai vector hợp với nhau một góc đúng bằng θ,</text>
+  <text x="590" y="378" class="bs">nên theo định lý cos:</text>
+  <text x="590" y="410" class="eq">v<tspan dy="5" font-size="15">G</tspan><tspan dy="-5">² = ẋ² + 2 l ẋ θ̇ cos θ + l² θ̇²</tspan></text>
+  <text x="590" y="450" class="bs">Số hạng ở giữa là nơi xe và con lắc “dính” vào nhau —</text>
+  <text x="590" y="472" class="bs">nó sinh ra mọi số hạng có cos θ trong phương trình.</text>
+</svg>

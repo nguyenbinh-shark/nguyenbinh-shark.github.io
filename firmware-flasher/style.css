@@ -1,0 +1,206 @@
+/* Use the website's typography, buttons, form controls and theme tokens. */
+.fw-layout { max-width: 720px; }
+.fw-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 2rem;
+}
+.firmware-tool { min-width: 0; }
+.fw-guide {
+  min-width: 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+  font-size: .8em;
+}
+.fw-guide h2 { margin-top: 0; font-size: 1.1em; }
+.fw-guide ol { margin: 1rem 0; padding-left: 1.3em; }
+.fw-guide li { margin-bottom: 1rem; padding-left: .2em; }
+.fw-guide li p { margin: .3rem 0 0; color: var(--muted-text); }
+.fw-guide summary { cursor: pointer; }
+.fw-guide details p { margin-top: .7rem; }
+
+@container (min-width: 760px) {
+  .fw-columns { grid-template-columns: minmax(0, 1fr) 240px; }
+  .fw-guide {
+    position: sticky;
+    top: 90px;
+    padding: 0 0 0 1.25rem;
+    border-top: 0;
+    border-left: 1px solid var(--border);
+  }
+}
+
+.firmware-tool [hidden] { display: none !important; }
+
+.firmware-tool .fw-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.firmware-tool label { font-size: .9em; }
+.firmware-tool input,
+.firmware-tool select,
+.firmware-tool button { font-family: inherit; }
+
+.firmware-tool .fw-help {
+  margin: .35rem 0 .8rem;
+  color: var(--muted-text);
+  font-size: .8em;
+  overflow-wrap: anywhere;
+}
+.firmware-tool .fw-file { margin: 1rem 0; }
+.firmware-tool .fw-file.drag {
+  outline: 2px dashed var(--global-link-color);
+  outline-offset: .25rem;
+}
+.firmware-tool .fw-details { margin: 1rem 0; }
+.firmware-tool .fw-serial { margin: 1rem 0; padding: 1rem; border: 1px solid var(--border); border-radius: 6px; background: var(--bg-elev); }
+.firmware-tool .fw-serial h3 { margin: 0 0 .6rem; font-size: .95em; }
+.firmware-tool .fw-serial .btn { margin-top: .5rem; }
+.firmware-tool summary,
+.fw-guide summary {
+  padding: .6rem .8rem;
+  color: var(--text);
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: .85em;
+  font-weight: 600;
+  cursor: pointer;
+}
+.firmware-tool .fw-details[open] > summary { margin-bottom: .8rem; }
+
+.firmware-tool .fw-check {
+  display: flex;
+  align-items: flex-start;
+  gap: .6rem;
+  margin: .8rem 0;
+  font-size: .8em;
+}
+.firmware-tool .fw-check input { flex-shrink: 0; margin-top: .25em; }
+.firmware-tool .fw-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .6rem;
+  margin: 1rem 0 .5rem;
+}
+.firmware-tool .fw-actions > * { margin: 0; }
+.firmware-tool .btn {
+  min-height: 46px;
+  padding: .65rem 1.05rem;
+  color: var(--text) !important;
+  background: var(--card-bg);
+  border: 1px solid #64748b !important;
+  border-radius: 6px;
+  box-shadow: 0 1px 2px #00000014;
+  font-size: .85rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.firmware-tool #connect {
+  color: #1d4ed8 !important;
+  background: #eff6ff;
+  border-color: #2563eb !important;
+}
+.firmware-tool #flash {
+  min-width: 180px;
+  color: #fff !important;
+  background: #1d4ed8;
+  border-color: #1d4ed8 !important;
+}
+.firmware-tool #cancel {
+  color: #fff !important;
+  background: #b91c1c;
+  border-color: #b91c1c !important;
+}
+.firmware-tool .btn:hover:not(:disabled) {
+  filter: brightness(.94);
+  box-shadow: 0 2px 5px #00000026;
+}
+#workspace .btn:disabled {
+  opacity: 1;
+  color: #475569 !important;
+  background: #e2e8f0;
+  border-color: #94a3b8 !important;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.firmware-tool input[type="file"] { font-size: .85rem; }
+.firmware-tool input[type="file"]::file-selector-button {
+  min-height: 42px;
+  margin-right: .8rem;
+  padding: .5rem .8rem;
+  color: var(--text);
+  background: var(--card-bg);
+  border: 1px solid #64748b;
+  border-radius: 6px;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+html[data-theme="dark"] .firmware-tool .btn,
+html[data-theme="dark"] .firmware-tool #flash,
+html[data-theme="dark"] .firmware-tool #cancel,
+html[data-theme="dark"] .firmware-tool input[type="file"]::file-selector-button {
+  border-color: #94a3b8 !important;
+}
+html[data-theme="dark"] .firmware-tool #connect {
+  color: #bfdbfe !important;
+  background: #172554;
+  border-color: #60a5fa !important;
+}
+html[data-theme="dark"] #workspace .btn:disabled {
+  color: #cbd5e1 !important;
+  background: #334155;
+  border-color: #64748b !important;
+}
+.firmware-tool :is(button, summary, input, select):focus-visible {
+  outline: 2px solid var(--global-link-color);
+  outline-offset: 3px;
+}
+.firmware-tool .fw-progress-text {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: .8em;
+}
+.firmware-tool progress {
+  display: block;
+  width: 100%;
+  height: .6rem;
+  margin: .5rem 0 1rem;
+  accent-color: var(--global-link-color);
+}
+.firmware-tool pre {
+  max-height: 220px;
+  padding: .8rem;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--text);
+  background: var(--bg-elev);
+  border: 1px solid var(--border);
+  font-size: .7em;
+}
+.firmware-tool .release,
+.firmware-tool .fw-note {
+  margin: .8rem 0;
+  padding: .8rem;
+  border: 1px solid var(--border);
+}
+.firmware-tool .release p { margin: .4rem 0; }
+.firmware-tool .release small {
+  display: block;
+  margin-bottom: .6rem;
+  color: var(--muted-text);
+}
+.firmware-tool .error { color: #b42318; }
+.firmware-tool .success { color: #18733c; }
+html[data-theme="dark"] .firmware-tool .error { color: #ffb4ab; }
+html[data-theme="dark"] .firmware-tool .success { color: #91d5aa; }
+
+@media (max-width: 600px) {
+  .firmware-tool .fw-fields { grid-template-columns: 1fr; gap: .4rem; }
+}

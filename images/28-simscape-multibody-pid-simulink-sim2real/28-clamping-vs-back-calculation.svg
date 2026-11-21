@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="380" viewBox="0 0 900 380" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="aw2-title aw2-desc">
+  <title id="aw2-title">Hai cơ chế chống Integral Windup trong khối PID Simulink: clamping và back-calculation</title>
+  <desc id="aw2-desc">Sơ đồ khối so sánh hai lựa chọn Anti-windup method. Clamping dùng một công tắc ngắt đường cộng dồn khi ngõ ra chạm biên bão hoà. Back-calculation lấy hiệu giữa ngõ ra sau và trước khâu bão hoà, nhân với hệ số Kb rồi cộng ngược vào khâu tích phân.</desc>
+  <defs>
+    <marker id="arr-aw" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#334155"/>
+    </marker>
+    <marker id="arr-awf" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#d97706"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+      .code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+      .blk  { fill: #ffffff; stroke: #0f172a; stroke-width: 1.6; }
+      .sig  { stroke: #334155; stroke-width: 1.6; fill: none; }
+      .fb   { stroke: #d97706; stroke-width: 1.6; fill: none; stroke-dasharray: 5 3; }
+      .bl   { font-size: 11px; font-weight: 700; fill: #0f172a; }
+      .sl   { font-size: 9.5px; fill: #64748b; }
+    </style>
+  </defs>
+
+  <rect width="900" height="380" rx="12" fill="#ffffff"/>
+  <rect x="1" y="1" width="898" height="378" rx="11" fill="none" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- ================= Panel 1: clamping ================= -->
+  <g transform="translate(25, 35)">
+    <rect width="410" height="320" rx="8" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1.2"/>
+    <text x="16" y="27" font-size="13.5" font-weight="800" fill="#166534">clamping — công tắc nhị phân</text>
+    <text x="16" y="46" font-size="10.5" fill="#15803d" class="code">if (!is_saturated) I_term += Ki*e*dt;</text>
+
+    <text x="14" y="134" class="bl" fill="#334155">e</text>
+    <rect x="26" y="112" width="40" height="36" rx="5" class="blk"/>
+    <text x="46" y="135" text-anchor="middle" class="bl">Ki</text>
+    <line x1="66" y1="130" x2="84" y2="130" class="sig" marker-end="url(#arr-aw)"/>
+
+    <text x="99" y="99" text-anchor="middle" font-size="9.5" font-weight="800" fill="#b45309">ngắt / nối</text>
+    <circle cx="88" cy="130" r="2.8" fill="#0f172a"/>
+    <circle cx="110" cy="130" r="2.8" fill="#0f172a"/>
+    <line x1="88" y1="130" x2="109" y2="116" stroke="#d97706" stroke-width="2.6" stroke-linecap="round"/>
+    <line x1="110" y1="130" x2="126" y2="130" class="sig" marker-end="url(#arr-aw)"/>
+
+    <rect x="128" y="110" width="80" height="40" rx="5" class="blk"/>
+    <text x="168" y="128" text-anchor="middle" class="bl">khâu I</text>
+    <text x="168" y="142" text-anchor="middle" class="sl">cộng dồn</text>
+    <line x1="208" y1="130" x2="222" y2="130" class="sig" marker-end="url(#arr-aw)"/>
+
+    <text x="243" y="94" text-anchor="middle" font-size="9.5" font-weight="700" fill="#64748b">+ P + D</text>
+    <line x1="243" y1="98" x2="243" y2="108" class="sig" marker-end="url(#arr-aw)"/>
+    <rect x="224" y="110" width="40" height="40" rx="5" class="blk"/>
+    <text x="244" y="136" text-anchor="middle" font-size="14" font-weight="800" fill="#0f172a">Σ</text>
+    <line x1="264" y1="130" x2="280" y2="130" class="sig" marker-end="url(#arr-aw)"/>
+
+    <rect x="282" y="110" width="62" height="40" rx="5" class="blk"/>
+    <text x="313" y="128" text-anchor="middle" class="bl">SAT</text>
+    <text x="313" y="142" text-anchor="middle" class="sl">±100</text>
+    <line x1="344" y1="130" x2="374" y2="130" class="sig" marker-end="url(#arr-aw)"/>
+    <text x="382" y="134" class="bl" fill="#334155">u</text>
+
+    <circle cx="272" cy="130" r="3" fill="#d97706"/>
+    <circle cx="356" cy="130" r="3" fill="#d97706"/>
+    <path d="M 272 130 L 272 206" class="fb"/>
+    <path d="M 356 130 L 356 206" class="fb"/>
+    <rect x="200" y="206" width="176" height="42" rx="6" fill="#ffffff" stroke="#d97706" stroke-width="1.4"/>
+    <text x="288" y="223" text-anchor="middle" font-size="10" font-weight="800" fill="#b45309">u đã chạm biên?</text>
+    <text x="288" y="238" text-anchor="middle" font-size="9.5" fill="#64748b">và sai số còn đẩy cùng chiều</text>
+    <path d="M 200 227 L 99 227 L 99 142" class="fb" marker-end="url(#arr-awf)"/>
+
+    <rect x="16" y="294" width="148" height="18" rx="9" fill="#dcfce7"/>
+    <text x="90" y="307" text-anchor="middle" font-size="9.5" font-weight="800" fill="#166534">0 THAM SỐ DÒ THÊM</text>
+    <text x="172" y="307" font-size="10" fill="#15803d">thoát biên khi sai số đổi dấu</text>
+  </g>
+
+  <!-- ================= Panel 2: back-calculation ================= -->
+  <g transform="translate(465, 35)">
+    <rect width="410" height="320" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1.2"/>
+    <text x="16" y="27" font-size="13.5" font-weight="800" fill="#0f172a">back-calculation — xả van tỉ lệ</text>
+    <text x="16" y="46" font-size="10.5" fill="#64748b" class="code">I_term += (Ki*e + Kb*(u_sat-u))*dt;</text>
+
+    <text x="14" y="134" class="bl" fill="#334155">e</text>
+    <rect x="26" y="112" width="40" height="36" rx="5" class="blk"/>
+    <text x="46" y="135" text-anchor="middle" class="bl">Ki</text>
+    <line x1="66" y1="130" x2="84" y2="130" class="sig" marker-end="url(#arr-aw)"/>
+
+    <circle cx="99" cy="130" r="14" fill="#ffffff" stroke="#0f172a" stroke-width="1.6"/>
+    <text x="99" y="135" text-anchor="middle" font-size="14" font-weight="800" fill="#0f172a">+</text>
+    <line x1="113" y1="130" x2="126" y2="130" class="sig" marker-end="url(#arr-aw)"/>
+
+    <rect x="128" y="110" width="80" height="40" rx="5" class="blk"/>
+    <text x="168" y="128" text-anchor="middle" class="bl">khâu I</text>
+    <text x="168" y="142" text-anchor="middle" class="sl">luôn cộng dồn</text>
+    <line x1="208" y1="130" x2="222" y2="130" class="sig" marker-end="url(#arr-aw)"/>
+
+    <text x="243" y="94" text-anchor="middle" font-size="9.5" font-weight="700" fill="#64748b">+ P + D</text>
+    <line x1="243" y1="98" x2="243" y2="108" class="sig" marker-end="url(#arr-aw)"/>
+    <rect x="224" y="110" width="40" height="40" rx="5" class="blk"/>
+    <text x="244" y="136" text-anchor="middle" font-size="14" font-weight="800" fill="#0f172a">Σ</text>
+    <line x1="264" y1="130" x2="280" y2="130" class="sig" marker-end="url(#arr-aw)"/>
+
+    <rect x="282" y="110" width="62" height="40" rx="5" class="blk"/>
+    <text x="313" y="128" text-anchor="middle" class="bl">SAT</text>
+    <text x="313" y="142" text-anchor="middle" class="sl">±100</text>
+    <line x1="344" y1="130" x2="374" y2="130" class="sig" marker-end="url(#arr-aw)"/>
+    <text x="382" y="134" class="bl" fill="#334155">u</text>
+
+    <circle cx="272" cy="130" r="3" fill="#d97706"/>
+    <circle cx="356" cy="130" r="3" fill="#d97706"/>
+    <path d="M 272 130 L 272 212 L 297 212" class="fb" marker-end="url(#arr-awf)"/>
+    <path d="M 356 130 L 356 212 L 327 212" class="fb" marker-end="url(#arr-awf)"/>
+    <circle cx="312" cy="212" r="14" fill="#ffffff" stroke="#d97706" stroke-width="1.6"/>
+    <text x="288" y="205" font-size="11" font-weight="800" fill="#b45309">−</text>
+    <text x="334" y="205" font-size="11" font-weight="800" fill="#b45309">+</text>
+    <text x="312" y="245" text-anchor="middle" font-size="9.5" font-weight="700" fill="#b45309">u_sat − u</text>
+
+    <path d="M 312 226 L 312 268 L 218 268" class="fb" marker-end="url(#arr-awf)"/>
+    <rect x="158" y="252" width="58" height="32" rx="5" fill="#ffffff" stroke="#d97706" stroke-width="1.6"/>
+    <text x="187" y="272" text-anchor="middle" class="bl" fill="#b45309">Kb</text>
+    <path d="M 158 268 L 99 268 L 99 144" class="fb" marker-end="url(#arr-awf)"/>
+
+    <rect x="16" y="294" width="152" height="18" rx="9" fill="#fef3c7"/>
+    <text x="92" y="307" text-anchor="middle" font-size="9.5" font-weight="800" fill="#b45309">THÊM 1 THAM SỐ Kb</text>
+    <text x="176" y="307" font-size="10" fill="#64748b">kéo I về với Tt = 1/Kb</text>
+  </g>
+</svg>

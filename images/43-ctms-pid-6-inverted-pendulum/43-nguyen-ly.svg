@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="370" viewBox="0 0 920 370" role="img" aria-labelledby="title desc">
+<title id="title">Xe–con lắc CTMS: lực, góc và vị trí xe</title><desc id="desc">Xe chịu lực u cộng d. Góc phi dương là thanh nghiêng về chiều x âm. l là khoảng cách từ khớp đến tâm khối lượng. Bộ PID chỉ giữ góc, không giữ vị trí xe.</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="#334155"/></marker></defs>
+<rect width="920" height="370" rx="16" fill="#f8fafc"/>
+<g font-family="Arial,sans-serif" font-size="20" fill="#1e293b">
+<text x="35" y="40" font-weight="bold">Giữ góc φ = 0 sau xung lực; vị trí xe x chưa được điều khiển</text>
+<path d="M50 300L850 300" stroke="#94a3b8" stroke-width="4"/>
+<rect x="325" y="235" width="165" height="45" rx="8" fill="#2875a6"/><circle cx="353" cy="282" r="15" fill="#475569"/><circle cx="462" cy="282" r="15" fill="#475569"/>
+<circle cx="407" cy="235" r="7" fill="#1e293b"/><path d="M407 235L365 80" stroke="#d26829" stroke-width="13"/><path d="M407 235L407 63" stroke="#64748b" stroke-width="2" stroke-dasharray="6 5"/>
+<circle cx="386" cy="157" r="6" fill="#fff" stroke="#874220" stroke-width="2"/><text x="210" y="156">tâm khối lượng m</text><path d="M335 154L378 157" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M425 226L401 156" stroke="#334155" stroke-width="2"/><text x="430" y="190">l = 0,3 m</text>
+<path d="M407 101Q392 100 374 109" stroke="#334155" fill="none" stroke-width="2"/><text x="423" y="110">φ &gt; 0</text>
+<path d="M485 257L635 257" stroke="#334155" stroke-width="3" marker-end="url(#arrow)"/><text x="527" y="238">u + d (N)</text>
+<path d="M407 328L635 328" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/><text x="460" y="356">x dương (m)</text>
+<text x="700" y="130" font-size="18">Xung 1 N·s</text><text x="660" y="160" font-size="18">= 100 N × 0,01 s</text>
+</g></svg>

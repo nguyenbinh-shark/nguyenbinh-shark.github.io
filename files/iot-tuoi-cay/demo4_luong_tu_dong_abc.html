@@ -1,0 +1,592 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Demo 4 — Bộ não Tự động tại vườn STM32: 3 Hàng A/B/C &amp; Luân phiên 1 van</title>
+<style>
+  :root {
+    --bg: #0b1120;
+    --panel: #111827;
+    --panel-2: #0f172a;
+    --border: #1e293b;
+    --border-hi: #334155;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --cyan: #38bdf8;
+    --green: #22c55e;
+    --amber: #f59e0b;
+    --red: #ef4444;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 12px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; }
+  .topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .topbar h1 { margin: 0; font-size: 1.02rem; }
+  .topbar p { margin: 2px 0 0; font-size: 0.8rem; color: var(--muted); }
+  .preset-bar {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  button {
+    border: 1px solid var(--border-hi);
+    background: var(--panel);
+    color: var(--text);
+    padding: 6px 11px;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  button:hover { border-color: var(--cyan); color: var(--cyan); }
+  button.primary { background: #0284c7; border-color: var(--cyan); color: #fff; }
+  button.net-on { background: rgba(34, 197, 94, 0.16); border-color: var(--green); color: #86efac; }
+  button.net-off { background: rgba(239, 68, 68, 0.18); border-color: var(--red); color: #fca5a5; }
+
+  .controls-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .ctrl-box {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 10px;
+  }
+  .ctrl-box label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .ctrl-box label b { color: var(--text); }
+  .ctrl-box input[type="range"] { width: 100%; accent-color: var(--cyan); cursor: pointer; }
+
+  .vpd-banner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 7px 11px;
+    margin-bottom: 8px;
+    font-size: 0.8rem;
+  }
+  .vpd-banner.hot {
+    border-color: var(--amber);
+    background: rgba(245, 158, 11, 0.1);
+  }
+  .pill {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(56, 189, 248, 0.15);
+    color: var(--cyan);
+  }
+  .pill.hot { background: rgba(245, 158, 11, 0.22); color: #fcd34d; }
+
+  .stage {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 8px;
+  }
+  svg#autoSvg { display: block; width: 100%; height: auto; }
+  .pipe { fill: none; stroke: #334155; stroke-width: 7; stroke-linecap: round; }
+  .pipe-water { fill: none; stroke: #38bdf8; stroke-width: 5; stroke-dasharray: 10 8; stroke-linecap: round; opacity: 0; }
+  .pipe-water.flowing { opacity: 1; animation: flowDash 0.8s linear infinite; }
+  @keyframes flowDash { to { stroke-dashoffset: -18; } }
+
+  .row-card rect.bg { fill: #111827; stroke: #334155; stroke-width: 1.5; rx: 9; ry: 9; }
+  .row-card.active rect.bg { fill: #0c4a6e; stroke: #38bdf8; stroke-width: 2.3; }
+  .row-card.pending rect.bg { fill: #451a03; stroke: #f59e0b; stroke-width: 2; }
+  .row-card.soaking rect.bg { fill: #1e1b4b; stroke: #a78bfa; stroke-width: 2; }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 9px 11px;
+  }
+  .bar-row {
+    display: grid;
+    grid-template-columns: 78px 1fr 56px;
+    align-items: center;
+    gap: 8px;
+    margin: 5px 0;
+    font-size: 0.78rem;
+  }
+  .bar-track {
+    height: 12px;
+    background: #020617;
+    border-radius: 999px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .bar-fill { height: 100%; width: 0%; transition: width 0.25s ease; }
+  .log-line {
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 0.74rem;
+    color: #cbd5e1;
+    margin: 2px 0;
+  }
+  @media (max-width: 720px) {
+    body { padding: 8px; }
+    .controls-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .summary-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div>
+      <h1>Mô Phỏng Bộ Não Tự Động Tại Biên (STM32): 3 Hàng A/B/C &amp; Luân Phiên 1 Van</h1>
+      <p>Kéo thanh trượt hoặc bấm kịch bản để xem STM32 tự xử lý ở vườn — kể cả khi tắt sóng 4G! Bấm các khối có nhãn 📷 Ảnh để xem ảnh phần cứng thực tế.</p>
+    </div>
+    <button id="btnNet" class="net-on" type="button">📶 Sóng 4G: ĐANG BẬT</button>
+  </div>
+
+  <div class="preset-bar">
+    <button id="btnRun" class="primary" type="button">▶ Chạy mô phỏng</button>
+    <button id="btnAll3" type="button">⚡ Cả 3 hàng cùng cần tưới (Xem xếp lượt A→B→C)</button>
+    <button id="btnHot" type="button">☀️ Trưa nắng gắt (VPD cao)</button>
+    <button id="btnCool" type="button">🌧️ Trời mát ẩm</button>
+    <button id="btnReset" type="button">↺ Đặt lại</button>
+  </div>
+
+  <div class="controls-grid">
+    <div class="ctrl-box">
+      <label><span>Độ ẩm đất Hàng B</span><b id="lblSoilB">31 %</b></label>
+      <input id="slSoilB" type="range" min="20" max="75" value="31">
+    </div>
+    <div class="ctrl-box">
+      <label><span>Độ ẩm đất Hàng C</span><b id="lblSoilC">36 %</b></label>
+      <input id="slSoilC" type="range" min="20" max="75" value="36">
+    </div>
+    <div class="ctrl-box">
+      <label><span>Nhiệt độ không khí (T)</span><b id="lblTemp">35 °C</b></label>
+      <input id="slTemp" type="range" min="18" max="42" value="35">
+    </div>
+    <div class="ctrl-box">
+      <label><span>Độ ẩm không khí (RH)</span><b id="lblRh">52 %</b></label>
+      <input id="slRh" type="range" min="25" max="95" value="52">
+    </div>
+  </div>
+
+  <div class="vpd-banner" id="vpdBanner">
+    <div>
+      <strong>Chỉ số Vi khí hậu VPD = <span id="lblVpd">2.70 kPa</span></strong> ·
+      <span id="lblVpdExplain">Trời khô nóng (VPD ≥ 1.2 kPa) → Hàng C tự cộng +8% vào ngưỡng bật (từ 38% → 46%) &amp; tăng +35% lượng nước!</span>
+    </div>
+    <span class="pill" id="lblClock">Giờ RTC: 05:59:50 · Lượt: —</span>
+  </div>
+
+  <div class="stage">
+    <svg id="autoSvg" viewBox="0 0 920 260" xmlns="http://www.w3.org/2000/svg">
+      <!-- STM32 Brain Box -->
+      <g id="hw-stm32-box">
+        <rect x="14" y="18" width="248" height="224" rx="10" fill="#111827" stroke="#38bdf8" stroke-width="1.8"/>
+        <text x="26" y="40" fill="#38bdf8" font-size="11.5" font-weight="700">STM32F401RCT6 SCHEDULER (100 ms)</text>
+        <text id="svgNetNote" x="26" y="57" fill="#4ade80" font-size="10">4G Online (Đồng bộ lên Web)</text>
+      </g>
+
+      <rect x="26" y="72" width="224" height="48" rx="7" fill="#0f172a" stroke="#334155"/>
+      <text x="36" y="90" fill="#f8fafc" font-size="11" font-weight="700">1. Hàng A (Hẹn giờ RTC)</text>
+      <text id="svgCondA" x="36" y="108" fill="#94a3b8" font-size="10">Lịch: 06:00 &amp; 17:00 (1–24 mốc/ngày)</text>
+
+      <rect x="26" y="128" width="224" height="48" rx="7" fill="#0f172a" stroke="#334155"/>
+      <text x="36" y="146" fill="#f8fafc" font-size="11" font-weight="700">2. Hàng B (Độ ẩm đất)</text>
+      <text id="svgCondB" x="36" y="164" fill="#94a3b8" font-size="10">Bật &lt; 35% · Dừng ≥ 55% + Nghỉ thấm</text>
+
+      <rect x="26" y="184" width="224" height="48" rx="7" fill="#0f172a" stroke="#334155"/>
+      <text x="36" y="202" fill="#f8fafc" font-size="11" font-weight="700">3. Hàng C (Đất + Bù VPD)</text>
+      <text id="svgCondC" x="36" y="220" fill="#fbbf24" font-size="10">Ngưỡng hiệu dụng: Bật &lt; 46%</text>
+
+      <!-- Hydraulic Manifold -->
+      <g id="hw-pump-box">
+        <rect x="292" y="94" width="84" height="72" rx="10" fill="#111827" stroke="#334155" stroke-width="1.8" id="svgPumpBox"/>
+        <text x="334" y="124" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="700">BƠM 12V</text>
+        <text id="svgPumpSt" x="334" y="144" text-anchor="middle" fill="#94a3b8" font-size="10.5" font-weight="700">DỪNG</text>
+      </g>
+
+      <!-- Pipes -->
+      <path class="pipe" d="M 376 130 L 420 130 L 420 52 L 500 52"/>
+      <path class="pipe" d="M 376 130 L 500 130"/>
+      <path class="pipe" d="M 376 130 L 420 130 L 420 208 L 500 208"/>
+
+      <path id="pwA" class="pipe-water" d="M 376 130 L 420 130 L 420 52 L 500 52"/>
+      <path id="pwB" class="pipe-water" d="M 376 130 L 500 130"/>
+      <path id="pwC" class="pipe-water" d="M 376 130 L 420 130 L 420 208 L 500 208"/>
+
+      <!-- Valve badges -->
+      <g id="valveA"><circle cx="460" cy="52" r="14" fill="#111827" stroke="#475569" stroke-width="2"/><text x="460" y="56" text-anchor="middle" fill="#94a3b8" font-size="10" font-weight="700">VA</text></g>
+      <g id="valveB"><circle cx="460" cy="130" r="14" fill="#111827" stroke="#475569" stroke-width="2"/><text x="460" y="134" text-anchor="middle" fill="#94a3b8" font-size="10" font-weight="700">VB</text></g>
+      <g id="valveC"><circle cx="460" cy="208" r="14" fill="#111827" stroke="#475569" stroke-width="2"/><text x="460" y="212" text-anchor="middle" fill="#94a3b8" font-size="10" font-weight="700">VC</text></g>
+
+      <!-- 3 Row Status Cards -->
+      <g class="row-card" id="cardA" transform="translate(500,18)">
+        <rect class="bg" width="404" height="66"/>
+        <text x="14" y="24" fill="#f8fafc" font-size="12" font-weight="700">Hàng A (A-1..A-4) · Đối chứng Hẹn giờ</text>
+        <text id="stTextA" x="14" y="45" fill="#94a3b8" font-size="11">Trạng thái: Sẵn sàng (Idle) · Mục tiêu: 2.00 L</text>
+      </g>
+
+      <g class="row-card" id="cardB" transform="translate(500,96)">
+        <rect class="bg" width="404" height="66"/>
+        <text x="14" y="24" fill="#f8fafc" font-size="12" font-weight="700">Hàng B (B-1..B-4) · Cảm biến Đất + Nghỉ thấm</text>
+        <text id="stTextB" x="14" y="45" fill="#94a3b8" font-size="11">Trạng thái: Sẵn sàng (Idle) · Đất: 31%</text>
+      </g>
+
+      <g class="row-card" id="cardC" transform="translate(500,174)">
+        <rect class="bg" width="404" height="66"/>
+        <text x="14" y="24" fill="#f8fafc" font-size="12" font-weight="700">Hàng C (C-1..C-4) · Cảm biến Đất + Bù VPD</text>
+        <text id="stTextC" x="14" y="45" fill="#94a3b8" font-size="11">Trạng thái: Sẵn sàng (Idle) · Đất: 36%</text>
+      </g>
+    </svg>
+  </div>
+
+  <div class="summary-grid">
+    <div class="card">
+      <strong style="font-size:0.82rem;">So sánh Lượng nước tích lũy (Hiệu chuẩn 12 vòi)</strong>
+      <div class="bar-row"><span>Hàng A (Giờ)</span><div class="bar-track"><div id="barA" class="bar-fill" style="background:#f59e0b"></div></div><b id="litA">0.00 L</b></div>
+      <div class="bar-row"><span>Hàng B (Đất)</span><div class="bar-track"><div id="barB" class="bar-fill" style="background:#22c55e"></div></div><b id="litB">0.00 L</b></div>
+      <div class="bar-row"><span>Hàng C (VPD)</span><div class="bar-track"><div id="barC" class="bar-fill" style="background:#38bdf8"></div></div><b id="litC">0.00 L</b></div>
+    </div>
+
+    <div class="card">
+      <strong style="font-size:0.82rem;">Nhật ký quyết định bên trong STM32</strong>
+      <div id="decisionLog">
+        <div class="log-line">• Nguyên tắc AUTO: Tại 1 thời điểm CHỈ MỞ TỐI ĐA 1 VAN.</div>
+        <div class="log-line">• Bấm "Cả 3 hàng cùng cần tưới" để xem xếp lượt A → B → C!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="./hardware-photos.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  const slSoilB = document.getElementById("slSoilB");
+  const slSoilC = document.getElementById("slSoilC");
+  const slTemp = document.getElementById("slTemp");
+  const slRh = document.getElementById("slRh");
+
+  const lblSoilB = document.getElementById("lblSoilB");
+  const lblSoilC = document.getElementById("lblSoilC");
+  const lblTemp = document.getElementById("lblTemp");
+  const lblRh = document.getElementById("lblRh");
+  const lblVpd = document.getElementById("lblVpd");
+  const lblVpdExplain = document.getElementById("lblVpdExplain");
+  const vpdBanner = document.getElementById("vpdBanner");
+  const lblClock = document.getElementById("lblClock");
+
+  const btnNet = document.getElementById("btnNet");
+  const btnRun = document.getElementById("btnRun");
+  const btnAll3 = document.getElementById("btnAll3");
+  const btnHot = document.getElementById("btnHot");
+  const btnCool = document.getElementById("btnCool");
+  const btnReset = document.getElementById("btnReset");
+
+  const svgNetNote = document.getElementById("svgNetNote");
+  const svgCondC = document.getElementById("svgCondC");
+  const svgPumpSt = document.getElementById("svgPumpSt");
+  const svgPumpBox = document.getElementById("svgPumpBox");
+
+  const decisionLog = document.getElementById("decisionLog");
+
+  let online = true;
+  let running = false;
+  let simTimer = null;
+  let simSec = 0; // seconds after 05:59:55
+  let activeRow = -1; // -1, 0, 1, 2
+  let sliceSec = 0;
+  const SLICE_MAX = 6; // fast demo slice: 6 ticks represents 5 minutes
+
+  const rows = [
+    { name: "A", pending: false, cycleL: 0, targetL: 2.0, dailyL: 0, soak: 0 },
+    { name: "B", pending: false, cycleL: 0, targetL: 2.0, dailyL: 0, soak: 0 },
+    { name: "C", pending: false, cycleL: 0, targetL: 2.0, dailyL: 0, soak: 0 }
+  ];
+
+  function calcVpd(T, RH) {
+    const es = 0.6108 * Math.exp((17.27 * T) / (T + 237.3));
+    return Math.max(0, es * (1 - RH / 100));
+  }
+
+  function logMsg(msg) {
+    const div = document.createElement("div");
+    div.className = "log-line";
+    div.textContent = "• " + msg;
+    decisionLog.insertBefore(div, decisionLog.firstChild);
+    while (decisionLog.children.length > 4) decisionLog.removeChild(decisionLog.lastChild);
+  }
+
+  function updateEnvUI() {
+    const sb = Number(slSoilB.value);
+    const sc = Number(slSoilC.value);
+    const t = Number(slTemp.value);
+    const rh = Number(slRh.value);
+    const vpd = calcVpd(t, rh);
+    const isHot = vpd >= 1.2;
+
+    lblSoilB.textContent = sb + " %";
+    lblSoilC.textContent = sc + " %";
+    lblTemp.textContent = t + " °C";
+    lblRh.textContent = rh + " %";
+    lblVpd.textContent = vpd.toFixed(2) + " kPa";
+
+    vpdBanner.classList.toggle("hot", isHot);
+    if (isHot) {
+      lblVpdExplain.textContent = "Trời khô nóng (VPD ≥ 1.2 kPa) → Hàng C tự cộng +8% ngưỡng bật (38% → 46%) & tăng +35% nước (2.0 L → 2.7 L)!";
+      svgCondC.textContent = "Ngưỡng hiệu dụng: Bật < 46% · Mục tiêu 2.7 L";
+      svgCondC.setAttribute("fill", "#fbbf24");
+    } else {
+      lblVpdExplain.textContent = "Không khí mát ẩm (VPD < 1.2 kPa) → Hàng C chạy ngưỡng chuẩn (38% · 2.0 L).";
+      svgCondC.textContent = "Ngưỡng chuẩn: Bật < 38% · Mục tiêu 2.0 L";
+      svgCondC.setAttribute("fill", "#94a3b8");
+    }
+    rows[2].targetL = isHot ? 2.7 : 2.0;
+    return { sb, sc, vpd, isHot };
+  }
+
+  function renderState() {
+    const env = updateEnvUI();
+    const hh = 6;
+    const mm = Math.floor(simSec / 60);
+    const ss = simSec % 60;
+    const clockStr = (hh < 10 ? "0" : "") + hh + ":" + (mm < 10 ? "0" : "") + mm + ":" + (ss < 10 ? "0" : "") + ss;
+    lblClock.textContent = "Giờ RTC: " + clockStr + " · Lượt: " + (activeRow >= 0 ? ("Hàng " + rows[activeRow].name + " (" + sliceSec + "/" + SLICE_MAX + "s)") : "Chờ");
+
+    const pumpOn = activeRow >= 0;
+    svgPumpSt.textContent = pumpOn ? "ĐANG CHẠY" : "DỪNG";
+    svgPumpSt.setAttribute("fill", pumpOn ? "#4ade80" : "#94a3b8");
+    svgPumpBox.setAttribute("stroke", pumpOn ? "#22c55e" : "#334155");
+
+    ["A", "B", "C"].forEach((letter, i) => {
+      const r = rows[i];
+      const isAct = activeRow === i;
+      const pw = document.getElementById("pw" + letter);
+      const vg = document.getElementById("valve" + letter);
+      const card = document.getElementById("card" + letter);
+      const stText = document.getElementById("stText" + letter);
+
+      pw.classList.toggle("flowing", isAct);
+      const vc = vg.querySelector("circle");
+      const vt = vg.querySelector("text");
+      vc.setAttribute("stroke", isAct ? "#38bdf8" : "#475569");
+      vc.setAttribute("fill", isAct ? "#0c4a6e" : "#111827");
+      vt.setAttribute("fill", isAct ? "#38bdf8" : "#94a3b8");
+
+      card.classList.remove("active", "pending", "soaking");
+      if (isAct) {
+        card.classList.add("active");
+        stText.textContent = "ĐANG TƯỚI (Mở van " + letter + ") · Đợt: " + r.cycleL.toFixed(2) + " / " + r.targetL.toFixed(2) + " L";
+        stText.setAttribute("fill", "#7dd3fc");
+      } else if (r.pending) {
+        card.classList.add("pending");
+        stText.textContent = "CHỜ LƯỢT (Pending) · Đã tưới dở: " + r.cycleL.toFixed(2) + " / " + r.targetL.toFixed(2) + " L";
+        stText.setAttribute("fill", "#fcd34d");
+      } else if (r.soak > 0) {
+        card.classList.add("soaking");
+        stText.textContent = "CHỜ NGẤM (Soaking: " + r.soak + "s) · Đợi nước thấm xuống rễ";
+        stText.setAttribute("fill", "#c4b5fd");
+      } else {
+        const extra = i === 1 ? ("Đất: " + env.sb + "%") : (i === 2 ? ("Đất: " + env.sc + "%") : "Đợi mốc 06:00 / 17:00");
+        stText.textContent = "Sẵn sàng (Idle) · " + extra;
+        stText.setAttribute("fill", "#94a3b8");
+      }
+
+      document.getElementById("lit" + letter).textContent = r.dailyL.toFixed(2) + " L";
+      document.getElementById("bar" + letter).style.width = Math.min(100, (r.dailyL / 3.0) * 100) + "%";
+    });
+  }
+
+  function stepPhysics() {
+    simSec += 1;
+    const env = updateEnvUI();
+
+    // Update soak counters
+    for (let i = 1; i <= 2; i++) {
+      if (rows[i].soak > 0) rows[i].soak--;
+    }
+
+    // Trigger Row A on tick 1
+    if (simSec === 1 && !rows[0].pending && activeRow !== 0) {
+      rows[0].pending = true;
+      rows[0].cycleL = 0;
+      logMsg("Đúng mốc 06:00 → Hàng A phát sinh nhu cầu tưới (2.0 L).");
+    }
+
+    // Evaluate Row B & C soil need
+    if (!rows[1].pending && rows[1].soak === 0 && env.sb < 35) {
+      rows[1].pending = true;
+      rows[1].cycleL = 0;
+      logMsg("Đất Hàng B (" + env.sb + "% < 35%) → Hàng B phát sinh nhu cầu.");
+    }
+    const cTrig = env.isHot ? 46 : 38;
+    if (!rows[2].pending && rows[2].soak === 0 && env.sc < cTrig) {
+      rows[2].pending = true;
+      rows[2].cycleL = 0;
+      logMsg("Đất Hàng C (" + env.sc + "% < " + cTrig + "%) → Hàng C phát sinh nhu cầu.");
+    }
+
+    // Active watering progress
+    if (activeRow >= 0) {
+      const ar = rows[activeRow];
+      const addL = 0.28;
+      ar.cycleL += addL;
+      ar.dailyL += addL;
+      sliceSec += 1;
+
+      if (activeRow === 1) {
+        slSoilB.value = Math.min(75, Number(slSoilB.value) + 3);
+      } else if (activeRow === 2) {
+        slSoilC.value = Math.min(75, Number(slSoilC.value) + 3);
+      }
+
+      if (ar.cycleL >= ar.targetL || (activeRow === 1 && Number(slSoilB.value) >= 55) || (activeRow === 2 && Number(slSoilC.value) >= 58)) {
+        ar.pending = false;
+        if (activeRow >= 1) ar.soak = 8;
+        logMsg("Hàng " + ar.name + " ĐỦ ĐỢT (" + ar.cycleL.toFixed(2) + " L) → Tắt bơm, đóng van" + (activeRow >= 1 ? ", vào Nghỉ thấm." : "."));
+        const prev = activeRow;
+        activeRow = -1;
+        sliceSec = 0;
+        pickNext(prev);
+      } else if (sliceSec >= SLICE_MAX) {
+        const anotherNeeds = rows.some((r, idx) => idx !== activeRow && r.pending);
+        if (anotherNeeds) {
+          logMsg("Hết lượt Hàng " + ar.name + " (giữ nguyên " + ar.cycleL.toFixed(2) + " L) → Nhường lượt cho hàng kế tiếp!");
+          const prev = activeRow;
+          activeRow = -1;
+          sliceSec = 0;
+          pickNext(prev);
+        } else {
+          sliceSec = 0; // only 1 row needs water, keep going smoothly
+        }
+      }
+    } else {
+      pickNext(-1);
+    }
+
+    renderState();
+  }
+
+  function pickNext(prevIdx) {
+    for (let offset = 1; offset <= 3; offset++) {
+      const idx = (prevIdx + offset + 3) % 3;
+      if (rows[idx].pending) {
+        activeRow = idx;
+        sliceSec = 0;
+        logMsg("Điều phối luân phiên: Tắt bơm → Đổi sang Van " + rows[idx].name + " → Bật bơm!");
+        return;
+      }
+    }
+  }
+
+  function toggleRun(forceOn) {
+    const next = typeof forceOn === "boolean" ? forceOn : !running;
+    running = next;
+    if (simTimer) { clearInterval(simTimer); simTimer = null; }
+    btnRun.textContent = running ? "⏸ Tạm dừng" : "▶ Chạy mô phỏng";
+    if (running) {
+      simTimer = setInterval(stepPhysics, 850);
+    }
+  }
+
+  function resetAll() {
+    toggleRun(false);
+    simSec = 0;
+    activeRow = -1;
+    sliceSec = 0;
+    rows.forEach(r => { r.pending = false; r.cycleL = 0; r.dailyL = 0; r.soak = 0; });
+    renderState();
+  }
+
+  btnNet.addEventListener("click", () => {
+    online = !online;
+    btnNet.className = online ? "net-on" : "net-off";
+    btnNet.textContent = online ? "📶 Sóng 4G: ĐANG BẬT" : "📵 Sóng 4G: MẤT MẠNG (Vẫn tự tưới!)";
+    svgNetNote.textContent = online ? "4G Online (Đồng bộ lên Web)" : "Mất 4G! STM32 tự chạy độc lập tại vườn";
+    svgNetNote.setAttribute("fill", online ? "#4ade80" : "#f87171");
+    logMsg(online ? "Sóng 4G đã nối lại — STM32 đồng bộ lịch sử lên Cloud." : "MẤT MẠNG 4G! Bộ não tại biên STM32 vẫn tự động đóng mở van bình thường.");
+  });
+
+  btnRun.addEventListener("click", () => toggleRun());
+  btnReset.addEventListener("click", () => {
+    slSoilB.value = 31; slSoilC.value = 36; slTemp.value = 35; slRh.value = 52;
+    resetAll();
+  });
+  btnAll3.addEventListener("click", () => {
+    resetAll();
+    slSoilB.value = 28; slSoilC.value = 30; slTemp.value = 34; slRh.value = 55;
+    rows[0].pending = true; rows[1].pending = true; rows[2].pending = true;
+    activeRow = 0;
+    logMsg("Kịch bản: Cả 3 hàng A, B, C cùng cần nước → Xếp lượt luân phiên A → B → C!");
+    renderState();
+    toggleRun(true);
+  });
+  btnHot.addEventListener("click", () => {
+    slTemp.value = 38; slRh.value = 40; slSoilB.value = 40; slSoilC.value = 42;
+    resetAll();
+    logMsg("Trời nắng gắt (VPD cao) → Hàng B (40% > 35%) chưa tưới, nhưng Hàng C tự nâng ngưỡng lên 46% nên BẬT TƯỚI sớm!");
+    renderState();
+    toggleRun(true);
+  });
+  btnCool.addEventListener("click", () => {
+    slTemp.value = 22; slRh.value = 82; slSoilB.value = 48; slSoilC.value = 48;
+    resetAll();
+    logMsg("Trời mát ẩm (VPD thấp) → Độ ẩm đất 48% đủ ẩm → Cả Hàng B và C đều nghỉ để tiết kiệm nước.");
+    renderState();
+  });
+
+  [slSoilB, slSoilC, slTemp, slRh].forEach(el => el.addEventListener("input", renderState));
+  renderState();
+
+  if (window.IoTHardwareViewer) {
+    window.IoTHardwareViewer.attachSvgTriggers([
+      { selector: "#hw-stm32-box", id: "stm32", pillPos: "tr" },
+      { selector: "#hw-pump-box", id: "act", pillPos: "br" },
+      { selector: "#valveA", id: "act", showPill: false },
+      { selector: "#valveB", id: "act", showPill: false },
+      { selector: "#valveC", id: "act", showPill: false }
+    ]);
+  }
+})();
+</script>
+</body>
+</html>

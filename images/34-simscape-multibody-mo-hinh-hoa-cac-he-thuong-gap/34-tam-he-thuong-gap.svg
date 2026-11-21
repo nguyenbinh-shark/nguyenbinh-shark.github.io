@@ -1,0 +1,175 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700" role="img" aria-labelledby="t1 d1">
+  <title id="t1">Tám hệ hay gặp và bài học tuyến tính hóa của từng hệ</title>
+  <desc id="d1">Lưới tám ô, mỗi ô một sơ đồ đơn giản: con lắc đơn có động cơ, động cơ DC với hộp số và tải, bể nước, nâng từ trường, xe hai bánh tự cân bằng, robot vi sai nhìn từ trên xuống, drone phẳng hai cánh quạt, và tay máy hai khâu. Dưới mỗi sơ đồ là tên hệ và bài học chính khi tuyến tính hóa hệ đó.</desc>
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#475569"/>
+    </marker>
+    <marker id="arA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 9 5 L 0 9 z" fill="#b45309"/>
+    </marker>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1 { font-size: 24px; font-weight: 800; fill: #0f172a; }
+      .h2 { font-size: 16px; font-weight: 500; fill: #64748b; }
+      .nb { font-size: 14px; font-weight: 800; fill: #ffffff; }
+      .nm { font-size: 16px; font-weight: 800; fill: #1e293b; }
+      .ls { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .m  { font-family: "Times New Roman", "STIX Two Text", Times, serif; font-style: italic; font-size: 18px; fill: #334155; }
+      .mA { font-family: "Times New Roman", "STIX Two Text", Times, serif; font-style: italic; font-size: 18px; fill: #92400e; }
+      .cell { fill: #f8fafc; stroke: #e2e8f0; stroke-width: 1.5; }
+      .ln { stroke: #1e293b; stroke-width: 3; fill: none; stroke-linecap: round; }
+      .lt { stroke: #475569; stroke-width: 2; fill: none; }
+      .bd { fill: #ffffff; stroke: #1e293b; stroke-width: 2.5; }
+      .sf { fill: #e2e8f0; stroke: #475569; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <rect width="1000" height="700" fill="#ffffff"/>
+  <text x="40" y="46" class="h1">Tám hệ hay gặp, tám bài học tuyến tính hóa</text>
+  <text x="40" y="74" class="h2">Mỗi hệ được chọn vì nó dạy một điều mà con lắc trên xe của Bài 7 chưa gặp.</text>
+
+  <!-- ===== Row 1 ===== -->
+  <!-- 1. Simple pendulum -->
+  <g transform="translate(40,100)">
+    <rect class="cell" width="220" height="280" rx="10"/>
+    <circle cx="20" cy="20" r="12" fill="#b45309"/><text x="20" y="25" text-anchor="middle" class="nb">1</text>
+    <line x1="60" y1="28" x2="160" y2="28" stroke="#94a3b8" stroke-width="3"/>
+    <circle cx="110" cy="40" r="12" class="sf"/>
+    <line x1="110" y1="40" x2="110" y2="150" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <line x1="110" y1="40" x2="160" y2="127" class="ln"/>
+    <circle cx="160" cy="127" r="11" fill="#1e293b"/>
+    <path d="M 110 85 A 45 45 0 0 0 132.5 79" class="lt"/>
+    <text x="114" y="104" class="m">θ</text>
+    <text x="80" y="46" class="mA">τ</text>
+    <text x="16" y="196" class="nm">Con lắc đơn có động cơ</text>
+    <text x="16" y="222" class="ls">Nhiều điểm cân bằng,</text>
+    <text x="16" y="242" class="ls">mỗi điểm một ma trận A</text>
+  </g>
+
+  <!-- 2. DC motor + gearbox + load -->
+  <g transform="translate(275,100)">
+    <rect class="cell" width="220" height="280" rx="10"/>
+    <circle cx="20" cy="20" r="12" fill="#b45309"/><text x="20" y="25" text-anchor="middle" class="nb">2</text>
+    <rect x="20" y="62" width="52" height="52" rx="6" class="sf"/>
+    <text x="46" y="94" text-anchor="middle" class="m">M</text>
+    <line x1="72" y1="88" x2="94" y2="88" class="ln"/>
+    <circle cx="104" cy="88" r="10" class="bd"/>
+    <circle cx="136" cy="70" r="24" class="bd"/>
+    <line x1="160" y1="70" x2="180" y2="70" class="ln"/>
+    <rect x="180" y="36" width="16" height="68" rx="3" fill="#1e293b"/>
+    <text x="118" y="132" class="m">N : 1</text>
+    <text x="30" y="50" class="mA">V</text>
+    <text x="16" y="196" class="nm">Động cơ DC + hộp số</text>
+    <text x="16" y="222" class="ls">Đã tuyến tính: rút gọn bậc,</text>
+    <text x="16" y="242" class="ls">quán tính quy đổi qua hộp số</text>
+  </g>
+
+  <!-- 3. Water tank -->
+  <g transform="translate(510,100)">
+    <rect class="cell" width="220" height="280" rx="10"/>
+    <circle cx="20" cy="20" r="12" fill="#b45309"/><text x="20" y="25" text-anchor="middle" class="nb">3</text>
+    <rect x="62" y="80" width="96" height="58" fill="#cbd5e1"/>
+    <path d="M 62 40 V 138 H 150 M 166 138 H 158 V 40" class="ln"/>
+    <path d="M 30 30 H 86 V 66" stroke="#b45309" stroke-width="3" fill="none" marker-end="url(#arA)"/>
+    <text x="38" y="22" class="mA">q<tspan dy="4" font-size="13">in</tspan></text>
+    <path d="M 150 132 H 196" class="lt" marker-end="url(#ar)"/>
+    <text x="148" y="158" class="m">q<tspan dy="4" font-size="13">out</tspan></text>
+    <path d="M 74 136 V 84" class="lt" marker-end="url(#ar)" marker-start="url(#ar)"/>
+    <text x="80" y="114" class="m">h</text>
+    <text x="16" y="196" class="nm">Bể nước</text>
+    <text x="16" y="222" class="ls">Đầu vào cân bằng khác 0,</text>
+    <text x="16" y="242" class="ls">độ lợi đổi theo mực nước</text>
+  </g>
+
+  <!-- 4. Magnetic levitation -->
+  <g transform="translate(745,100)">
+    <rect class="cell" width="220" height="280" rx="10"/>
+    <circle cx="20" cy="20" r="12" fill="#b45309"/><text x="20" y="25" text-anchor="middle" class="nb">4</text>
+    <rect x="70" y="30" width="80" height="34" rx="4" class="sf"/>
+    <path d="M 80 34 V 60 M 92 34 V 60 M 104 34 V 60 M 116 34 V 60 M 128 34 V 60 M 140 34 V 60" stroke="#64748b" stroke-width="1.5"/>
+    <text x="158" y="54" class="mA">i</text>
+    <circle cx="110" cy="112" r="20" fill="#1e293b"/>
+    <path d="M 58 66 V 90" class="lt" marker-end="url(#ar)" marker-start="url(#ar)"/>
+    <text x="38" y="84" class="m">x</text>
+    <line x1="52" y1="64" x2="70" y2="64" stroke="#94a3b8"/>
+    <line x1="52" y1="92" x2="92" y2="92" stroke="#94a3b8"/>
+    <path d="M 110 136 V 160" class="lt" marker-end="url(#ar)"/>
+    <text x="118" y="158" class="m">mg</text>
+    <text x="16" y="196" class="nm">Nâng từ trường</text>
+    <text x="16" y="222" class="ls">Đầu vào đi vào phi tuyến (i²),</text>
+    <text x="16" y="242" class="ls">mất ổn định rất nhanh</text>
+  </g>
+
+  <!-- ===== Row 2 ===== -->
+  <!-- 5. TWIP -->
+  <g transform="translate(40,400)">
+    <rect class="cell" width="220" height="280" rx="10"/>
+    <circle cx="20" cy="20" r="12" fill="#b45309"/><text x="20" y="25" text-anchor="middle" class="nb">5</text>
+    <line x1="30" y1="152" x2="190" y2="152" stroke="#94a3b8" stroke-width="3"/>
+    <rect x="97" y="34" width="26" height="96" rx="5" class="sf" transform="rotate(15 110 128)"/>
+    <circle cx="110" cy="128" r="22" class="bd"/>
+    <circle cx="110" cy="128" r="4" fill="#1e293b"/>
+    <line x1="110" y1="128" x2="110" y2="30" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <text x="118" y="64" class="m">θ</text>
+    <text x="146" y="128" class="mA">τ</text>
+    <text x="16" y="196" class="nm">Xe hai bánh tự cân bằng</text>
+    <text x="16" y="222" class="ls">Mô-men phản lực lên thân,</text>
+    <text x="16" y="242" class="ls">ràng buộc lăn không trượt</text>
+  </g>
+
+  <!-- 6. Differential drive (top view) -->
+  <g transform="translate(275,400)">
+    <rect class="cell" width="220" height="280" rx="10"/>
+    <circle cx="20" cy="20" r="12" fill="#b45309"/><text x="20" y="25" text-anchor="middle" class="nb">6</text>
+    <path d="M 30 150 C 70 140 120 90 190 40" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 5" fill="none"/>
+    <circle cx="105" cy="98" r="34" class="sf"/>
+    <rect x="65" y="82" width="10" height="32" rx="2" fill="#1e293b"/>
+    <rect x="135" y="82" width="10" height="32" rx="2" fill="#1e293b"/>
+    <path d="M 105 98 V 44" stroke="#b45309" stroke-width="3" marker-end="url(#arA)"/>
+    <text x="112" y="54" class="mA">v</text>
+    <text x="28" y="172" class="ls">quỹ đạo đặt</text>
+    <text x="16" y="196" class="nm">Robot vi sai</text>
+    <text x="16" y="222" class="ls">Đứng yên thì không điều khiển</text>
+    <text x="16" y="242" class="ls">được; phải chạy mới lái ngang</text>
+  </g>
+
+  <!-- 7. Planar quadrotor -->
+  <g transform="translate(510,400)">
+    <rect class="cell" width="220" height="280" rx="10"/>
+    <circle cx="20" cy="20" r="12" fill="#b45309"/><text x="20" y="25" text-anchor="middle" class="nb">7</text>
+    <line x1="40" y1="104" x2="180" y2="104" class="ln"/>
+    <rect x="96" y="96" width="28" height="18" rx="4" class="sf"/>
+    <ellipse cx="50" cy="94" rx="26" ry="5" class="sf"/>
+    <ellipse cx="170" cy="94" rx="26" ry="5" class="sf"/>
+    <line x1="50" y1="94" x2="50" y2="104" class="ln"/>
+    <line x1="170" y1="94" x2="170" y2="104" class="ln"/>
+    <path d="M 50 86 V 46" stroke="#b45309" stroke-width="3" marker-end="url(#arA)"/>
+    <path d="M 170 86 V 46" stroke="#b45309" stroke-width="3" marker-end="url(#arA)"/>
+    <text x="24" y="58" class="mA">F₁</text>
+    <text x="180" y="58" class="mA">F₂</text>
+    <path d="M 110 116 V 150" class="lt" marker-end="url(#ar)"/>
+    <text x="118" y="148" class="m">mg</text>
+    <text x="16" y="196" class="nm">Drone phẳng</text>
+    <text x="16" y="222" class="ls">Lực nâng giữ cân bằng,</text>
+    <text x="16" y="242" class="ls">phải nghiêng mới đi ngang</text>
+  </g>
+
+  <!-- 8. Two-link arm -->
+  <g transform="translate(745,400)">
+    <rect class="cell" width="220" height="280" rx="10"/>
+    <circle cx="20" cy="20" r="12" fill="#b45309"/><text x="20" y="25" text-anchor="middle" class="nb">8</text>
+    <rect x="34" y="132" width="44" height="18" rx="3" class="sf"/>
+    <line x1="56" y1="132" x2="126" y2="80" class="ln"/>
+    <line x1="126" y1="80" x2="186" y2="112" class="ln"/>
+    <circle cx="56" cy="132" r="7" class="bd"/>
+    <circle cx="126" cy="80" r="7" class="bd"/>
+    <circle cx="186" cy="112" r="8" fill="#1e293b"/>
+    <text x="62" y="116" class="mA">τ₁</text>
+    <text x="132" y="70" class="mA">τ₂</text>
+    <path d="M 186 124 V 156" class="lt" marker-end="url(#ar)"/>
+    <text x="16" y="196" class="nm">Tay máy hai khâu</text>
+    <text x="16" y="222" class="ls">Mô hình đổi theo tư thế</text>
+    <text x="16" y="242" class="ls">của cánh tay</text>
+  </g>
+</svg>

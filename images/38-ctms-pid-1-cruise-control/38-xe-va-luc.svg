@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="425" viewBox="0 0 960 425" role="img" aria-labelledby="t1 d1">
+  <title id="t1">Xe và các lực theo phương chuyển động</title>
+  <desc id="d1">Lực kéo u đẩy xe về phía trước. Lực cản b nhân v và tải d chống lại chuyển động. Khối lượng m nhân gia tốc bằng tổng lực. Mô hình bỏ qua chi tiết động cơ và hộp số.</desc>
+  <defs>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1 { font-size: 24px; font-weight: 800; fill: #0f172a; }
+      .h2 { font-size: 16px; font-weight: 500; fill: #64748b; }
+      .pt { font-size: 16px; font-weight: 700; fill: #1e293b; }
+      .ax { font-size: 14px; font-weight: 500; fill: #64748b; font-variant-numeric: tabular-nums; }
+      .axl { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .lg { font-size: 15px; font-weight: 500; fill: #334155; }
+      .an { font-size: 14px; font-weight: 600; fill: #334155; }
+      .anm { font-size: 14px; font-weight: 500; fill: #475569; }
+      .m { font-family: "Times New Roman", "STIX Two Text", Times, serif; font-style: italic; }
+    </style>
+  </defs>
+  <rect width="960" height="425" fill="#ffffff"/>
+<text x="30" y="42" class="h1">Xe tăng tốc khi lực kéo thắng lực cản</text>
+<text x="30" y="68" class="h2">Mô hình CTMS · chỉ xét chuyển động thẳng · m = 1000 kg, b = 50 N·s/m</text>
+<line x1="30" y1="86" x2="930" y2="86" stroke="#e2e8f0"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
+<line x1="65" y1="299" x2="905" y2="299" stroke="#94a3b8" stroke-width="3"/>
+<path d="M310,265 L310,218 Q310,205 332,203 L385,199 L420,154 Q426,145 440,145 L545,145 Q558,145 568,158 L599,199 L635,211 Q650,217 650,232 L650,265 Z" fill="#dbeafe" stroke="#2a78d6" stroke-width="3"/>
+<path d="M404,193 L433,156 L477,156 L477,193 Z M490,156 L539,156 Q546,156 550,162 L575,193 L490,193 Z" fill="#ffffff" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="382" cy="269" r="28" fill="#334155" stroke="#ffffff" stroke-width="3"/>
+<circle cx="382" cy="269" r="12" fill="#e2e8f0"/>
+<circle cx="579" cy="269" r="28" fill="#334155" stroke="#ffffff" stroke-width="3"/>
+<circle cx="579" cy="269" r="12" fill="#e2e8f0"/>
+<text x="490.0" y="236.0" class="pt" text-anchor="middle">m = 1000 kg</text>
+<line x1="530" y1="124" x2="730" y2="124" stroke="#2a78d6" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="630.0" y="112.0" class="an" text-anchor="middle">v: vận tốc (m/s)</text>
+<line x1="630" y1="257" x2="878" y2="257" stroke="#1baf7a" stroke-width="4" marker-end="url(#arrow)"/>
+<text x="756.0" y="236.0" class="an" text-anchor="middle">u: lực kéo (N)</text>
+<line x1="330" y1="231" x2="90" y2="231" stroke="#eb6834" stroke-width="4" marker-end="url(#arrow)"/>
+<text x="206.0" y="210.0" class="an" text-anchor="middle">bv: lực cản (N)</text>
+<line x1="329" y1="273" x2="147" y2="273" stroke="#8b5cf6" stroke-width="3" marker-end="url(#arrow)"/>
+<text x="198.0" y="296.0" class="an" text-anchor="middle">d: tải thêm (N)</text>
+<text x="480.0" y="342.0" class="pt" text-anchor="middle">m·dv/dt = u − bv − d</text>
+<text x="480.0" y="371.0" class="anm" text-anchor="middle">Gia tốc = (lực kéo − lực cản − tải thêm) / khối lượng</text>
+<text x="480.0" y="398.0" class="anm" text-anchor="middle">Mô hình CTMS gốc lấy d = 0; phần thử nhiễu bổ sung một tải chống chuyển động.</text>
+</svg>

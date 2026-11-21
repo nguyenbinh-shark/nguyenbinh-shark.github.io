@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Demo 3 — Luồng bấm nút từ Web xuống Bơm/Van &amp; Phản hồi quay về</title>
+<style>
+  :root {
+    --bg: #0b1120;
+    --panel: #111827;
+    --panel-2: #0f172a;
+    --border: #1e293b;
+    --border-hi: #334155;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --cyan: #38bdf8;
+    --green: #22c55e;
+    --amber: #f59e0b;
+    --red: #ef4444;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 12px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; }
+  .topbar h1 { margin: 0; font-size: 1.02rem; }
+  .topbar p { margin: 2px 0 8px; font-size: 0.8rem; color: var(--muted); }
+  .scn-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    margin-bottom: 8px;
+  }
+  button {
+    border: 1px solid var(--border-hi);
+    background: var(--panel);
+    color: var(--text);
+    padding: 7px 10px;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+  }
+  button:hover:not(:disabled) { border-color: var(--cyan); color: var(--cyan); }
+  button:disabled { opacity: 0.45; cursor: not-allowed; }
+  button.scn.active { background: rgba(245, 158, 11, 0.16); border-color: var(--amber); color: #fcd34d; }
+  button.scn-err.active { background: rgba(239, 68, 68, 0.16); border-color: var(--red); color: #fca5a5; }
+  button.scn-ok.active { background: rgba(34, 197, 94, 0.16); border-color: var(--green); color: #86efac; }
+  .playback-bar {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+    align-items: center;
+  }
+  .playback-bar button { text-align: center; }
+  button.play-btn { background: #d97706; border-color: #f59e0b; color: #fff; }
+
+  .stage {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 8px;
+  }
+  svg#cmdSvg { display: block; width: 100%; height: auto; }
+  .wire { fill: none; stroke: #334155; stroke-width: 2.2; }
+  .wire.down { stroke: var(--amber); stroke-width: 3.4; }
+  .wire.back { stroke: var(--green); stroke-width: 3.4; }
+  .wire.err { stroke: var(--red); stroke-width: 3.4; stroke-dasharray: 5 4; }
+  .st rect { fill: #111827; stroke: #334155; stroke-width: 1.5; rx: 8; ry: 8; transition: all 0.2s ease; }
+  .st.down rect { fill: #451a03; stroke: var(--amber); stroke-width: 2.4; }
+  .st.back rect { fill: #052e16; stroke: var(--green); stroke-width: 2.4; }
+  .st.err rect { fill: #450a0a; stroke: var(--red); stroke-width: 2.5; }
+  .st-t { fill: #f8fafc; font-size: 11px; font-weight: 700; }
+  .st-s { fill: #94a3b8; font-size: 9.5px; }
+
+  .bottom-grid {
+    display: grid;
+    grid-template-columns: 1.45fr 1fr;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 12px;
+  }
+  .card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .pill {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: rgba(245, 158, 11, 0.16);
+    color: var(--amber);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+  }
+  .pill.ok { background: rgba(34, 197, 94, 0.16); color: var(--green); border-color: rgba(34, 197, 94, 0.35); }
+  .pill.err { background: rgba(239, 68, 68, 0.16); color: var(--red); border-color: rgba(239, 68, 68, 0.35); }
+  .explain { margin: 0 0 8px; font-size: 0.83rem; color: #e2e8f0; }
+  pre.payload {
+    margin: 0;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: #020617;
+    border: 1px solid #1e293b;
+    font-family: ui-monospace, Consolas, monospace;
+    font-size: 0.72rem;
+    color: #cbd5e1;
+    overflow-x: auto;
+    line-height: 1.42;
+  }
+  .hydro-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+  .h-box {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 9px;
+  }
+  .h-box span { display: block; font-size: 0.7rem; color: var(--muted); }
+  .h-box b { display: block; font-size: 0.9rem; margin-top: 2px; color: var(--text); }
+  .h-box.on { border-color: var(--green); background: rgba(34, 197, 94, 0.08); }
+  .h-box.on b { color: #4ade80; }
+  .h-box.blocked { border-color: var(--red); background: rgba(239, 68, 68, 0.08); }
+  .h-box.blocked b { color: #f87171; }
+  .warn-tip { margin: 8px 0 0; font-size: 0.75rem; color: var(--muted); }
+  @media (max-width: 740px) {
+    body { padding: 8px; }
+    .scn-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .bottom-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    .scn-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <h1>Animation Bấm Nút Trên Web: Lệnh Đi Xuống Qua Chốt Kiểm Tra &amp; Phản Hồi Quay Về</h1>
+    <p>Hãy bấm thử từng nút thao tác bên dưới để xem gói tin đi qua những chốt kiểm tra nào (Vàng = Lệnh đi xuống · Đỏ = Bị chặn · Xanh = Phản hồi thật quay về). Bấm các khối có nhãn 📷 Ảnh để xem ảnh phần cứng thực tế.</p>
+  </div>
+
+  <div class="scn-grid">
+    <button class="scn scn-ok active" data-scn="open_b" type="button">💧 1. Bấm Mở Van B (User hợp lệ)</button>
+    <button class="scn scn-err" data-scn="pump_blocked" type="button">🚫 2. Bật Bơm khi 3 van đóng (Bị chặn!)</button>
+    <button class="scn scn-ok" data-scn="pump_ok" type="button">✅ 3. Bật Bơm sau khi Van B đã mở</button>
+    <button class="scn scn-err" data-scn="guest_blocked" type="button">🔒 4. Khách (Guest) cố bấm Mở Van</button>
+    <button class="scn scn-err" data-scn="estop" type="button">🚨 5. Bấm Dừng Khẩn Cấp (E-STOP)</button>
+    <button class="scn" data-scn="reset_water" type="button">↺ 6. Đặt lại số lít về 0 (Offset)</button>
+  </div>
+
+  <div class="playback-bar">
+    <button id="btnPlay" class="play-btn" type="button">▶ Chạy tự động</button>
+    <button id="btnPrev" type="button">⏮ Bước trước</button>
+    <button id="btnNext" type="button">⏭ Bước tiếp theo</button>
+    <button id="btnReplay" type="button">↺ Chạy lại</button>
+  </div>
+
+  <div class="stage">
+    <svg id="cmdSvg" viewBox="0 0 920 250" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="glow3" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="2.5" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+
+      <!-- Row labels -->
+      <text x="14" y="18" fill="#fbbf24" font-size="10.5" font-weight="700">CHIỀU ĐI XUỐNG (Lệnh điều khiển &amp; 3 Chốt kiểm tra an toàn)</text>
+      <text x="14" y="152" fill="#4ade80" font-size="10.5" font-weight="700">CHIỀU PHẢN HỒI QUAY VỀ (Xác nhận thật từ STM32 → Đổi màu giao diện Web)</text>
+
+      <!-- Downward wires -->
+      <path id="dw1" class="wire" d="M 128 66 L 154 66"/>
+      <path id="dw2" class="wire" d="M 278 66 L 304 66"/>
+      <path id="dw3" class="wire" d="M 434 66 L 460 66"/>
+      <path id="dw4" class="wire" d="M 580 66 L 606 66"/>
+      <path id="dw5" class="wire" d="M 716 66 L 742 66"/>
+      <path id="dw6" class="wire" d="M 852 100 L 852 162"/>
+
+      <!-- Blocked bounce back wires -->
+      <path id="err-g1" class="wire" d="M 216 100 C 216 126, 70 126, 70 100"/>
+      <path id="err-g2" class="wire" d="M 369 100 C 369 132, 70 132, 70 100"/>
+
+      <!-- Return feedback wires -->
+      <path id="rw1" class="wire" d="M 742 198 L 602 198"/>
+      <path id="rw2" class="wire" d="M 474 198 L 352 198"/>
+      <path id="rw3" class="wire" d="M 222 198 C 110 198, 70 150, 70 100"/>
+      <!-- Shortcut VPS -> WebSocket for reset_water offset -->
+      <path id="rw-offset" class="wire" d="M 304 100 C 280 142, 110 142, 70 100"/>
+
+      <!-- Stations Down -->
+      <g class="st" id="s-web" transform="translate(14,32)">
+        <rect width="114" height="68"/>
+        <text class="st-t" x="9" y="22">Web HMI</text>
+        <text class="st-s" x="9" y="39">Bấm nút + Hộp</text>
+        <text class="st-s" x="9" y="54">xác nhận + JWT</text>
+      </g>
+
+      <g class="st" id="s-g1" transform="translate(154,32)">
+        <rect width="124" height="68"/>
+        <text class="st-t" x="9" y="22">Chốt 1: Quyền</text>
+        <text class="st-s" x="9" y="39">Backend check JWT</text>
+        <text class="st-s" x="9" y="54">Chặn Guest (403)</text>
+      </g>
+
+      <g class="st" id="s-g2" transform="translate(304,32)">
+        <rect width="130" height="68"/>
+        <text class="st-t" x="9" y="22">Chốt 2: An toàn</text>
+        <text class="st-s" x="9" y="39">Check Van &amp; Bồn</text>
+        <text class="st-s" x="9" y="54">+ Ghi sổ commands</text>
+      </g>
+
+      <g class="st" id="s-emqx" transform="translate(460,32)">
+        <rect width="120" height="68"/>
+        <text class="st-t" x="9" y="22">EMQX Broker</text>
+        <text class="st-s" x="9" y="39">Topic /command</text>
+        <text class="st-s" x="9" y="54">QoS 1 · Retain=off</text>
+      </g>
+
+      <g class="st" id="s-4g" transform="translate(606,32)">
+        <rect width="110" height="68"/>
+        <text class="st-t" x="9" y="22">Modem 4G</text>
+        <text class="st-s" x="9" y="39">EC600N nhận</text>
+        <text class="st-s" x="9" y="54">URC → STM32</text>
+      </g>
+
+      <g class="st" id="s-stm" transform="translate(742,32)">
+        <rect width="164" height="68"/>
+        <text class="st-t" x="9" y="22" style="font-size:11px;">STM32F401RCT6 (Chốt 3)</text>
+        <text class="st-s" x="9" y="39">Check Interlock vật lý</text>
+        <text class="st-s" x="9" y="54">Đóng/Ngắt Relay</text>
+      </g>
+
+      <!-- Stations Return -->
+      <g class="st" id="s-act" transform="translate(742,164)">
+        <rect width="164" height="68"/>
+        <text class="st-t" x="9" y="22">Bơm &amp; 3 Van thật</text>
+        <text class="st-s" x="9" y="39">PB4 (Bơm) · PB5/8/9</text>
+        <text class="st-s" x="9" y="54">Gửi /events + /data mới</text>
+      </g>
+
+      <g class="st" id="s-ret-emqx" transform="translate(474,164)">
+        <rect width="128" height="68"/>
+        <text class="st-t" x="9" y="22">EMQX (Quay về)</text>
+        <text class="st-s" x="9" y="39">/events &amp; /data</text>
+        <text class="st-s" x="9" y="54">Trạng thái mới</text>
+      </g>
+
+      <g class="st" id="s-ret-vps" transform="translate(222,164)">
+        <rect width="130" height="68"/>
+        <text class="st-t" x="9" y="22">VPS → WebSocket</text>
+        <text class="st-s" x="9" y="39">Lưu SQLite EventLog</text>
+        <text class="st-s" x="9" y="54">Đẩy WS lên trình duyệt</text>
+      </g>
+
+      <g id="pktLayer3"></g>
+    </svg>
+  </div>
+
+  <div class="bottom-grid">
+    <div class="card">
+      <div class="card-head">
+        <strong id="stepTitle">Bước 1</strong>
+        <span class="pill" id="stepPill">1 / 7</span>
+      </div>
+      <p class="explain" id="stepExplain"></p>
+      <pre class="payload" id="stepPayload"></pre>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <strong>Trạng thái Bơm/Van &amp; Nút trên Web</strong>
+        <span class="pill ok" id="hydroBadge">Chờ lệnh</span>
+      </div>
+      <div class="hydro-grid">
+        <div class="h-box" id="boxPump"><span>Bơm 12V (PB4)</span><b id="valPump">DỪNG</b></div>
+        <div class="h-box" id="boxValveB"><span>Van Hàng B (PB8)</span><b id="valValveB">ĐÓNG</b></div>
+        <div class="h-box" id="boxGate"><span>Kết quả kiểm tra</span><b id="valGate">Chưa gửi</b></div>
+        <div class="h-box" id="boxWater"><span>Nước Hàng B (Web)</span><b id="valWater">12.00 L</b></div>
+      </div>
+      <p class="warn-tip" id="hydroNote">Quy tắc vàng: Thông báo "Đã gửi lệnh" ≠ Bơm đã chạy. Phải đợi vòng phản hồi màu xanh quay về!</p>
+    </div>
+  </div>
+</div>
+
+<script src="./hardware-photos.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  const SCENARIOS = {
+    open_b: {
+      steps: [
+        {
+          st: "s-web", wire: null, dir: "down",
+          title: "Bước 1: Người dùng (User) bấm Mở Van B & xác nhận",
+          explain: "Trình duyệt mở hộp thoại xác nhận tránh bấm nhầm, sau đó gửi yêu cầu HTTP POST /commands kèm thẻ đăng nhập JWT trong Header.",
+          payload: "POST /commands\nAuthorization: Bearer <JWT_TOKEN>\n{\"device_id\": \"stm32_tram_01\", \"action\": \"start\", \"row\": 2}",
+          hydro: { pump: "DỪNG", pumpCls: "", vb: "ĐÓNG (Chờ)", vbCls: "", gate: "Đang gửi...", gateCls: "", water: "12.00 L", badge: "Chiều đi xuống", badgeCls: "" }
+        },
+        {
+          st: "s-g1", wire: "dw1", dir: "down",
+          title: "Bước 2: Chốt 1 (Backend RBAC) kiểm tra thẻ JWT",
+          explain: "FastAPI giải mã JWT, thấy tài khoản có vai trò 'user' (hoặc 'admin') → CHO QUA. Nếu là 'guest', yêu cầu sẽ bị chặn ngay tại đây.",
+          payload: "require_operator_or_admin() -> PASS\nNgười bấm: \"Người vận hành A\" (role = user)",
+          hydro: { pump: "DỪNG", pumpCls: "", vb: "ĐÓNG (Chờ)", vbCls: "", gate: "Chốt 1: OK", gateCls: "on", water: "12.00 L", badge: "Qua Chốt quyền", badgeCls: "" }
+        },
+        {
+          st: "s-g2", wire: "dw2", dir: "down",
+          title: "Bước 3: Chốt 2 (Backend An toàn) & Ghi sổ truy vết",
+          explain: "Kiểm tra thấy bồn ở trạng thái cho phép (tank_ok = true), lệnh mở van hợp lệ. VPS lưu lại ai vừa bấm lệnh vào bảng commands & history rồi gửi lên EMQX.",
+          payload: "Safety Guard: PASS (action='start')\nSQLite INSERT commands (status='published_mqtt')\nSQLite INSERT history (Audit Trail: ai bấm lúc nào)",
+          hydro: { pump: "DỪNG", pumpCls: "", vb: "ĐÓNG (Chờ)", vbCls: "", gate: "Chốt 2: OK", gateCls: "on", water: "12.00 L", badge: "Đã ghi sổ DB", badgeCls: "" }
+        },
+        {
+          st: "s-emqx", wire: "dw3", dir: "down",
+          title: "Bước 4: EMQX chuyển lệnh xuống Topic /command",
+          explain: "EMQX phát gói JSON xuống iot/devices/stm32_tram_01/command. Lệnh bấm nút dùng Retain=false để nếu mất điện không bị tự kích lại sau nhiều giờ.",
+          payload: "MQTT PUBLISH -> iot/devices/stm32_tram_01/command\nQoS: 1 | Retain: false\n{\"action\": \"start\", \"row\": 2}",
+          hydro: { pump: "DỪNG", pumpCls: "", vb: "ĐÓNG (Chờ)", vbCls: "", gate: "Lên đường truyền", gateCls: "", water: "12.00 L", badge: "Qua EMQX", badgeCls: "" }
+        },
+        {
+          st: "s-4g", wire: "dw4", dir: "down",
+          title: "Bước 5: Modem 4G EC600N nhận lệnh ngoài vườn",
+          explain: "Modem 4G nhận gói tin từ EMQX, đẩy thẳng vào bộ đệm vòng DMA trên USART1 để báo cho STM32 xử lý.",
+          payload: "+QMTRECV: 1,0,\"iot/devices/stm32_tram_01/command\",\"{\\\"action\\\":\\\"start\\\",\\\"row\\\":2}\"",
+          hydro: { pump: "DỪNG", pumpCls: "", vb: "ĐÓNG (Chờ)", vbCls: "", gate: "Tới vườn qua 4G", gateCls: "", water: "12.00 L", badge: "Đã tới Modem 4G", badgeCls: "" }
+        },
+        {
+          st: "s-stm", wire: "dw5", dir: "down",
+          title: "Bước 6: STM32 kiểm tra khóa cứng lần 3 & Đóng Relay PB8",
+          explain: "STM32 kiểm tra đang ở chế độ Thủ công (Manual), kích chân PB8 lên HIGH để mở cuộn hút Van điện từ Hàng B. Lưu ý: Mở van xong bơm CHƯA tự bật!",
+          payload: "HAL_GPIO_WritePin(VALVE_B_PB8, GPIO_PIN_SET);\n// Bơm PB4 vẫn TẮT cho tới khi người dùng bấm Bật bơm",
+          hydro: { pump: "DỪNG", pumpCls: "", vb: "MỞ (Thật!)", vbCls: "on", gate: "Relay PB8 = ON", gateCls: "on", water: "12.00 L", badge: "Van B đã mở!", badgeCls: "ok" }
+        },
+        {
+          st: "s-ret-emqx", wire: "rw1", dir: "back",
+          title: "Bước 7: STM32 phát gói phản hồi /events & /data quay về",
+          explain: "Ngay sau khi đóng relay, STM32 lập tức bắn sự kiện và trạng thái thật mới lên EMQX để chứng minh mình đã nhận lệnh và làm theo.",
+          payload: "PUBLISH /events -> {\"type\":\"manual_start\", \"row\":2}\nPUBLISH /data   -> {\"pump_on\":false, \"rows\":[{\"id\":1,\"valve\":false},{\"id\":2,\"valve\":true},...]}",
+          hydro: { pump: "DỪNG", pumpCls: "", vb: "MỞ (Thật!)", vbCls: "on", gate: "Đang báo về...", gateCls: "on", water: "12.00 L", badge: "Chiều phản hồi", badgeCls: "ok" }
+        },
+        {
+          st: "s-web", wire: "rw3", dir: "back",
+          title: "Bước 8: WebSocket đẩy lên Web → Giao diện chuyển Xanh Lá!",
+          explain: "VPS lưu log và đẩy WebSocket /ws/sensor_data. Lúc này Van B trên sơ đồ Web HMI mới đổi sang màu xanh dương/xanh lá xác nhận van đã mở!",
+          payload: "WebSocket PUSH -> Web HMI\nVan B (PB8): ĐANG MỞ · Sẵn sàng nhận lệnh Bật Bơm!",
+          hydro: { pump: "DỪNG", pumpCls: "", vb: "MỞ (Đã xác nhận)", vbCls: "on", gate: "Hoàn tất 2 chiều", gateCls: "on", water: "12.00 L", badge: "Xác nhận xong!", badgeCls: "ok" }
+        }
+      ]
+    },
+    pump_blocked: {
+      steps: [
+        {
+          st: "s-web", wire: null, dir: "down",
+          title: "Bước 1: Người dùng bấm Bật Bơm khi cả 3 van đang đóng",
+          explain: "Trên màn hình chưa có van nào mở, nếu cố gửi lệnh pump_on, điều gì sẽ xảy ra?",
+          payload: "POST /commands\nAuthorization: Bearer <JWT_TOKEN>\n{\"device_id\": \"stm32_tram_01\", \"action\": \"pump_on\"}",
+          hydro: { pump: "DỪNG", pumpCls: "", vb: "ĐÓNG", vbCls: "", gate: "Đang gửi...", gateCls: "", water: "12.00 L", badge: "Gửi lệnh bật bơm", badgeCls: "" }
+        },
+        {
+          st: "s-g1", wire: "dw1", dir: "down",
+          title: "Bước 2: Qua Chốt 1 (Tài khoản User có quyền điều khiển)",
+          explain: "Tài khoản hợp lệ nên qua được Chốt phân quyền, nhưng tiếp tục gặp Chốt 2 (An toàn thủy lực) ở ngay phía sau.",
+          payload: "require_operator_or_admin() -> PASS (role = user)",
+          hydro: { pump: "DỪNG", pumpCls: "", vb: "ĐÓNG", vbCls: "", gate: "Chốt 1: OK", gateCls: "on", water: "12.00 L", badge: "Tới Chốt an toàn", badgeCls: "" }
+        },
+        {
+          st: "s-g2", wire: "err-g2", dir: "err",
+          title: "Bước 3: CHỐT 2 BẬT ĐỎ CHẶN LẠI — Không gửi xuống vườn!",
+          explain: "Backend kiểm tra bản ghi mới nhất thấy cả 3 van (A, B, C) đều đang ĐÓNG. Để chống nổ đường ống PE16 và cháy bơm, Backend trả lỗi HTTP 400 dội thẳng về Web, tuyệt đối KHÔNG phát tin lên EMQX!",
+          payload: "HTTP 400 Bad Request (Bị chặn tại api.py!)\n{\"detail\": \"Cả 3 van đang đóng — hãy mở ít nhất 1 van trước khi bật bơm!\"}",
+          hydro: { pump: "BỊ CHẶN", pumpCls: "blocked", vb: "ĐÓNG", vbCls: "", gate: "HTTP 400 · ĐÃ CHẶN", gateCls: "blocked", water: "12.00 L", badge: "Chặn để bảo vệ ống!", badgeCls: "err" }
+        }
+      ]
+    },
+    pump_ok: {
+      steps: [
+        {
+          st: "s-web", wire: null, dir: "down",
+          title: "Bước 1: Sau khi Van B đã mở, người dùng bấm Bật Bơm",
+          explain: "Bây giờ Van Hàng B đã mở sẵn. Web gửi yêu cầu pump_on lên Backend VPS.",
+          payload: "POST /commands\n{\"device_id\": \"stm32_tram_01\", \"action\": \"pump_on\"}",
+          hydro: { pump: "DỪNG (Chờ)", pumpCls: "", vb: "ĐANG MỞ", vbCls: "on", gate: "Đang gửi...", gateCls: "", water: "12.00 L", badge: "Gửi lệnh bật bơm", badgeCls: "" }
+        },
+        {
+          st: "s-g2", wire: "dw2", dir: "down",
+          title: "Bước 2: Chốt 1 & Chốt 2 đều XANH (Đã có Van B mở)",
+          explain: "Backend xác nhận tài khoản đúng quyền VÀ thấy trong trạng thái gần nhất có ít nhất 1 van đang mở (Van B) → Cho phép phát lệnh xuống EMQX.",
+          payload: "Chốt 1 RBAC: PASS | Chốt 2 Safety: PASS (rows[1].valve == true)\n→ PUBLISH iot/devices/stm32_tram_01/command",
+          hydro: { pump: "DỪNG (Chờ)", pumpCls: "", vb: "ĐANG MỞ", vbCls: "on", gate: "Chốt 1 & 2: OK", gateCls: "on", water: "12.00 L", badge: "Qua Backend VPS", badgeCls: "" }
+        },
+        {
+          st: "s-stm", wire: "dw5", dir: "down",
+          title: "Bước 3: STM32 kiểm tra Khóa liên động phần cứng & Bật Bơm PB4",
+          explain: "Kể cả khi nhận lệnh từ mạng, STM32 vẫn tự kiểm tra lại lần nữa xem đúng là có van đang mở (1 <= open_valves <= 3) không, rồi mới đóng Relay PB4 cho bơm chạy!",
+          payload: "Interlock check: open_valves = 1 (>=1) -> PASS\nHAL_GPIO_WritePin(PUMP_PB4, GPIO_PIN_SET); // Nước bắt đầu chảy!",
+          hydro: { pump: "ĐANG CHẠY", pumpCls: "on", vb: "ĐANG MỞ", vbCls: "on", gate: "Chốt 3 cứng: OK", gateCls: "on", water: "12.03 L", badge: "Bơm đang chạy!", badgeCls: "ok" }
+        },
+        {
+          st: "s-ret-vps", wire: "rw2", dir: "back",
+          title: "Bước 4: Phản hồi pump_on=true quay về Web → Nước chảy trên sơ đồ!",
+          explain: "STM32 báo /events (pump_started) & /data (pump_on: true, flow_lpm: 0.133) về VPS → WebSocket. Lúc này sơ đồ Web mới bật hoạt ảnh cánh quạt bơm quay và dòng nước xanh chảy vào 4 chậu Hàng B!",
+          payload: "WS PUSH -> {\"pump_on\": true, \"rows\":[..., {\"id\":2,\"valve\":true,\"flow_lpm\":0.133,\"daily_l\":12.08}]}",
+          hydro: { pump: "ĐANG CHẠY (Xác nhận)", pumpCls: "on", vb: "ĐANG MỞ", vbCls: "on", gate: "Hoàn tất 2 chiều", gateCls: "on", water: "12.08 L", badge: "Nước đang tưới!", badgeCls: "ok" }
+        }
+      ]
+    },
+    guest_blocked: {
+      steps: [
+        {
+          st: "s-web", wire: null, dir: "down",
+          title: "Bước 1: Tài khoản Khách (Guest) cố gửi yêu cầu mở van",
+          explain: "Bình thường nút điều khiển đã bị ẩn với tài khoản Guest. Nhưng giả sử có người tự dùng công cụ gửi thẳng yêu cầu API lên Backend thì sao?",
+          payload: "POST /commands\nAuthorization: Bearer <GUEST_JWT_TOKEN>\n{\"device_id\": \"stm32_tram_01\", \"action\": \"start\", \"row\": 1}",
+          hydro: { pump: "DỪNG", pumpCls: "", vb: "ĐÓNG", vbCls: "", gate: "Guest gửi lệnh...", gateCls: "", water: "12.00 L", badge: "Kiểm tra phân quyền", badgeCls: "" }
+        },
+        {
+          st: "s-g1", wire: "err-g1", dir: "err",
+          title: "Bước 2: CHỐT 1 BẬT ĐỎ CHẶN NGAY TẠI BACKEND (HTTP 403)!",
+          explain: "Máy chủ luôn là chốt chặn cuối cùng. Backend thấy role='guest' lập tức từ chối HTTP 403 Forbidden. Gói tin không bao giờ chạm được vào EMQX hay ngoài vườn!",
+          payload: "HTTP 403 Forbidden\n{\"detail\": \"Không đủ quyền thực hiện thao tác này (Cần User hoặc Admin)\"}",
+          hydro: { pump: "DỪNG", pumpCls: "", vb: "ĐÓNG", vbCls: "", gate: "HTTP 403 · BỊ CHẶN", gateCls: "blocked", water: "12.00 L", badge: "Bị chặn ở Chốt 1!", badgeCls: "err" }
+        }
+      ]
+    },
+    estop: {
+      steps: [
+        {
+          st: "s-web", wire: null, dir: "down",
+          title: "Bước 1: Bấm nút đỏ Dừng Khẩn Cấp (E-STOP) trên thanh tiêu đề",
+          explain: "Khi phát hiện tuột ống ngoài vườn, người dùng bấm nút đỏ E-STOP (luôn ghim cố định ở góc trên cùng mọi trang).",
+          payload: "POST /commands\n{\"device_id\": \"stm32_tram_01\", \"action\": \"estop\"}",
+          hydro: { pump: "ĐANG CHẠY", pumpCls: "on", vb: "ĐANG MỞ", vbCls: "on", gate: "Khẩn cấp!", gateCls: "blocked", water: "12.15 L", badge: "Kích hoạt E-STOP", badgeCls: "err" }
+        },
+        {
+          st: "s-emqx", wire: "dw3", dir: "down",
+          title: "Bước 2: Qua kiểm tra quyền & phóng thẳng qua EMQX",
+          explain: "Lệnh dừng khẩn cấp không bị cản bởi điều kiện bồn/van, đi thẳng qua EMQX tới Modem 4G.",
+          payload: "PUBLISH iot/devices/stm32_tram_01/command\n{\"action\": \"estop\"}",
+          hydro: { pump: "ĐANG CHẠY", pumpCls: "on", vb: "ĐANG MỞ", vbCls: "on", gate: "Đang chuyển E-STOP", gateCls: "blocked", water: "12.15 L", badge: "Bay xuống vườn", badgeCls: "err" }
+        },
+        {
+          st: "s-stm", wire: "dw5", dir: "down",
+          title: "Bước 3: STM32 ngắt BƠM trước → đóng toàn bộ 3 VAN sau",
+          explain: "Hàm irrigation_emergency_stop() ngắt Bơm PB4 ngay lập tức, sau đó đóng cả 3 Van PB5, PB8, PB9 (theo trình tự thủy lực để xả áp đường ống).",
+          payload: "irrigation_emergency_stop():\n  1. PUMP_PB4 = LOW (Ngắt bơm trước)\n  2. Chờ xả áp -> VALVE_A/B/C = LOW (Đóng cả 3 van)",
+          hydro: { pump: "ĐÃ NGẮT", pumpCls: "blocked", vb: "ĐÃ ĐÓNG", vbCls: "", gate: "Ngắt an toàn", gateCls: "on", water: "12.15 L", badge: "Đã dừng khẩn cấp", badgeCls: "ok" }
+        },
+        {
+          st: "s-web", wire: "rw3", dir: "back",
+          title: "Bước 4: Báo cáo E-STOP quay về Web HMI",
+          explain: "STM32 phát sự kiện estop lên /events và trạng thái toàn tắt lên /data. Web ghi nhận vào Nhật ký cảnh báo kèm tên người đã bấm E-STOP.",
+          payload: "PUBLISH /events -> {\"type\": \"estop\"}\nWeb HMI: Toàn bộ Bơm & 3 Van đã về trạng thái DỪNG",
+          hydro: { pump: "DỪNG", pumpCls: "", vb: "ĐÓNG", vbCls: "", gate: "Hoàn tất E-STOP", gateCls: "on", water: "12.15 L", badge: "An toàn", badgeCls: "ok" }
+        }
+      ]
+    },
+    reset_water: {
+      steps: [
+        {
+          st: "s-web", wire: null, dir: "down",
+          title: "Bước 1: Bấm 'Đặt lại về 0 L' để bắt đầu theo dõi đợt tưới mới",
+          explain: "Ví dụ tổng nước Hàng B đang là 12.00 L. Người vận hành bấm đặt lại để đo riêng cho đợt thử nghiệm hiện tại.",
+          payload: "POST /commands\n{\"device_id\": \"stm32_tram_01\", \"action\": \"reset_water\", \"row\": 2}",
+          hydro: { pump: "DỪNG", pumpCls: "", vb: "ĐÓNG", vbCls: "", gate: "Yêu cầu Reset", gateCls: "", water: "12.00 L", badge: "Bấm đặt lại", badgeCls: "" }
+        },
+        {
+          st: "s-g2", wire: "rw-offset", dir: "back",
+          title: "Bước 2 (Nhánh 1): VPS lưu mốc bù 12.00 L → Web về 0.00 L NGAY!",
+          explain: "Rất thông minh: VPS lưu số 12.00 L vào file water_offsets.json và trừ ngay trên màn hình (12.00 - 12.00 = 0.00 L). Nhờ vậy dù STM32 chưa kịp nhận lệnh và tiếp tục đếm lên 15 L, Web vẫn hiện đúng 15 - 12 = 3.00 L!",
+          payload: "water_offsets.json: {\"stm32_tram_01\": {\"2\": 12.0}}\nWebSocket PUSH -> Hàng B hiển thị: 0.00 L (không làm mất gốc!)",
+          hydro: { pump: "DỪNG", pumpCls: "", vb: "ĐÓNG", vbCls: "", gate: "Lưu offset = 12.0L", gateCls: "on", water: "0.00 L (Ngay!)", badge: "Bù trừ ngay trên Web", badgeCls: "ok" }
+        },
+        {
+          st: "s-stm", wire: "dw5", dir: "down",
+          title: "Bước 3 (Nhánh 2): Đồng thời gửi reset_water xuống STM32",
+          explain: "VPS cũng gửi lệnh xuống /command để STM32 đặt lại bộ đếm gốc daily_l của Hàng B về 0. Khi STM32 gửi số mới (< 12.0 L), VPS tự gỡ mốc bù 12.0 L đi để không bị trừ âm!",
+          payload: "PUBLISH /command -> {\"action\": \"reset_water\", \"row\": 2}\nSTM32 reset daily_l[B] = 0.0 -> Gửi lên -> VPS tự xóa offset",
+          hydro: { pump: "DỪNG", pumpCls: "", vb: "ĐÓNG", vbCls: "", gate: "Đồng bộ gốc STM32", gateCls: "on", water: "0.00 L", badge: "Đồng bộ 2 phía!", badgeCls: "ok" }
+        }
+      ]
+    }
+  };
+
+  let curScn = "open_b";
+  let stepIdx = 0;
+  let timer = null;
+  let pktAnim = null;
+  let pktProg = 0;
+
+  const sts = Array.from(document.querySelectorAll(".st"));
+  const wires = Array.from(document.querySelectorAll("#cmdSvg .wire"));
+  const pktLayer = document.getElementById("pktLayer3");
+
+  const stepTitle = document.getElementById("stepTitle");
+  const stepPill = document.getElementById("stepPill");
+  const stepExplain = document.getElementById("stepExplain");
+  const stepPayload = document.getElementById("stepPayload");
+
+  const boxPump = document.getElementById("boxPump");
+  const valPump = document.getElementById("valPump");
+  const boxValveB = document.getElementById("boxValveB");
+  const valValveB = document.getElementById("valValveB");
+  const boxGate = document.getElementById("boxGate");
+  const valGate = document.getElementById("valGate");
+  const valWater = document.getElementById("valWater");
+  const hydroBadge = document.getElementById("hydroBadge");
+
+  const btnPlay = document.getElementById("btnPlay");
+  const btnPrev = document.getElementById("btnPrev");
+  const btnNext = document.getElementById("btnNext");
+  const btnReplay = document.getElementById("btnReplay");
+
+  function setPacket(wireId, dir) {
+    while (pktLayer.firstChild) pktLayer.removeChild(pktLayer.firstChild);
+    pktAnim = null;
+    if (!wireId) return;
+    const wire = document.getElementById(wireId);
+    if (!wire) return;
+    const color = dir === "err" ? "#ef4444" : (dir === "back" ? "#22c55e" : "#f59e0b");
+    const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    c.setAttribute("r", "6");
+    c.setAttribute("fill", color);
+    c.setAttribute("filter", "url(#glow3)");
+    pktLayer.appendChild(c);
+    pktProg = 0;
+    pktAnim = { el: c, wire: wire, len: wire.getTotalLength() };
+  }
+
+  function render() {
+    const steps = SCENARIOS[curScn].steps;
+    const s = steps[stepIdx];
+
+    sts.forEach(el => el.classList.remove("down", "back", "err"));
+    wires.forEach(w => w.classList.remove("down", "back", "err"));
+
+    const stEl = document.getElementById(s.st);
+    if (stEl) stEl.classList.add(s.dir);
+    if (s.wire) {
+      const wEl = document.getElementById(s.wire);
+      if (wEl) wEl.classList.add(s.dir);
+    }
+    setPacket(s.wire, s.dir);
+
+    stepTitle.textContent = s.title;
+    stepPill.textContent = (stepIdx + 1) + " / " + steps.length;
+    stepPill.className = "pill " + (s.dir === "err" ? "err" : (s.dir === "back" ? "ok" : ""));
+    stepExplain.textContent = s.explain;
+    stepPayload.textContent = s.payload;
+
+    const h = s.hydro;
+    valPump.textContent = h.pump;
+    boxPump.className = "h-box " + h.pumpCls;
+    valValveB.textContent = h.vb;
+    boxValveB.className = "h-box " + h.vbCls;
+    valGate.textContent = h.gate;
+    boxGate.className = "h-box " + h.gateCls;
+    valWater.textContent = h.water;
+    hydroBadge.textContent = h.badge;
+    hydroBadge.className = "pill " + h.badgeCls;
+
+    btnPrev.disabled = stepIdx === 0;
+    btnNext.disabled = stepIdx >= steps.length - 1;
+  }
+
+  function stopAuto() {
+    if (timer) { clearInterval(timer); timer = null; }
+    btnPlay.textContent = "▶ Chạy tự động";
+  }
+
+  function startAuto() {
+    stopAuto();
+    const steps = SCENARIOS[curScn].steps;
+    if (stepIdx >= steps.length - 1) { stepIdx = 0; render(); }
+    btnPlay.textContent = "⏸ Tạm dừng";
+    timer = setInterval(() => {
+      if (stepIdx < steps.length - 1) {
+        stepIdx++;
+        render();
+      } else {
+        stopAuto();
+      }
+    }, 2300);
+  }
+
+  document.querySelectorAll(".scn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      stopAuto();
+      document.querySelectorAll(".scn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      curScn = btn.getAttribute("data-scn");
+      stepIdx = 0;
+      render();
+      startAuto();
+    });
+  });
+
+  btnPlay.addEventListener("click", () => { if (timer) stopAuto(); else startAuto(); });
+  btnPrev.addEventListener("click", () => { stopAuto(); if (stepIdx > 0) { stepIdx--; render(); } });
+  btnNext.addEventListener("click", () => { stopAuto(); if (stepIdx < SCENARIOS[curScn].steps.length - 1) { stepIdx++; render(); } });
+  btnReplay.addEventListener("click", () => { stopAuto(); stepIdx = 0; render(); startAuto(); });
+
+  let lastTs = performance.now();
+  function loop(ts) {
+    const dt = Math.min(0.05, (ts - lastTs) / 1000);
+    lastTs = ts;
+    if (pktAnim) {
+      pktProg = (pktProg + dt * 0.95) % 1;
+      const pt = pktAnim.wire.getPointAtLength(pktProg * pktAnim.len);
+      pktAnim.el.setAttribute("cx", pt.x.toFixed(1));
+      pktAnim.el.setAttribute("cy", pt.y.toFixed(1));
+    }
+    requestAnimationFrame(loop);
+  }
+
+  render();
+  requestAnimationFrame(loop);
+
+  if (window.IoTHardwareViewer) {
+    window.IoTHardwareViewer.attachSvgTriggers([
+      { selector: "#s-4g", id: "ec600n", pillPos: "br" },
+      { selector: "#s-stm", id: "stm32", pillPos: "br" },
+      { selector: "#s-act", id: "act", pillPos: "br" }
+    ]);
+  }
+})();
+</script>
+</body>
+</html>
