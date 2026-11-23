@@ -1,0 +1,187 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 620" role="img">
+  <title>Cấu trúc Khung CAN 29-bit và Payload Giao Thức Động Cơ RobStride</title>
+  <desc>Sơ đồ giải mã 29-bit Extended CAN ID kết hợp 8-byte Payload của động cơ RobStride trong chế độ điều khiển hỗn hợp MIT (Position, Velocity, Kp, Kd, Torque Feedforward nhét vào 16-bit của CAN ID).</desc>
+  <style>
+    text { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; fill: #24292f; font-size: 13px; paint-order: stroke; stroke: #ffffff; stroke-width: 3.5px; stroke-linejoin: round; }
+    .hdr-title { font-size: 18px; font-weight: bold; fill: #24292f; }
+    .section-title { font-size: 15px; font-weight: bold; fill: #0969da; }
+    .mono { font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace; font-size: 12px; }
+    .bit-box { stroke-width: 1.5; }
+    .bit-lbl { font-weight: bold; text-anchor: middle; }
+    .type-color { fill: #ddf4ff; stroke: #0969da; }
+    .torque-color { fill: #ffebe9; stroke: #cf222e; }
+    .id-color { fill: #dafbe1; stroke: #1a7f37; }
+    .pos-color { fill: #fff8c5; stroke: #bf8700; }
+    .vel-color { fill: #fbefff; stroke: #8250df; }
+    .kp-color { fill: #ddf4ff; stroke: #0550ae; }
+    .kd-color { fill: #ffebe9; stroke: #a40e26; }
+    .table-cell { fill: #ffffff; stroke: #d0d7de; stroke-width: 1; }
+    .table-hdr { fill: #f6f8fa; stroke: #d0d7de; stroke-width: 1; font-weight: bold; }
+  </style>
+
+  <rect width="960" height="620" fill="#ffffff"/>
+
+  <!-- Tiêu đề sơ đồ -->
+  <text x="480" y="32" text-anchor="middle" class="hdr-title">Cấu Trúc Giao Thức FDCAN 29-Bit RobStride (MIT Hybrid Control Mode)</text>
+  <text x="480" y="54" text-anchor="middle" font-size="12" fill="#57606a">Nhúng trực tiếp Torque Feedforward vào CAN ID 29-bit + 8 Byte Data Payload (P, V, Kp, Kd)</text>
+
+  <!-- 1. CAN ID 29-BIT EXTENDED IDENTIFIER -->
+  <g transform="translate(40, 75)">
+    <text x="0" y="0" class="section-title">1. Phân Rã 29-Bit Extended CAN Identifier (CAN ID)</text>
+    
+    <!-- Bit range labels -->
+    <text x="0" y="24" class="mono" fill="#57606a">Bit 28</text>
+    <text x="140" y="24" class="mono" fill="#57606a">Bit 24</text>
+    <text x="160" y="24" class="mono" fill="#57606a">Bit 23</text>
+    <text x="660" y="24" class="mono" fill="#57606a">Bit 8</text>
+    <text x="680" y="24" class="mono" fill="#57606a">Bit 7</text>
+    <text x="860" y="24" class="mono" fill="#57606a">Bit 0</text>
+
+    <!-- Box 1: Mode/Type [28:24] 5 bits -->
+    <rect x="0" y="30" width="150" height="60" rx="4" class="bit-box type-color"/>
+    <text x="75" y="55" class="bit-lbl" fill="#0969da">Type / Mode [28:24]</text>
+    <text x="75" y="75" text-anchor="middle" class="mono">5 bits (0x12 = MIT Mode)</text>
+
+    <!-- Box 2: Torque Feedforward Data2 [23:8] 16 bits -->
+    <rect x="160" y="30" width="510" height="60" rx="4" class="bit-box torque-color"/>
+    <text x="415" y="55" class="bit-lbl" fill="#cf222e">Data 2: Torque Feedforward (T_ff) [23:8]</text>
+    <text x="415" y="75" text-anchor="middle" class="mono">16 bits uint16 · Dải: [-12.0 N·m, +12.0 N·m]</text>
+
+    <!-- Box 3: Target ID [7:0] 8 bits -->
+    <rect x="680" y="30" width="200" height="60" rx="4" class="bit-box id-color"/>
+    <text x="780" y="55" class="bit-lbl" fill="#1a7f37">Target Node ID [7:0]</text>
+    <text x="780" y="75" text-anchor="middle" class="mono">8 bits (ID 1 = RobStride Motor)</text>
+  </g>
+
+  <!-- 2. PAYLOAD 8 BYTES -->
+  <g transform="translate(40, 205)">
+    <text x="0" y="0" class="section-title">2. Cấu Trúc 8 Byte Data Payload (Big-Endian / uint16_t)</text>
+    
+    <!-- Byte 0-1: Position -->
+    <rect x="0" y="15" width="210" height="65" rx="4" class="bit-box pos-color"/>
+    <text x="105" y="38" class="bit-lbl" fill="#9a6700">Byte 0 - 1: Target Pos (p_des)</text>
+    <text x="105" y="56" text-anchor="middle" class="mono">uint16_t (16-bit)</text>
+    <text x="105" y="70" text-anchor="middle" font-size="11" fill="#57606a">[-4π, +4π] rad (-12.57 ~ +12.57)</text>
+
+    <!-- Byte 2-3: Velocity -->
+    <rect x="225" y="15" width="210" height="65" rx="4" class="bit-box vel-color"/>
+    <text x="330" y="38" class="bit-lbl" fill="#8250df">Byte 2 - 3: Target Vel (v_des)</text>
+    <text x="330" y="56" text-anchor="middle" class="mono">uint16_t (16-bit)</text>
+    <text x="330" y="70" text-anchor="middle" font-size="11" fill="#57606a">[-30.0, +30.0] rad/s</text>
+
+    <!-- Byte 4-5: Kp Gain -->
+    <rect x="450" y="15" width="210" height="65" rx="4" class="bit-box kp-color"/>
+    <text x="555" y="38" class="bit-lbl" fill="#0550ae">Byte 4 - 5: Stiff Gain (Kp)</text>
+    <text x="555" y="56" text-anchor="middle" class="mono">uint16_t (16-bit)</text>
+    <text x="555" y="70" text-anchor="middle" font-size="11" fill="#57606a">[0.0, 500.0] N·m/rad</text>
+
+    <!-- Byte 6-7: Kd Gain -->
+    <rect x="675" y="15" width="205" height="65" rx="4" class="bit-box kd-color"/>
+    <text x="777" y="38" class="bit-lbl" fill="#a40e26">Byte 6 - 7: Damp Gain (Kd)</text>
+    <text x="777" y="56" text-anchor="middle" class="mono">uint16_t (16-bit)</text>
+    <text x="777" y="70" text-anchor="middle" font-size="11" fill="#57606a">[0.0, 5.0] N·m·s/rad</text>
+  </g>
+
+  <!-- 3. BẢNG LƯỢNG TỬ HÓA VÀ CÔNG THỨC CHUYỂN ĐỔI -->
+  <g transform="translate(40, 320)">
+    <text x="0" y="0" class="section-title">3. Bảng Tham Số Lượng Tử Hóa Tuyến Tính (16-bit Quantization Mapping)</text>
+    
+    <!-- Table Header -->
+    <rect x="0" y="15" width="160" height="30" class="table-hdr"/>
+    <text x="80" y="35" text-anchor="middle">Tham số vật lý</text>
+    
+    <rect x="160" y="15" width="120" height="30" class="table-hdr"/>
+    <text x="220" y="35" text-anchor="middle">Ký hiệu</text>
+
+    <rect x="280" y="15" width="140" height="30" class="table-hdr"/>
+    <text x="350" y="35" text-anchor="middle">Dải Min (0x0000)</text>
+
+    <rect x="420" y="15" width="140" height="30" class="table-hdr"/>
+    <text x="490" y="35" text-anchor="middle">Dải Max (0xFFFF)</text>
+
+    <rect x="560" y="15" width="140" height="30" class="table-hdr"/>
+    <text x="630" y="35" text-anchor="middle">Độ phân giải (LSB)</text>
+
+    <rect x="700" y="15" width="180" height="30" class="table-hdr"/>
+    <text x="790" y="35" text-anchor="middle">Vị trí trong gói CAN</text>
+
+    <!-- Row 1: Position -->
+    <rect x="0" y="45" width="160" height="28" class="table-cell"/>
+    <text x="12" y="64" font-weight="bold">Vị trí mục tiêu</text>
+    <rect x="160" y="45" width="120" height="28" class="table-cell"/>
+    <text x="220" y="64" text-anchor="middle" class="mono">p_des</text>
+    <rect x="280" y="45" width="140" height="28" class="table-cell"/>
+    <text x="350" y="64" text-anchor="middle" class="mono">-12.57 rad (-4π)</text>
+    <rect x="420" y="45" width="140" height="28" class="table-cell"/>
+    <text x="490" y="64" text-anchor="middle" class="mono">+12.57 rad (+4π)</text>
+    <rect x="560" y="45" width="140" height="28" class="table-cell"/>
+    <text x="630" y="64" text-anchor="middle" class="mono">0.00038 rad (0.02°)</text>
+    <rect x="700" y="45" width="180" height="28" class="table-cell"/>
+    <text x="790" y="64" text-anchor="middle">Payload Byte 0..1</text>
+
+    <!-- Row 2: Velocity -->
+    <rect x="0" y="73" width="160" height="28" class="table-cell"/>
+    <text x="12" y="92" font-weight="bold">Vận tốc mục tiêu</text>
+    <rect x="160" y="73" width="120" height="28" class="table-cell"/>
+    <text x="220" y="92" text-anchor="middle" class="mono">v_des</text>
+    <rect x="280" y="73" width="140" height="28" class="table-cell"/>
+    <text x="350" y="92" text-anchor="middle" class="mono">-30.0 rad/s</text>
+    <rect x="420" y="73" width="140" height="28" class="table-cell"/>
+    <text x="490" y="92" text-anchor="middle" class="mono">+30.0 rad/s</text>
+    <rect x="560" y="73" width="140" height="28" class="table-cell"/>
+    <text x="630" y="92" text-anchor="middle" class="mono">0.000915 rad/s</text>
+    <rect x="700" y="73" width="180" height="28" class="table-cell"/>
+    <text x="790" y="92" text-anchor="middle">Payload Byte 2..3</text>
+
+    <!-- Row 3: Kp -->
+    <rect x="0" y="101" width="160" height="28" class="table-cell"/>
+    <text x="12" y="120" font-weight="bold">Hệ số độ cứng Kp</text>
+    <rect x="160" y="101" width="120" height="28" class="table-cell"/>
+    <text x="220" y="120" text-anchor="middle" class="mono">Kp</text>
+    <rect x="280" y="101" width="140" height="28" class="table-cell"/>
+    <text x="350" y="120" text-anchor="middle" class="mono">0.0 N·m/rad</text>
+    <rect x="420" y="101" width="140" height="28" class="table-cell"/>
+    <text x="490" y="120" text-anchor="middle" class="mono">500.0 N·m/rad</text>
+    <rect x="560" y="101" width="140" height="28" class="table-cell"/>
+    <text x="630" y="120" text-anchor="middle" class="mono">0.00763 N·m/rad</text>
+    <rect x="700" y="101" width="180" height="28" class="table-cell"/>
+    <text x="790" y="120" text-anchor="middle">Payload Byte 4..5</text>
+
+    <!-- Row 4: Kd -->
+    <rect x="0" y="129" width="160" height="28" class="table-cell"/>
+    <text x="12" y="148" font-weight="bold">Hệ số giảm chấn Kd</text>
+    <rect x="160" y="129" width="120" height="28" class="table-cell"/>
+    <text x="220" y="148" text-anchor="middle" class="mono">Kd</text>
+    <rect x="280" y="129" width="140" height="28" class="table-cell"/>
+    <text x="350" y="148" text-anchor="middle" class="mono">0.0 N·m·s/rad</text>
+    <rect x="420" y="129" width="140" height="28" class="table-cell"/>
+    <text x="490" y="148" text-anchor="middle" class="mono">5.0 N·m·s/rad</text>
+    <rect x="560" y="129" width="140" height="28" class="table-cell"/>
+    <text x="630" y="148" text-anchor="middle" class="mono">0.000076 N·m·s/rad</text>
+    <rect x="700" y="129" width="180" height="28" class="table-cell"/>
+    <text x="790" y="148" text-anchor="middle">Payload Byte 6..7</text>
+
+    <!-- Row 5: Torque Feedforward -->
+    <rect x="0" y="157" width="160" height="28" class="table-cell" fill="#fff5f5"/>
+    <text x="12" y="176" font-weight="bold" fill="#cf222e">Mô-men bù T_ff</text>
+    <rect x="160" y="157" width="120" height="28" class="table-cell" fill="#fff5f5"/>
+    <text x="220" y="176" text-anchor="middle" class="mono" fill="#cf222e">T_ff</text>
+    <rect x="280" y="157" width="140" height="28" class="table-cell" fill="#fff5f5"/>
+    <text x="350" y="176" text-anchor="middle" class="mono">-12.0 N·m</text>
+    <rect x="420" y="157" width="140" height="28" class="table-cell" fill="#fff5f5"/>
+    <text x="490" y="176" text-anchor="middle" class="mono">+12.0 N·m</text>
+    <rect x="560" y="157" width="140" height="28" class="table-cell" fill="#fff5f5"/>
+    <text x="630" y="176" text-anchor="middle" class="mono">0.000366 N·m</text>
+    <rect x="700" y="157" width="180" height="28" class="table-cell" fill="#fff5f5"/>
+    <text x="790" y="176" text-anchor="middle" font-weight="bold" fill="#cf222e">CAN ID Bit 8..23</text>
+  </g>
+
+  <!-- 4. KHUNG CÔNG THỨC TÍNH TOÁN -->
+  <g transform="translate(40, 535)">
+    <rect x="0" y="0" width="880" height="65" rx="4" fill="#f6f8fa" stroke="#0969da" stroke-width="1"/>
+    <text x="20" y="24" font-weight="bold" fill="#0969da">Công thức lượng tử hóa (Encode / Decode):</text>
+    <text x="20" y="48" class="mono" fill="#24292f">raw = (uint16_t)(((val - min_val) / (max_val - min_val)) * 65535.0f);</text>
+    <text x="470" y="48" class="mono" fill="#24292f">val = min_val + ((float)raw / 65535.0f) * (max_val - min_val);</text>
+  </g>
+</svg>
+

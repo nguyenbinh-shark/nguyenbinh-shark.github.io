@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <style>
+    .n { fill: #111111; }
+    .b { fill: #2563eb; }
+    @media (prefers-color-scheme: dark) {
+      .n { fill: #ffffff; }
+      .b { fill: #60a5fa; }
+    }
+  </style>
+  <path class="n" d="M11 52V27Q11.5 16 19 12L29.5 35.6V20H35.5V52H29.5L17 23V52Z"/>
+  <path class="b" d="M38 20H44.5A8 8 0 0 1 47.54 35.4A8.5 8.5 0 0 1 45 52H38V46.8H43.9A4.4 4.4 0 0 0 43.9 38H38V32.8H43.5A3.8 3.8 0 0 0 43.5 25.2H38Z"/>
+</svg>

@@ -1,0 +1,284 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><title>Demo 2 — Luồng dữ liệu đi lên: Từ vườn lên Web HMI</title><style>:root{--bg:#0b1120;--panel:#111827;--panel-2:#0f172a;--border:#1e293b;--border-hi:#334155;--text:#f8fafc;--muted:#94a3b8;--cyan:#38bdf8;--green:#22c55e;--amber:#f59e0b;--red:#ef4444}*{box-sizing:border-box}body{margin:0;padding:12px;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:14px;line-height:1.5}.wrap{max-width:960px;margin:0 auto}.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}.topbar h1{margin:0;font-size:1.02rem}.topbar p{margin:2px 0 0;font-size:.8rem;color:var(--muted)}.playback-bar,.scenario-bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}button{border:1px solid var(--border-hi);background:var(--panel);color:var(--text);padding:7px 12px;border-radius:8px;font:inherit;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s ease}button:hover:not(:disabled){border-color:var(--cyan);color:var(--cyan)}button:disabled{opacity:.45;cursor:not-allowed}button.scn.active{background:rgba(56,189,248,.15);border-color:var(--cyan);color:var(--cyan)}button.scn-warn.active{background:rgba(245,158,11,.15);border-color:var(--amber);color:var(--amber)}button.play-btn{background:#0284c7;border-color:#38bdf8;color:#fff}.stage{background:var(--panel-2);border:1px solid var(--border);border-radius:12px;padding:10px}svg#flowSvg{display:block;width:100%;height:auto}.wire{fill:none;stroke:#334155;stroke-width:2.5}.wire.lit{stroke:var(--cyan);stroke-width:3.5}.wire.lit-warn{stroke:var(--amber);stroke-width:3.5;stroke-dasharray:6 4}.wire.lit-err{stroke:var(--red);stroke-width:3.5;stroke-dasharray:5 5}.station rect{fill:#111827;stroke:#334155;stroke-width:1.6;rx:9;ry:9;transition:all .2s ease}.station.active rect{fill:#172554;stroke:var(--cyan);stroke-width:2.6}.station.warn rect{fill:#451a03;stroke:var(--amber);stroke-width:2.6}.station.err rect{fill:#450a0a;stroke:var(--red);stroke-width:2.6}.st-t{fill:#f8fafc;font-size:12px;font-weight:700}.st-s{fill:#94a3b8;font-size:10px}.bottom-grid{display:grid;grid-template-columns:1.35fr 1fr;gap:10px;margin-top:10px}.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:11px 13px}.card-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--border)}.step-pill{font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:999px;background:rgba(56,189,248,.15);color:var(--cyan);border:1px solid rgba(56,189,248,.35)}.explain{font-size:.85rem;color:#e2e8f0;margin:0 0 8px}pre.payload{margin:0;padding:9px 10px;border-radius:8px;background:#020617;border:1px solid #1e293b;font-family:ui-monospace,Consolas,monospace;font-size:.74rem;color:#cbd5e1;overflow-x:auto;line-height:1.45}.hmi-preview{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.hmi-tile{background:var(--panel-2);border:1px solid var(--border);border-radius:8px;padding:8px 9px}.hmi-tile span{display:block;font-size:.7rem;color:var(--muted)}.hmi-tile b{display:block;font-size:.98rem;margin-top:2px;color:var(--text)}.badge-online{color:var(--green)!important}.badge-offline{color:var(--red)!important}.hmi-note{margin:8px 0 0;font-size:.76rem;color:var(--muted)}@media (max-width:720px){body{padding:8px}.bottom-grid{grid-template-columns:1fr}}</style></head><body><div class="wrap"><div class="topbar"><div><h1>Animation Luồng Đi Lên: Từ Vườn Cà Chua Lên Màn Hình Web</h1><p>Chọn 1 kịch bản bên dưới rồi bấm "Chạy tự động" hoặc "Từng bước" để theo dõi gói tin di chuyển. Bấm các khối có nhãn 📷 Ảnh để xem ảnh phần cứng thực tế.</p></div></div><div class="scenario-bar"><button class="scn active" data-scn="telemetry" type="button">✅ 1. Gửi số đo định kỳ (4G → WebSocket)</button> <button class="scn" data-scn="openweb" type="button">🔄 2. Vừa mở trang Web / F5 (REST + WS)</button> <button class="scn scn-warn" data-scn="lwt" type="button">⚠️ 3. Mất sóng 4G đột ngột (Di chúc LWT)</button></div><div class="playback-bar"><button id="btnPlay" class="play-btn" type="button">▶ Chạy tự động</button> <button id="btnPrev" type="button">⏮ Bước trước</button> <button id="btnNext" type="button">⏭ Bước tiếp theo</button> <button id="btnReplay" type="button">↺ Chạy lại từ đầu</button></div><div class="stage"><svg id="flowSvg" viewBox="0 0 920 225" xmlns="http://www.w3.org/2000/svg"><defs><filter id="glow2" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="2.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><path id="w1" class="wire" d="M 142 82 L 176 82"/><path id="w2" class="wire" d="M 306 82 L 340 82"/><path id="w3" class="wire" d="M 464 82 L 498 82"/><path id="w4" class="wire" d="M 628 82 L 662 82"/><path id="w5" class="wire" d="M 792 82 C 818 82, 818 156, 792 156 L 670 156"/><path id="w-rest-req" class="wire" d="M 792 128 C 836 128, 836 186, 740 186 L 628 186 C 590 186, 590 120, 628 120"/><g class="station" id="st-sensor" transform="translate(14,42)"><rect width="128" height="80"/><text class="st-t" x="10" y="24">1. Cảm biến</text><text class="st-s" x="10" y="42">Đất (PA0..PA3)</text><text class="st-s" x="10" y="57">AHT30 (Nhiệt/Ẩm)</text></g><g class="station" id="st-stm32" transform="translate(176,42)"><rect width="130" height="80"/><text class="st-t" x="8" y="24" style="font-size:11px">2. STM32F401RCT6</text><text class="st-s" x="10" y="42">Lọc 16 mẫu + EMA</text><text class="st-s" x="10" y="57">Tính VPD → JSON</text></g><g class="station" id="st-4g" transform="translate(340,42)"><rect width="124" height="80"/><text class="st-t" x="10" y="24">3. Modem 4G</text><text class="st-s" x="10" y="42">EC600N · TLS 1.2</text><text class="st-s" x="10" y="57">Bắn gói qua 4G</text></g><g class="station" id="st-emqx" transform="translate(498,42)"><rect width="130" height="80"/><text class="st-t" x="10" y="24">4. EMQX Broker</text><text class="st-s" x="10" y="42">Topic /data (QoS 1)</text><text class="st-s" x="10" y="57">hoặc /status (LWT)</text></g><g class="station" id="st-vps" transform="translate(662,42)"><rect width="130" height="80"/><text class="st-t" x="10" y="24">5. Backend VPS</text><text class="st-s" x="10" y="42">Chống bão 4.8s</text><text class="st-s" x="10" y="57">Lưu SQLite + WS</text></g><g class="station" id="st-web" transform="translate(534,132)"><rect width="136" height="72"/><text class="st-t" x="10" y="24">6. Web HMI</text><text class="st-s" x="10" y="42">Nhận WebSocket</text><text class="st-s" x="10" y="57">Cập nhật không F5</text></g><g id="pktLayer"></g></svg></div><div class="bottom-grid"><div class="card"><div class="card-head"><strong id="stepTitle">Bước 1</strong> <span class="step-pill" id="stepCounter">1 / 6</span></div><p class="explain" id="stepExplain"></p><pre class="payload" id="stepPayload"></pre></div><div class="card"><div class="card-head"><strong>Màn hình Web HMI (Xem trước kết quả)</strong> <span class="step-pill" id="hmiBadge">Đang chờ</span></div><div class="hmi-preview"><div class="hmi-tile"><span>Trạng thái trạm</span> <b id="hmiStatus" class="badge-online">Online</b></div><div class="hmi-tile"><span>Độ ẩm đất Hàng B</span> <b id="hmiSoilB">46.5 %</b></div><div class="hmi-tile"><span>Không khí &amp; VPD</span> <b id="hmiVpd">29.4°C · 1.22 kPa</b></div><div class="hmi-tile"><span>Cập nhật gần nhất</span> <b id="hmiTime">08:00:00</b></div></div><p class="hmi-note" id="hmiNote">Gợi ý: Hãy thử chuyển sang kịch bản 3 để xem Web phân biệt "Online" và "Offline" ra sao khi vườn mất sóng 4G.</p></div></div></div><script src="./hardware-photos.js?v=bbe73888"></script><script>(function () {
+  "use strict";
+
+  const SCENARIOS = {
+    telemetry: {
+      steps: [
+        {
+          station: "st-sensor",
+          wire: null,
+          mode: "active",
+          title: "Bước 1: Cảm biến ngoài vườn đo tín hiệu thô",
+          explain: "4 cảm biến độ ẩm đất điện dung ở Hàng B và C xuất điện áp 0–3.3 V; cảm biến AHT30 đo nhiệt độ và độ ẩm không khí gửi cho vi điều khiển.",
+          payload: "// Tín hiệu vật lý đọc tại vườn:\nADC PA0..PA3 (Đất): [2290, 2245, 2190, 2135]\nAHT30 (I2C 0x38):  T = 29.4 °C, RH = 71.0 %",
+          hmi: { status: "Online", cls: "badge-online", soil: "46.5 % (cũ)", vpd: "29.4°C · 1.22 kPa", time: "07:59:30", badge: "Đang đo tại vườn" }
+        },
+        {
+          station: "st-stm32",
+          wire: "w1",
+          mode: "active",
+          title: "Bước 2: STM32 lọc nhiễu 2 tầng & đóng gói JSON",
+          explain: "STM32 lấy 16 mẫu ADC, bỏ 2 mẫu nhỏ nhất & 2 mẫu lớn nhất để chống gai nhiễu, làm mượt bằng lọc EMA, tính chỉ số VPD rồi đóng thành 1 gói JSON.",
+          payload: "{\n  \"device_id\": \"stm32_tram_01\",\n  \"seq\": 106,\n  \"soil_pct\": [41.2, 42.8, 46.2, 48.1],\n  \"temp_c\": 30.1, \"rh_pct\": 68.0, \"vpd_kpa\": 1.36,\n  \"pump_on\": false, \"control_mode\": \"auto\"\n}",
+          hmi: { status: "Online", cls: "badge-online", soil: "46.5 % (cũ)", vpd: "29.4°C · 1.22 kPa", time: "07:59:30", badge: "STM32 đang xử lý" }
+        },
+        {
+          station: "st-4g",
+          wire: "w2",
+          mode: "active",
+          title: "Bước 3: Modem 4G EC600N gửi lên mạng di động",
+          explain: "STM32 đẩy chuỗi JSON sang Modem 4G qua cổng USART1 (dùng DMA để CPU không bị khựng). Modem mã hóa gói tin bằng TLS 1.2 và phát lên sóng 4G.",
+          payload: "AT+QMTPUBEX=1,1,1,0,\"iot/devices/stm32_tram_01/data\",248\n→ Đang truyền qua sóng 4G (RSSI: -69 dBm)",
+          hmi: { status: "Online", cls: "badge-online", soil: "46.5 % (cũ)", vpd: "29.4°C · 1.22 kPa", time: "07:59:30", badge: "Đang bay qua 4G" }
+        },
+        {
+          station: "st-emqx",
+          wire: "w3",
+          mode: "active",
+          title: "Bước 4: Trạm trung chuyển EMQX định tuyến bản tin",
+          explain: "EMQX Cloud nhận bản tin trên topic iot/devices/stm32_tram_01/data (QoS 1 bảo đảm không rơi tin), thấy Backend VPS đang đăng ký kênh này nên chuyển tiếp ngay.",
+          payload: "MQTT PUBLISH -> Topic: iot/devices/stm32_tram_01/data\nQoS: 1 | Retain: false\nBroker chuyển tiếp ngay tới client: vps_backend_client",
+          hmi: { status: "Online", cls: "badge-online", soil: "46.5 % (cũ)", vpd: "29.4°C · 1.22 kPa", time: "07:59:30", badge: "Qua EMQX Broker" }
+        },
+        {
+          station: "st-vps",
+          wire: "w4",
+          mode: "active",
+          title: "Bước 5: Backend VPS lọc bão tin, trừ offset & lưu SQLite",
+          explain: "Hàm mqtt.py kiểm tra tần suất chống bão tin (4.8s/lần), áp dụng mốc bù nước (nếu người dùng từng bấm đặt lại về 0), lưu vào 2 bảng SQLite (sensor_data & telemetry_logs) và đưa vào hàng đợi phát trực tiếp.",
+          payload: "SQLite INSERT telemetry_logs (id=172051, seq=106)\nSQLite UPDATE sensor_data (số mới nhất)\n→ Đẩy bản tin sang hàng đợi WebSocket",
+          hmi: { status: "Online", cls: "badge-online", soil: "46.5 % (cũ)", vpd: "29.4°C · 1.22 kPa", time: "07:59:30", badge: "VPS đã lưu DB" }
+        },
+        {
+          station: "st-web",
+          wire: "w5",
+          mode: "active",
+          title: "Bước 6: Web HMI nhận qua WebSocket — Tự nhảy số không cần F5!",
+          explain: "Kênh WebSocket /ws/sensor_data đẩy tức thời gói JSON tới tất cả trình duyệt đang mở. Con số độ ẩm và VPD lập tức nhảy sang giá trị mới nhất.",
+          payload: "WS Frame <- /ws/sensor_data\n{\"kind\": \"telemetry\", \"device_id\": \"stm32_tram_01\",\n \"soil_pct\": [41.2, 42.8, 46.2, 48.1], \"vpd_kpa\": 1.36}",
+          hmi: { status: "Online", cls: "badge-online", soil: "42.0 % (mới!)", vpd: "30.1°C · 1.36 kPa", time: "08:00:00", badge: "Đã cập nhật!" }
+        }
+      ]
+    },
+    openweb: {
+      steps: [
+        {
+          station: "st-web",
+          wire: null,
+          mode: "active",
+          title: "Bước 1: Người dùng vừa mở trang Web (hoặc bấm F5)",
+          explain: "Khi mới mở trình duyệt, không thể ngồi chờ 30 giây tới gói tin 4G tiếp theo mới có số liệu để vẽ đồ thị. Web gửi ngay yêu cầu REST HTTP lên VPS.",
+          payload: "GET https://garden.example.com/devices/stm32_tram_01/latest\nGET https://garden.example.com/devices/stm32_tram_01/history?hours=24",
+          hmi: { status: "Đang tải...", cls: "", soil: "—", vpd: "—", time: "—", badge: "Mở trang Web" }
+        },
+        {
+          station: "st-vps",
+          wire: "w-rest-req",
+          mode: "active",
+          title: "Bước 2: Backend VPS lấy ảnh chụp dữ liệu từ SQLite",
+          explain: "VPS đọc bản ghi mới nhất và chuỗi lịch sử 24 giờ từ database SQLite rồi trả ngay về trình duyệt qua HTTPS.",
+          payload: "HTTP 200 OK (Snapshot từ SQLite)\n{\"samples\": [...], \"latest\": {\"soil_pct\": [42.5, 44.0, 46.2, 48.1], \"vpd_kpa\": 1.22}}",
+          hmi: { status: "Đang tải...", cls: "", soil: "—", vpd: "—", time: "—", badge: "VPS đọc SQLite" }
+        },
+        {
+          station: "st-web",
+          wire: "w5",
+          mode: "active",
+          title: "Bước 3: Web hiển thị ngay & mở đường ống WebSocket",
+          explain: "Giao diện vẽ xong sơ đồ + biểu đồ từ dữ liệu REST, đồng thời mở kết nối WebSocket /ws/sensor_data để đón mọi gói tin mới từ lúc này trở đi.",
+          payload: "WebSocket CONNECTED: wss://garden.example.com/ws/sensor_data\n(Nếu rớt mạng, trình duyệt tự thử kết nối lại sau 4 giây)",
+          hmi: { status: "Online", cls: "badge-online", soil: "43.3 %", vpd: "29.4°C · 1.22 kPa", time: "08:00:00", badge: "REST + WS sẵn sàng" }
+        },
+        {
+          station: "st-web",
+          wire: null,
+          mode: "active",
+          title: "Bước 4: Nhịp dự phòng mỗi 30 giây",
+          explain: "Trong lúc trang mở, Web vẫn âm thầm hỏi lại REST mỗi 30 giây để bù nếu có gói WebSocket bị rơi. Lưu ý: Web kết nối được VPS chưa chắc vườn đang online!",
+          payload: "// Chu kỳ đồng bộ kép:\n1. WebSocket: đẩy tức thời (<100 ms)\n2. REST Polling: dự phòng mỗi 30 giây",
+          hmi: { status: "Online", cls: "badge-online", soil: "43.3 %", vpd: "29.4°C · 1.22 kPa", time: "08:00:30", badge: "Ổn định" }
+        }
+      ]
+    },
+    lwt: {
+      steps: [
+        {
+          station: "st-stm32",
+          wire: null,
+          mode: "warn",
+          title: "Bước 1: Ngoài vườn bị mất sóng 4G (hoặc cúp điện hộp mạng)",
+          explain: "Modem EC600N đột ngột mất kết nối tới Internet nên không gửi được số đo. Tuy nhiên nếu chỉ rớt mạng, STM32 vẫn tự tưới bình thường bằng cấu hình đã lưu!",
+          payload: "// Trạng thái ngoài vườn:\n4G Signal: MẤT KẾT NỐI\nSTM32 Edge Mode: Vẫn chạy độc lập theo lịch & ngưỡng ẩm đã lưu",
+          hmi: { status: "Online (cũ)", cls: "badge-online", soil: "43.3 %", vpd: "29.4°C · 1.22 kPa", time: "08:00:00", badge: "Mất sóng 4G" }
+        },
+        {
+          station: "st-emqx",
+          wire: "w3",
+          mode: "err",
+          title: "Bước 2: EMQX phát hiện mất liên lạc & kích hoạt Di chúc LWT",
+          explain: "Khi mới kết nối, STM32 đã gửi sẵn một bản 'Di chúc' (Last Will & Testament) tại EMQX. Chờ quá thời hạn không thấy tín hiệu giữ sống, EMQX tự động phát thay STM32.",
+          payload: "MQTT LWT Triggered -> Topic: iot/devices/stm32_tram_01/status\nPayload: \"offline\" (Retain: true)",
+          hmi: { status: "Online (cũ)", cls: "badge-online", soil: "43.3 %", vpd: "29.4°C · 1.22 kPa", time: "08:00:00", badge: "EMQX phát LWT" }
+        },
+        {
+          station: "st-vps",
+          wire: "w4",
+          mode: "warn",
+          title: "Bước 3: Backend VPS ghi nhận trạng thái Offline vào Database",
+          explain: "VPS nhận bản tin 'offline' từ EMQX, cập nhật cột status của thiết bị thành offline (nhưng vẫn giữ nguyên các số đo lịch sử đã lưu trước đó) và đẩy báo lên WebSocket.",
+          payload: "SQLite UPDATE devices SET status='offline' WHERE id='stm32_tram_01'\n→ Push WebSocket status_update",
+          hmi: { status: "Online (cũ)", cls: "badge-online", soil: "43.3 %", vpd: "29.4°C · 1.22 kPa", time: "08:00:00", badge: "VPS báo Offline" }
+        },
+        {
+          station: "st-web",
+          wire: "w5",
+          mode: "err",
+          title: "Bước 4: Web đổi nhãn Offline — Nhắc người dùng không tin số cũ",
+          explain: "Web vẫn còn kết nối với VPS, nhưng thanh trạng thái chuyển sang màu đỏ 'Mất kết nối (Offline)' kèm giờ gói tin cuối (08:00:00) để người vận hành nhận biết số liệu trên màn hình đã cũ.",
+          payload: "UI Alert: Trạm stm32_tram_01 OFFLINE\nLần cuối nhận số liệu: 08:00:00\n→ Cần kiểm tra SIM 4G hoặc nguồn điện ngoài vườn!",
+          hmi: { status: "Offline (Mất mạng)", cls: "badge-offline", soil: "43.3 % (cũ)", vpd: "29.4°C · (cũ)", time: "08:00:00", badge: "Cảnh báo mất kết nối!" }
+        }
+      ]
+    }
+  };
+
+  let currentScn = "telemetry";
+  let stepIdx = 0;
+  let timer = null;
+  let pktAnim = null;
+  let pktProg = 0;
+
+  const stations = Array.from(document.querySelectorAll(".station"));
+  const wires = Array.from(document.querySelectorAll("#flowSvg .wire"));
+  const pktLayer = document.getElementById("pktLayer");
+
+  const stepTitle = document.getElementById("stepTitle");
+  const stepCounter = document.getElementById("stepCounter");
+  const stepExplain = document.getElementById("stepExplain");
+  const stepPayload = document.getElementById("stepPayload");
+
+  const hmiStatus = document.getElementById("hmiStatus");
+  const hmiSoilB = document.getElementById("hmiSoilB");
+  const hmiVpd = document.getElementById("hmiVpd");
+  const hmiTime = document.getElementById("hmiTime");
+  const hmiBadge = document.getElementById("hmiBadge");
+
+  const btnPlay = document.getElementById("btnPlay");
+  const btnPrev = document.getElementById("btnPrev");
+  const btnNext = document.getElementById("btnNext");
+  const btnReplay = document.getElementById("btnReplay");
+
+  function setPacket(wireId, mode) {
+    while (pktLayer.firstChild) pktLayer.removeChild(pktLayer.firstChild);
+    pktAnim = null;
+    if (!wireId) return;
+    const wire = document.getElementById(wireId);
+    if (!wire) return;
+    const color = mode === "err" ? "#ef4444" : (mode === "warn" ? "#f59e0b" : "#38bdf8");
+    const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    c.setAttribute("r", "6");
+    c.setAttribute("fill", color);
+    c.setAttribute("filter", "url(#glow2)");
+    pktLayer.appendChild(c);
+    pktProg = 0;
+    pktAnim = { el: c, wire: wire, len: wire.getTotalLength() };
+  }
+
+  function renderStep() {
+    const steps = SCENARIOS[currentScn].steps;
+    const s = steps[stepIdx];
+
+    stations.forEach(st => st.classList.remove("active", "warn", "err"));
+    wires.forEach(w => w.classList.remove("lit", "lit-warn", "lit-err"));
+
+    const stEl = document.getElementById(s.station);
+    if (stEl) stEl.classList.add(s.mode === "err" ? "err" : (s.mode === "warn" ? "warn" : "active"));
+
+    if (s.wire) {
+      const wEl = document.getElementById(s.wire);
+      if (wEl) wEl.classList.add(s.mode === "err" ? "lit-err" : (s.mode === "warn" ? "lit-warn" : "lit"));
+    }
+
+    setPacket(s.wire, s.mode);
+
+    stepTitle.textContent = s.title;
+    stepCounter.textContent = (stepIdx + 1) + " / " + steps.length;
+    stepExplain.textContent = s.explain;
+    stepPayload.textContent = s.payload;
+
+    hmiStatus.textContent = s.hmi.status;
+    hmiStatus.className = s.hmi.cls;
+    hmiSoilB.textContent = s.hmi.soil;
+    hmiVpd.textContent = s.hmi.vpd;
+    hmiTime.textContent = s.hmi.time;
+    hmiBadge.textContent = s.hmi.badge;
+
+    btnPrev.disabled = stepIdx === 0;
+    btnNext.disabled = stepIdx >= steps.length - 1;
+  }
+
+  function stopAuto() {
+    if (timer) { clearInterval(timer); timer = null; }
+    btnPlay.textContent = "▶ Chạy tự động";
+  }
+
+  function startAuto() {
+    stopAuto();
+    const steps = SCENARIOS[currentScn].steps;
+    if (stepIdx >= steps.length - 1) { stepIdx = 0; renderStep(); }
+    btnPlay.textContent = "⏸ Tạm dừng";
+    timer = setInterval(() => {
+      if (stepIdx < steps.length - 1) {
+        stepIdx++;
+        renderStep();
+      } else {
+        stopAuto();
+      }
+    }, 2400);
+  }
+
+  document.querySelectorAll(".scn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      stopAuto();
+      document.querySelectorAll(".scn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentScn = btn.getAttribute("data-scn");
+      stepIdx = 0;
+      renderStep();
+    });
+  });
+
+  btnPlay.addEventListener("click", () => {
+    if (timer) stopAuto(); else startAuto();
+  });
+  btnPrev.addEventListener("click", () => { stopAuto(); if (stepIdx > 0) { stepIdx--; renderStep(); } });
+  btnNext.addEventListener("click", () => {
+    stopAuto();
+    if (stepIdx < SCENARIOS[currentScn].steps.length - 1) { stepIdx++; renderStep(); }
+  });
+  btnReplay.addEventListener("click", () => { stopAuto(); stepIdx = 0; renderStep(); startAuto(); });
+
+  let lastTs = performance.now();
+  function loop(ts) {
+    const dt = Math.min(0.05, (ts - lastTs) / 1000);
+    lastTs = ts;
+    if (pktAnim) {
+      pktProg = (pktProg + dt * 0.9) % 1;
+      const pt = pktAnim.wire.getPointAtLength(pktProg * pktAnim.len);
+      pktAnim.el.setAttribute("cx", pt.x.toFixed(1));
+      pktAnim.el.setAttribute("cy", pt.y.toFixed(1));
+    }
+    requestAnimationFrame(loop);
+  }
+
+  renderStep();
+  requestAnimationFrame(loop);
+
+  if (window.IoTHardwareViewer) {
+    window.IoTHardwareViewer.attachSvgTriggers([
+      { selector: "#st-sensor", id: "soil", group: ["soil", "aht"], pillPos: "br" },
+      { selector: "#st-stm32", id: "stm32", pillPos: "br" },
+      { selector: "#st-4g", id: "ec600n", pillPos: "br" }
+    ]);
+  }
+})();</script></body></html>

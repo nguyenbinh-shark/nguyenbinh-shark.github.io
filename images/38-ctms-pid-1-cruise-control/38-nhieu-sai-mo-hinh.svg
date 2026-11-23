@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="1270" viewBox="0 0 960 1270" role="img" aria-labelledby="t1 d1">
+  <title id="t1">PI800,40 khi thêm tải và thay đổi tham số mô hình</title>
+  <desc id="d1">Dữ liệu MATLAB. Tải chống chuyển động 200 N xuất hiện ở giây 20 làm vận tốc giảm rồi phục hồi, trong khi lực tăng từ 500 lên 700 N. Khối lượng tăng 20 phần trăm hoặc lực cản tăng 20 phần trăm vẫn hội tụ về 10 m/s nhưng có quá độ và đuôi đáp ứng khác mô hình danh định.</desc>
+  <defs>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .h1 { font-size: 24px; font-weight: 800; fill: #0f172a; }
+      .h2 { font-size: 16px; font-weight: 500; fill: #64748b; }
+      .pt { font-size: 16px; font-weight: 700; fill: #1e293b; }
+      .ax { font-size: 14px; font-weight: 500; fill: #64748b; font-variant-numeric: tabular-nums; }
+      .axl { font-size: 14px; font-weight: 500; fill: #64748b; }
+      .lg { font-size: 15px; font-weight: 500; fill: #334155; }
+      .an { font-size: 14px; font-weight: 600; fill: #334155; }
+      .anm { font-size: 14px; font-weight: 500; fill: #475569; }
+      .m { font-family: "Times New Roman", "STIX Two Text", Times, serif; font-style: italic; }
+    </style>
+  </defs>
+  <rect width="960" height="1270" fill="#ffffff"/>
+<text x="30" y="42" class="h1">Khâu I khử tải hằng; quá độ đổi khi chiếc xe khác mô hình</text>
+<text x="30" y="68" class="h2">Thử nghiệm bổ sung · PI (800, 40) giữ nguyên · lực chưa giới hạn</text>
+<line x1="30" y1="86" x2="930" y2="86" stroke="#e2e8f0"/>
+<line x1="40.0" y1="111.0" x2="66.0" y2="111.0" stroke="#2a78d6" stroke-width="3" stroke-linecap="round"/>
+<text x="74.0" y="116.0" class="lg">Danh định</text>
+<line x1="245.0" y1="111.0" x2="271.0" y2="111.0" stroke="#eb6834" stroke-width="3" stroke-linecap="round"/>
+<text x="279.0" y="116.0" class="lg">Thêm tải 200 N tại 20 s</text>
+<defs><clipPath id="panel-clip-0"><rect x="80" y="165" width="840" height="190"/></clipPath></defs>
+<line x1="80.0" y1="337.2" x2="920.0" y2="337.2" stroke="#e2e8f0"/>
+<text x="72.0" y="342.2" class="ax" text-anchor="end">9.75</text>
+<line x1="80.0" y1="307.5" x2="920.0" y2="307.5" stroke="#e2e8f0"/>
+<text x="72.0" y="312.5" class="ax" text-anchor="end">9.8</text>
+<line x1="80.0" y1="248.1" x2="920.0" y2="248.1" stroke="#e2e8f0"/>
+<text x="72.0" y="253.1" class="ax" text-anchor="end">9.9</text>
+<line x1="80.0" y1="188.7" x2="920.0" y2="188.7" stroke="#e2e8f0"/>
+<text x="72.0" y="193.7" class="ax" text-anchor="end">10</text>
+<line x1="80.0" y1="355.0" x2="80.0" y2="360.0" stroke="#cbd5e1"/>
+<text x="80.0" y="376.0" class="ax" text-anchor="middle">0</text>
+<line x1="220.0" y1="355.0" x2="220.0" y2="360.0" stroke="#cbd5e1"/>
+<text x="220.0" y="376.0" class="ax" text-anchor="middle">20</text>
+<line x1="360.0" y1="355.0" x2="360.0" y2="360.0" stroke="#cbd5e1"/>
+<text x="360.0" y="376.0" class="ax" text-anchor="middle">40</text>
+<line x1="500.0" y1="355.0" x2="500.0" y2="360.0" stroke="#cbd5e1"/>
+<text x="500.0" y="376.0" class="ax" text-anchor="middle">60</text>
+<line x1="640.0" y1="355.0" x2="640.0" y2="360.0" stroke="#cbd5e1"/>
+<text x="640.0" y="376.0" class="ax" text-anchor="middle">80</text>
+<line x1="780.0" y1="355.0" x2="780.0" y2="360.0" stroke="#cbd5e1"/>
+<text x="780.0" y="376.0" class="ax" text-anchor="middle">100</text>
+<line x1="920.0" y1="355.0" x2="920.0" y2="360.0" stroke="#cbd5e1"/>
+<text x="920.0" y="376.0" class="ax" text-anchor="middle">120</text>
+<line x1="80.0" y1="355.0" x2="920.0" y2="355.0" stroke="#cbd5e1"/>
+<text x="80.0" y="151.0" class="pt">Vận tốc khi thêm tải (m/s) · trục đứng phóng to quanh đích</text>
+<line x1="80.0" y1="188.7" x2="920.0" y2="188.7" stroke="#64748b" stroke-width="1.5" stroke-dasharray="6 5"/>
+<line x1="220.0" y1="165.0" x2="220.0" y2="355.0" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="5 4"/>
+<polyline points="80.0,6126.3 83.0,4381.2 85.8,3233.1 89.3,2229.4 91.5,1774.9 93.5,1451.5 95.6,1182.1 98.5,901.4 101.3,706.3 104.0,569.1 107.5,443.7 111.0,359.6 113.2,321.6 115.3,293.2 117.4,270.9 120.2,248.4 122.8,233.1 125.8,220.2 129.3,209.8 131.4,205.3 134.1,200.9 138.5,196.1 143.9,192.7 150.4,190.6 160.5,189.3 176.2,188.8 920.0,188.8" fill="none" stroke="#2a78d6" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" clip-path="url(#panel-clip-0)"/>
+<polyline points="80.0,6126.3 83.0,4381.2 85.8,3233.1 89.3,2229.4 91.5,1774.9 93.5,1451.5 95.6,1182.1 98.5,901.4 101.3,706.3 104.0,569.1 107.5,443.7 111.0,359.6 113.2,321.6 115.3,293.2 117.4,270.9 120.2,248.4 124.3,226.1 127.0,216.2 129.3,209.8 131.9,204.4 134.7,200.1 137.6,196.9 141.9,193.7 145.3,192.1 149.5,190.8 160.5,189.3 176.2,188.8 220.0,188.8 222.4,224.7 224.5,247.9 227.3,270.6 230.0,285.9 233.5,298.8 237.0,306.4 238.8,308.8 241.6,311.1 244.0,312.0 247.2,312.1 252.7,310.4 258.4,307.2 288.9,285.4 311.9,270.8 329.5,261.1 341.2,255.3 357.0,248.2 371.1,242.5 385.9,237.1 414.7,228.1 444.7,220.5 478.4,213.7 513.9,208.1 553.7,203.3 597.2,199.4 645.1,196.3 701.0,193.8 761.9,192.0 832.0,190.7 920.0,189.8" fill="none" stroke="#eb6834" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" clip-path="url(#panel-clip-0)"/>
+<text x="444.0" y="283.8" class="an" text-anchor="start">Sụt tối đa 0.208 m/s; I kéo lại về đích</text>
+<defs><clipPath id="panel-clip-1"><rect x="80" y="440" width="840" height="175"/></clipPath></defs>
+<line x1="80.0" y1="584.8" x2="920.0" y2="584.8" stroke="#e2e8f0"/>
+<text x="72.0" y="589.8" class="ax" text-anchor="end">500</text>
+<line x1="80.0" y1="524.5" x2="920.0" y2="524.5" stroke="#e2e8f0"/>
+<text x="72.0" y="529.5" class="ax" text-anchor="end">600</text>
+<line x1="80.0" y1="464.1" x2="920.0" y2="464.1" stroke="#e2e8f0"/>
+<text x="72.0" y="469.1" class="ax" text-anchor="end">700</text>
+<line x1="80.0" y1="615.0" x2="80.0" y2="620.0" stroke="#cbd5e1"/>
+<text x="80.0" y="636.0" class="ax" text-anchor="middle">0</text>
+<line x1="220.0" y1="615.0" x2="220.0" y2="620.0" stroke="#cbd5e1"/>
+<text x="220.0" y="636.0" class="ax" text-anchor="middle">20</text>
+<line x1="360.0" y1="615.0" x2="360.0" y2="620.0" stroke="#cbd5e1"/>
+<text x="360.0" y="636.0" class="ax" text-anchor="middle">40</text>
+<line x1="500.0" y1="615.0" x2="500.0" y2="620.0" stroke="#cbd5e1"/>
+<text x="500.0" y="636.0" class="ax" text-anchor="middle">60</text>
+<line x1="640.0" y1="615.0" x2="640.0" y2="620.0" stroke="#cbd5e1"/>
+<text x="640.0" y="636.0" class="ax" text-anchor="middle">80</text>
+<line x1="780.0" y1="615.0" x2="780.0" y2="620.0" stroke="#cbd5e1"/>
+<text x="780.0" y="636.0" class="ax" text-anchor="middle">100</text>
+<line x1="920.0" y1="615.0" x2="920.0" y2="620.0" stroke="#cbd5e1"/>
+<text x="920.0" y="636.0" class="ax" text-anchor="middle">120</text>
+<line x1="80.0" y1="615.0" x2="920.0" y2="615.0" stroke="#cbd5e1"/>
+<text x="80.0" y="426.0" class="pt">Lực khi thêm tải (N)</text>
+<line x1="220.0" y1="440.0" x2="220.0" y2="615.0" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="5 4"/>
+<polyline points="80.0,-3941.0 82.3,-2877.0 85.8,-1735.7 89.3,-970.7 91.5,-624.2 93.5,-377.7 95.6,-172.3 97.8,-3.7 100.5,152.3 103.3,270.8 106.2,359.5 110.3,443.7 112.5,475.1 114.5,497.5 117.4,522.2 120.1,538.8 122.9,551.4 125.6,560.3 129.2,568.6 133.4,574.8 138.0,578.9 143.8,581.8 150.2,583.4 160.1,584.4 176.0,584.8 920.0,584.8" fill="none" stroke="#2a78d6" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" clip-path="url(#panel-clip-1)"/>
+<polyline points="80.0,-3941.0 82.3,-2877.0 85.8,-1735.7 89.3,-970.7 91.5,-624.2 93.5,-377.7 95.6,-172.3 97.8,-3.7 100.5,152.3 103.3,270.8 106.2,359.5 110.3,443.7 112.5,475.1 114.5,497.5 117.4,522.2 120.1,538.8 122.1,548.2 124.4,556.7 127.2,564.4 129.2,568.6 133.4,574.8 136.9,578.1 141.1,580.7 148.6,583.1 160.1,584.4 176.0,584.8 220.0,584.8 222.4,555.4 225.8,526.0 229.4,505.1 232.0,494.6 234.3,487.5 237.0,481.3 239.0,477.8 242.0,473.8 245.0,471.0 248.0,469.0 253.2,466.8 258.3,465.6 263.8,464.9 275.5,464.3 300.6,464.1 920.0,464.1" fill="none" stroke="#eb6834" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" clip-path="url(#panel-clip-1)"/>
+<text x="892.0" y="458.1" class="an" text-anchor="end">700 N = 500 N lực cản + 200 N tải</text>
+<line x1="40.0" y1="680.0" x2="66.0" y2="680.0" stroke="#2a78d6" stroke-width="3" stroke-linecap="round"/>
+<text x="74.0" y="685.0" class="lg">Danh định</text>
+<line x1="245.0" y1="680.0" x2="271.0" y2="680.0" stroke="#1baf7a" stroke-width="3" stroke-linecap="round"/>
+<text x="279.0" y="685.0" class="lg">m tăng 20 %</text>
+<line x1="470.0" y1="680.0" x2="496.0" y2="680.0" stroke="#8b5cf6" stroke-width="3" stroke-linecap="round"/>
+<text x="504.0" y="685.0" class="lg">b tăng 20 %</text>
+<defs><clipPath id="panel-clip-2"><rect x="80" y="735" width="840" height="180"/></clipPath></defs>
+<line x1="80.0" y1="915.0" x2="920.0" y2="915.0" stroke="#cbd5e1"/>
+<text x="72.0" y="920.0" class="ax" text-anchor="end">0</text>
+<line x1="80.0" y1="881.0" x2="920.0" y2="881.0" stroke="#e2e8f0"/>
+<text x="72.0" y="886.0" class="ax" text-anchor="end">2</text>
+<line x1="80.0" y1="847.1" x2="920.0" y2="847.1" stroke="#e2e8f0"/>
+<text x="72.0" y="852.1" class="ax" text-anchor="end">4</text>
+<line x1="80.0" y1="813.1" x2="920.0" y2="813.1" stroke="#e2e8f0"/>
+<text x="72.0" y="818.1" class="ax" text-anchor="end">6</text>
+<line x1="80.0" y1="779.2" x2="920.0" y2="779.2" stroke="#e2e8f0"/>
+<text x="72.0" y="784.2" class="ax" text-anchor="end">8</text>
+<line x1="80.0" y1="745.2" x2="920.0" y2="745.2" stroke="#e2e8f0"/>
+<text x="72.0" y="750.2" class="ax" text-anchor="end">10</text>
+<line x1="80.0" y1="915.0" x2="80.0" y2="920.0" stroke="#cbd5e1"/>
+<text x="80.0" y="936.0" class="ax" text-anchor="middle">0</text>
+<line x1="248.0" y1="915.0" x2="248.0" y2="920.0" stroke="#cbd5e1"/>
+<text x="248.0" y="936.0" class="ax" text-anchor="middle">4</text>
+<line x1="416.0" y1="915.0" x2="416.0" y2="920.0" stroke="#cbd5e1"/>
+<text x="416.0" y="936.0" class="ax" text-anchor="middle">8</text>
+<line x1="584.0" y1="915.0" x2="584.0" y2="920.0" stroke="#cbd5e1"/>
+<text x="584.0" y="936.0" class="ax" text-anchor="middle">12</text>
+<line x1="752.0" y1="915.0" x2="752.0" y2="920.0" stroke="#cbd5e1"/>
+<text x="752.0" y="936.0" class="ax" text-anchor="middle">16</text>
+<line x1="920.0" y1="915.0" x2="920.0" y2="920.0" stroke="#cbd5e1"/>
+<text x="920.0" y="936.0" class="ax" text-anchor="middle">20</text>
+<line x1="80.0" y1="915.0" x2="920.0" y2="915.0" stroke="#cbd5e1"/>
+<text x="80.0" y="721.0" class="pt">Vận tốc khi thay tham số (m/s) · 20 giây đầu</text>
+<rect x="80.0" y="741.8" width="840.0" height="6.8" fill="#e2e8f0" opacity="0.6"/>
+<line x1="80.0" y1="745.2" x2="920.0" y2="745.2" stroke="#64748b" stroke-width="1.5" stroke-dasharray="6 5"/>
+<polyline points="80.0,915.0 87.3,892.8 97.6,866.5 106.2,848.2 114.4,833.3 124.9,817.3 131.4,808.9 137.5,801.9 147.8,791.8 160.6,781.7 173.2,773.9 187.9,766.9 202.8,761.5 221.5,756.6 240.0,753.2 261.4,750.5 290.8,748.2 320.0,746.9 390.4,745.6 496.2,745.2 5120.0,745.2" fill="none" stroke="#2a78d6" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" clip-path="url(#panel-clip-2)"/>
+<polyline points="80.0,915.0 89.2,891.8 99.7,869.2 110.0,850.4 120.7,833.8 127.2,825.0 133.1,817.8 145.9,804.2 158.3,793.4 173.4,782.8 181.6,778.0 190.2,773.6 204.5,767.5 223.6,761.2 244.4,756.2 267.3,752.3 290.2,749.6 317.9,747.4 353.6,745.7 404.9,744.5 483.2,743.9 2034.3,745.0 5120.0,745.2" fill="none" stroke="#1baf7a" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" clip-path="url(#panel-clip-2)"/>
+<polyline points="80.0,915.0 87.3,892.8 97.6,866.6 106.2,848.4 114.4,833.6 124.5,818.3 135.4,804.8 148.2,792.2 160.2,782.9 172.6,775.3 187.9,768.1 202.6,762.9 221.3,758.1 242.3,754.4 261.6,752.1 288.5,750.0 321.9,748.5 382.0,747.3 479.6,746.7 1308.7,745.7 2370.0,745.3 5120.0,745.2" fill="none" stroke="#8b5cf6" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" clip-path="url(#panel-clip-2)"/>
+<defs><clipPath id="panel-clip-3"><rect x="80" y="1010" width="840" height="180"/></clipPath></defs>
+<line x1="80.0" y1="1190.0" x2="920.0" y2="1190.0" stroke="#e2e8f0"/>
+<text x="72.0" y="1195.0" class="ax" text-anchor="end">9.8</text>
+<line x1="80.0" y1="1133.8" x2="920.0" y2="1133.8" stroke="#e2e8f0"/>
+<text x="72.0" y="1138.8" class="ax" text-anchor="end">9.9</text>
+<line x1="80.0" y1="1077.5" x2="920.0" y2="1077.5" stroke="#e2e8f0"/>
+<text x="72.0" y="1082.5" class="ax" text-anchor="end">10</text>
+<line x1="80.0" y1="1021.2" x2="920.0" y2="1021.2" stroke="#e2e8f0"/>
+<text x="72.0" y="1026.2" class="ax" text-anchor="end">10.1</text>
+<line x1="80.0" y1="1190.0" x2="80.0" y2="1195.0" stroke="#cbd5e1"/>
+<text x="80.0" y="1211.0" class="ax" text-anchor="middle">5</text>
+<line x1="189.6" y1="1190.0" x2="189.6" y2="1195.0" stroke="#cbd5e1"/>
+<text x="189.6" y="1211.0" class="ax" text-anchor="middle">20</text>
+<line x1="335.7" y1="1190.0" x2="335.7" y2="1195.0" stroke="#cbd5e1"/>
+<text x="335.7" y="1211.0" class="ax" text-anchor="middle">40</text>
+<line x1="481.7" y1="1190.0" x2="481.7" y2="1195.0" stroke="#cbd5e1"/>
+<text x="481.7" y="1211.0" class="ax" text-anchor="middle">60</text>
+<line x1="627.8" y1="1190.0" x2="627.8" y2="1195.0" stroke="#cbd5e1"/>
+<text x="627.8" y="1211.0" class="ax" text-anchor="middle">80</text>
+<line x1="773.9" y1="1190.0" x2="773.9" y2="1195.0" stroke="#cbd5e1"/>
+<text x="773.9" y="1211.0" class="ax" text-anchor="middle">100</text>
+<line x1="920.0" y1="1190.0" x2="920.0" y2="1195.0" stroke="#cbd5e1"/>
+<text x="920.0" y="1211.0" class="ax" text-anchor="middle">120</text>
+<line x1="80.0" y1="1190.0" x2="920.0" y2="1190.0" stroke="#cbd5e1"/>
+<text x="80.0" y="996.0" class="pt">Nhìn sát đích (m/s): đuôi đáp ứng lộ khi m hoặc b thay đổi</text>
+<text x="920.0" y="1232.0" class="axl" text-anchor="end">thời gian (s)</text>
+<line x1="80.0" y1="1077.5" x2="920.0" y2="1077.5" stroke="#64748b" stroke-width="1.5" stroke-dasharray="6 5"/>
+<polyline points="43.5,6702.5 46.1,5278.1 49.2,4067.3 53.0,3049.8 55.3,2610.5 57.6,2269.0 59.9,2003.6 62.5,1774.6 65.2,1596.0 68.3,1446.6 71.7,1331.9 75.5,1245.3 77.8,1207.9 80.1,1178.9 82.4,1156.3 85.1,1136.1 87.7,1121.6 90.8,1108.9 94.2,1099.1 98.7,1090.7 103.6,1085.2 109.3,1081.6 116.2,1079.4 126.3,1078.1 149.7,1077.5 920.0,1077.5" fill="none" stroke="#2a78d6" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" clip-path="url(#panel-clip-3)"/>
+<polyline points="43.5,6702.5 46.9,5172.9 50.7,3965.2 54.9,3033.2 57.2,2654.1 59.9,2298.5 62.5,2030.1 65.6,1781.5 68.3,1615.3 72.1,1441.0 76.3,1306.9 80.5,1215.7 85.1,1148.9 88.1,1118.5 91.2,1094.9 93.5,1081.3 96.5,1067.7 99.6,1057.2 103.8,1047.4 107.6,1041.6 111.9,1037.5 115.6,1035.4 117.9,1034.6 124.1,1033.7 130.4,1034.0 138.9,1035.4 174.8,1044.0 205.5,1050.4 225.4,1053.9 249.9,1057.6 278.6,1061.2 313.3,1064.7 347.3,1067.4 382.5,1069.6 426.7,1071.7 469.4,1073.2 577.9,1075.5 722.8,1076.8 920.0,1077.3" fill="none" stroke="#1baf7a" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" clip-path="url(#panel-clip-3)"/>
+<polyline points="43.5,6702.5 46.1,5280.5 49.2,4076.5 53.0,3069.1 57.2,2352.5 59.5,2080.2 61.8,1869.1 64.8,1663.5 67.9,1511.2 71.3,1394.4 75.1,1306.2 77.4,1268.0 79.7,1238.2 82.4,1211.4 85.1,1191.3 88.1,1174.7 90.4,1165.0 93.1,1156.2 96.1,1148.7 99.5,1142.4 103.6,1136.9 108.2,1132.5 114.1,1128.5 121.7,1124.8 130.9,1121.4 144.9,1117.2 163.3,1112.5 183.6,1108.0 202.7,1104.3 246.7,1097.4 292.4,1092.1 345.3,1087.7 405.0,1084.3 475.6,1081.7 551.3,1080.0 645.4,1078.8 778.3,1078.0 920.0,1077.7" fill="none" stroke="#8b5cf6" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" clip-path="url(#panel-clip-3)"/>
+<text x="591.3" y="1173.1" class="anm" text-anchor="middle">Triệt tiêu cực–zero danh định không giữ nguyên khi b/m thay đổi</text>
+</svg>

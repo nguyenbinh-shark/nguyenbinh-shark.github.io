@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="780" viewBox="0 0 1200 780" preserveAspectRatio="xMidYMid meet" role="img" aria-labelledby="title desc">
+  <title id="title">Săn PID Quanh Ta — Năm Cỗ Máy Đời Thường</title>
+  <desc id="desc">Bảng tra cứu nhận diện 5 vai trò (Đích đặt, Cảm biến, Bộ điều khiển, Cơ cấu chấp hành, Nhiễu) trong các thiết bị gia dụng và tự động hóa quen thuộc.</desc>
+  <defs>
+    <style>
+      text { font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif; }
+      .ink { fill: #0f172a; }
+      .muted { fill: #475569; }
+      .head { fill: #334155; font-size: 14px; font-weight: 800; letter-spacing: 1px; }
+      .device-name { font-size: 18px; font-weight: 800; fill: #0f172a; }
+      .role-val { font-size: 15px; fill: #334155; font-weight: 600; }
+    </style>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="780" fill="#f8fafc"/>
+  <text x="60" y="52" class="ink" font-size="30" font-weight="800">Săn PID quanh ta — Bài kiểm tra trí nhớ</text>
+  <text x="60" y="84" class="muted" font-size="18">Mọi cỗ máy tự động đều đang lặp lại chiếc vòng Đo — So sánh — Hành động của Chương 1.</text>
+
+  <!-- Table container -->
+  <rect x="55" y="110" width="1090" height="570" rx="10" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+
+  <!-- Table Header -->
+  <rect x="56" y="111" width="1088" height="56" rx="9" fill="#f1f5f9"/>
+  <path d="M 55 167 H 1145" stroke="#cbd5e1" stroke-width="2"/>
+  
+  <text x="85" y="146" class="head">THIẾT BỊ</text>
+  <text x="280" y="146" class="head">RÙA VÀNG (ĐÍCH)</text>
+  <text x="470" y="146" class="head">TRỌNG TÀI (CẢM BIẾN)</text>
+  <text x="690" y="146" class="head">CÁI ĐẦU (BỘ PID)</text>
+  <text x="910" y="146" class="head">ĐÔI CHÂN (CHẤP HÀNH)</text>
+
+  <!-- Column Dividers -->
+  <path d="M 255 111 V 680 M 445 111 V 680 M 665 111 V 680 M 885 111 V 680" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Row Dividers -->
+  <path d="M 55 270 H 1145 M 55 373 H 1145 M 55 476 H 1145 M 55 579 H 1145" stroke="#e2e8f0" stroke-width="1.5"/>
+
+  <!-- Row 1: Điều hòa Inverter -->
+  <circle cx="85" cy="218" r="18" fill="#dbeafe"/>
+  <text x="85" y="224" text-anchor="middle" fill="#2563eb" font-size="18">❄️</text>
+  <text x="115" y="212" class="device-name">Điều hòa</text>
+  <text x="115" y="234" fill="#2563eb" font-size="13" font-weight="700">INVERTER</text>
+
+  <text x="280" y="212" class="role-val">Nhiệt độ cài đặt</text>
+  <text x="280" y="234" class="muted" font-size="14">(ví dụ: 25°C)</text>
+
+  <text x="470" y="212" class="role-val">Cảm biến nhiệt</text>
+  <text x="470" y="234" class="muted" font-size="14">(Thermistor)</text>
+
+  <text x="690" y="212" class="role-val">Vi điều khiển</text>
+  <text x="690" y="234" class="muted" font-size="14">chạy thuật toán PID</text>
+
+  <text x="910" y="212" class="role-val">Máy nén biến tần</text>
+  <text x="910" y="234" class="muted" font-size="14">(quay nhanh/chậm)</text>
+
+  <!-- Row 2: Drone lơ lửng -->
+  <circle cx="85" cy="321" r="18" fill="#ffedd5"/>
+  <text x="85" y="327" text-anchor="middle" fill="#d97706" font-size="18">🚁</text>
+  <text x="115" y="315" class="device-name">Drone</text>
+  <text x="115" y="337" fill="#d97706" font-size="13" font-weight="700">GIỮ ĐỘ CAO</text>
+
+  <text x="280" y="315" class="role-val">Độ cao mục tiêu</text>
+  <text x="280" y="337" class="muted" font-size="14">(ví dụ: 10m cố định)</text>
+
+  <text x="470" y="315" class="role-val">Cảm biến Baro /</text>
+  <text x="470" y="337" class="muted" font-size="14">LiDAR / Siêu âm</text>
+
+  <text x="690" y="315" class="role-val">Flight Controller</text>
+  <text x="690" y="337" class="muted" font-size="14">(P+D gắt, I chống gió)</text>
+
+  <text x="910" y="315" class="role-val">4 Động cơ cánh quạt</text>
+  <text x="910" y="337" class="muted" font-size="14">(điều chỉnh ESC)</text>
+
+  <!-- Row 3: Xe tự cân bằng -->
+  <circle cx="85" cy="424" r="18" fill="#ffe4e6"/>
+  <text x="85" y="430" text-anchor="middle" fill="#e11d48" font-size="18">🛴</text>
+  <text x="115" y="418" class="device-name">Hoverboard</text>
+  <text x="115" y="440" fill="#e11d48" font-size="13" font-weight="700">TỰ CÂN BẰNG</text>
+
+  <text x="280" y="418" class="role-val">Góc nghiêng 0°</text>
+  <text x="280" y="440" class="muted" font-size="14">(thẳng đứng)</text>
+
+  <text x="470" y="418" class="role-val">Cảm biến IMU</text>
+  <text x="470" y="440" class="muted" font-size="14">(Con quay Gyro + Accel)</text>
+
+  <text x="690" y="418" class="role-val">Bộ PID thăng bằng</text>
+  <text x="690" y="440" class="muted" font-size="14">(P &amp; D quyết định chính)</text>
+
+  <text x="910" y="418" class="role-val">Động cơ bánh xe</text>
+  <text x="910" y="440" class="muted" font-size="14">(tiến/lùi chống ngã)</text>
+
+  <!-- Row 4: Cruise Control ô tô -->
+  <circle cx="85" cy="527" r="18" fill="#dcfce7"/>
+  <text x="85" y="533" text-anchor="middle" fill="#15803d" font-size="18">🚗</text>
+  <text x="115" y="521" class="device-name">Cruise Control</text>
+  <text x="115" y="543" fill="#15803d" font-size="13" font-weight="700">GIỮ TỐC ĐỘ Ô TÔ</text>
+
+  <text x="280" y="521" class="role-val">Tốc độ cài đặt</text>
+  <text x="280" y="543" class="muted" font-size="14">(ví dụ: 80 km/h)</text>
+
+  <text x="470" y="521" class="role-val">Cảm biến tốc độ xe</text>
+  <text x="470" y="543" class="muted" font-size="14">(Wheel Speed Sensor)</text>
+
+  <text x="690" y="521" class="role-val">Hộp ECU động cơ</text>
+  <text x="690" y="543" class="muted" font-size="14">(I bù tải khi leo dốc)</text>
+
+  <text x="910" y="521" class="role-val">Bướm ga điện tử</text>
+  <text x="910" y="543" class="muted" font-size="14">(Throttle Actuator)</text>
+
+  <!-- Row 5: Nồi cơm điện tử cao cấp -->
+  <circle cx="85" cy="630" r="18" fill="#ede9fe"/>
+  <text x="85" y="636" text-anchor="middle" fill="#7c3aed" font-size="18">🍚</text>
+  <text x="115" y="624" class="device-name">Nồi cơm điện</text>
+  <text x="115" y="646" fill="#7c3aed" font-size="13" font-weight="700">ĐIỆN TỬ CAO CẤP (IH)</text>
+
+  <text x="280" y="624" class="role-val">Đường cong nhiệt</text>
+  <text x="280" y="646" class="muted" font-size="14">(ngâm, sôi, ủ chín)</text>
+
+  <text x="470" y="624" class="role-val">Cảm biến nhiệt đáy</text>
+  <text x="470" y="646" class="muted" font-size="14">(NTC sensor)</text>
+
+  <text x="690" y="624" class="role-val">Vi xử lý nấu cơm</text>
+  <text x="690" y="646" class="muted" font-size="14">(kiểm soát công suất)</text>
+
+  <text x="910" y="624" class="role-val">Mâm nhiệt / Mâm từ</text>
+  <text x="910" y="646" class="muted" font-size="14">(điều xung PWM)</text>
+
+  <!-- Caption / Honest note -->
+  <rect x="55" y="698" width="1090" height="58" rx="8" fill="#fffbeb" stroke="#fef08a"/>
+  <text x="75" y="733" fill="#854d0e" font-size="15" font-weight="600">
+    <tspan font-weight="800">💡 Lời thú nhận thành thật:</tspan> Tủ lạnh gia đình hay nồi cơm cơ giá rẻ thường chỉ dùng rơ-le BẬT–TẮT (On–Off), không phải PID. PID chỉ xuất hiện trên các máy móc đòi hỏi sự mượt mà và chính xác cao!
+  </text>
+</svg>

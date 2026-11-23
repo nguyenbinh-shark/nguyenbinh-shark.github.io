@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title"><title id="title">Shark Drive Copier</title>
+<defs><linearGradient id="bg" x2="0" y2="1"><stop stop-color="#104c9d"/><stop offset="1" stop-color="#17286e"/></linearGradient></defs>
+<rect x="12.8" y="12.8" width="486.4" height="486.4" rx="112.64" fill="url(#bg)"/>
+<polygon fill="#bcefff" points="143.36,250.88 61.44,179.2 81.92,266.24 51.2,358.4 148.48,302.08"/>
+<polygon fill="#ffffff" points="215.04,225.28 245.76,102.4 322.56,209.92"/>
+<polygon fill="#bcefff" points="215.04,307.2 225.28,409.6 317.44,337.92"/>
+<polygon fill="#ffffff" points="92.16,286.72 153.6,230.4 225.28,204.8 296.96,189.44 337.92,204.8 389.12,235.52 440.32,271.36 455.68,291.84 404.48,307.2 327.68,348.16 266.24,353.28 194.56,327.68 143.36,296.96"/>
+<polygon fill="#c7f0ff" points="133.12,296.96 225.28,291.84 337.92,312.32 404.48,307.2 327.68,348.16 266.24,353.28 194.56,327.68"/>
+<polygon fill="#12376d" points="404.48,289.28 455.68,289.28 440.32,299.52 404.48,299.52"/>
+<polygon fill="#39749e" points="302.08,240.64 307.2,240.64 294.4,286.72 289.28,286.72"/>
+<polygon fill="#39749e" points="320,245.76 325.12,245.76 312.32,286.72 307.2,286.72"/>
+<circle cx="386.56" cy="258.048" r="8.704" fill="#12376d"/>
+<rect x="337.92" y="366.08" width="76.8" height="81.92" rx="11.264" fill="#63e5e3"/>
+<rect x="350.72" y="378.88" width="51.2" height="56.32" rx="4.608" fill="#163371"/>
+<rect x="373.76" y="399.36" width="76.8" height="81.92" rx="11.264" fill="#63e5e3"/>
+<rect x="386.56" y="412.16" width="51.2" height="56.32" rx="4.608" fill="#162d6f"/>
+</svg>

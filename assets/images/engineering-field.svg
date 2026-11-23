@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640" fill="none">
+  <defs>
+    <pattern id="points" width="64" height="64" patternUnits="userSpaceOnUse">
+      <circle cx="32" cy="32" r="1" fill="#9ca3af" opacity=".5"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="640" fill="url(#points)"/>
+  <g stroke="#60a5fa" stroke-width="1" opacity=".5">
+    <path d="M752 0v64a16 16 0 0 0 16 16h176a16 16 0 0 1 16 16v48"/>
+    <path d="M1200 192h-96a16 16 0 0 0-16 16v112a16 16 0 0 1-16 16h-64"/>
+    <path d="M0 512h112a16 16 0 0 0 16-16v-32a16 16 0 0 1 16-16h80"/>
+    <path d="M512 640v-64a16 16 0 0 1 16-16h176a16 16 0 0 0 16-16v-48"/>
+    <circle cx="928" cy="304" r="192" opacity=".4"/>
+    <circle cx="928" cy="304" r="224" stroke-dasharray="4 16" opacity=".3"/>
+  </g>
+  <g fill="#60a5fa">
+    <circle cx="960" cy="144" r="3" opacity=".8"/>
+    <circle cx="1008" cy="336" r="3" opacity=".8"/>
+    <circle cx="224" cy="448" r="3" opacity=".6"/>
+    <circle cx="720" cy="496" r="3" opacity=".6"/>
+  </g>
+  <g stroke="#9ca3af" stroke-width="1" opacity=".3">
+    <path d="M312 96h16m-8-8v16M88 240h16m-8-8v16M1016 560h16m-8-8v16"/>
+  </g>
+</svg>

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640" preserveAspectRatio="none" fill="none">
+  <defs><filter id="haze" x="-100%" y="-50%" width="300%" height="200%"><feGaussianBlur stdDeviation="24"/></filter><filter id="glow" x="-100%" y="-50%" width="300%" height="200%"><feGaussianBlur stdDeviation="7"/></filter></defs>
+  <path d="M984-40V477Q984 640 780 640H500M984 477Q984 640 1150 640h100" stroke="#2563eb" stroke-width="64" stroke-opacity=".2" filter="url(#haze)"/>
+  <path d="M984-40V512Q984 640 780 640H500M984 512Q984 640 1150 640h100" stroke="#60a5fa" stroke-width="12" stroke-opacity=".65" filter="url(#glow)"/>
+  <path d="M984-40V542Q984 640 810 640H620M984 542Q984 640 1130 640h120" stroke="#60a5fa" stroke-width="2" stroke-opacity=".8"/>
+</svg>

@@ -1,0 +1,215 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><title>Demo 6 — Sao lưu Google Drive 15 phút &amp; Máy dò lỗi theo luồng</title><style>:root{--bg:#0b1120;--panel:#111827;--panel-2:#0f172a;--border:#1e293b;--border-hi:#334155;--text:#f8fafc;--muted:#94a3b8;--cyan:#38bdf8;--green:#22c55e;--amber:#f59e0b;--red:#ef4444;--violet:#a78bfa}*{box-sizing:border-box}body{margin:0;padding:12px;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:14px;line-height:1.45}.wrap{max-width:960px;margin:0 auto}.ctrl-row,.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center}button{border:1px solid var(--border-hi);background:var(--panel);color:var(--text);padding:7px 11px;border-radius:8px;font:inherit;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .15s ease}button:hover:not(:disabled){border-color:var(--cyan);color:var(--cyan)}button.tab-btn.active{background:rgba(167,139,250,.18);border-color:var(--violet);color:#ddd6fe}button.run-btn{background:#6d28d9;border-color:var(--violet);color:#fff}button.fault-btn.active{background:rgba(239,68,68,.18);border-color:var(--red);color:#fca5a5}.stage{background:var(--panel-2);border:1px solid var(--border);border-radius:12px;padding:10px}svg{display:block;width:100%;height:auto}.wire{fill:none;stroke:#334155;stroke-width:2.5}.wire.violet{stroke:var(--violet);stroke-width:3.4}.wire.green{stroke:var(--green);stroke-width:3.4}.wire.err{stroke:var(--red);stroke-width:3.8;stroke-dasharray:5 4}.box rect{fill:#111827;stroke:#334155;stroke-width:1.6;rx:9;ry:9;transition:all .2s ease}.box.violet rect{fill:#2e1065;stroke:var(--violet);stroke-width:2.4}.box.green rect{fill:#052e16;stroke:var(--green);stroke-width:2.4}.box.err rect{fill:#450a0a;stroke:var(--red);stroke-width:2.6}.bt{fill:#f8fafc;font-size:11.5px;font-weight:700}.bs{fill:#94a3b8;font-size:10px}.grid-2{display:grid;grid-template-columns:1.35fr 1fr;gap:10px;margin-top:10px}.card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:10px 12px}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-bottom:8px}.stat{background:var(--panel-2);border:1px solid var(--border);border-radius:8px;padding:7px 9px}.stat span{display:block;font-size:.7rem;color:var(--muted)}.stat b{display:block;font-size:.92rem;color:#ddd6fe;margin-top:2px}.trap-table{width:100%;border-collapse:collapse;font-size:.78rem;margin-top:6px}.trap-table td,.trap-table th{border-bottom:1px solid var(--border);padding:4px 6px;text-align:left}.trap-table th{color:var(--muted);font-size:.72rem}.bad{color:#f87171;font-weight:700}.good{color:#4ade80;font-weight:700}.hidden{display:none}.check-list{margin:6px 0 0;padding-left:18px;font-size:.84rem;color:#e2e8f0}.check-list li{margin:4px 0}@media (max-width:720px){body{padding:8px}.grid-2{grid-template-columns:1fr}}</style></head><body><div class="wrap"><div class="tabs"><button class="tab-btn active" data-tab="drive" type="button">☁️ Phần 1: Sao lưu Google Drive 15 phút &amp; Bẫy cộng Excel</button> <button class="tab-btn" data-tab="fault" type="button">🩺 Phần 2: Bảng dò lỗi theo luồng dữ liệu</button></div><div id="tab-drive"><div class="ctrl-row"><button id="btnSync" class="run-btn" type="button">▶ Chạy lượt sao lưu 15 phút</button> <button id="btnAddRows" type="button">➕ Thêm 30 bản ghi mới ngoài vườn vào VPS</button> <button id="btnResetDrive" type="button">↺ Reset về đầu ngày</button></div><div class="stage"><svg id="drvSvg" viewBox="0 0 920 190" xmlns="http://www.w3.org/2000/svg"><path id="gw-ask" class="wire" d="M 650 74 L 312 74"/><path id="gw-res" class="wire" d="M 312 114 L 650 114"/><path id="gw-save" class="wire" d="M 790 132 C 846 132, 846 164, 720 164 L 540 164"/><g class="box" id="db-vps" transform="translate(24,42)"><rect width="288" height="104"/><text class="bt" x="12" y="25">Backend VPS + SQLite (telemetry_logs)</text><text id="svgVpsCount" class="bs" x="12" y="45">Tổng bản ghi đang có: 150 dòng (ID #1 → #150)</text><text class="bs" x="12" y="63">API: GET /drive-backup/changes?after_id=...</text><text class="bs" x="12" y="81" fill="#38bdf8">Chỉ đóng gói các dòng có ID &gt; after_id (Base64 + SHA-256)</text></g><g class="box" id="db-gas" transform="translate(650,42)"><rect width="246" height="104"/><text class="bt" x="12" y="25">Google Apps Script (DriveBackup.gs)</text><text id="svgCursor" class="bs" x="12" y="45">Con trỏ BACKUP_CURSOR_V2 = 0</text><text id="svgHash" class="bs" x="12" y="63">Kiểm tra mã vân tay SHA-256 trước khi lưu</text><text class="bs" x="12" y="81" fill="#4ade80">Chỉ tăng con trỏ SAU KHI ghi xong Drive!</text></g><g class="box" id="db-drive" transform="translate(320,140)"><rect width="220" height="44"/><text class="bt" x="12" y="19">Google Drive (File CSV 27 cột)</text><text id="svgDrvRows" class="bs" x="12" y="35">Tuoi_cay_YYYY-MM-DD.csv · 0 dòng</text></g><g id="drvPktLayer"></g></svg></div><div class="grid-2"><div class="card"><div class="stats"><div class="stat"><span>Số dòng hiện có trên VPS</span><b id="stVps">150 dòng</b></div><div class="stat"><span>Mốc con trỏ hiện tại (after_id)</span><b id="stCur">0</b></div><div class="stat"><span>Số dòng đã sao lưu lên Drive</span><b id="stDrv">0 dòng</b></div><div class="stat"><span>Kết quả lượt chạy gần nhất</span><b id="stLast">Chưa chạy</b></div></div><p id="drvMsg" style="margin:0;font-size:.82rem;color:#cbd5e1">Bấm "Chạy lượt sao lưu 15 phút" để xem Apps Script kéo 150 dòng đầu tiên, rồi bấm thêm lần nữa để thấy nó KHÔNG tải trùng dòng cũ!</p></div><div class="card"><strong style="font-size:.82rem;color:#fbbf24">⚠️ Lưu ý quan trọng khi tổng hợp CSV bằng Excel</strong><p style="margin:4px 0;font-size:.78rem;color:#cbd5e1">Cột <code>daily_l</code> là <b>số tích lũy trong ngày</b>, KHÔNG phải lượng nước của riêng 1 lần gửi tin:</p><table class="trap-table"><thead><tr><th>Giờ ghi nhận</th><th>daily_l (Hàng B)</th><th>Cách hiểu đúng</th></tr></thead><tbody><tr><td>08:00</td><td>0.50 L</td><td>Từ sáng tới 08:00 đã tưới 0.50 L</td></tr><tr><td>09:00</td><td>1.20 L</td><td>Từ sáng tới 09:00 tổng là 1.20 L</td></tr><tr><td>10:00</td><td>1.80 L</td><td>Tổng đến 10:00 là 1.80 L</td></tr></tbody></table><p style="margin:6px 0 0;font-size:.78rem"><span class="bad">❌ SUM cả cột = 3.50 L (SAI!)</span> · <span class="good">✅ Lấy giá trị cuối ngày = 1.80 L (ĐÚNG!)</span></p></div></div></div><div id="tab-fault" class="hidden"><div class="ctrl-row"><button class="fault-btn active" data-f="f1" type="button">🌐 1. Web không mở được</button> <button class="fault-btn" data-f="f2" type="button">📵 2. Web mở được nhưng báo Offline</button> <button class="fault-btn" data-f="f3" type="button">🚫 3. Bấm Bật Bơm bị từ chối</button> <button class="fault-btn" data-f="f4" type="button">❄️ 4. Số liệu đứng yên lâu</button> <button class="fault-btn" data-f="f5" type="button">📁 5. Tạo CSV xong nhưng Drive chưa có</button></div><div class="stage"><svg id="fltSvg" viewBox="0 0 920 155" xmlns="http://www.w3.org/2000/svg"><path id="fw1" class="wire" d="M 186 76 L 230 76"/><path id="fw2" class="wire" d="M 412 76 L 466 76"/><path id="fw3" class="wire" d="M 656 76 L 710 76"/><path id="fw4" class="wire" d="M 560 112 L 560 142 L 710 142"/><g class="box" id="fb-stm" transform="translate(14,36)"><rect width="172" height="80"/><text class="bt" x="10" y="25">1. Ngoài vườn</text><text class="bs" x="10" y="43">STM32F401RCT6 + Cảm biến</text><text class="bs" x="10" y="59">+ Modem 4G + SIM</text></g><g class="box" id="fb-emqx" transform="translate(230,36)"><rect width="182" height="80"/><text class="bt" x="10" y="25">2. Mạng 4G &amp; EMQX</text><text class="bs" x="10" y="43">Sóng di động + Broker</text><text class="bs" x="10" y="59">Cổng 8883 + Di chúc LWT</text></g><g class="box" id="fb-vps" transform="translate(466,36)"><rect width="190" height="80"/><text class="bt" x="10" y="25">3. VPS &amp; Tunnel</text><text class="bs" x="10" y="43">FastAPI + SQLite</text><text class="bs" x="10" y="59">+ Chốt RBAC / An toàn</text></g><g class="box" id="fb-web" transform="translate(710,20)"><rect width="196" height="68"/><text class="bt" x="10" y="23">4A. Trình duyệt Web HMI</text><text class="bs" x="10" y="41">REST + WebSocket</text><text class="bs" x="10" y="56">Đang xem Live hay Demo?</text></g><g class="box" id="fb-drv" transform="translate(710,104)"><rect width="196" height="46"/><text class="bt" x="10" y="19">4B. Google Apps Script</text><text class="bs" x="10" y="36">Lịch chạy 15 phút + Token</text></g></svg></div><div class="card"><strong id="fltTitle" style="color:#fca5a5">Triệu chứng 1: Trang Web không mở được</strong><p id="fltWhy" style="margin:4px 0;font-size:.84rem;color:#cbd5e1"></p><ol id="fltSteps" class="check-list"></ol></div></div></div><script src="./hardware-photos.js?v=bbe73888"></script><script>(function () {
+  "use strict";
+
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      const t = btn.getAttribute("data-tab");
+      document.getElementById("tab-drive").classList.toggle("hidden", t !== "drive");
+      document.getElementById("tab-fault").classList.toggle("hidden", t !== "fault");
+    });
+  });
+
+  // ===== TAB 1: DRIVE BACKUP =====
+  let vpsTotal = 150;
+  let cursor = 0;
+  let drvTotal = 0;
+  let anim = null;
+  let prog = 0;
+
+  const drvPktLayer = document.getElementById("drvPktLayer");
+  const svgVpsCount = document.getElementById("svgVpsCount");
+  const svgCursor = document.getElementById("svgCursor");
+  const svgDrvRows = document.getElementById("svgDrvRows");
+  const stVps = document.getElementById("stVps");
+  const stCur = document.getElementById("stCur");
+  const stDrv = document.getElementById("stDrv");
+  const stLast = document.getElementById("stLast");
+  const drvMsg = document.getElementById("drvMsg");
+
+  function updateDriveUI() {
+    svgVpsCount.textContent = "Tổng bản ghi đang có: " + vpsTotal + " dòng (ID #1 → #" + vpsTotal + ")";
+    svgCursor.textContent = "Con trỏ BACKUP_CURSOR_V2 = " + cursor;
+    svgDrvRows.textContent = "Tuoi_cay_YYYY-MM-DD.csv · " + drvTotal + " dòng";
+    stVps.textContent = vpsTotal + " dòng";
+    stCur.textContent = cursor;
+    stDrv.textContent = drvTotal + " dòng";
+  }
+
+  function runPkt(wireId, color, cb) {
+    while (drvPktLayer.firstChild) drvPktLayer.removeChild(drvPktLayer.firstChild);
+    const wire = document.getElementById(wireId);
+    const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    c.setAttribute("r", "6");
+    c.setAttribute("fill", color);
+    drvPktLayer.appendChild(c);
+    prog = 0;
+    anim = { el: c, wire: wire, len: wire.getTotalLength(), cb: cb };
+  }
+
+  function clearDrvClasses() {
+    document.querySelectorAll("#drvSvg .box").forEach(b => b.classList.remove("violet", "green"));
+    document.querySelectorAll("#drvSvg .wire").forEach(w => w.classList.remove("violet", "green"));
+  }
+
+  document.getElementById("btnSync").addEventListener("click", () => {
+    clearDrvClasses();
+    document.getElementById("db-gas").classList.add("violet");
+    document.getElementById("gw-ask").classList.add("violet");
+    const delta = vpsTotal - cursor;
+
+    runPkt("gw-ask", "#a78bfa", () => {
+      document.getElementById("db-vps").classList.add("violet");
+      if (delta <= 0) {
+        stLast.textContent = "Không có dòng mới (0 dòng)";
+        drvMsg.textContent = "Apps Script hỏi ?after_id=" + cursor + " → VPS báo 0 dòng mới → Không đọc/ghi lại file Drive cho đỡ tốn thời gian! Hãy bấm 'Thêm 30 bản ghi mới' rồi thử lại.";
+        anim = null;
+        while (drvPktLayer.firstChild) drvPktLayer.removeChild(drvPktLayer.firstChild);
+        return;
+      }
+      document.getElementById("gw-res").classList.add("violet");
+      runPkt("gw-res", "#a78bfa", () => {
+        document.getElementById("gw-save").classList.add("green");
+        document.getElementById("db-drive").classList.add("green");
+        runPkt("gw-save", "#22c55e", () => {
+          const oldCur = cursor;
+          cursor = vpsTotal;
+          drvTotal += delta;
+          stLast.textContent = "+" + delta + " dòng (SHA-256 OK!)";
+          drvMsg.textContent = "Đã kéo đúng phần mới ID #" + (oldCur + 1) + " → #" + cursor + ", kiểm tra SHA-256 khớp 100%, ghép vào Google Drive và mới nâng con trỏ lên " + cursor + "!";
+          updateDriveUI();
+          anim = null;
+        });
+      });
+    });
+  });
+
+  document.getElementById("btnAddRows").addEventListener("click", () => {
+    vpsTotal += 30;
+    updateDriveUI();
+    drvMsg.textContent = "Vườn vừa gửi thêm 30 dòng lên VPS (tổng " + vpsTotal + " dòng). Hãy bấm 'Chạy lượt sao lưu 15 phút' để xem nó chỉ tải đúng 30 dòng mới!";
+  });
+
+  document.getElementById("btnResetDrive").addEventListener("click", () => {
+    clearDrvClasses();
+    vpsTotal = 150; cursor = 0; drvTotal = 0; anim = null;
+    while (drvPktLayer.firstChild) drvPktLayer.removeChild(drvPktLayer.firstChild);
+    stLast.textContent = "Chưa chạy";
+    drvMsg.textContent = "Đã đặt lại. Bấm 'Chạy lượt sao lưu 15 phút' để quan sát.";
+    updateDriveUI();
+  });
+
+  // ===== TAB 2: FAULT LOCATOR =====
+  const FAULTS = {
+    f1: {
+      boxes: ["fb-vps", "fb-web"],
+      wires: ["fw3"],
+      title: "Triệu chứng 1: Trình duyệt báo lỗi không mở được trang Web HMI",
+      why: "Lỗi nằm ở chặng giữa Trình duyệt ↔ Cloudflare Tunnel ↔ Máy chủ VPS (hoặc dịch vụ FastAPI/Uvicorn trên VPS đang tắt).",
+      steps: [
+        "Thử truy cập trang /health để xem Backend FastAPI có trả về 'healthy' hay không.",
+        "Trên VPS Windows, kiểm tra tác vụ TomatoBackend và dịch vụ Cloudflare Tunnel xem có đang chạy không.",
+        "Yên tâm: Trong lúc Web chưa vào được, STM32 ngoài vườn vẫn đang chạy tự động bình thường!"
+      ]
+    },
+    f2: {
+      boxes: ["fb-stm", "fb-emqx"],
+      wires: ["fw1"],
+      title: "Triệu chứng 2: Web mở được bình thường nhưng báo Trạm tưới 'Offline'",
+      why: "Web và VPS vẫn sống, nhưng chặng từ Ngoài vườn (STM32 + Modem 4G) tới EMQX Broker bị đứt nên EMQX phát di chúc LWT 'offline'.",
+      steps: [
+        "Kiểm tra nguồn điện hộp điều khiển ngoài vườn xem STM32 có sáng đèn nhấp nháy PC13 (1 giây/lần) không.",
+        "Kiểm tra SIM 4G trong Modem EC600N (còn data không, ăng-ten có lỏng không).",
+        "Kiểm tra trạm trên Web có đang ở chế độ Live đúng mã thiết bị hay không."
+      ]
+    },
+    f3: {
+      boxes: ["fb-vps"],
+      wires: [],
+      title: "Triệu chứng 3: Bấm nút Bật Bơm trên Web nhưng bị báo lỗi từ chối",
+      why: "Lệnh đã chạm tới Chốt 1 (Quyền) hoặc Chốt 2 (An toàn thủy lực) tại Backend VPS và bị chủ động chặn lại để bảo vệ hệ thống.",
+      steps: [
+        "Kiểm tra xem bạn đã đăng nhập tài khoản User/Admin chưa (tài khoản Guest bị HTTP 403 chặn mọi lệnh).",
+        "Nếu báo lỗi HTTP 400 'Cả 3 van đang đóng', hãy mở ít nhất 1 van (A, B hoặc C) rồi mới bấm Bật Bơm!",
+        "Kiểm tra chế độ hiện tại: Nếu đang để AUTO, nút điều khiển van/bơm thủ công sẽ bị khóa — cần chuyển sang THỦ CÔNG trước."
+      ]
+    },
+    f4: {
+      boxes: ["fb-stm", "fb-emqx", "fb-web"],
+      wires: ["fw1", "fw2", "fw3"],
+      title: "Triệu chứng 4: Các con số trên Web đứng yên rất lâu không thay đổi",
+      why: "Hoặc kết nối WebSocket trên trình duyệt bị rớt, hoặc thiết bị ngoài vườn lâu chưa gửi gói /data mới.",
+      steps: [
+        "Nhìn ngay mục 'Thời điểm cập nhật gần nhất' trên thanh trạng thái Web.",
+        "Bấm nút 'Làm mới' (gọi REST API) để xem VPS có dữ liệu mới hơn mà WebSocket lỡ bỏ qua không.",
+        "Nếu giờ cập nhật ở VPS cũng cũ quá 2–3 phút, kiểm tra sóng 4G ngoài vườn."
+      ]
+    },
+    f5: {
+      boxes: ["fb-vps", "fb-drv"],
+      wires: ["fw4"],
+      title: "Triệu chứng 5: Đã bấm 'Sao lưu dữ liệu hôm nay ngay' trên Web nhưng Google Drive chưa có dòng mới",
+      why: "Hai nhánh này ĐỘC LẬP với nhau! Nút trên Web chỉ xuất file CSV tại thư mục exports_csv của VPS để tải về ngay, KHÔNG kích hoạt Google Apps Script.",
+      steps: [
+        "Muốn tải file ngay lúc đó: dùng luôn nút 'Tải về' trong danh sách ngay dưới nút Sao lưu trên Web.",
+        "Muốn kiểm tra đồng bộ Drive: vào Google Apps Script xem mục Triggers (đã cài lịch 15 phút backupIncremental chưa) và Executions (có báo lỗi token/quyền Drive không).",
+        "Chú ý: Không được dùng bookmark link tải CSV cũ để mở lại vì trình duyệt/Download có thể lưu bản cũ."
+      ]
+    }
+  };
+
+  function showFault(id) {
+    const f = FAULTS[id];
+    document.querySelectorAll("#fltSvg .box").forEach(b => b.classList.remove("err"));
+    document.querySelectorAll("#fltSvg .wire").forEach(w => w.classList.remove("err"));
+    f.boxes.forEach(bid => document.getElementById(bid).classList.add("err"));
+    f.wires.forEach(wid => document.getElementById(wid).classList.add("err"));
+    document.getElementById("fltTitle").textContent = f.title;
+    document.getElementById("fltWhy").textContent = f.why;
+    const ul = document.getElementById("fltSteps");
+    ul.innerHTML = "";
+    f.steps.forEach(txt => {
+      const li = document.createElement("li");
+      li.textContent = txt;
+      ul.appendChild(li);
+    });
+  }
+
+  document.querySelectorAll(".fault-btn").forEach(b => {
+    b.addEventListener("click", () => {
+      document.querySelectorAll(".fault-btn").forEach(x => x.classList.remove("active"));
+      b.classList.add("active");
+      showFault(b.getAttribute("data-f"));
+    });
+  });
+
+  let lastTs = performance.now();
+  function loop(ts) {
+    const dt = Math.min(0.05, (ts - lastTs) / 1000);
+    lastTs = ts;
+    if (anim) {
+      prog += dt * 1.45;
+      if (prog >= 1) {
+        const cb = anim.cb;
+        anim = null;
+        if (cb) cb();
+      } else {
+        const pt = anim.wire.getPointAtLength(prog * anim.len);
+        anim.el.setAttribute("cx", pt.x.toFixed(1));
+        anim.el.setAttribute("cy", pt.y.toFixed(1));
+      }
+    }
+    requestAnimationFrame(loop);
+  }
+
+  updateDriveUI();
+  showFault("f1");
+  requestAnimationFrame(loop);
+
+  if (window.IoTHardwareViewer) {
+    window.IoTHardwareViewer.attachSvgTriggers([
+      { selector: "#fb-stm", id: "cabinet", group: ["cabinet", "stm32", "ec600n", "soil", "aht", "act"], pillPos: "br" }
+    ]);
+  }
+})();</script></body></html>

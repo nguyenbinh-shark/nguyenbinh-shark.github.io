@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="340" viewBox="0 0 920 340" role="img" aria-labelledby="title desc">
+<title id="title">Ball and Beam: vị trí bóng và hai góc</title><desc id="desc">Góc servo theta qua tay đòn d tạo góc thanh alpha. Bóng lăn dọc thanh, tọa độ r đo theo thanh. Hình là nguyên lý góc nhỏ; file Multibody dùng khớp trượt tương đương.</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8" fill="#334155"/></marker></defs>
+<rect width="920" height="340" rx="16" fill="#f8fafc"/>
+<g font-family="Arial, sans-serif" font-size="20" fill="#1e293b">
+<text x="40" y="38" font-weight="bold">Góc servo → góc thanh → gia tốc bóng</text>
+<path d="M90 205L665 160" stroke="#27739b" stroke-width="16"/><path d="M90 205L675 205" stroke="#94a3b8" stroke-dasharray="7 6" stroke-width="2"/>
+<path d="M365 187L325 270L405 270Z" fill="#64748b"/>
+<circle cx="305" cy="174" r="23" fill="#da692b" stroke="#874220" stroke-width="2"/>
+<path d="M115 143L290 129" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/><text x="180" y="112">vị trí r (m)</text>
+<path d="M530 204Q560 203 563 169" fill="none" stroke="#334155" stroke-width="2"/><text x="567" y="194">α</text>
+<circle cx="776" cy="223" r="37" fill="#cbd5e1" stroke="#475569" stroke-width="2"/><path d="M776 223L798 193L664 160" fill="none" stroke="#475569" stroke-width="5"/>
+<text x="799" y="164">θ</text><text x="796" y="219">d</text>
+<text x="690" y="290">servo lý tưởng</text>
+<text x="50" y="310" font-size="17">CTMS góc nhỏ: α = (d/L)θ,  r̈ = 0,21θ  ·  Tín hiệu góc phải được kiểm cùng vị trí.</text>
+</g></svg>

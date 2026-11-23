@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="300" viewBox="0 0 900 300" role="img" aria-labelledby="title desc">
+  <title id="title">Lực kéo và lực cản trên mô hình xe</title>
+  <desc id="desc">Xe khối lượng m chuyển động sang phải với vận tốc v. Lực kéo u hướng sang phải; lực cản bv hướng sang trái.</desc>
+  <defs><marker id="blue" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#1767a4"/></marker><marker id="red" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#ad3434"/></marker></defs>
+  <rect width="900" height="300" rx="16" fill="#f4f7fb"/>
+  <g font-family="Arial, sans-serif" font-size="24" fill="#172f47">
+    <path d="M75 235H825" stroke="#526477" stroke-width="3"/>
+    <path d="M320 180V135H370L405 95H490L535 135H585V180Z" fill="#d5e6f4" stroke="#1767a4" stroke-width="3"/>
+    <circle cx="375" cy="201" r="32" fill="#526477"/><circle cx="535" cy="201" r="32" fill="#526477"/>
+    <text x="450" y="164" text-anchor="middle">Khối lượng m</text>
+    <path d="M590 155H780" stroke="#1767a4" stroke-width="5" marker-end="url(#blue)"/>
+    <text x="683" y="127" text-anchor="middle">Lực kéo u</text>
+    <path d="M315 155H125" stroke="#ad3434" stroke-width="5" marker-end="url(#red)"/>
+    <text x="215" y="127" text-anchor="middle">Lực cản bv</text>
+    <path d="M395 55H520" stroke="#1767a4" stroke-width="3" marker-end="url(#blue)"/>
+    <text x="455" y="35" text-anchor="middle">Tốc độ v</text>
+    <text x="450" y="276" text-anchor="middle">Lực dư = u − bv → Gia tốc = (u − bv) / m</text>
+  </g>
+</svg>

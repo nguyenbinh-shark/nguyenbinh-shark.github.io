@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "systems": [
+    {
+      "id": "local",
+      "name": "File từ máy tính",
+      "icon": "file",
+      "description": "Dùng firmware BIN hoặc HEX đã biên dịch cho mạch STM32 của bạn.",
+      "releases": []
+    },
+    {
+      "id": "vuon-iot",
+      "name": "Vườn IoT",
+      "icon": "garden",
+      "description": "Firmware cho hệ thống vườn IoT. Các bản nạp có sẵn sẽ được bổ sung tại đây sau khi xác nhận đúng phần cứng và phiên bản.",
+      "releases": []
+    }
+  ]
+}

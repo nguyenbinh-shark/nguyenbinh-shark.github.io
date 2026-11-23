@@ -1,0 +1,249 @@
+<!doctype html><html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><title>Demo 5 — Luồng Đổi Cài Đặt (Cờ Retain) &amp; Nạp Firmware Từ Xa (ESP32 OTA)</title><style>:root{--bg:#0b1120;--panel:#111827;--panel-2:#0f172a;--border:#1e293b;--border-hi:#334155;--text:#f8fafc;--muted:#94a3b8;--cyan:#38bdf8;--green:#22c55e;--amber:#f59e0b;--red:#ef4444;--violet:#a78bfa}*{box-sizing:border-box}body{margin:0;padding:12px;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:14px;line-height:1.45}.wrap{max-width:960px;margin:0 auto}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}button{border:1px solid var(--border-hi);background:var(--panel);color:var(--text);padding:7px 12px;border-radius:8px;font:inherit;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .15s ease}button:hover:not(:disabled){border-color:var(--cyan);color:var(--cyan)}button:disabled{opacity:.45;cursor:not-allowed}button.tab-btn.active{background:rgba(56,189,248,.16);border-color:var(--cyan);color:var(--cyan)}button.primary{background:#d97706;border-color:#f59e0b;color:#fff}button.ota-btn{background:#6d28d9;border-color:#a78bfa;color:#fff}button.net-on{background:rgba(34,197,94,.16);border-color:var(--green);color:#86efac}button.net-off{background:rgba(239,68,68,.18);border-color:var(--red);color:#fca5a5}.ctrl-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center}.stage{background:var(--panel-2);border:1px solid var(--border);border-radius:12px;padding:10px}svg{display:block;width:100%;height:auto}.wire{fill:none;stroke:#334155;stroke-width:2.5}.wire.amber{stroke:var(--amber);stroke-width:3.4}.wire.green{stroke:var(--green);stroke-width:3.4}.wire.violet{stroke:var(--violet);stroke-width:3.4}.wire.err{stroke:var(--red);stroke-width:3.4;stroke-dasharray:5 4}.box rect{fill:#111827;stroke:#334155;stroke-width:1.6;rx:9;ry:9;transition:all .2s ease}.box.amber rect{fill:#451a03;stroke:var(--amber);stroke-width:2.4}.box.green rect{fill:#052e16;stroke:var(--green);stroke-width:2.4}.box.violet rect{fill:#2e1065;stroke:var(--violet);stroke-width:2.4}.box.err rect{fill:#450a0a;stroke:var(--red);stroke-width:2.4}.bt{fill:#f8fafc;font-size:11.5px;font-weight:700}.bs{fill:#94a3b8;font-size:10px}.card{margin-top:10px;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:11px 13px}.card-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid var(--border)}.pill{font-size:.72rem;font-weight:700;padding:2px 9px;border-radius:999px;background:rgba(245,158,11,.16);color:var(--amber);border:1px solid rgba(245,158,11,.35)}.pill.violet{background:rgba(167,139,250,.16);color:var(--violet);border-color:rgba(167,139,250,.35)}.pill.green{background:rgba(34,197,94,.16);color:var(--green);border-color:rgba(34,197,94,.35)}.pill.err{background:rgba(239,68,68,.16);color:var(--red);border-color:rgba(239,68,68,.35)}.explain{margin:0 0 8px;font-size:.85rem;color:#e2e8f0}pre.payload{margin:0;padding:9px 10px;border-radius:8px;background:#020617;border:1px solid #1e293b;font-family:ui-monospace,Consolas,monospace;font-size:.74rem;color:#cbd5e1;overflow-x:auto;line-height:1.45}.hidden{display:none}@media (max-width:680px){body{padding:8px}}</style></head><body><div class="wrap"><div class="tabs"><button class="tab-btn active" data-tab="cfg" type="button">📌 Phần 1: Đổi cài đặt &amp; Sức mạnh Cờ Retain</button> <button class="tab-btn" data-tab="ota" type="button">⚡ Phần 2: Nạp code STM32 từ xa qua ESP32 (OTA)</button></div><div id="tab-cfg"><div class="ctrl-row"><button id="btn4g" class="net-on" type="button">📶 Sóng 4G ngoài vườn: ĐANG CÓ SÓNG</button> <button id="btnSendCfg" class="primary" type="button">💾 Lưu cài đặt mới (/config · Retain=true)</button> <button id="btnSendCmd" type="button">⚡ Thử gửi /command (Retain=false) lúc mất sóng</button></div><div class="stage"><svg id="cfgSvg" viewBox="0 0 920 215" xmlns="http://www.w3.org/2000/svg"><defs><filter id="glow5a" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="2.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><path id="cw1" class="wire" d="M 164 108 L 210 108"/><path id="cw2" class="wire" d="M 366 108 L 414 108"/><path id="cw3" class="wire" d="M 578 108 L 626 108"/><path id="cw4" class="wire" d="M 756 108 L 786 108"/><g class="box" id="cb-web" transform="translate(14,68)"><rect width="150" height="80"/><text class="bt" x="10" y="25">1. Web HMI (Admin)</text><text class="bs" x="10" y="44">Đổi ngưỡng ẩm, lịch</text><text class="bs" x="10" y="60">hoặc 12 vòi L/h</text></g><g class="box" id="cb-vps" transform="translate(210,68)"><rect width="156" height="80"/><text class="bt" x="10" y="25">2. Backend VPS</text><text class="bs" x="10" y="44">Check Admin JWT</text><text class="bs" x="10" y="60">Lưu DB → MQTT</text></g><g class="box" id="cb-emqx" transform="translate(414,54)"><rect width="164" height="108"/><text class="bt" x="10" y="25">3. EMQX Broker</text><text class="bs" x="10" y="44">Topic /config</text><text class="bs" x="10" y="60">Retain = TRUE</text><rect id="pinBg" x="10" y="72" width="144" height="26" rx="6" fill="#0f172a" stroke="#334155"/><text id="pinTxt" x="82" y="89" text-anchor="middle" fill="#64748b" font-size="10" font-weight="700">Chưa có tin ghim</text></g><g class="box" id="cb-4g" transform="translate(626,68)"><rect width="130" height="80"/><text class="bt" x="10" y="25">4. Sóng 4G Vườn</text><text id="svg4gTxt" class="bs" x="10" y="44" fill="#4ade80">Đang kết nối</text><text class="bs" x="10" y="60">Chuyển xuống MCU</text></g><g class="box" id="cb-stm" transform="translate(786,60)"><rect width="120" height="96"/><text class="bt" x="10" y="24">5. STM32 Flash</text><text class="bs" x="10" y="42">Kiểm tra hợp lệ</text><text class="bs" x="10" y="57">Lưu Sector 5</text><text id="svgFlashVer" class="bs" x="10" y="79" fill="#fbbf24">Cấu hình v1</text></g><g id="cfgPktLayer"></g></svg></div><div class="card"><div class="card-head"><strong id="cfgTitle">Hãy thử bấm "Ngắt sóng 4G" rồi bấm "Lưu cài đặt mới"!</strong> <span class="pill" id="cfgBadge">Cờ Retain</span></div><p class="explain" id="cfgExplain">Trên EMQX, topic /config bật cờ Retain=true (giấy ghim sẵn trên bảng thông báo). Nhờ vậy dù vườn đang mất điện hay mất sóng 4G lúc Admin bấm lưu, ngay khi STM32 online trở lại sẽ tự động kéo được bản cài đặt mới nhất!</p><pre class="payload" id="cfgPayload">Topic: iot/devices/stm32_tram_01/config (QoS 1, Retain: true)
+{"low": [36.0, 38.0], "high": [56.0, 58.0], "autoSliceSeconds": 300,
+ "potDripRateLph": {"A-1": 2.0, "A-2": 1.8, ...}}</pre></div></div><div id="tab-ota" class="hidden"><div class="ctrl-row"><button id="btnOtaOk" class="ota-btn" type="button">✅ Kịch bản 1: Nạp Firmware thành công (6 bước)</button> <button id="btnOtaFail" type="button">⚠️ Kịch bản 2: Mất mạng giữa chừng (Trạng thái unknown)</button> <button id="btnOtaNext" type="button">⏭ Bước tiếp</button></div><div class="stage"><svg id="otaSvg" viewBox="0 0 920 215" xmlns="http://www.w3.org/2000/svg"><defs><filter id="glow5b" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="2.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><path id="ow1" class="wire" d="M 156 108 L 194 108"/><path id="ow2" class="wire" d="M 358 108 L 396 108"/><path id="ow3" class="wire" d="M 550 108 L 588 108"/><path id="ow4" class="wire" d="M 744 108 L 776 108"/><path id="ow-dl" class="wire" d="M 276 152 C 276 196, 666 196, 666 152"/><g class="box" id="ob-web" transform="translate(14,66)"><rect width="142" height="84"/><text class="bt" x="10" y="24">1. Web (Admin)</text><text class="bs" x="10" y="42">Kiểm tra chip trước</text><text class="bs" x="10" y="58">Upload file .bin</text></g><g class="box" id="ob-vps" transform="translate(194,66)"><rect width="164" height="84"/><text class="bt" x="10" y="24">2. Backend VPS</text><text class="bs" x="10" y="42">Check ảnh ≤ 128 KiB</text><text class="bs" x="10" y="58">Cấp Link ký 30 phút</text></g><g class="box" id="ob-emqx" transform="translate(396,66)"><rect width="154" height="84"/><text class="bt" x="10" y="24">3. EMQX (OTA)</text><text class="bs" x="10" y="42">esp32/to_stm32/check</text><text class="bs" x="10" y="58">esp32/to_stm32/flash</text></g><g class="box" id="ob-esp" transform="translate(588,66)"><rect width="156" height="84"/><text class="bt" x="10" y="24">4. ESP32 (Wi-Fi)</text><text class="bs" x="10" y="42">Check DEV_ID=0x423</text><text class="bs" x="10" y="58">Tải .bin qua HTTPS</text></g><g class="box" id="ob-stm" transform="translate(776,66)"><rect width="132" height="84"/><text class="bt" x="8" y="24" style="font-size:11px">5. STM32F401RCT6</text><text class="bs" x="10" y="42">Nạp qua 4 dây SWD</text><text class="bs" x="10" y="58">Xóa → Ghi → Verify</text></g><g id="otaPktLayer"></g></svg></div><div class="card"><div class="card-head"><strong id="otaTitle">Bước 1</strong> <span class="pill violet" id="otaBadge">1 / 6</span></div><p class="explain" id="otaExplain"></p><pre class="payload" id="otaPayload"></pre></div></div></div><script src="./hardware-photos.js?v=bbe73888"></script><script>(function () {
+  "use strict";
+
+  const tabBtns = document.querySelectorAll(".tab-btn");
+  const tabCfg = document.getElementById("tab-cfg");
+  const tabOta = document.getElementById("tab-ota");
+
+  tabBtns.forEach(b => {
+    b.addEventListener("click", () => {
+      tabBtns.forEach(x => x.classList.remove("active"));
+      b.classList.add("active");
+      const t = b.getAttribute("data-tab");
+      tabCfg.classList.toggle("hidden", t !== "cfg");
+      tabOta.classList.toggle("hidden", t !== "ota");
+    });
+  });
+
+  // ===== TAB 1: CONFIG & RETAIN =====
+  let online4g = true;
+  let retainedVer = 0;
+  let cfgVersion = 1;
+  let cfgTimer = null;
+
+  const btn4g = document.getElementById("btn4g");
+  const btnSendCfg = document.getElementById("btnSendCfg");
+  const btnSendCmd = document.getElementById("btnSendCmd");
+  const svg4gTxt = document.getElementById("svg4gTxt");
+  const svgFlashVer = document.getElementById("svgFlashVer");
+  const pinBg = document.getElementById("pinBg");
+  const pinTxt = document.getElementById("pinTxt");
+  const cfgTitle = document.getElementById("cfgTitle");
+  const cfgBadge = document.getElementById("cfgBadge");
+  const cfgExplain = document.getElementById("cfgExplain");
+  const cfgPayload = document.getElementById("cfgPayload");
+  const cfgPktLayer = document.getElementById("cfgPktLayer");
+
+  let activeAnim = null;
+  let animProg = 0;
+
+  function clearCfgStyles() {
+    document.querySelectorAll("#cfgSvg .box").forEach(b => b.classList.remove("amber", "green", "err"));
+    document.querySelectorAll("#cfgSvg .wire").forEach(w => w.classList.remove("amber", "green", "err"));
+  }
+
+  function runPacket(layerEl, wireId, color, durationMs, cb) {
+    while (layerEl.firstChild) layerEl.removeChild(layerEl.firstChild);
+    const wire = document.getElementById(wireId);
+    if (!wire) return;
+    const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+    c.setAttribute("r", "6");
+    c.setAttribute("fill", color);
+    layerEl.appendChild(c);
+    animProg = 0;
+    activeAnim = { el: c, wire: wire, len: wire.getTotalLength(), dur: durationMs, cb: cb, layer: layerEl };
+  }
+
+  function updatePin(hasPin, ver) {
+    if (hasPin) {
+      pinBg.setAttribute("fill", "#451a03");
+      pinBg.setAttribute("stroke", "#f59e0b");
+      pinTxt.setAttribute("fill", "#fcd34d");
+      pinTxt.textContent = "📌 ĐANG GHIM Cấu hình v" + ver;
+    } else {
+      pinBg.setAttribute("fill", "#0f172a");
+      pinBg.setAttribute("stroke", "#334155");
+      pinTxt.setAttribute("fill", "#64748b");
+      pinTxt.textContent = "Không ghim tin";
+    }
+  }
+
+  function deliverRetainedToStm32() {
+    if (!online4g || !retainedVer) return;
+    clearCfgStyles();
+    document.getElementById("cw3").classList.add("green");
+    document.getElementById("cw4").classList.add("green");
+    document.getElementById("cb-4g").classList.add("green");
+    document.getElementById("cb-stm").classList.add("green");
+    cfgTitle.textContent = "Sóng 4G vừa bật lại → EMQX tự giao bản tin ĐANG GHIM xuống STM32!";
+    cfgBadge.textContent = "Đã đồng bộ Flash!";
+    cfgBadge.className = "pill green";
+    cfgExplain.textContent = "Ngay khi EC600N kết nối lại EMQX và đăng ký /config, Broker tự động gửi bản cấu hình đang ghim xuống. STM32 kiểm tra mọi giá trị hợp lệ rồi mới ghi vào vùng Flash Sector 5 (128 KiB sau) để nhớ mãi kể cả khi cúp điện.";
+    svgFlashVer.textContent = "Cấu hình v" + retainedVer + " (Đã lưu!)";
+    svgFlashVer.setAttribute("fill", "#4ade80");
+    runPacket(cfgPktLayer, "cw3", "#22c55e", 650, () => {
+      runPacket(cfgPktLayer, "cw4", "#22c55e", 550, null);
+    });
+  }
+
+  btn4g.addEventListener("click", () => {
+    online4g = !online4g;
+    btn4g.className = online4g ? "net-on" : "net-off";
+    btn4g.textContent = online4g ? "📶 Sóng 4G ngoài vườn: ĐANG CÓ SÓNG" : "📵 Sóng 4G ngoài vườn: ĐANG MẤT SÓNG";
+    svg4gTxt.textContent = online4g ? "Đang kết nối" : "MẤT SÓNG 4G!";
+    svg4gTxt.setAttribute("fill", online4g ? "#4ade80" : "#f87171");
+    if (online4g && retainedVer > 0) {
+      deliverRetainedToStm32();
+    } else if (!online4g) {
+      clearCfgStyles();
+      document.getElementById("cb-4g").classList.add("err");
+      cfgTitle.textContent = "Vườn đang MẤT SÓNG 4G — Thử bấm 'Lưu cài đặt mới' ngay lúc này xem!";
+      cfgBadge.textContent = "Mất 4G";
+      cfgBadge.className = "pill err";
+    }
+  });
+
+  btnSendCfg.addEventListener("click", () => {
+    cfgVersion += 1;
+    const ver = cfgVersion;
+    clearCfgStyles();
+    document.getElementById("cb-web").classList.add("amber");
+    document.getElementById("cb-vps").classList.add("amber");
+    document.getElementById("cw1").classList.add("amber");
+    document.getElementById("cw2").classList.add("amber");
+    cfgTitle.textContent = "Đang gửi Cấu hình v" + ver + " qua VPS lên EMQX (Retain = true)...";
+    cfgBadge.textContent = "Đang gửi /config";
+    cfgBadge.className = "pill";
+    cfgPayload.textContent = "POST /config -> MQTT PUBLISH (QoS 1, Retain: true)\n{\"cfg_ver\": " + ver + ", \"autoSliceSeconds\": 300, \"low\": [36, 38], \"high\": [56, 58]}";
+
+    runPacket(cfgPktLayer, "cw1", "#f59e0b", 550, () => {
+      runPacket(cfgPktLayer, "cw2", "#f59e0b", 550, () => {
+        retainedVer = ver;
+        updatePin(true, ver);
+        document.getElementById("cb-emqx").classList.add("amber");
+        if (online4g) {
+          deliverRetainedToStm32();
+        } else {
+          document.getElementById("cb-4g").classList.add("err");
+          cfgTitle.textContent = "Vườn mất 4G → Cấu hình v" + ver + " ĐƯỢC GHIM CHẶT trên EMQX chờ sẵn!";
+          cfgBadge.textContent = "Đang ghim chờ 4G";
+          cfgBadge.className = "pill";
+          cfgExplain.textContent = "Nhìn vào khối EMQX: bản tin v" + ver + " đang được ghim lại. Bây giờ bạn hãy bấm nút 'Sóng 4G ngoài vườn' để bật lại mạng và xem điều kỳ diệu xảy ra!";
+        }
+      });
+    });
+  });
+
+  btnSendCmd.addEventListener("click", () => {
+    clearCfgStyles();
+    document.getElementById("cb-web").classList.add("amber");
+    document.getElementById("cw1").classList.add("amber");
+    document.getElementById("cw2").classList.add("amber");
+    cfgTitle.textContent = "Nếu gửi lệnh /command (Retain = false) khi mất sóng thì sao?";
+    cfgBadge.textContent = "Retain = FALSE";
+    cfgBadge.className = "pill err";
+    cfgPayload.textContent = "Topic: iot/devices/stm32_tram_01/command (QoS 1, Retain: false)\n{\"action\": \"pump_on\"} -> KHÔNG GHIM lại trên EMQX!";
+    runPacket(cfgPktLayer, "cw1", "#f59e0b", 500, () => {
+      runPacket(cfgPktLayer, "cw2", "#f59e0b", 500, () => {
+        document.getElementById("cb-emqx").classList.add("err");
+        if (!online4g) {
+          cfgExplain.textContent = "Vì Retain = FALSE, EMQX KHÔNG giữ lại lệnh bật bơm khi vườn đang mất mạng. Điều này cực kỳ an toàn — tránh việc 3 tiếng sau có mạng lại thì máy bơm tự nhiên nổ máy tưới lúc nửa đêm!";
+        } else {
+          cfgExplain.textContent = "Khi có mạng, lệnh /command đi thẳng xuống ngay nhưng cũng KHÔNG ghim trên Broker — tránh bị chạy lặp khi STM32 khởi động lại.";
+        }
+      });
+    });
+  });
+
+  // ===== TAB 2: ESP32 OTA =====
+  const OTA_SCENARIOS = {
+    ok: [
+      { box: "ob-web", wire: null, cls: "violet", title: "Bước 1: Admin bấm 'Kiểm tra STM32' & chọn file .bin", explain: "Tab nạp OTA ẩn khỏi Khách và User, chỉ Admin thấy. Đầu tiên phải dừng tưới, bấm kiểm tra chip rồi chọn file firmware mới.", payload: "Yêu cầu: Đúng chip STM32F401RCT6 (họ STM32F401xB/C, DEV_ID=0x423)\nĐọc file firmware.bin (kích thước ~110 KiB)" },
+      { box: "ob-vps", wire: "ow1", cls: "violet", title: "Bước 2: VPS kiểm tra kích thước ≤ 128 KiB & cấp Link ký", explain: "Rất quan trọng: Vùng Flash cấu hình của STM32 nằm từ 128 KiB trở đi (0x08020000). VPS kiểm tra ảnh không đè lên cấu hình, tính mã SHA-256 và tạo Link tải dùng 1 lần trong 30 phút.", payload: "File Size: 110,356 bytes (Hợp lệ < 128 KiB!)\nSigned URL: https://garden.example.com/firmware/download?sig=... (hết hạn sau 30 phút)" },
+      { box: "ob-emqx", wire: "ow2", cls: "violet", title: "Bước 3: VPS phát lệnh OTA xuống EMQX cho ESP32", explain: "VPS gửi lệnh qua topic esp32/to_stm32/flash (không Retain để tránh nạp lại nhầm lúc khởi động lại).", payload: "PUBLISH esp32/to_stm32/flash\nPayload: URL ký tải file firmware.bin" },
+      { box: "ob-esp", wire: "ow-dl", cls: "violet", title: "Bước 4: ESP32 kiểm tra chip (0x423) & tải file qua Wi-Fi", explain: "ESP32 dùng kết nối Wi-Fi gọi thẳng tới URL ký trên VPS để tải ảnh .bin về bộ nhớ đệm, đồng thời kiểm tra đúng chip STM32F401RCT6 (DEV_ID=0x423).", payload: "ESP32 SWD Probe -> DEV_ID = 0x423 (STM32F401RCT6 / xB-C OK)\nHTTP GET -> Đã tải đủ 110,356 bytes" },
+      { box: "ob-stm", wire: "ow4", cls: "violet", title: "Bước 5: ESP32 nạp sang STM32 qua 4 dây SWD", explain: "ESP32 lần lượt báo tiến độ qua MQTT: Xóa Flash → Ghi Flash → Đọc kiểm tra lại (Verify 100%). Lưu ý: Verify 100% mới chỉ xong khâu đọc đối chiếu, chưa kết luận xong hẳn!", payload: "SWD Flash Progress:\nErase -> Program 100% -> Verify 100% -> Chờ STM32 khởi động lại..." },
+      { box: "ob-web", wire: "ow3", cls: "green", title: "Bước 6: Nhận 'flash: OK' + Telemetry mới → Thành công!", explain: "Chỉ khi ESP32 gửi 'flash: OK' VÀ STM32 khởi động chạy lại phát gói /data mới lên Web, Admin mới xác nhận nâng cấp thành công.", payload: "esp32/status -> \"flash: OK (110356 bytes)\"\niot/devices/stm32_tram_01/data -> Telemetry mới đã lên!" }
+    ],
+    fail: [
+      { box: "ob-esp", wire: "ow-dl", cls: "violet", title: "Bước 1: ESP32 đang tải hoặc đang nạp thì bị rớt Wi-Fi / khởi động lại", explain: "Đang giữa chừng nạp firmware, ESP32 bỗng gửi lại tin 'online' mới hoặc im lặng quá 120 giây không báo kết quả cuối.", payload: "Timeout 120s hoặc nhận sự kiện 'online' bất thường giữa chừng!" },
+      { box: "ob-vps", wire: "ow3", cls: "err", title: "Bước 2: Backend giữ trạng thái CHƯA XÁC NHẬN (unknown) — Cấm tự gửi lại!", explain: "An toàn là số 1: Backend tuyệt đối KHÔNG tự động bắn lệnh nạp lặp lại. Web khóa nút nạp lại cho đến khi Admin tự bấm 'Kiểm tra STM32' để xem chip có ổn không rồi mới quyết định nạp lại.", payload: "OTA State = 'unknown' (Chưa xác nhận)\nNút 'Cập nhật STM32' TẠM KHÓA cho tới khi Probe mới thành công!" }
+    ]
+  };
+
+  let otaKey = "ok";
+  let otaStep = 0;
+  const otaTitle = document.getElementById("otaTitle");
+  const otaBadge = document.getElementById("otaBadge");
+  const otaExplain = document.getElementById("otaExplain");
+  const otaPayload = document.getElementById("otaPayload");
+  const otaPktLayer = document.getElementById("otaPktLayer");
+
+  function renderOta() {
+    const list = OTA_SCENARIOS[otaKey];
+    const s = list[otaStep];
+    document.querySelectorAll("#otaSvg .box").forEach(b => b.classList.remove("amber", "green", "violet", "err"));
+    document.querySelectorAll("#otaSvg .wire").forEach(w => w.classList.remove("amber", "green", "violet", "err"));
+    const bEl = document.getElementById(s.box);
+    if (bEl) bEl.classList.add(s.cls);
+    if (s.wire) {
+      const wEl = document.getElementById(s.wire);
+      if (wEl) wEl.classList.add(s.cls);
+      const col = s.cls === "err" ? "#ef4444" : (s.cls === "green" ? "#22c55e" : "#a78bfa");
+      runPacket(otaPktLayer, s.wire, col, 900, null);
+    } else {
+      while (otaPktLayer.firstChild) otaPktLayer.removeChild(otaPktLayer.firstChild);
+    }
+    otaTitle.textContent = s.title;
+    otaBadge.textContent = (otaStep + 1) + " / " + list.length;
+    otaBadge.className = "pill " + s.cls;
+    otaExplain.textContent = s.explain;
+    otaPayload.textContent = s.payload;
+  }
+
+  document.getElementById("btnOtaOk").addEventListener("click", () => { otaKey = "ok"; otaStep = 0; renderOta(); });
+  document.getElementById("btnOtaFail").addEventListener("click", () => { otaKey = "fail"; otaStep = 0; renderOta(); });
+  document.getElementById("btnOtaNext").addEventListener("click", () => {
+    const list = OTA_SCENARIOS[otaKey];
+    otaStep = (otaStep + 1) % list.length;
+    renderOta();
+  });
+
+  let lastTs = performance.now();
+  function loop(ts) {
+    const dt = Math.min(0.05, (ts - lastTs) / 1000);
+    lastTs = ts;
+    if (activeAnim) {
+      animProg += (dt * 1000) / activeAnim.dur;
+      if (animProg >= 1) {
+        const doneCb = activeAnim.cb;
+        if (!doneCb) {
+          animProg = 0;
+        } else {
+          activeAnim = null;
+          doneCb();
+        }
+      }
+      if (activeAnim) {
+        const pt = activeAnim.wire.getPointAtLength(Math.min(1, animProg) * activeAnim.len);
+        activeAnim.el.setAttribute("cx", pt.x.toFixed(1));
+        activeAnim.el.setAttribute("cy", pt.y.toFixed(1));
+      }
+    }
+    requestAnimationFrame(loop);
+  }
+
+  renderOta();
+  requestAnimationFrame(loop);
+
+  if (window.IoTHardwareViewer) {
+    window.IoTHardwareViewer.attachSvgTriggers([
+      { selector: "#cb-4g", id: "ec600n", pillPos: "br" },
+      { selector: "#cb-stm", id: "stm32", pillPos: "tr" },
+      { selector: "#ob-esp", id: "esp32", pillPos: "br" },
+      { selector: "#ob-stm", id: "stm32", pillPos: "br" }
+    ]);
+  }
+})();</script></body></html>
